@@ -1,0 +1,38 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+body {
+
+}
+.menu {
+
+}
+.ribbon {
+	width: 100%;
+	background-color: white;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ccc;
+}
+.content_well {
+	background-color: #eee;
+	padding: 0.5in;
+	padding-top: 1in;
+}
+.content {
+	height: 9in;
+	width: 6.5in;
+	padding: 1in;
+	margin:auto;
+	border: 1px solid #ccc;
+	background-color: white;
+}
+p {
+	-user-modify: read-write;
+	-moz-user-modify: read-write;
+	-webkit-user-modify: read-write;
+	height: 100%;
+}
+p:focus {
+	outline: none;
+}

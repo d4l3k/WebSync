@@ -6,5 +6,10 @@
 	<head>
 		<link rel="stylesheet" type="text/css" href="/css/main.css">
 		<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+		<script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+		<% @javascripts.each do |script| %>
+			<script type="text/javascript" src="<%= script %>"></script>
+		<% end %>
 	</head>
 </html>

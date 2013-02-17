@@ -27,13 +27,50 @@ body {
 	border: 1px solid #ccc;
 	background-color: white;
 }
-.content p {
+.content .page {
 	-user-modify: read-write;
 	-moz-user-modify: read-write;
 	-webkit-user-modify: read-write;
 	height: 100%;
 	border: 1px solid #eee;
+	word-wrap: break-word;
+	overflow-wrap: break-work;
+	hyphens: auto;
+	-webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+	font-size: 14px;
 }
-p:focus {
+:focus {
 	outline: none;
+}
+::-moz-selection {
+	background-color: #ccc;
+}
+::selection {
+	background-color: #ccc;
+}
+a#name {
+	background-color: #555;
+	font-size: 1.5em;
+}
+a#name:hover {
+	background-color: #777;
+}
+
+.preformatted {
+    font-family: monospace;
+    white-space: pre;
+}
+.ribbon_button {
+	position: relative;
+	top: 8px;
+	width: auto !important;
+}
+#font_size {
+	width: auto !important;
+}
+.btn-group {
+	position: relative;
+	top: 1px;
 }

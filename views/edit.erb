@@ -4,24 +4,43 @@
 			<div class="container">
 				<a class="brand" href="/">Web-Sync</a>
 				<ul class="nav">
+					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
 					<li class="active"><a>Text</a></li>
 				</ul>
 			</div>
 		</div>
 		<div class="ribbon">
 			<div class="container">
-			<a class="btn"><i class="icon-bold"></i></a>
-			<a class="btn"><i class="icon-italic"></i></a>
-			<a class="btn"><i class="icon-strikethrough"></i></a>
-			<a class="btn"><i class="icon-underline"></i></a>
+			<button id="bold" class="btn"><i class="icon-bold"></i></button>
+			<button id="italic" class="btn"><i class="icon-italic"></i></button>
+			<button id="strikethrough" class="btn"><i class="icon-strikethrough"></i></button>
+			<button id="underline" class="btn"><i class="icon-underline"></i></button>
+			<select id="font" class="ribbon_button">
+				<option>Arial</option>
+				<option>Droid Sans</option>
+				<option>Times New Roman</option>
+			</select>
+			<select id="font_size" class="ribbon_button">
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
+				<option>4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
+			</select>
+			<div class="btn-group">
+				<button id="justifyleft" class="btn"><i class="icon-align-left"></i></button>
+				<button id="justifycenter" class="btn"><i class="icon-align-center"></i></button>
+				<button id="justifyright" class="btn"><i class="icon-align-right"></i></button>
+				<button id="justifyfull" class="btn"><i class="icon-align-justify"></i></button>
+			</div>
 			</div>
 		</div>
 	</div>
 </div>
 <div class="content_well">
-<div class="content">
-	<p>
-		<%= @doc.body %>
-	</p>
-</div>
+	<div class="content">
+		<div class="page"><%= @doc.body %></div>
+	</div>
 </div>

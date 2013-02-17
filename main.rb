@@ -2,6 +2,13 @@ require 'sinatra'
 require 'sinatra-websocket'
 require 'data_mapper'
 require 'json'
+use Rack::Logger
+
+helpers do
+	def logger
+		request.logger
+	end
+end
 
 set :server, 'thin'
 set :sockets, []
@@ -12,7 +19,7 @@ class Document
 	include DataMapper::Resource
 	property :id, Serial
 	property :name, String
-	property :body, String
+	property :body, Text
 	property :created, DateTime
 	property :last_edit_time, DateTime
 	has n, :assets, :through => Resource
@@ -32,6 +39,7 @@ DataMapper.auto_upgrade!
 
 get '/' do
 	@javascripts = []
+
 	erb :index
 end
 get '/new' do
@@ -45,9 +53,19 @@ get '/new' do
 end
 get '/:doc/edit' do
 	if !request.websocket?
-		@javascripts = ['/js/edit.js','/js/diff_match_patch.js']
+		@javascripts = [
+			'/js/edit.js',
+			#'/js/diff_match_patch.js',
+			'/js/rangy-core.js',
+			'/js/rangy-cssclassapplier.js',
+			'/js/fontdetect.js'
+		]
 		@doc = Document.get(params[:doc].to_i)
-		erb :edit
+		if !@doc.nil?
+			erb :edit
+		else
+			redirect '/'
+		end
 	else
 		doc_id = params[:doc].to_i
 		request.websocket do |ws|
@@ -61,9 +79,16 @@ get '/:doc/edit' do
 					doc = Document.get doc_id
 					doc.body = data["text"]
 					doc.last_edit_time = Time.now
-					puts "Doc: #{doc.to_s}"
-					puts "Valid?: #{doc.valid?}"
-					puts "Save suceeded: #{doc.save()}"
+					if !doc.save
+						puts("Save errors: #{doc.errors.inspect}")
+					end
+				elsif data['type']=="name_update"
+					doc = Document.get doc_id
+					doc.name = data["name"]
+					doc.last_edit_time = Time.now
+					if !doc.save
+						puts("Save errors: #{doc.errors.inspect}")
+					end
 				end
 			end
 			ws.onclose do

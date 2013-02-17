@@ -27,11 +27,12 @@ body {
 	border: 1px solid #ccc;
 	background-color: white;
 }
-p {
+.content p {
 	-user-modify: read-write;
 	-moz-user-modify: read-write;
 	-webkit-user-modify: read-write;
 	height: 100%;
+	border: 1px solid #eee;
 }
 p:focus {
 	outline: none;

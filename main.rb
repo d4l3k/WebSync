@@ -1,5 +1,10 @@
 require 'sinatra'
+require 'sinatra-websocket'
 require 'data_mapper'
+require 'json'
+
+set :server, 'thin'
+set :sockets, []
 
 DataMapper.setup(:default, 'sqlite:main.db');
 
@@ -39,7 +44,31 @@ get '/new' do
 	redirect "/#{doc.id}/edit"
 end
 get '/:doc/edit' do
-	@javascripts = ["/js/edit.js"]
-	@doc = Document.get(params[:doc].to_i)
-	erb :edit	
+	if !request.websocket?
+		@javascripts = ['/js/edit.js','/js/diff_match_patch.js']
+		@doc = Document.get(params[:doc].to_i)
+		erb :edit
+	else
+		doc_id = params[:doc].to_i
+		request.websocket do |ws|
+			ws.onopen do
+				ws.send("hello world!")
+			end
+			ws.onmessage do |msg|
+				data = JSON.parse(msg);
+				puts "JSON: #{data.to_s}"
+				if data["type"]=="text_update"
+					doc = Document.get doc_id
+					doc.body = data["text"]
+					doc.last_edit_time = Time.now
+					puts "Doc: #{doc.to_s}"
+					puts "Valid?: #{doc.valid?}"
+					puts "Save suceeded: #{doc.save()}"
+				end
+			end
+			ws.onclose do
+				warn("websocket closed")
+			end
+		end
+	end
 end

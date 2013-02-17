@@ -1,7 +1,3 @@
-require 'sinatra'
-require 'sinatra-websocket'
-require 'data_mapper'
-require 'json'
 use Rack::Logger
 
 helpers do

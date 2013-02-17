@@ -13,6 +13,7 @@ body {
 	background-color: white;
 	padding-bottom: 5px;
 	border-bottom: 1px solid #ccc;
+	height: 40px !important;
 }
 .content_well {
 	background-color: #eee;
@@ -73,4 +74,14 @@ a#name:hover {
 .btn-group {
 	position: relative;
 	top: 1px;
+}
+#ribbon_buttons li.active a {
+	background-color: #777 !important;
+	font-weight: bold;
+}
+#ribbon_buttons li a:hover {
+	background-color: #555;
+}
+.ribbon .container {
+
 }

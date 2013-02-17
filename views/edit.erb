@@ -5,36 +5,42 @@
 				<a class="brand" href="/">Web-Sync</a>
 				<ul class="nav">
 					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
-					<li class="active"><a>Text</a></li>
+				</ul>
+				<ul id="ribbon_buttons" class="nav">
 				</ul>
 			</div>
 		</div>
 		<div class="ribbon">
-			<div class="container">
-			<button id="bold" class="btn"><i class="icon-bold"></i></button>
-			<button id="italic" class="btn"><i class="icon-italic"></i></button>
-			<button id="strikethrough" class="btn"><i class="icon-strikethrough"></i></button>
-			<button id="underline" class="btn"><i class="icon-underline"></i></button>
-			<select id="font" class="ribbon_button">
-				<option>Arial</option>
-				<option>Droid Sans</option>
-				<option>Times New Roman</option>
-			</select>
-			<select id="font_size" class="ribbon_button">
-				<option>1</option>
-				<option>2</option>
-				<option>3</option>
-				<option>4</option>
-				<option>5</option>
-				<option>6</option>
-				<option>7</option>
-			</select>
-			<div class="btn-group">
-				<button id="justifyleft" class="btn"><i class="icon-align-left"></i></button>
-				<button id="justifycenter" class="btn"><i class="icon-align-center"></i></button>
-				<button id="justifyright" class="btn"><i class="icon-align-right"></i></button>
-				<button id="justifyfull" class="btn"><i class="icon-align-justify"></i></button>
+			<div id="Text" class="container">
+				<button id="bold" title="Bold" class="btn"><i class="icon-bold"></i></button>
+				<button id="italic" title="Italic" class="btn"><i class="icon-italic"></i></button>
+				<button id="strikethrough" title="Strikethrough" class="btn"><i class="icon-strikethrough"></i></button>
+				<button id="underline" title="Underline" class="btn"><i class="icon-underline"></i></button>
+				<select id="font" title="Font" class="ribbon_button">
+					<option>Arial</option>
+					<option>Droid Sans</option>
+					<option>Times New Roman</option>
+				</select>
+				<select id="font_size" title="Font Size" class="ribbon_button">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+				</select>
+				<div class="btn-group">
+					<button id="justifyleft" title="Justify Left" class="btn"><i class="icon-align-left"></i></button>
+					<button id="justifycenter" title="Justify Center" class="btn"><i class="icon-align-center"></i></button>
+					<button id="justifyright" title="Justify Right" class="btn"><i class="icon-align-right"></i></button>
+					<button id="justifyfull" title="Justify Full" class="btn"><i class="icon-align-justify"></i></button>
+				</div>
+				<button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button>
 			</div>
+			<div id="Insert" class="container">
+				<button id="picture" title="Picture" class="btn"><i class="icon-picture"></i></button>
+				<button id="table" title="Table" class="btn"><i class="icon-table"></i></button>
 			</div>
 		</div>
 	</div>

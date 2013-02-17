@@ -8,7 +8,7 @@ end
 
 set :server, 'thin'
 set :sockets, []
-
+$dmp = DiffMatchPatch.new
 DataMapper.setup(:default, 'sqlite:main.db');
 
 class Document
@@ -57,7 +57,8 @@ get '/:doc/edit' do
 			#'/js/diff_match_patch.js',
 			'/js/rangy-core.js',
 			'/js/rangy-cssclassapplier.js',
-			'/js/fontdetect.js'
+			'/js/fontdetect.js',
+			'/js/diff_match_patch.js'
 		]
 		@doc = Document.get(params[:doc].to_i)
 		if !@doc.nil?
@@ -65,6 +66,7 @@ get '/:doc/edit' do
 		else
 			redirect '/'
 		end
+	# Websocket edit
 	else
 		doc_id = params[:doc].to_i
 		request.websocket do |ws|
@@ -74,6 +76,7 @@ get '/:doc/edit' do
 			ws.onmessage do |msg|
 				data = JSON.parse(msg);
 				puts "JSON: #{data.to_s}"
+				# This replaces all the text w/ the provided content.
 				if data["type"]=="text_update"
 					doc = Document.get doc_id
 					doc.body = data["text"]
@@ -81,6 +84,16 @@ get '/:doc/edit' do
 					if !doc.save
 						puts("Save errors: #{doc.errors.inspect}")
 					end
+				# Google Diff-Match-Patch algorithm
+				elsif data['type']=='text_patch'
+					doc = Document.get doc_id
+					patches = $dmp.patch_from_text data['patch']
+					doc.body = $dmp.patch_apply(patches,doc.body)[0]
+					doc.last_edit_time = Time.now
+					if !doc.save
+						puts("Save errors: #{doc.errors.inspect}")
+					end
+				# Sets the name
 				elsif data['type']=="name_update"
 					doc = Document.get doc_id
 					doc.name = data["name"]

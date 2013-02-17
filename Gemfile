@@ -8,3 +8,10 @@ gem 'em-websocket', '= 0.3.8'
 gem 'sinatra-websocket'
 gem 'diff_match_patch_native'
 gem 'dm-sqlite-adapter'
+
+
+group :development do
+	gem 'racksh'
+	gem 'pry-rescue'
+	gem 'pry-stack_explorer'
+end

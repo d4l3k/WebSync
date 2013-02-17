@@ -38,6 +38,9 @@ get '/' do
 
 	erb :index
 end
+get '/error' do
+	error
+end
 get '/new' do
 	doc = Document.create(
 		:name => 'Unnamed Document',

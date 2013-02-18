@@ -76,7 +76,7 @@ WebSync = {
 			$('.ribbon .container').hide();
 			$("#"+$(this).text()).show();
 		});
-		$($('#ribbon_buttons li').get(0)).click();
+		$($('#ribbon_buttons li').get(1)).click();
 	},
 	keypress: function(e){
 		console.log(e);
@@ -153,7 +153,7 @@ WebSync = {
 			var diffsHTML = WebSync.diff_htmlMode(WebSync.old_html,new_html);
 			var patchesHTML = WebSync.dmp.patch_make(diffsHTML);
 			var patch_textHTML = WebSync.dmp.patch_toText(patchesHTML)
-			console.log("Patch text HTML: ",patch_textHTML);
+			//console.log("Patch text HTML: ",patch_textHTML);
 			WebSync.connection.sendJSON({type: "text_patch", patch: patch_text});
 			/*
 			 * Old text replace method
@@ -235,7 +235,6 @@ diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
 
 	var chars1 = diff_linesToCharsMunge_(text1);
 	var chars2 = diff_linesToCharsMunge_(text2);
-	console.log(chars1,chars2,lineArray);
 	return {chars1: chars1, chars2: chars2, lineArray: lineArray};
 }
 diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {

@@ -1,4 +1,6 @@
 use Rack::Logger
+use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
+
 
 helpers do
 	def logger
@@ -6,8 +8,11 @@ helpers do
 	end
 end
 
-set :server, 'thin'
-set :sockets, []
+configure do
+	set :server, 'thin'
+	set :sockets, []
+	set :template_engine, :erb
+end 
 $dmp = DiffMatchPatch.new
 DataMapper.setup(:default, 'sqlite:main.db');
 
@@ -18,6 +23,7 @@ class Document
 	property :body, Text
 	property :created, DateTime
 	property :last_edit_time, DateTime
+	property :public, Boolean, :default=>false
 	has n, :assets, :through => Resource
 end
 # Assets could be javascript or css
@@ -42,6 +48,7 @@ get '/error' do
 	error
 end
 get '/new' do
+	login_required
 	doc = Document.create(
 		:name => 'Unnamed Document',
 		:body => '',
@@ -50,7 +57,16 @@ get '/new' do
 	)
 	redirect "/#{doc.id}/edit"
 end
+get '/:doc/download' do
+	login_required
+	doc = Document.get params[:doc].to_i
+  	response.headers['content_type'] = "application/octet-stream"
+  	attachment(doc.name+'.docx')
+  	response.write(doc.body)	
+	#send_data doc.body, :filename=>doc.name+".docx"
+end
 get '/:doc/edit' do
+	login_required
 	if !request.websocket?
 		@javascripts = [
 			'/js/edit.js',

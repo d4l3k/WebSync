@@ -8,7 +8,8 @@ gem 'em-websocket', '= 0.3.8'
 gem 'sinatra-websocket'
 gem 'diff_match_patch_native'
 gem 'dm-sqlite-adapter'
-
+gem 'sinatra-authentication'
+gem 'haml'
 
 group :development do
 	gem 'racksh'

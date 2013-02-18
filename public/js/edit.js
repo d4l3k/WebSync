@@ -17,6 +17,9 @@ WebSync = {
 			console.log(e);
 		}
 		$(".content .page").keypress(WebSync.keypress);
+		$("#name").keyup(function(){
+			$(this).html($(this).text());
+		});
 		$("#name").blur(function(){
 			WebSync.connection.sendJSON({type: "name_update", name: $("#name").text()});
 		});

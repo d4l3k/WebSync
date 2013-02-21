@@ -28,7 +28,7 @@ WebSync = {
 				document.execCommand('selectAll');
 			},100);
 		});
-		var text_buttons = ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat"];
+		var text_buttons = ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"];
 		text_buttons.forEach(function(elem){
 			$('button#'+elem).click(function(){
 				document.execCommand(elem);
@@ -61,7 +61,7 @@ WebSync = {
 				}
 			});
 			applier.applyToSelection();*/
-			document.execCommand('fontsize',false,size);
+			WebSync.applyCssToSelection({'font-size':size});
 		});
 		WebSync.fontsInit();
 		WebSync.updateRibbon();
@@ -173,6 +173,11 @@ WebSync = {
 		var diffs = WebSync.dmp.diff_main(lineText1,lineText2, false);
 		WebSync.dmp.diff_charsToHTML_(diffs, lineArray);
 		return diffs;
+	},
+	applyCssToSelection: function(css){
+		var applier = rangy.createCssClassApplier("tmp");
+		applier.toggleSelection();
+		$(".tmp").css(css).removeClass("tmp");
 	}
 }
 

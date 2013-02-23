@@ -36,6 +36,7 @@ WebSync = {
 			});
 		});
 		$(document).on('selectionchange',function(){
+			var style = WebSync.getCss();
 			text_buttons.forEach(function(elem){
 				if(document.queryCommandState(elem)){
 					$('button#'+elem).addClass("active");
@@ -45,7 +46,7 @@ WebSync = {
 				}
 			});
 			$('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split("'").join("")));
-			$('#font_size').val(document.queryCommandValue('fontsize'));
+			//$('#font_size').val(parseInt(style.fontSize)*(0.75)+"pt");
 		});
 		$('#font').change(function(){
 			document.execCommand('fontname',false,$('#font').val());
@@ -173,6 +174,14 @@ WebSync = {
 		var diffs = WebSync.dmp.diff_main(lineText1,lineText2, false);
 		WebSync.dmp.diff_charsToHTML_(diffs, lineArray);
 		return diffs;
+	},
+	getCss: function(){
+		var applier = rangy.createCssClassApplier("tmp");
+		applier.toggleSelection();
+		if($(".tmp").length==0) return {};
+		var style = $(".tmp").getStyleObject();
+		$(".tmp").removeClass("tmp");
+		return style;
 	},
 	applyCssToSelection: function(css){
 		var applier = rangy.createCssClassApplier("tmp");

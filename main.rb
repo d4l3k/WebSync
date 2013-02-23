@@ -70,6 +70,7 @@ get '/:doc/edit' do
 	if !request.websocket?
 		@javascripts = [
 			'/js/edit.js',
+			'/js/jquery.computedstyles.js',
 			#'/js/diff_match_patch.js',
 			'/js/rangy-core.js',
 			'/js/rangy-cssclassapplier.js',

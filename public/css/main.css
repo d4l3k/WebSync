@@ -54,6 +54,14 @@ body {
 a#name {
 	background-color: #555;
 	font-size: 1.5em;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	max-width: 3in;
+	max-height: 25px;
+	white-space: nowrap
+}
+a#name:focus {
+	max-width: 6in;
 }
 a#name:hover {
 	background-color: #777;

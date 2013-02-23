@@ -29,8 +29,8 @@ end
 # Assets could be javascript or css
 class Asset
 	include DataMapper::Resource
-	property :id, Serial
-	property :name, String
+	property :id, Serial, :key=> true
+	property :name, String, :key=> true
 	property :description, String
 	property :url, String
 	property :type, String
@@ -38,6 +38,8 @@ class Asset
 end
 DataMapper.finalize
 DataMapper.auto_upgrade!
+
+Asset.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/js/tables.js',:type=>'javascript')
 
 get '/' do
 	@javascripts = []
@@ -69,13 +71,13 @@ get '/:doc/edit' do
 	login_required
 	if !request.websocket?
 		@javascripts = [
-			'/js/edit.js',
 			'/js/jquery.computedstyles.js',
 			#'/js/diff_match_patch.js',
 			'/js/rangy-core.js',
 			'/js/rangy-cssclassapplier.js',
 			'/js/fontdetect.js',
-			'/js/diff_match_patch.js'
+			'/js/diff_match_patch.js',
+			'/js/edit.js'
 		]
 		@doc = Document.get(params[:doc].to_i)
 		if !@doc.nil?
@@ -118,6 +120,10 @@ get '/:doc/edit' do
 					if !doc.save
 						puts("Save errors: #{doc.errors.inspect}")
 					end
+				# Loads scripts
+				elsif data['type']=="load_scripts"
+					doc = Document.get doc_id
+					#binding.pry
 				end
 			end
 			ws.onclose do

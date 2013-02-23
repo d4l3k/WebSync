@@ -5,6 +5,7 @@ WebSync = {
 		WebSync.connection.onopen = function(e){
 			console.log(e);
 			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
+			WebSync.loadScripts();
 		}
 		WebSync.connection.onclose = function(e){
 			console.log(e);
@@ -17,10 +18,8 @@ WebSync = {
 			console.log(e);
 		}
 		$(".content .page").keypress(WebSync.keypress);
-		$("#name").keyup(function(){
-			$(this).html($(this).text());
-		});
 		$("#name").blur(function(){
+			$(this).html($(this).text());
 			WebSync.connection.sendJSON({type: "name_update", name: $("#name").text()});
 		});
 		$("#name").focus(function(){
@@ -28,29 +27,23 @@ WebSync = {
 				document.execCommand('selectAll');
 			},100);
 		});
-		var text_buttons = ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"];
-		text_buttons.forEach(function(elem){
+		WebSync.text_buttons.forEach(function(elem){
 			$('button#'+elem).click(function(){
 				document.execCommand(elem);
 				$(document).trigger('selectionchange');
 			});
 		});
 		$(document).on('selectionchange',function(){
-			var style = WebSync.getCss();
-			text_buttons.forEach(function(elem){
-				if(document.queryCommandState(elem)){
-					$('button#'+elem).addClass("active");
-				}
-				else {
-					$('button#'+elem).removeClass('active');
-				}
-			});
-			$('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split("'").join("")));
-			//$('#font_size').val(parseInt(style.fontSize)*(0.75)+"pt");
+			if(!WebSync._selectInterval){
+				WebSync._selectInterval = setInterval(WebSync.selectHandler,200);
+			}
 		});
 		$('#font').change(function(){
 			document.execCommand('fontname',false,$('#font').val());
 		});
+		$(".menu, .content_well").bind("mousedown selectstart",function(){ return false; });
+		$(".content").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
+		$("#name, select").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
 		$('#font_size').change(function(){
 			var size = $('#font_size').val()
 			console.log(size);
@@ -67,6 +60,27 @@ WebSync = {
 		WebSync.fontsInit();
 		WebSync.updateRibbon();
 		WebSync.dmp = new diff_match_patch();
+		rangy.init();
+		console.log(rangy)
+		WebSync.applier = rangy.createCssClassApplier("tmp");
+	},
+	text_buttons: ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"],
+	selectHandler: function(){
+		var style = WebSync.getCss();
+		$('#font_size').val(parseInt(style.fontSize)*(0.75)+"pt");
+
+		WebSync.text_buttons.forEach(function(elem){
+			var button = $('button#'+elem)
+			if(document.queryCommandState(elem)){
+				button.addClass("active");
+			}
+			else {
+				button.removeClass('active');
+			}
+		});
+		$('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split("'").join("")));
+		clearInterval(WebSync._selectInterval);
+		WebSync._selectInterval = null;
 	},
 	updateRibbon: function(){
 		var menu_buttons = "";
@@ -87,6 +101,9 @@ WebSync = {
 		$(".page").each(function(page,list,index){
 			console.log(page,list);	
 		});
+	},
+	loadScripts: function(){ 
+		WebSync.connection.sendJSON({type: "load_scripts"});
 	},
 	showHTML: function(){
 		$('.page').html("<code>"+$('.page').html()+"</code>");
@@ -120,7 +137,6 @@ WebSync = {
 	    fonts.push("Modena");
 	    fonts.push("Monotype Corsiva");
 	    fonts.push("Papyrus");
-	    fonts.push("Tahoma");
 	    fonts.push("TeX");
 	    fonts.push("Times");
 	    fonts.push("Times New Roman");
@@ -176,12 +192,10 @@ WebSync = {
 		return diffs;
 	},
 	getCss: function(){
-		var applier = rangy.createCssClassApplier("tmp");
-		applier.toggleSelection();
+		/*WebSync.applier.toggleSelection();
 		if($(".tmp").length==0) return {};
-		var style = $(".tmp").getStyleObject();
-		$(".tmp").removeClass("tmp");
-		return style;
+		return $(".tmp").removeClass("tmp").getStyleObject();*/
+		return $(getSelection().baseNode.parentNode).getStyleObject();
 	},
 	applyCssToSelection: function(css){
 		var applier = rangy.createCssClassApplier("tmp");

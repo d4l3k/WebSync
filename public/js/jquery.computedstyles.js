@@ -1,4 +1,8 @@
 $.fn.getStyleObject = function(){
+	return window.getComputedStyle(this.get(0),null);
+}
+/*
+$.fn.getStyleObject = function(){
     var dom = this.get(0);
     var style;
     var returns = {};
@@ -30,4 +34,4 @@ $.fn.getStyleObject = function(){
         return returns;
     }
     return returns;
-}
+}*/

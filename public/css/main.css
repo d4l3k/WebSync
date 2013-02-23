@@ -41,6 +41,7 @@ body {
     -moz-hyphens: auto;
     -ms-hyphens: auto;
 	font-size: 14px;
+	line-height: normal;
 }
 :focus {
 	outline: none;

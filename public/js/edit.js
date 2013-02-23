@@ -30,6 +30,7 @@ WebSync = {
 		WebSync.text_buttons.forEach(function(elem){
 			$('button#'+elem).click(function(){
 				document.execCommand(elem);
+				//$(this).toggleClass("active");
 				$(document).trigger('selectionchange');
 			});
 		});
@@ -67,7 +68,7 @@ WebSync = {
 	text_buttons: ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"],
 	selectHandler: function(){
 		var style = WebSync.getCss();
-		$('#font_size').val(parseInt(style.fontSize)*(0.75)+"pt");
+		$('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
 
 		WebSync.text_buttons.forEach(function(elem){
 			var button = $('button#'+elem)
@@ -159,26 +160,30 @@ WebSync = {
 		$('#font').html(font_list.join("\n"));
    	},
 	checkDiff: function(){
-		var new_html = $(".content .page").html();
-		if(!WebSync.old_html){
+		var new_html = $(".content .page").html().trim();
+		if(typeof WebSync.old_html == "undefined"){
 			WebSync.old_html = new_html;
 		}
-
 		if(new_html!=WebSync.old_html){
-			// Create a patch
-			var diffs = WebSync.dmp.diff_main(WebSync.old_html,new_html);
-			var patches = WebSync.dmp.patch_make(diffs);
-			var patch_text = WebSync.dmp.patch_toText(patches)
-			console.log("Patch text: ",patch_text);
-			var diffsHTML = WebSync.diff_htmlMode(WebSync.old_html,new_html);
-			var patchesHTML = WebSync.dmp.patch_make(diffsHTML);
-			var patch_textHTML = WebSync.dmp.patch_toText(patchesHTML)
-			//console.log("Patch text HTML: ",patch_textHTML);
-			WebSync.connection.sendJSON({type: "text_patch", patch: patch_text});
-			/*
-			 * Old text replace method
-			WebSync.connection.sendJSON({type: "text_update",text: new_html.trim()})
-			*/
+			if(WebSync.old_html==""){
+				WebSync.connection.sendJSON({type: "text_update",text: new_html})
+			}
+			else {
+				// Create a patch
+				var diffs = WebSync.dmp.diff_main(WebSync.old_html,new_html);
+				var patches = WebSync.dmp.patch_make(diffs);
+				var patch_text = WebSync.dmp.patch_toText(patches)
+				console.log("Patch text: ",patch_text);
+				/*var diffsHTML = WebSync.diff_htmlMode(WebSync.old_html,new_html);
+				var patchesHTML = WebSync.dmp.patch_make(diffsHTML);
+				var patch_textHTML = WebSync.dmp.patch_toText(patchesHTML)
+				//console.log("Patch text HTML: ",patch_textHTML);*/
+				WebSync.connection.sendJSON({type: "text_patch", patch: patch_text});
+				/*
+				 * Old text replace method
+				WebSync.connection.sendJSON({type: "text_update",text: new_html.trim()})
+				*/
+			}
 			WebSync.old_html=new_html;
 		}
 	},

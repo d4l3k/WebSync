@@ -13,6 +13,14 @@ WebSync = {
 		}
 		WebSync.connection.onmessage = function(e){
 			console.log(e);
+			data = JSON.parse(e.data);
+			console.log("Message data:",data);
+			if(data.type=="scripts"){
+				data.js.forEach(function(script){
+					console.log("Loading script:",script);
+					$(document.body).append($('<script type="text/javascript" src="'+script+'"></script>'))
+				});
+			}
 		}
 		WebSync.connection.onerror = function(e){
 			console.log(e);
@@ -206,7 +214,14 @@ WebSync = {
 		var applier = rangy.createCssClassApplier("tmp");
 		applier.toggleSelection();
 		$(".tmp").css(css).removeClass("tmp");
-	}
+	},
+	// This is where plugins register themselves.
+	register: function(plugin){
+		console.log("Loading plugin:",plugin);
+		WebSync.plugins[plugin.name]=plugin;
+		WebSync.plugins[plugin.name].enable();
+	},
+	plugins: {}
 }
 
 WebSocket.prototype.sendJSON = function(object){

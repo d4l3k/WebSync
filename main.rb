@@ -57,6 +57,8 @@ get '/new' do
 		:created => Time.now,
 		:last_edit_time => Time.now
 	)
+	doc.assets << Asset.first(name:'Tables')
+	doc.save
 	redirect "/#{doc.id}/edit"
 end
 get '/:doc/download' do
@@ -123,7 +125,17 @@ get '/:doc/edit' do
 				# Loads scripts
 				elsif data['type']=="load_scripts"
 					doc = Document.get doc_id
-					#binding.pry
+					msg = {type:'scripts', js:[]}
+					doc.assets.each do |asset|
+						arr = :js;
+						if asset.type=="javascript"
+							arr = :js
+						elsif asset.type=="stylesheet"
+							arr = :css
+						end
+						msg[arr].push asset.url
+					end
+					ws.send JSON.dump msg
 				end
 			end
 			ws.onclose do

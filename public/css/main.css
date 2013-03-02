@@ -93,5 +93,5 @@ a#name:hover {
 	background-color: #555;
 }
 .ribbon .container {
-
+	display: none;
 }

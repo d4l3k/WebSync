@@ -4,15 +4,19 @@ WebSync.register({
 	name: "Tables",
 	// Enable: This is where everything should be setup.
 	// Plugins should use a jQuery namespace for ease of use.
-	// Bind Example: $(document).bind("click.tables", clickHandler);
-	// Unbind Example: $(document).unbind(".tables");
+	// Bind Example: $(document).bind("click.Tables", clickHandler);
+	// Unbind Example: $("*").unbind(".Tables");
 	enable: function(){
-		$(document).bind("click.tables",function(e){
+		$("#table").bind("click.Tables",function(e){
 			console.log(e);
 		});
+		$(".ribbon").append($('<div id="Table" class="container">Table Editting</div>'));
+		WebSync.updateRibbon();
 	},
 	// Disable: Plugin should clean itself up.
 	disable: function(){
-		$(document).unbind(".tables");
+		var elem = $("#Table").remove();
+		WebSync.updateRibbon();
+		$("*").unbind(".Tables");
 	}
 });

@@ -21,7 +21,6 @@ WebSync.register(function(){ var module = this;
 		});
 		$(".page").bind("click.Tables",function(e){
 			console.log(e);
-			console.log("Doc:",module._clickedTable)
 			module.clearSelect();
 		});
 		$("td").bind("click.Tables",function(e){
@@ -137,6 +136,7 @@ WebSync.register(function(){ var module = this;
 			module.selectedEditable(false);
 			$("#table_cursor").offset({left:-10000});
 			delete module.selectedElem;
+			$('a:contains("Text")').click();
 		}
 	}
 });

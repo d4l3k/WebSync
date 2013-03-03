@@ -17,29 +17,33 @@ WebSync.register(function(){ var module = this;
 			if(module.selectedElem.contentEditable!="true"){
 				$('a:contains("Table")').click();
 			}
+			e.stopPropagation();
 		});
-		$(document).bind("click.Tables",function(e){
+		$(".page").bind("click.Tables",function(e){
 			console.log(e);
 			console.log("Doc:",module._clickedTable)
-			if(!module._clickedTable){
-				//module.clearSelect();
-			}
+			module.clearSelect();
 		});
 		$("td").bind("click.Tables",function(e){
-			console.log("TD click");
+			console.log(e);
 			if(this!=module.selectedElem){
 				module.cursorSelect(this);
 			}
-			module._clickedTable = true;
-			setTimeout(function(){
-				module._clickedTable = false;
-			},50);
+		});
+		$("td").bind("contextmenu.Tables",function(e){
+			if(this!=module.selectedElem){
+				module.cursorSelect(this);
+			}
+			if(module.selectedElem.contentEditable!="true"){
+				e.preventDefault();
+				$(this).contextmenu();
+			}
 		});
 		$("td").bind("dblclick.Tables",function(e){
 			module.selectedEditable(true);
 		});
 		$(document).bind("keydown.Tables",function(e){
-			if(module.selected==true){
+			if(module.selected==true&&!e.shiftKey){
 				var editting = module.selectedElem.contentEditable=="true"
 				if(e.keyCode==13){
 					module.cursorMove(0,1);
@@ -74,7 +78,8 @@ WebSync.register(function(){ var module = this;
 			}
 		});
 		$(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));
-		$(document.body).append($('<div id="table_cursor" class="Table"></div>'));
+		$(document.body).append($('<div id="table_cursor" class="Table"></div><div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
+		$("td").attr("data-target","#tablemenu");
 		WebSync.updateRibbon();
 	}
 	// Disable: Plugin should clean itself up.

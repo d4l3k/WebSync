@@ -2,6 +2,7 @@
 	margin: 0;
 	padding: 0;
 	outline: none;
+	border: none;
 }
 body {
 
@@ -44,7 +45,7 @@ body {
 	font-size: 14px;
 	line-height: normal;
 }
-:focus {
+:focus, :active {
 	outline: none;
 }
 ::-moz-selection {
@@ -94,4 +95,35 @@ a#name:hover {
 }
 .ribbon .container {
 	display: none;
+}
+table {
+	/*-user-modify: read-only;
+	-moz-user-modify: read-only;
+	-webkit-user-modify: read-only;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;	*/
+	border-collapse:collapse;
+}	
+table, th, td {
+	border: 1px solid #888;
+}
+td {
+	padding-left: 1px;
+	padding-right: 1px;
+	min-width: 0.25in;
+	height: 11pt;
+}
+#table_cursor {
+	position: absolute;
+	outline: 1px solid black;
+	border: 1px solid black;
+	padding-left: 1px;
+	padding-right: 1px;
+	padding-bottom: 1px;
+	min-height: 1px;
+	min-width: 1px;
+	pointer-events: none;
+	background: none !important;
 }

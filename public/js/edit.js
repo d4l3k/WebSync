@@ -25,7 +25,7 @@ WebSync = {
 		WebSync.connection.onerror = function(e){
 			console.log(e);
 		}
-		$(".content .page").keypress(WebSync.keypress);
+		$(".content .page").keydown(WebSync.keypress);
 		$("#name").blur(function(){
 			$(this).html($(this).text());
 			WebSync.connection.sendJSON({type: "name_update", name: $("#name").text()});
@@ -43,8 +43,8 @@ WebSync = {
 			});
 		});
 		$(document).on('selectionchange',function(){
-			if(!WebSync._selectInterval){
-				WebSync._selectInterval = setInterval(WebSync.selectHandler,200);
+			if(!WebSync._selectTimeout){
+				WebSync._selectTimeout = setTimeout(WebSync.selectHandler,200);
 			}
 		});
 		$('#font').change(function(){
@@ -88,8 +88,8 @@ WebSync = {
 			}
 		});
 		$('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split("'").join("")));
-		clearInterval(WebSync._selectInterval);
-		WebSync._selectInterval = null;
+		clearTimeout(WebSync._selectTimeout);
+		WebSync._selectTimeout = null;
 	},
 	updateRibbon: function(){
 		var menu_buttons = "";
@@ -103,7 +103,7 @@ WebSync = {
 			$('.ribbon .container').hide();
 			$("#"+$(this).text()).show();
 		});
-		$($('#ribbon_buttons li').get(1)).click();
+		$($('#ribbon_buttons li').get(2)).click();
 	},
 	keypress: function(e){
 		console.log(e);
@@ -195,6 +195,20 @@ WebSync = {
 			WebSync.old_html=new_html;
 		}
 	},
+	insertAtCursor: function(node) {
+		node = node.get(0);
+		var sel, range, html;
+		if (window.getSelection) {
+			sel = window.getSelection();
+			if (sel.getRangeAt && sel.rangeCount) {
+				range = sel.getRangeAt(0);
+				range.deleteContents();
+				range.insertNode( node );
+			}
+		} else if (document.selection && document.selection.createRange) {
+			document.selection.createRange().html = node;
+		}
+	},
 	diff_htmlMode: function (text1,text2){
 		var a = WebSync.dmp.diff_htmlToChars_(text1,text2);
 		var lineText1 = a.chars1;
@@ -217,9 +231,27 @@ WebSync = {
 	},
 	// This is where plugins register themselves.
 	register: function(plugin){
-		console.log("Loading plugin:",plugin);
+		plugin = new plugin();
+		console.log("Loading plugin:",plugin.name);
 		WebSync.plugins[plugin.name]=plugin;
 		WebSync.plugins[plugin.name].enable();
+	},
+	setCaretPosition: function(elem, caretPos) {
+		if(elem != null) {
+			if(elem.createTextRange) {
+				var range = elem.createTextRange();
+				range.move('character', caretPos);
+				range.select();
+			}
+			else {
+				if(elem.selectionStart) {
+					elem.focus();
+					elem.setSelectionRange(caretPos, caretPos);
+				}
+				else
+					elem.focus();
+			}
+		}
 	},
 	plugins: {}
 }

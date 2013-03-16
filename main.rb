@@ -12,7 +12,7 @@ configure do
 	set :server, 'thin'
 	set :sockets, []
 	set :template_engine, :erb
-end 
+end
 $dmp = DiffMatchPatch.new
 class DataMapper::Adapters::RedisAdapter
 	attr_accessor :redis
@@ -63,18 +63,20 @@ get '/new' do
 	)
 	doc.assets << Asset.first(name:'Tables')
 	doc.save
-	redirect "/#{doc.id}/edit"
+	redirect "/#{doc.id.base62_encode}/edit"
 end
 get '/:doc/download' do
 	login_required
-	doc = Document.get params[:doc].to_i
+    doc_id = params[:doc].base62_decode
+	doc = Document.get doc_id
   	response.headers['content_type'] = "application/octet-stream"
   	attachment(doc.name+'.docx')
-  	response.write(doc.body)	
+  	response.write(doc.body)
 	#send_data doc.body, :filename=>doc.name+".docx"
 end
 get '/:doc/edit' do
-	#login_required
+    doc_id = params[:doc].base62_decode
+    #login_required
 	if !request.websocket?
 		@javascripts = [
 			'/js/bootstrap-contextmenu.js',
@@ -83,9 +85,10 @@ get '/:doc/edit' do
 			'/js/rangy-cssclassapplier.js',
 			'/js/fontdetect.js',
 			'/js/diff_match_patch.js',
-			'/js/edit.js'
+			'/js/webrtc-adapter.js',
+            '/js/edit.js'
 		]
-		@doc = Document.get(params[:doc].to_i)
+		@doc = Document.get(doc_id)
 		if !@doc.nil?
 			erb :edit
 		else
@@ -93,9 +96,8 @@ get '/:doc/edit' do
 		end
 	# Websocket edit
 	else
-		doc_id = params[:doc].to_i
 		redis_sock = EM::Hiredis.connect
-		redis_sock.subscribe("doc.#{doc_id}")
+		redis_sock.subscribe("doc.#{doc_id.base62_encode}")
 		redis_sock.on(:message) do |channel, message|
 			puts "#{channel}: #{message}"
 		end

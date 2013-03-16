@@ -16,7 +16,7 @@ gem 'diff_match_patch_native'
 gem 'dm-sqlite-adapter'
 gem 'sinatra-authentication'
 gem 'haml'
-
+gem 'base62'
 group :development do
 	gem 'racksh'
 	gem 'pry-rescue'

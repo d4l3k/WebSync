@@ -56,7 +56,7 @@ WebSync = {
 		$('#font_size').change(function(){
 			var size = $('#font_size').val()
 			console.log(size);
-			/*var applier = rangy.createCssClassApplier("fontsize",{ 
+			/*var applier = rangy.createCssClassApplier("fontsize",{
 				normalize: true,
 				elementTagName: 'font',
 				elementProperties: {
@@ -72,10 +72,81 @@ WebSync = {
 		rangy.init();
 		console.log(rangy)
 		WebSync.applier = rangy.createCssClassApplier("tmp");
+		WebSync.setupWebRTC();
 
 	},
+	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
 	setupWebRTC: function(){
-		
+		WebSync.createPeerConnection();
+		WebSync.createDataChannel();
+	},
+	createPeerConnection: function() {
+		var pc_config = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+		var pc_constraints = {"optional": [{"RtpDataChannels": true}]};
+		// Force the use of a number IP STUN server for Firefox.
+		if (webrtcDetectedBrowser == "firefox") {
+			pc_config = {"iceServers":[{"url":"stun:23.21.150.121"}]};
+		}
+		try {
+		// Create an RTCPeerConnection via the polyfill (adapter.js).
+		WebSync.pc = new RTCPeerConnection(pc_config, pc_constraints);
+		WebSync.pc.onicecandidate = WebSync.onIceCandidate;
+		console.log("Created RTCPeerConnnection with:\n" +
+			  "  config: \"" + JSON.stringify(pc_config) + "\";\n" +
+			  "  constraints: \"" + JSON.stringify(pc_constraints) + "\".");
+		} catch (e) {
+			console.log("Failed to create PeerConnection, exception: " + e.message);
+			alert("Cannot create RTCPeerConnection object; WebRTC is not supported by this browser.");
+			return;
+		}
+
+		WebSync.pc.onaddstream = WebSync.onRemoteStreamAdded;
+		WebSync.pc.onremovestream = WebSync.onRemoteStreamRemoved;
+		WebSync.pc.ondatachannel = WebSync.onDataChannel;
+	},
+	createDataChannel: function() {
+		WebSync.dataChannel = WebSync.pc.createDataChannel("chat",{reliable:false});
+		WebSync.dataChannel.onopen = WebSync.reportEvent;
+		WebSync.dataChannel.onclose = WebSync.reportEvent;
+		WebSync.dataChannel.onerror = WebSync.reportEvent;
+		WebSync.dataChannel.onmessage = WebSync.reportEvent;
+	},
+	setupPeerOffer: function(isCaller){
+		if (isCaller)
+		    WebSync.pc.createOffer(gotDescription);
+		else
+		    WebSync.pc.createAnswer(WebSync.pc.remoteDescription, gotDescription);
+
+		function gotDescription(desc) {
+		    pc.setLocalDescription(desc);
+		    signalingChannel.send(JSON.stringify({ "sdp": desc }));
+		}
+	},
+	reportEvent: function(event) {
+		console.log(event);
+	},
+	onIceCanidate: function onIceCandidate(event) {
+		if (event.candidate) {
+		sendMessage({type: 'candidate',
+			   label: event.candidate.sdpMLineIndex,
+			   id: event.candidate.sdpMid,
+			   candidate: event.candidate.candidate});
+		} else {
+		console.log("End of candidates.");
+		}
+	},
+	onRemoteStreamAdded: function onRemoteStreamAdded(event) {
+		console.log("Remote stream added.");
+		reattachMediaStream(miniVideo, localVideo);
+		attachMediaStream(remoteVideo, event.stream);
+		remoteStream = event.stream;
+		waitForRemoteVideo();
+	},
+	onRemoteStreamRemoved: function onRemoteStreamRemoved(event) {
+		console.log("Remote stream removed.");
+	},
+	onDataChannel: function(event){
+		console.log("Data Channel:",event);
 	},
 	text_buttons: ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"],
 	selectHandler: function(){
@@ -112,10 +183,10 @@ WebSync = {
 	keypress: function(e){
 		console.log(e);
 		$(".page").each(function(page,list,index){
-			console.log(page,list);	
+			console.log(page,list);
 		});
 	},
-	loadScripts: function(){ 
+	loadScripts: function(){
 		WebSync.connection.sendJSON({type: "load_scripts"});
 	},
 	showHTML: function(){
@@ -271,7 +342,7 @@ WebSync = {
 		selection.addRange(range);//make the range you have just created the visible selection
 	    }
 	    else if(document.selection)//IE 8 and lower
-	    { 
+	    {
 		range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
 		range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
 		range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start

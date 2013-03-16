@@ -98,10 +98,14 @@ get '/:doc/edit' do
 	else
 		redis_sock = EM::Hiredis.connect
 		redis_sock.subscribe("doc.#{doc_id.base62_encode}")
+        websock = nil
 		redis_sock.on(:message) do |channel, message|
 			puts "#{channel}: #{message}"
+            ws.send message
 		end
+        puts "Redis ID: #{redis_sock.id}"
 		request.websocket do |ws|
+            websock = ws
 			ws.onopen do
 				warn "websocket open"
 				ws.send("hello world!")
@@ -152,6 +156,7 @@ get '/:doc/edit' do
 			end
 			ws.onclose do
 				warn("websocket closed")
+                redis_sock.close_connection
 			end
 		end
 	end

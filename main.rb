@@ -76,6 +76,7 @@ get '/:doc/download' do
 end
 get '/:doc/edit' do
     doc_id = params[:doc].base62_decode
+    doc = Document.get doc_id
     #login_required
 	if !request.websocket?
 		@javascripts = [
@@ -88,7 +89,7 @@ get '/:doc/edit' do
 			'/js/webrtc-adapter.js',
             '/js/edit.js'
 		]
-		@doc = Document.get(doc_id)
+		@doc = doc
 		if !@doc.nil?
 			erb :edit
 		else
@@ -96,31 +97,26 @@ get '/:doc/edit' do
 		end
 	# Websocket edit
 	else
+        client_id = $redis.incr "clientid"
 		redis_sock = EM::Hiredis.connect
 		redis_sock.subscribe("doc.#{doc_id.base62_encode}")
-        websock = nil
-		redis_sock.on(:message) do |channel, message|
-			puts "#{channel}: #{message}"
-            ws.send message
-		end
         puts "Redis ID: #{redis_sock.id}"
 		request.websocket do |ws|
             websock = ws
 			ws.onopen do
 				warn "websocket open"
-				ws.send("hello world!")
 			end
 			ws.onmessage do |msg|
 				data = JSON.parse(msg);
 				puts "JSON: #{data.to_s}"
 				# This replaces all the text w/ the provided content.
 				if data["type"]=="text_update"
-					doc = Document.get doc_id
 					doc.body = data["text"]
 					doc.last_edit_time = Time.now
 					if !doc.save
 						puts("Save errors: #{doc.errors.inspect}")
 					end
+                    $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
 				# Google Diff-Match-Patch algorithm
 				elsif data['type']=='text_patch'
 					doc = Document.get doc_id
@@ -130,17 +126,17 @@ get '/:doc/edit' do
 					if !doc.save
 						puts("Save errors: #{doc.errors.inspect}")
 					end
+                    $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
 				# Sets the name
 				elsif data['type']=="name_update"
-					doc = Document.get doc_id
 					doc.name = data["name"]
 					doc.last_edit_time = Time.now
 					if !doc.save
 						puts("Save errors: #{doc.errors.inspect}")
 					end
+                    $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
 				# Loads scripts
 				elsif data['type']=="load_scripts"
-					doc = Document.get doc_id
 					msg = {type:'scripts', js:[]}
 					doc.assets.each do |asset|
 						arr = :js;
@@ -158,6 +154,13 @@ get '/:doc/edit' do
 				warn("websocket closed")
                 redis_sock.close_connection
 			end
+            redis_sock.on(:message) do |channel, message|
+                puts "[#{client_id}]#{channel}: #{message}"
+                data = JSON.parse(message)
+                if data['type']=="client_bounce" and data['client']!=client_id
+                    ws.send JSON.dump(data['data'])
+                end
+            end
 		end
 	end
 end

@@ -5,7 +5,7 @@
 	border: none;
 }
 body {
-
+	background-color: #eee !important;
 }
 .menu {
 
@@ -18,8 +18,6 @@ body {
 	height: 40px !important;
 }
 .content_well {
-	background-color: #eee;
-	padding: 0.5in;
 	padding-top: 1in;
 }
 .content {

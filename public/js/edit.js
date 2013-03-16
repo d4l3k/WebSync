@@ -21,6 +21,14 @@ WebSync = {
 					$(document.body).append($('<script type="text/javascript" src="'+script+'"></script>'))
 				});
 			}
+            else if(data.type=="text_patch"){
+                WebSync.checkDiff();
+		        var new_html = $(".content .page").html().trim();
+                var patches = WebSync.dmp.patch_fromText(data.patch);
+                var result = WebSync.dmp.patch_apply(patches,new_html);
+                $(".content .page").html(result[0]);
+                WebSync.old_html = result[0];
+            }
 		}
 		WebSync.connection.onerror = function(e){
 			console.log(e);

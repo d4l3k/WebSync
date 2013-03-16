@@ -1,6 +1,6 @@
 use Rack::Logger
 use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
-
+#use Rack::FiberPool
 
 helpers do
 	def logger
@@ -14,7 +14,11 @@ configure do
 	set :template_engine, :erb
 end 
 $dmp = DiffMatchPatch.new
-DataMapper.setup(:default, 'sqlite:main.db');
+class DataMapper::Adapters::RedisAdapter
+	attr_accessor :redis
+end
+$adapter = DataMapper.setup(:default, {:adapter => "redis"});
+$redis = $adapter.redis
 
 class Document
 	include DataMapper::Resource
@@ -50,7 +54,7 @@ get '/error' do
 	error
 end
 get '/new' do
-	login_required
+	#login_required
 	doc = Document.create(
 		:name => 'Unnamed Document',
 		:body => '',
@@ -70,7 +74,7 @@ get '/:doc/download' do
 	#send_data doc.body, :filename=>doc.name+".docx"
 end
 get '/:doc/edit' do
-	login_required
+	#login_required
 	if !request.websocket?
 		@javascripts = [
 			'/js/jquery.computedstyles.js',
@@ -90,8 +94,14 @@ get '/:doc/edit' do
 	# Websocket edit
 	else
 		doc_id = params[:doc].to_i
+		redis_sock = EM::Hiredis.connect
+		redis_sock.subscribe("doc#{doc_id}")
+		redis_sock.on(:message) do |channel, message|
+			puts "#{channel}: #{message}"
+		end
 		request.websocket do |ws|
 			ws.onopen do
+				warn "websocket open"
 				ws.send("hello world!")
 			end
 			ws.onmessage do |msg|

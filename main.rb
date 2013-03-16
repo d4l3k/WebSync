@@ -95,7 +95,7 @@ get '/:doc/edit' do
 	else
 		doc_id = params[:doc].to_i
 		redis_sock = EM::Hiredis.connect
-		redis_sock.subscribe("doc#{doc_id}")
+		redis_sock.subscribe("doc.#{doc_id}")
 		redis_sock.on(:message) do |channel, message|
 			puts "#{channel}: #{message}"
 		end

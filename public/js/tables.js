@@ -13,33 +13,37 @@ WebSync.register(function(){ var module = this;
 			var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
 			WebSync.insertAtCursor(new_table)
 		});
-		$("table").bind("click.Tables",function(e){
+		$(document).delegate("table","click.Tables",function(e){
 			if(module.selectedElem.contentEditable!="true"){
 				$('a:contains("Table")').click();
 			}
+			e.stopPropagation();
 		});
-		$(document).bind("click.Tables",function(e){
+		$(".page").bind("click.Tables",function(e){
 			console.log(e);
-			console.log("Doc:",module._clickedTable)
-			if(!module._clickedTable){
-				//module.clearSelect();
-			}
+			module.clearSelect();
 		});
-		$("td").bind("click.Tables",function(e){
-			console.log("TD click");
+		$(document).delegate("td","click.Tables",function(e){
+			console.log(e);
+			console.log(this);
 			if(this!=module.selectedElem){
 				module.cursorSelect(this);
 			}
-			module._clickedTable = true;
-			setTimeout(function(){
-				module._clickedTable = false;
-			},50);
 		});
-		$("td").bind("dblclick.Tables",function(e){
+		$(document).delegate("td","contextmenu.Tables",function(e){
+			if(this!=module.selectedElem){
+				module.cursorSelect(this);
+			}
+			if(module.selectedElem.contentEditable!="true"){
+				e.preventDefault();
+				$(this).contextmenu();
+			}
+		});
+		$(document).delegate("td","dblclick.Tables",function(e){
 			module.selectedEditable(true);
 		});
 		$(document).bind("keydown.Tables",function(e){
-			if(module.selected==true){
+			if(module.selected==true&&!e.shiftKey){
 				var editting = module.selectedElem.contentEditable=="true"
 				if(e.keyCode==13){
 					module.cursorMove(0,1);
@@ -71,10 +75,30 @@ WebSync.register(function(){ var module = this;
 					}
 					setTimeout(module.cursorUpdate,1);
 				}
+			} else {
+				if(!module.selectedElem.contentEditable||module.selectedElem.contentEditable=="false"){
+					module.selectedEditable(true);
+
+					$(module.selectedElem).focus();
+					//WebSync.setCaretPosition(module.selectedElem,0);
+				}
+				setTimeout(module.cursorUpdate,1);
 			}
 		});
 		$(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));
-		$(document.body).append($('<div id="table_cursor" class="Table"></div>'));
+		$(document.body).append($('<div id="table_cursor" class="Table"></div><div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
+		$("td").attr("data-target","#tablemenu");
+		$("#tablemenu a").bind("click.Tables",function(e){
+			e.preventDefault();
+		});
+		$('#tablemenu a:contains("Insert Column")').bind("click.Tables",function(e){
+		});
+		$('#tablemenu a:contains("Delete Column")').bind("click.Tables",function(e){
+		});
+		$('#tablemenu a:contains("Insert Row")').bind("click.Tables",function(e){
+		});
+		$('#tablemenu a:contains("Delete Row")').bind("click.Tables",function(e){
+		});
 		WebSync.updateRibbon();
 	}
 	// Disable: Plugin should clean itself up.
@@ -82,6 +106,7 @@ WebSync.register(function(){ var module = this;
 		var elem = $(".Table").remove();
 		WebSync.updateRibbon();
 		$("*").unbind(".Tables");
+		$("*").undelegate(".Tables");
 	}
 	// Helper methods:
 	this.cursorSelect = function(td){
@@ -96,15 +121,10 @@ WebSync.register(function(){ var module = this;
 		module.cursorUpdate();
 	}
 	this.cursorMove = function(dColumn, dRow){
-		var child = module.selectedElem;
 		module.selectedEditable(false);
-		var column = 0;
-		while( (child = child.previousSibling) != null ) 
-			column++;
-		child = module.selectedElem.parentElement
-		var row = 0
-		while( (child = child.previousSibling) != null ) 
-			row++;
+		var pos = module.selectedPos();
+		var column = pos[0];
+		var row = pos[1];
 		if(module.selectedElem.parentElement.parentElement.children.length>row+dRow&&module.selectedElem.parentElement.parentElement.children[0].children.length>column+dColumn&&row+dRow>=0&&column+dColumn>=0){
 			var new_td = module.selectedElem.parentElement.parentElement.children[row+dRow].children[column+dColumn];
 			module.cursorSelect(new_td);
@@ -124,6 +144,7 @@ WebSync.register(function(){ var module = this;
 			module.selectedElem.contentEditable=true;
 			$("#table_cursor").css({borderStyle: 'dashed', outlineStyle: 'dashed'});
 			$('a:contains("Text")').click();
+			WebSync.setEndOfContenteditable(module.selectedElem);
 		}
 	}
 	this.clearSelect = function(){
@@ -132,6 +153,21 @@ WebSync.register(function(){ var module = this;
 			module.selectedEditable(false);
 			$("#table_cursor").offset({left:-10000});
 			delete module.selectedElem;
+			$('a:contains("Text")').click();
 		}
+	}
+	this.selectedPos = function(){	
+		var child = module.selectedElem;
+		var column = 0;
+		while( (child = child.previousSibling) != null ) 
+			column++;
+		child = module.selectedElem.parentElement
+		var row = 0
+		while( (child = child.previousSibling) != null ) 
+			row++;
+		return [column,row];
+	}
+	this.tableSize = function(){
+		return [module.selectedElem.parentElement.children.length,module.selectedElem.parentElement.parentElement.children.length]
 	}
 });

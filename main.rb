@@ -77,8 +77,8 @@ get '/:doc/edit' do
 	#login_required
 	if !request.websocket?
 		@javascripts = [
+			'/js/bootstrap-contextmenu.js',
 			'/js/jquery.computedstyles.js',
-			#'/js/diff_match_patch.js',
 			'/js/rangy-core.js',
 			'/js/rangy-cssclassapplier.js',
 			'/js/fontdetect.js',

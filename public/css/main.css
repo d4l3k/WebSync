@@ -104,10 +104,13 @@ table {
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;	*/
-	border-collapse:collapse;
 }	
 table, th, td {
 	border: 1px solid #888;
+	word-wrap: break-word;
+	overflow-wrap: break-work;
+	hyphens: auto;
+	border-collapse:collapse;
 }
 td {
 	padding-left: 1px;
@@ -126,4 +129,8 @@ td {
 	min-width: 1px;
 	pointer-events: none;
 	background: none !important;
+}
+.dropdown-menu i {
+	position: relative;
+	left: -10px;
 }

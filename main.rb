@@ -60,14 +60,13 @@ $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing
 
 get '/' do
 	@javascripts = []
-
 	erb :index
 end
 get '/error' do
 	error
 end
 get '/new' do
-	#login_required
+	login_required
 	doc = Document.create(
 		:name => 'Unnamed Document',
 		:body => '',
@@ -88,9 +87,9 @@ get '/:doc/download' do
 	#send_data doc.body, :filename=>doc.name+".docx"
 end
 get '/:doc/edit' do
+    login_required
     doc_id = params[:doc].base62_decode
     doc = Document.get doc_id
-    #login_required
 	if !request.websocket?
 		@javascripts = [
 			'/js/bootstrap-contextmenu.js',
@@ -175,9 +174,11 @@ get '/:doc/edit' do
             redis_sock.on(:message) do |channel, message|
                 puts "[#{client_id}]#{channel}: #{message}"
                 data = JSON.parse(message)
-                if data['type']=="client_bounce" and data['client']!=client_id
-                    ws.send JSON.dump(data['data'])
-                end
+				if data['client']!=client_id
+					if data['type']=="client_bounce"
+						ws.send JSON.dump(data['data'])
+					end
+				end
             end
 		end
 	end

@@ -5,7 +5,7 @@
 	border: none;
 }
 body {
-	background-color: #eee !important;
+	//background-color: #eee !important;
 }
 .menu {
 
@@ -29,6 +29,9 @@ cursor {
 }
 .content_well {
 	padding-top: 1in;
+	background-color: #eee !important;
+	min-width: 100%;
+	display: inline-block;
 }
 .content {
 	height: 9in;

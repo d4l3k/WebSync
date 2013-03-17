@@ -63,6 +63,8 @@ a#name {
 }
 a#name:focus {
 	max-width: 6in;
+	background-color: #777;
+	outline: none;
 }
 a#name:hover {
 	background-color: #777;

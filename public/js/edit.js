@@ -23,25 +23,50 @@ WebSync = {
 			}
             else if(data.type=="text_patch"){
                 WebSync.checkDiff();
-		        var new_html = $(".content .page").html().trim();
+				/*var sel = getSelection();
+				// Convert selection into unicode characters
+				var range = sel.getRangeAt(0);
+				range.insertNode(document.createTextNode(String.fromCharCode(100000001));
+				range.collapse(false);
+				range.insertNode(document.createTextNode(String.fromCharCode(100000002));
+		        */
+				var new_html = $(".content .page").html().trim();
                 var patches = WebSync.dmp.patch_fromText(data.patch);
-                var result = WebSync.dmp.patch_apply(patches,new_html);
-                $(".content .page").html(result[0]);
-                WebSync.old_html = result[0];
+                var result = WebSync.dmp.patch_apply(patches,new_html)[0];
+				/*
+				// Replace selection
+				var begin = result.search(String.fromCharCode(100000001));
+				var end   = result.search(String.fromCharCode(100000002));
+                result = result.replace(String.fromCharCode(100000001),"").replace(String.fromCharCode(100000002),"");*/
+				$(".content .page").get(0).innerHTML=result;
+				/*var n_range = document.createRange();
+				n_range.setStart(*/
+                WebSync.old_html = result;
             }
+			else if(data.type=="name_update"){
+				$("#name").text(data.name);
+			}
+			else if(data.type="text_update"){
+				$(".content .page").get(0).innerHTML=data.text;
+				WebSync.old_html = data.text;
+			}
 		}
 		WebSync.connection.onerror = function(e){
 			console.log(e);
 		}
 		$(".content .page").keydown(WebSync.keypress);
+		$("#name").keyup(function(){
+			var div = $("#name").get(0);
+			div.innerHTML = div.innerText;
+		});
 		$("#name").blur(function(){
 			$(this).html($(this).text());
 			WebSync.connection.sendJSON({type: "name_update", name: $("#name").text()});
 		});
 		$("#name").focus(function(){
-			setTimeout(function(){
+			/*setTimeout(function(){
 				document.execCommand('selectAll');
-			},100);
+			},100);*/
 		});
 		WebSync.text_buttons.forEach(function(elem){
 			$('button#'+elem).click(function(){
@@ -434,3 +459,4 @@ diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {
   }
 };
 });
+

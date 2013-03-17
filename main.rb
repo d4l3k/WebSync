@@ -28,22 +28,29 @@ class Document
 	property :created, DateTime
 	property :last_edit_time, DateTime
 	property :public, Boolean, :default=>false
-	has n, :assets, :through => Resource
+	has n, :assets, :through => :asset_documents
 end
 # Assets could be javascript or css
 class Asset
 	include DataMapper::Resource
-	property :id, Serial, :key=> true
-	property :name, String, :key=> true
+	property :id, Serial
+	property :name, String
 	property :description, String
 	property :url, String
-	property :type, String
-	has n, :documents, :through => Resource
+	property :type, Discriminator
+	has n, :documents, :through => :asset_documents
 end
+class AssetDocument
+	include DataMapper::Resource
+	belongs_to :asset, :key=>true
+	belongs_to :document, :key=>true
+end
+class Javascript < Asset; end
+class Stylesheet < Asset; end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 
-Asset.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/js/tables.js',:type=>'javascript')
+$table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/js/tables.js')
 
 get '/' do
 	@javascripts = []
@@ -61,7 +68,7 @@ get '/new' do
 		:created => Time.now,
 		:last_edit_time => Time.now
 	)
-	doc.assets << Asset.first(name:'Tables')
+	doc.assets << Asset.get(1)
 	doc.save
 	redirect "/#{doc.id.base62_encode}/edit"
 end

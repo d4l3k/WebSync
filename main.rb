@@ -17,9 +17,15 @@ $dmp = DiffMatchPatch.new
 class DataMapper::Adapters::RedisAdapter
 	attr_accessor :redis
 end
-$adapter = DataMapper.setup(:default, {:adapter => "redis"});
-$redis = $adapter.redis
-
+DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))}/main.db")
+# Redis has issues with datamapper associations especially Many-to-many.
+#$adapter = DataMapper.setup(:default, {:adapter => "redis"});
+#$redis = $adapter.redis
+#
+# Ease of use connection to the redis server.
+EM.next_tick do
+	$redis = EM::Hiredis.connect
+end
 class Document
 	include DataMapper::Resource
 	property :id, Serial
@@ -104,8 +110,11 @@ get '/:doc/edit' do
 		end
 	# Websocket edit
 	else
-        client_id = $redis.incr "clientid"
 		redis_sock = EM::Hiredis.connect
+		client_id = 0
+        redis_sock.incr("clientid") do |val|
+			client_id = val
+		end
 		redis_sock.subscribe("doc.#{doc_id.base62_encode}")
         puts "Redis ID: #{redis_sock.id}"
 		request.websocket do |ws|
@@ -155,6 +164,8 @@ get '/:doc/edit' do
 						msg[arr].push asset.url
 					end
 					ws.send JSON.dump msg
+				elsif data['type']=='connection'
+					
 				end
 			end
 			ws.onclose do

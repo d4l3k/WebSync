@@ -1,17 +1,34 @@
 
 WebSync = {
-	start: function(){
+	webSocketFirstTime: true,
+	webSocketStart: function(){
 		WebSync.connection = new WebSocket("ws://"+window.location.host+window.location.pathname);
-		WebSync.connection.onopen = function(e){
+		WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
+		WebSync.connection.onclose = WebSync.webSocketCallbacks.onclose;
+		WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;
+		WebSync.connection.onerror = WebSync.webSocketCallbacks.onerror;
+	},
+	webSocketCallbacks: {
+		onopen: function(e){
 			console.log(e);
 			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
-			WebSync.loadScripts();
-		}
-		WebSync.connection.onclose = function(e){
+			$(".navbar-inner").removeClass("no-connection");
+			if(WebSync.webSocketFirstTime){
+				WebSync.webSocketFirstTime = false;
+				WebSync.connection.sendJSON({type:'connect'});
+				WebSync.loadScripts();
+			} else {
+				WebSync.connection.sendJSON({type:'reconnect'});
+			}
+		},
+
+		onclose: function(e){
 			console.log(e);
 			clearInterval(WebSync.diffInterval);
-		}
-		WebSync.connection.onmessage = function(e){
+			$(".navbar-inner").addClass("no-connection");
+			setTimeout(WebSync.webSocketStart,2000);
+		},
+		onmessage: function(e){
 			console.log(e);
 			data = JSON.parse(e.data);
 			console.log("Message data:",data);
@@ -30,7 +47,7 @@ WebSync = {
 				range.collapse(false);
 				range.insertNode(document.createTextNode(String.fromCharCode(100000002));
 		        */
-				var new_html = $(".content .page").html().trim();
+				var new_html = WebSync.getHTML();
                 var patches = WebSync.dmp.patch_fromText(data.patch);
                 var result = WebSync.dmp.patch_apply(patches,new_html)[0];
 				/*
@@ -50,10 +67,14 @@ WebSync = {
 				$(".content .page").get(0).innerHTML=data.text;
 				WebSync.old_html = data.text;
 			}
-		}
-		WebSync.connection.onerror = function(e){
+		},
+		onerror:function(e){
 			console.log(e);
 		}
+
+	},
+	start: function(){
+		WebSync.webSocketStart();
 		$(".content .page").keydown(WebSync.keypress);
 		$("#name").keyup(function(){
 			var div = $("#name").get(0);
@@ -104,6 +125,13 @@ WebSync = {
 		WebSync.dmp = new diff_match_patch();
 		rangy.init();
 		console.log(rangy)
+		/*
+		 * Cursor Blink
+		 * For future other people.
+		setInterval(function(){
+			$("cursor").toggleClass("hidden");
+		},1000);
+		*/
 		WebSync.applier = rangy.createCssClassApplier("tmp");
 		WebSync.setupWebRTC();
 
@@ -214,16 +242,24 @@ WebSync = {
 		$($('#ribbon_buttons li').get(2)).click();
 	},
 	keypress: function(e){
+		/*
+		 * Pagination should go here probably.
 		console.log(e);
 		$(".page").each(function(page,list,index){
 			console.log(page,list);
-		});
+		});*/
 	},
 	loadScripts: function(){
 		WebSync.connection.sendJSON({type: "load_scripts"});
 	},
 	showHTML: function(){
-		$('.page').html("<code>"+$('.page').html()+"</code>");
+		$('.page').html("<code>"+WebSync.getHTML()+"</code>");
+	},
+	getHTML: function(){
+		var html = $(".page").html().trim();
+		// Remove other cursors.
+		html = html.replace(/\<cursor[^\/]+\/?\<\/cursor\>/g,"")
+		return html;
 	},
 	fontsInit: function(){
 		var fonts = [];
@@ -276,7 +312,7 @@ WebSync = {
 		$('#font').html(font_list.join("\n"));
    	},
 	checkDiff: function(){
-		var new_html = $(".content .page").html().trim();
+		var new_html = WebSync.getHTML();
 		if(typeof WebSync.old_html == "undefined"){
 			WebSync.old_html = new_html;
 		}

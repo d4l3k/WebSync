@@ -10,6 +10,16 @@ body {
 .menu {
 
 }
+cursor {
+	background-color: red;
+	padding-right: 3px;
+}
+.hidden {
+	visibility: hidden;
+}
+.navbar-inner a {
+	color: white !important;
+}
 .ribbon {
 	width: 100%;
 	background-color: white;
@@ -52,8 +62,12 @@ body {
 ::selection {
 	background-color: #ccc;
 }
+.no-connection {
+	background-image: -webkit-gradient(linear,0 0,0 100%,from(#f33),to(#c11)) !important;
+}
 a#name {
-	background-color: #555;
+	//background-color: #555;
+	background-color: rgba(255,255,255,0.3) !important; 
 	font-size: 1.5em;
 	overflow: hidden;
 	text-overflow:ellipsis;
@@ -63,11 +77,14 @@ a#name {
 }
 a#name:focus {
 	max-width: 6in;
-	background-color: #777;
+	//background-color: #777;
+
+	background-color: rgba(255,255,255,0.45) !important; 
 	outline: none;
 }
 a#name:hover {
-	background-color: #777;
+	//background-color: #777;
+	background-color: rgba(255,255,255,0.45) !important; 
 }
 
 .preformatted {
@@ -87,7 +104,8 @@ a#name:hover {
 	top: 1px;
 }
 #ribbon_buttons li.active a {
-	background-color: #777 !important;
+	background-color: rgba(255,255,255,0.45) !important; 
+	//background-color: #777 !important;
 	font-weight: bold;
 }
 #ribbon_buttons li a:hover {

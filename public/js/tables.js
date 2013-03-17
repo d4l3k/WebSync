@@ -43,29 +43,42 @@ WebSync.register(function(){ var module = this;
 			module.selectedEditable(true);
 		});
 		$(document).bind("keydown.Tables",function(e){
-			if(module.selected==true&&!e.shiftKey){
-				var editting = module.selectedElem.contentEditable=="true"
-				if(e.keyCode==13){
-					module.cursorMove(0,1);
-				} else if(e.keyCode==27){
-					// Escape
-					module.selectedEditable(false);
-				} else if(e.keyCode==37&&!editting){ 
-					// Left arrow
-					module.cursorMove(-1,0);
-					e.preventDefault();
-				}else if(e.keyCode==39&&!editting){ 
-					// Right arrow
-					module.cursorMove(1,0);
-					e.preventDefault();
-				}else if(e.keyCode==38&&!editting){ 
-					// Up arrow
-					module.cursorMove(0,-1);
-					e.preventDefault();
-				}else if(e.keyCode==40&&!editting){ 
-					// Down arrow
-					module.cursorMove(0,1);
-					e.preventDefault();
+			if(module.selectedElem){
+				if(module.selected==true&&!e.shiftKey){
+					var editting = false;
+					if(module.selectedElem.contentEditable){
+						edditing=module.selectedElem.contedEditable=="true";
+					}
+					if(e.keyCode==13){
+						module.cursorMove(0,1);
+					} else if(e.keyCode==27){
+						// Escape
+						module.selectedEditable(false);
+					} else if(e.keyCode==37&&!editting){ 
+						// Left arrow
+						module.cursorMove(-1,0);
+						e.preventDefault();
+					}else if(e.keyCode==39&&!editting){ 
+						// Right arrow
+						module.cursorMove(1,0);
+						e.preventDefault();
+					}else if(e.keyCode==38&&!editting){ 
+						// Up arrow
+						module.cursorMove(0,-1);
+						e.preventDefault();
+					}else if(e.keyCode==40&&!editting){ 
+						// Down arrow
+						module.cursorMove(0,1);
+						e.preventDefault();
+					} else {
+						if(!module.selectedElem.contentEditable||module.selectedElem.contentEditable=="false"){
+							module.selectedEditable(true);
+
+							$(module.selectedElem).focus();
+							//WebSync.setCaretPosition(module.selectedElem,0);
+						}
+						setTimeout(module.cursorUpdate,1);
+					}
 				} else {
 					if(!module.selectedElem.contentEditable||module.selectedElem.contentEditable=="false"){
 						module.selectedEditable(true);
@@ -75,14 +88,6 @@ WebSync.register(function(){ var module = this;
 					}
 					setTimeout(module.cursorUpdate,1);
 				}
-			} else {
-				if(!module.selectedElem.contentEditable||module.selectedElem.contentEditable=="false"){
-					module.selectedEditable(true);
-
-					$(module.selectedElem).focus();
-					//WebSync.setCaretPosition(module.selectedElem,0);
-				}
-				setTimeout(module.cursorUpdate,1);
 			}
 		});
 		$(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));

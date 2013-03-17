@@ -33,64 +33,57 @@ WebSync = {
 			data = JSON.parse(e.data);
 			console.log("Message data:",data);
 			if(data.type=="scripts"){
+                // Load scripts from server.
 				data.js.forEach(function(script){
 					console.log("Loading script:",script);
 					$(document.body).append($('<script type="text/javascript" src="'+script+'"></script>'))
 				});
 			}
             else if(data.type=="text_patch"){
+                // Make sure there aren't any outstanding changes that need to be sent before patching document.
                 WebSync.checkDiff();
+                // Get start selection.
 				var sel = getSelection();
-				// Convert selection into unicode characters
 				var range = sel.getRangeAt(0);
-				/*range.insertNode(document.createTextNode(String.fromCharCode(100000001));
-				range.collapse(false);
-				range.insertNode(document.createTextNode(String.fromCharCode(100000002));
-		        */
                 var startText = range.startContainer.nodeValue;
                 var startOffset = range.startOffset;
                 var endText = range.endContainer.nodeValue;
                 var endOffset = range.endOffset;
-                console.log(range);
-                /*var range = getSelection().getRangeAt(0);
-                var newNode = document.createElement("sel")
-                newNode.appendChild(range.extractContents());
-                range.insertNode(newNode);*/
+                // Patch the HTML.
                 var new_html = WebSync.getHTML();
                 var patches = WebSync.dmp.patch_fromText(data.patch);
                 var result = WebSync.dmp.patch_apply(patches,new_html)[0];
-                /*
-				// Replace selection
-				var begin = result.search(String.fromCharCode(100000001));
-				var end   = result.search(String.fromCharCode(100000002));
-                result = result.replace(String.fromCharCode(100000001),"").replace(String.fromCharCode(100000002),"");*/
+                // Set HTML. We don't use jQuery because it screws more things up. .html() clears the text then sets it.
 				$(".content .page").get(0).innerHTML=result;
-                // TODO: Add text node searching capabilities.
+                // Find all #text nodes.
                 var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
                     return this.nodeType == 3;
                 });
                 var startNode = {};
                 var endNode = {};
                 console.log(text_nodes);
+                var startNodeDist = 99999;
+                var endNodeDist = 99999;
+                // Locate the start & end #text nodes based on a Levenstein string distance.
                 text_nodes.each(function(index, node){
-                    if(node.nodeValue==startText){
+                    var dist = levenshteinenator(node.nodeValue,startText);
+                    if(dist<startNodeDist){
                         startNode = node;
+                        startNodeDist = dist;
                     }
-                    if(node.nodeValue==endText){
+                    dist = levenshteinenator(node.nodeValue,endText);
+                    if(dist<endNodeDist){
                         endNode = node;
+                        endNodeDist = dist;
                     }
                 });
-                console.log([startNode,startOffset,endNode,endOffset]);
+                // Update the text range.
                 var range = document.createRange();
                 range.setStart(startNode,startOffset);
                 range.setEnd(endNode,endOffset);
                 window.getSelection().removeAllRanges();
                 window.getSelection().addRange(range);
-                /*selectText($("sel").get(0));
-                var selection = $("sel").contents();
-                $("sel").replaceWith(selection);*/
-				/*var n_range = document.createRange();
-				n_range.setStart(*/
+                // Prevent checkDiff() from sending updates for patches.
                 WebSync.old_html = WebSync.getHTML();
             }
 			else if(data.type=="name_update"){

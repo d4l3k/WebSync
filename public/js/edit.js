@@ -40,25 +40,58 @@ WebSync = {
 			}
             else if(data.type=="text_patch"){
                 WebSync.checkDiff();
-				/*var sel = getSelection();
+				var sel = getSelection();
 				// Convert selection into unicode characters
 				var range = sel.getRangeAt(0);
-				range.insertNode(document.createTextNode(String.fromCharCode(100000001));
+				/*range.insertNode(document.createTextNode(String.fromCharCode(100000001));
 				range.collapse(false);
 				range.insertNode(document.createTextNode(String.fromCharCode(100000002));
 		        */
-				var new_html = WebSync.getHTML();
+                var startText = range.startContainer.nodeValue;
+                var startOffset = range.startOffset;
+                var endText = range.endContainer.nodeValue;
+                var endOffset = range.endOffset;
+                console.log(range);
+                /*var range = getSelection().getRangeAt(0);
+                var newNode = document.createElement("sel")
+                newNode.appendChild(range.extractContents());
+                range.insertNode(newNode);*/
+                var new_html = WebSync.getHTML();
                 var patches = WebSync.dmp.patch_fromText(data.patch);
                 var result = WebSync.dmp.patch_apply(patches,new_html)[0];
-				/*
+                /*
 				// Replace selection
 				var begin = result.search(String.fromCharCode(100000001));
 				var end   = result.search(String.fromCharCode(100000002));
                 result = result.replace(String.fromCharCode(100000001),"").replace(String.fromCharCode(100000002),"");*/
 				$(".content .page").get(0).innerHTML=result;
+                // TODO: Add text node searching capabilities.
+                var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
+                    return this.nodeType == 3;
+                });
+                var startNode = {};
+                var endNode = {};
+                console.log(text_nodes);
+                text_nodes.each(function(index, node){
+                    if(node.nodeValue==startText){
+                        startNode = node;
+                    }
+                    if(node.nodeValue==endText){
+                        endNode = node;
+                    }
+                });
+                console.log([startNode,startOffset,endNode,endOffset]);
+                var range = document.createRange();
+                range.setStart(startNode,startOffset);
+                range.setEnd(endNode,endOffset);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                /*selectText($("sel").get(0));
+                var selection = $("sel").contents();
+                $("sel").replaceWith(selection);*/
 				/*var n_range = document.createRange();
 				n_range.setStart(*/
-                WebSync.old_html = result;
+                WebSync.old_html = WebSync.getHTML();
             }
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
@@ -495,4 +528,15 @@ diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {
   }
 };
 });
+function selectText(containerid) {
+    if (document.selection) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(document.getElementById(containerid));
+        range.select();
+    } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(document.getElementById(containerid));
+        window.getSelection().addRange(range);
+    }
+}
 

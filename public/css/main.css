@@ -106,13 +106,16 @@ a#name:hover {
 	position: relative;
 	top: 1px;
 }
-#ribbon_buttons li.active a {
+.ribbon-opt li.active a, .ribbon-opt li.active a:hover  {
 	background-color: rgba(255,255,255,0.45) !important; 
 	//background-color: #777 !important;
 	font-weight: bold;
 }
-#ribbon_buttons li a:hover {
-	background-color: #555;
+.ribbon-opt li {
+	cursor: pointer;
+}
+.ribbon-opt li a:hover {
+	background-color: rgba(255,255,255,0.3) !important; 
 }
 .ribbon .container {
 	display: none;
@@ -151,6 +154,8 @@ td {
 	min-width: 1px;
 	pointer-events: none;
 	background: none !important;
+	left: -1000px;
+	top: 0px;
 }
 .dropdown-menu i {
 	position: relative;

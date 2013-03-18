@@ -6,7 +6,10 @@
 				<ul class="nav">
 					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
 				</ul>
-				<ul id="ribbon_buttons" class="nav">
+				<ul id="ribbon_buttons" class="nav ribbon-opt">
+				</ul>
+				<ul id="settings" class="nav pull-right ribbon-opt">
+					<li class><a id="settingsBtn" data-toggle="popover" title="Settings" data-content="Blah blah blah." data-placement="bottom"><i class="icon-cog icon-large"></i></a></li>
 				</ul>
 			</div>
 		</div>

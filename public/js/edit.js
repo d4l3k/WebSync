@@ -159,10 +159,11 @@ WebSync = {
 		},1000);
 		*/
         $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover().click(function(){
+			$(this.parentElement).toggleClass("active");
+		});
 		WebSync.applier = rangy.createCssClassApplier("tmp");
 		WebSync.setupWebRTC();
-
-
 	},
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
 	setupWebRTC: function(){

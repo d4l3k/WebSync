@@ -110,6 +110,7 @@ get '/:doc/edit' do
 		end
 	# Websocket edit
 	else
+		puts "Websocket"
 		redis_sock = EM::Hiredis.connect
 		client_id = $redis.incr("clientid")
 		redis_sock.subscribe("doc.#{doc_id.base62_encode}")

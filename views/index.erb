@@ -1,11 +1,38 @@
-
-<div class="hero-unit">
-	<h1>Welcome to Web-Sync</h1>
-	<p>
-		Made by Outer Earth Interactive 
-	</p>
-	<p>
-		<a href="/new" class='btn btn-primary btn-large'>Create a Document <i class="icon-file-alt"></i></a>
-	</p>
+<div class="container">
+    <div class="hero-unit">
+        <h1>Welcome to Web-Sync</h1>
+        <p>
+            Made by Outer Earth Interactive 
+        </p>
+        <p>
+            <a href="/new" class='btn btn-primary btn-large'>Create a Document <i class="icon-file-alt"></i></a>
+        </p>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>Name</td>
+                <td>Last Edited</td>
+                <td>Created</td>
+        </thead>
+        <tbody>
+            <% Document.all.each do |doc| %>
+                <tr>
+                    <td><%= doc.id.base62_encode %></td>
+                    <td><%= doc.name %></td>
+                    <td><%= doc.last_edit_time %></td>
+                    <td><%= doc.created %></td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
 </div>
+<script type="text/javascript">
+window.onload = function(){
+    $("td").click(function(){
+        window.location.pathname="/"+this.parentElement.children[0].innerText+"/edit"
+    });
+}
+</script>
 

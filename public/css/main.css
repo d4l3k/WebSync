@@ -121,7 +121,7 @@ a#name:hover {
 	display: none;
     height: 36px !important;
 }
-table {
+.content table {
 	/*-user-modify: read-only;
 	-moz-user-modify: read-only;
 	-webkit-user-modify: read-only;
@@ -129,15 +129,15 @@ table {
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;	*/
-}	
-table, th, td {
+}
+.content table, .content th, .content td {
 	border: 1px solid #888;
 	word-wrap: break-word;
 	overflow-wrap: break-work;
 	hyphens: auto;
 	border-collapse:collapse;
 }
-td {
+.content td {
 	padding-left: 1px;
 	padding-right: 1px;
 	min-width: 0.25in;

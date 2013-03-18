@@ -1,4 +1,13 @@
+/*
+    Web-Sync: Edit.js
+    This is the core file that runs the Web-Sync editor.
 
+    Copyright (c) 2013. All Rights reserved.
+
+    Tristan Rice
+    rice (at) outerearth (dot) net
+    http://tristanrice.name/
+*/
 WebSync = {
 	webSocketFirstTime: true,
 	webSocketStart: function(){

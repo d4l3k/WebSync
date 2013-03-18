@@ -38,7 +38,7 @@ WebSync = {
 			if(WebSync.diffInterval){
 				clearInterval(WebSync.diffInterval);
 				$(".navbar-inner").addClass("no-connection");
-				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg"; 
+				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg";
 				WebSync.diffInterval=null;
 			}
 			setTimeout(WebSync.webSocketStart,2000);
@@ -366,15 +366,16 @@ WebSync = {
 			}
 			else {
 				// Create a patch
-				var diffs = WebSync.dmp.diff_main(WebSync.old_html,new_html);
+				/*var diffs = WebSync.dmp.diff_main(WebSync.old_html,new_html);
 				var patches = WebSync.dmp.patch_make(diffs);
 				var patch_text = WebSync.dmp.patch_toText(patches)
-				console.log("Patch text: ",patch_text);
-				/*var diffsHTML = WebSync.diff_htmlMode(WebSync.old_html,new_html);
+				console.log("Patch text: ",patch_text);*/
+				var diffsHTML = WebSync.diff_htmlMode(WebSync.old_html,new_html);
+                console.log(diffsHTML);
 				var patchesHTML = WebSync.dmp.patch_make(diffsHTML);
 				var patch_textHTML = WebSync.dmp.patch_toText(patchesHTML)
-				//console.log("Patch text HTML: ",patch_textHTML);*/
-				WebSync.connection.sendJSON({type: "text_patch", patch: patch_text});
+				console.log("Patch text HTML: ",patch_textHTML);
+				WebSync.connection.sendJSON({type: "text_patch", patch: patch_textHTML});
 				/*
 				 * Old text replace method
 				WebSync.connection.sendJSON({type: "text_update",text: new_html.trim()})
@@ -492,7 +493,7 @@ function capitaliseFirstLetter(string)
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 $(document).ready(WebSync.start);
-$(document).ready(function(){
+
 // Create a diff after replacing all HTML tags with unicode characters.
 diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
 	var lineArray = [];  // e.g. lineArray[4] == 'Hello\n'
@@ -534,9 +535,9 @@ diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
 
 			if (lineHash.hasOwnProperty ? lineHash.hasOwnProperty(line) :
 				(lineHash[line] !== undefined)) {
-				chars = chars.replace(line,String.fromCharCode(100000+lineHash[line]));
+				chars = chars.replace(line,String.fromCharCode(lineHash[line]));
 			} else {
-				chars = chars.replace(line,String.fromCharCode(100000+lineArrayLength));
+				chars = chars.replace(line,String.fromCharCode(lineArrayLength));
 				lineHash[line] = lineArrayLength;
 				lineArray[lineArrayLength++] = line;
 			}
@@ -552,13 +553,17 @@ diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {
   for (var x = 0; x < diffs.length; x++) {
     var chars = diffs[x][1];
     var text = ""+chars;
-    for (var y = 0; y < lineArray; y++) {
-      while(text!=(text=text.replace(String.fromCharCode(100000+y),lineArray[y]))){};
+    for (var y = 0; y < lineArray.length; y++) {
+        var chara = String.fromCharCode(y);
+        while(text.indexOf(chara)!=-1){
+            var n_text=text.replace(chara,lineArray[y]);
+            text=n_text;
+        }
     }
     diffs[x][1] = text;
   }
 };
-});
+
 function selectText(containerid) {
     if (document.selection) {
         var range = document.body.createTextRange();

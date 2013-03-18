@@ -34,7 +34,7 @@ cursor {
 	display: inline-block;
 }
 .content {
-	height: 9in;
+	min-height: 9in;
 	width: 6.5in;
 	padding: 1in;
 	margin:auto;
@@ -45,7 +45,7 @@ cursor {
 	-user-modify: read-write;
 	-moz-user-modify: read-write;
 	-webkit-user-modify: read-write;
-	height: 100%;
+	min-height: 9in;
 	border: 1px solid #eee;
 	word-wrap: break-word;
 	overflow-wrap: break-work;

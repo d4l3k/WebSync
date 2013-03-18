@@ -33,7 +33,8 @@ class Document
 	property :created, DateTime
 	property :last_edit_time, DateTime
 	property :public, Boolean, :default=>false
-	has n, :assets, :through => :asset_documents
+	has n, :assets, :through => Resource
+    #belongs_to :dm_user
 end
 # Assets could be javascript or css
 class Asset
@@ -43,15 +44,13 @@ class Asset
 	property :description, String
 	property :url, String
 	property :type, Discriminator
-	has n, :documents, :through => :asset_documents
-end
-class AssetDocument
-	include DataMapper::Resource
-	belongs_to :asset, :key=>true
-	belongs_to :document, :key=>true
+	has n, :documents, :through => Resource
 end
 class Javascript < Asset; end
 class Stylesheet < Asset; end
+class DmUser
+    #has n, :documents
+end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 
@@ -66,15 +65,19 @@ get '/error' do
 end
 get '/new' do
 	login_required
-	doc = Document.create(
-		:name => 'Unnamed Document',
-		:body => '',
-		:created => Time.now,
-		:last_edit_time => Time.now
-	)
-	doc.assets << Asset.get(1)
-	doc.save
-	redirect "/#{doc.id.base62_encode}/edit"
+    if logged_in?
+        puts current_user()
+        doc = Document.create(
+            :name => 'Unnamed Document',
+            :body => '',
+            :created => Time.now,
+            :last_edit_time => Time.now,
+            #:dm_user => current_user.db_instance
+        )
+        doc.assets << Asset.get(1)
+        doc.save
+        redirect "/#{doc.id.base62_encode}/edit"
+    end
 end
 get '/:doc/download' do
 	login_required
@@ -134,8 +137,11 @@ get '/:doc/edit' do
 				# Google Diff-Match-Patch algorithm
 				elsif data['type']=='text_patch'
 					doc = Document.get doc_id
-					patches = $dmp.patch_from_text data['patch']
-					doc.body = $dmp.patch_apply(patches,doc.body)[0]
+                    #I'm pretty sure this works just fine. The main issue seems to be diffing w/ structure content. We'll see with time.
+					#html_optimized_patches = diff_htmlToChars_ doc.body, URI::decode(data['patch'])
+                    #puts html_optimized_patches.inspect
+                    patches = $dmp.patch_from_text data['patch']
+                    doc.body = $dmp.patch_apply(patches,doc.body)[0]
 					doc.last_edit_time = Time.now
 					if !doc.save
 						puts("Save errors: #{doc.errors.inspect}")
@@ -182,3 +188,79 @@ get '/:doc/edit' do
 		end
 	end
 end
+
+=begin
+# This might be completely useless since it seems like you only have to structure for diff.
+# Create a diff after replacing all HTML tags with unicode characters.
+def diff_htmlToChars_ text1, text2
+	lineArray = []  # e.g. lineArray[4] == 'Hello\n'
+	lineHash = {}   # e.g. lineHash['Hello\n'] == 4
+
+	# '\x00' is a valid character, but various debuggers don't like it.
+	# So we'll insert a junk entry to avoid generating a null character.
+	lineArray[0] = ''
+
+	#/**
+	#* Split a text into an array of strings.  Reduce the texts to a string of
+	#* hashes where each Unicode character represents one line.
+	#* Modifies linearray and linehash through being a closure.
+	#* @param {string} text String to encode.
+	#* @return {string} Encoded string.
+	#* @private
+	#*/
+	def diff_linesToCharsMunge_ text, lineArray, lineHash
+		chars = ""+text
+		#// Walk the text, pulling out a substring for each line.
+		#// text.split('\n') would would temporarily double our memory footprint.
+		#// Modifying text would create many large strings to garbage collect.
+		lineStart = 0
+		lineEnd = 0
+		#// Keeping our own length variable is faster than looking it up.
+		lineArrayLength = lineArray.length;
+		while lineEnd <(text.length - 1)
+			prevLineEnd = lineEnd
+			if prevLineEnd==nil
+				prevLineEnd=0
+			end
+			lineStart = text.index('<',lineEnd)
+            if lineStart.nil?
+                lineEnd=nil
+                break
+			else
+                lineEnd = text.index('>', lineStart)
+            end
+			if lineEnd.nil?
+				lineEnd = text.length - 1
+			end
+			line = text[lineStart..lineEnd]
+			lineStart = lineEnd + 1
+
+			if lineHash.has_key? line
+		        chars.gsub!(line,[lineHash[line]].pack("U"))
+            else
+		        chars.gsub!(line,[lineArrayLength].pack("U"))
+				lineHash[line] = lineArrayLength
+				lineArray[lineArrayLength] = line
+                lineArrayLength +=1
+			end
+		end
+		return chars;
+	end
+
+	chars1 = diff_linesToCharsMunge_(text1, lineArray,lineHash)
+	chars2 = diff_linesToCharsMunge_(text2,lineArray,lineHash)
+	return {chars1: chars1, chars2: chars2, lineArray: lineArray}
+end
+def diff_charsToHTML_ diffs, lineArray
+  (0..(diffs.length-1)).each do |x|
+    chars = diffs[x][1];
+    text = ""+chars
+    (0..(lineArray-1)).each do |y|
+      text.gsub!([y].pack("U"),lineArray[y])
+    end
+    diffs[x][1] = text;
+  end
+end
+=end
+
+

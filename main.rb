@@ -91,11 +91,13 @@ get '/:doc/edit' do
     doc = Document.get doc_id
 	if !request.websocket?
 		@javascripts = [
+            '/js/bootstrap.min.js',
 			'/js/bootstrap-contextmenu.js',
 			'/js/jquery.computedstyles.js',
 			'/js/rangy-core.js',
 			'/js/rangy-cssclassapplier.js',
 			'/js/fontdetect.js',
+            '/js/levenshtein.js',
 			'/js/diff_match_patch.js',
 			'/js/webrtc-adapter.js',
             '/js/edit.js'

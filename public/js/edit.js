@@ -158,8 +158,10 @@ WebSync = {
 			$("cursor").toggleClass("hidden");
 		},1000);
 		*/
+        $('[data-toggle="tooltip"]').tooltip();
 		WebSync.applier = rangy.createCssClassApplier("tmp");
 		WebSync.setupWebRTC();
+
 
 	},
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.

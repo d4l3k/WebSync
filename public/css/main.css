@@ -94,9 +94,9 @@ a#name:hover {
     font-family: monospace;
     white-space: pre;
 }
-.ribbon_button {
-	position: relative;
-	top: 8px;
+.ribbon button, .ribbon select {
+	margin-bottom: 0px !important;
+    margin-top: 5px;
 	width: auto !important;
 }
 #font_size {
@@ -116,6 +116,7 @@ a#name:hover {
 }
 .ribbon .container {
 	display: none;
+    height: 36px !important;
 }
 table {
 	/*-user-modify: read-only;

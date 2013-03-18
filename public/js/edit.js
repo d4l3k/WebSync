@@ -166,6 +166,8 @@ WebSync = {
 		WebSync.dmp = new diff_match_patch();
 		rangy.init();
 		console.log(rangy)
+        WebSync.resize();
+        $(window).resize(WebSync.resize);
 		/*
 		 * Cursor Blink
 		 * For future other people.
@@ -355,6 +357,9 @@ WebSync = {
 	    }
 		$('#font').html(font_list.join("\n"));
    	},
+    resize: function(){
+        $(".content_well").height(window.innerHeight-$(".content_well").position().top)
+    },
 	checkDiff: function(){
 		var new_html = WebSync.getHTML();
 		if(typeof WebSync.old_html == "undefined"){
@@ -464,16 +469,16 @@ WebSync = {
 	    }
 	},
 	alert: function(msg){
-		WebSync.alert_msg(msg,"");
+		return WebSync.alert_msg(msg,"");
 	},
 	error: function(msg){
-		WebSync.alert_msg(msg,"alert-error");
+		return WebSync.alert_msg(msg,"alert-error");
 	},
 	success: function(msg){
-		WebSync.alert_msg(msg,"alert-success");
+		return WebSync.alert_msg(msg,"alert-success");
 	},
 	info: function(msg){
-		WebSync.alert_msg(msg,"alert-info");
+		return WebSync.alert_msg(msg,"alert-info");
 	},
 	alert_msg: function(msg,classes){
 		var div = $('<div class="alert '+classes+'"><a class="close" data-dismiss="alert">&times;</a>'+msg+'</div>');

@@ -4,11 +4,15 @@
 	outline: none;
 	border: none;
 }
-body {
+body,html {
+    overflow: hidden;
 	//background-color: #eee !important;
 }
 .menu {
 
+}
+.navbar {
+    position: relative !important;
 }
 cursor {
 	background-color: red;
@@ -28,18 +32,37 @@ cursor {
 	height: 40px !important;
 }
 .content_well {
-	padding-top: 1in;
-	background-color: #eee !important;
+	//padding-top: 0.1in;
+    background-color: #eee !important;
+    background-image: linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
+    background-image: -o-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
+    background-image: -moz-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
+    background-image: -webkit-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
+    background-image: -ms-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, #A0A0A0),
+        color-stop(1, #E0E0E0)
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E0E0E0', endColorstr='#A0A0A0');
+    background-attachment: fixed;
 	min-width: 100%;
 	display: inline-block;
+    height: 100%;
+    overflow: auto;
 }
 .content {
 	min-height: 9in;
 	width: 6.5in;
 	padding: 1in;
 	margin:auto;
+    margin-top: 0.1in;
+    margin-bottom: 0.1in;
 	border: 1px solid #ccc;
 	background-color: white;
+    //box-shadow: 0 0 8px #aaa;
 }
 .content .page {
 	-user-modify: read-write;
@@ -171,4 +194,5 @@ a#name:hover {
 #alert_well .alert {
 	display: table;
 	margin-left: auto;
+    margin-bottom: 10px;
 }

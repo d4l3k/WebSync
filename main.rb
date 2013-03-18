@@ -65,19 +65,16 @@ get '/error' do
 end
 get '/new' do
 	login_required
-    if logged_in?
-        puts current_user()
-        doc = Document.create(
-            :name => 'Unnamed Document',
-            :body => '',
-            :created => Time.now,
-            :last_edit_time => Time.now,
-            #:dm_user => current_user.db_instance
-        )
-        doc.assets << Asset.get(1)
-        doc.save
-        redirect "/#{doc.id.base62_encode}/edit"
-    end
+    doc = Document.create(
+        :name => 'Unnamed Document',
+        :body => '',
+        :created => Time.now,
+        :last_edit_time => Time.now
+        #,:dm_user => current_user.db_instance
+    )
+    doc.assets << Asset.get(1)
+    doc.save
+    redirect "/#{doc.id.base62_encode}/edit"
 end
 get '/:doc/download' do
 	login_required

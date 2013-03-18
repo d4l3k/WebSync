@@ -13,19 +13,25 @@ WebSync = {
 			console.log(e);
 			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
 			$(".navbar-inner").removeClass("no-connection");
+			$("#connection_msg").remove();
 			if(WebSync.webSocketFirstTime){
 				WebSync.webSocketFirstTime = false;
 				WebSync.connection.sendJSON({type:'connect'});
 				WebSync.loadScripts();
 			} else {
 				WebSync.connection.sendJSON({type:'reconnect'});
+				WebSync.success("<strong>Success!</strong> Connection restablished.");
 			}
 		},
 
 		onclose: function(e){
 			console.log(e);
-			clearInterval(WebSync.diffInterval);
-			$(".navbar-inner").addClass("no-connection");
+			if(WebSync.diffInterval){
+				clearInterval(WebSync.diffInterval);
+				$(".navbar-inner").addClass("no-connection");
+				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg"; 
+				WebSync.diffInterval=null;
+			}
 			setTimeout(WebSync.webSocketStart,2000);
 		},
 		onmessage: function(e){
@@ -446,6 +452,26 @@ WebSync = {
 		range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
 		range.select();//Select the range (make it the visible selection
 	    }
+	},
+	alert: function(msg){
+		WebSync.alert_msg(msg,"");
+	},
+	error: function(msg){
+		WebSync.alert_msg(msg,"alert-error");
+	},
+	success: function(msg){
+		WebSync.alert_msg(msg,"alert-success");
+	},
+	info: function(msg){
+		WebSync.alert_msg(msg,"alert-info");
+	},
+	alert_msg: function(msg,classes){
+		var div = $('<div class="alert '+classes+'"><a class="close" data-dismiss="alert">&times;</a>'+msg+'</div>');
+		$('#alert_well').prepend(div);
+		setTimeout(function(){
+			div.alert('close');
+		},10000);
+		return div;
 	}
 }
 

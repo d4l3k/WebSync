@@ -29,24 +29,24 @@ cursor {
 	background-color: white;
 	padding-bottom: 5px;
 	border-bottom: 1px solid #ccc;
-	height: 40px !important;
+	height: 38px !important;
 }
 .content_well {
 	//padding-top: 0.1in;
     background-color: #eee !important;
-    background-image: linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
-    background-image: -o-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
-    background-image: -moz-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
-    background-image: -webkit-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
-    background-image: -ms-linear-gradient(bottom, #A0A0A0 0%, #E0E0E0 100%);
+    background-image: linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
+    background-image: -o-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
+    background-image: -moz-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
+    background-image: -webkit-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
+    background-image: -ms-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0, #A0A0A0),
-        color-stop(1, #E0E0E0)
+        color-stop(0, #C0C0C0),
+        color-stop(1, #F0F0F0)
     );
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E0E0E0', endColorstr='#A0A0A0');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
     background-attachment: fixed;
 	min-width: 100%;
 	display: inline-block;
@@ -60,8 +60,13 @@ cursor {
 	margin:auto;
     margin-top: 0.1in;
     margin-bottom: 0.1in;
-	border: 1px solid #ccc;
+	border: 1px solid #aaa;
 	background-color: white;
+    -moz-transform-origin: top center;
+    -webkit-transform-origin: top center;
+    -o-transform-origin: top center;
+    -ms-transform-origin: top center;
+    transform-origin: top center;
     //box-shadow: 0 0 8px #aaa;
 }
 .content .page {

@@ -98,6 +98,7 @@ get '/:doc/edit' do
 			'/js/rangy-cssclassapplier.js',
 			'/js/fontdetect.js',
             '/js/levenshtein.js',
+            '/js/jquery.transform2d.js',
 			'/js/diff_match_patch.js',
 			'/js/webrtc-adapter.js',
             '/js/edit.js'
@@ -110,11 +111,10 @@ get '/:doc/edit' do
 		end
 	# Websocket edit
 	else
-		puts "Websocket"
 		redis_sock = EM::Hiredis.connect
 		client_id = $redis.incr("clientid")
 		redis_sock.subscribe("doc.#{doc_id.base62_encode}")
-        puts "Redis ID: #{redis_sock.id}"
+        puts "Websocket Client ID: #{client_id}"
 		request.websocket do |ws|
             websock = ws
 			ws.onopen do

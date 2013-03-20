@@ -59,45 +59,50 @@ WebSync = {
                 WebSync.checkDiff();
                 // Get start selection.
 				var sel = getSelection();
-				var range = sel.getRangeAt(0);
-                var startText = range.startContainer.nodeValue;
-                var startOffset = range.startOffset;
-                var endText = range.endContainer.nodeValue;
-                var endOffset = range.endOffset;
+                var range, startText,startOffset,endText,endOffset;
+                if(sel.rangeCount>0){
+                    range = sel.getRangeAt(0);
+                    startText = range.startContainer.nodeValue;
+                    startOffset = range.startOffset;
+                    endText = range.endContainer.nodeValue;
+                    endOffset = range.endOffset;
+                }
                 // Patch the HTML.
                 var new_html = WebSync.getHTML();
                 var patches = WebSync.dmp.patch_fromText(data.patch);
                 var result = WebSync.dmp.patch_apply(patches,new_html)[0];
                 // Set HTML. We don't use jQuery because it screws more things up. .html() clears the text then sets it.
 				$(".content .page").get(0).innerHTML=result;
-                // Find all #text nodes.
-                var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
-                    return this.nodeType == 3;
-                });
-                var startNode = {};
-                var endNode = {};
-                console.log(text_nodes);
-                var startNodeDist = 99999;
-                var endNodeDist = 99999;
-                // Locate the start & end #text nodes based on a Levenstein string distance.
-                text_nodes.each(function(index, node){
-                    var dist = levenshteinenator(node.nodeValue,startText);
-                    if(dist<startNodeDist){
-                        startNode = node;
-                        startNodeDist = dist;
-                    }
-                    dist = levenshteinenator(node.nodeValue,endText);
-                    if(dist<endNodeDist){
-                        endNode = node;
-                        endNodeDist = dist;
-                    }
-                });
-                // Update the text range.
-                var range = document.createRange();
-                range.setStart(startNode,startOffset);
-                range.setEnd(endNode,endOffset);
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
+                if(sel.rangeCount>0){
+                    // Find all #text nodes.
+                    var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
+                        return this.nodeType == 3;
+                    });
+                    var startNode = {};
+                    var endNode = {};
+                    console.log(text_nodes);
+                    var startNodeDist = 99999;
+                    var endNodeDist = 99999;
+                    // Locate the start & end #text nodes based on a Levenstein string distance.
+                    text_nodes.each(function(index, node){
+                        var dist = levenshteinenator(node.nodeValue,startText);
+                        if(dist<startNodeDist){
+                            startNode = node;
+                            startNodeDist = dist;
+                        }
+                        dist = levenshteinenator(node.nodeValue,endText);
+                        if(dist<endNodeDist){
+                            endNode = node;
+                            endNodeDist = dist;
+                        }
+                    });
+                    // Update the text range.
+                    var range = document.createRange();
+                    range.setStart(startNode,startOffset);
+                    range.setEnd(endNode,endOffset);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                }
                 // Prevent checkDiff() from sending updates for patches.
                 WebSync.old_html = WebSync.getHTML();
             }
@@ -161,6 +166,10 @@ WebSync = {
 			applier.applyToSelection();*/
 			WebSync.applyCssToSelection({'font-size':size});
 		});
+        $('#zoom_level').change(function(){
+			var zoom = parseInt($('#zoom_level').val())/100.0
+			$(".content").animate({"transform":"scale("+zoom+")"});
+        });
 		WebSync.fontsInit();
 		WebSync.updateRibbon();
 		WebSync.dmp = new diff_match_patch();

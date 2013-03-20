@@ -9,7 +9,18 @@ body,html {
 	//background-color: #eee !important;
 }
 .menu {
-
+    width: 100%;
+}
+.zen .menu {
+    position: fixed;
+    z-index: 1000;
+}
+.zen .content_well {
+    background-color: white !important;
+    background-image: none !important;
+}
+.zen .content {
+    border: none;
 }
 .navbar {
     position: relative !important;
@@ -30,6 +41,9 @@ cursor {
 	padding-bottom: 5px;
 	border-bottom: 1px solid #ccc;
 	height: 38px !important;
+}
+.table-click td {
+    cursor: pointer;
 }
 .content_well {
 	//padding-top: 0.1in;
@@ -53,6 +67,13 @@ cursor {
     height: 100%;
     overflow: auto;
 }
+.content_well > div {
+    -moz-transform-origin: top center;
+    -webkit-transform-origin: top center;
+    -o-transform-origin: top center;
+    -ms-transform-origin: top center;
+    transform-origin: top center;
+}
 .content {
 	min-height: 9in;
 	width: 6.5in;
@@ -62,11 +83,6 @@ cursor {
     margin-bottom: 0.1in;
 	border: 1px solid #aaa;
 	background-color: white;
-    -moz-transform-origin: top center;
-    -webkit-transform-origin: top center;
-    -o-transform-origin: top center;
-    -ms-transform-origin: top center;
-    transform-origin: top center;
     //box-shadow: 0 0 8px #aaa;
 }
 .content .page {

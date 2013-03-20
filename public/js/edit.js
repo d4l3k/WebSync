@@ -168,7 +168,29 @@ WebSync = {
 		});
         $('#zoom_level').change(function(){
 			var zoom = parseInt($('#zoom_level').val())/100.0
-			$(".content").animate({"transform":"scale("+zoom+")"});
+			$(".content_well").children().animate({"transform":"scale("+zoom+")"});
+        });
+        $('body').mousemove(function(e){
+            if(WebSync.viewMode=='Zen'){
+                if(e.pageY<85&&!WebSync.menuVisible){
+                    $(".menu").animate({top: 0});
+                    WebSync.menuVisible = true;
+                }
+                else if(e.pageY>85&&WebSync.menuVisible) {
+                    $(".menu").animate({top: -85});
+                    WebSync.menuVisible = false;
+                }
+            }
+        });
+        $('#view_mode').change(function(){
+            var mode = $('#view_mode').val();
+            WebSync.viewMode = mode;
+            if(mode=='Zen'){
+                $("body").addClass("zen").resize(); $("#zoom_level").val("120%").change(); $(".menu").animate({top:-85});
+            }
+            else {
+                $("body").removeClass("zen").resize(); $("#zoom_level").val("100%").change(); $(".menu").animate({top: 0});
+            }
         });
 		WebSync.fontsInit();
 		WebSync.updateRibbon();
@@ -191,6 +213,8 @@ WebSync = {
 		WebSync.applier = rangy.createCssClassApplier("tmp");
 		WebSync.setupWebRTC();
 	},
+    viewMode: 'normal',
+    menuVisible: true,
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
 	setupWebRTC: function(){
 		WebSync.createPeerConnection();

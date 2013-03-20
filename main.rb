@@ -21,7 +21,21 @@ DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
 #$redis = $adapter.redis
-#
+
+# Monkey patched Redis for easy caching.
+class Redis
+  def cache(key, expire=nil)
+    if (value = get(key)).nil?
+      value = yield(self)
+      set(key, value)
+      expire(key, expire) if expire
+      value
+    else
+      value
+    end
+  end
+end
+
 # Ease of use connection to the redis server.
 $redis = Redis.new
 
@@ -57,8 +71,10 @@ DataMapper.auto_upgrade!
 $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/js/tables.js')
 
 get '/' do
-	@javascripts = []
-	erb :index
+    $redis.cache("index",300) do
+	    @javascripts = []
+	    erb :index
+    end
 end
 get '/error' do
 	error

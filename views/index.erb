@@ -8,13 +8,13 @@
             <a href="/new" class='btn btn-primary btn-large'>Create a Document <i class="icon-file-alt"></i></a>
         </p>
     </div>
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover table-click">
         <thead>
             <tr>
-                <td>#</td>
-                <td>Name</td>
-                <td>Last Edited</td>
-                <td>Created</td>
+                <th>#</th>
+                <th>Name</th>
+                <th>Last Edited</th>
+                <th>Created</th>
         </thead>
         <tbody>
             <% Document.all.each do |doc| %>

@@ -194,7 +194,6 @@ WebSync = {
         });
 		WebSync.fontsInit();
 		WebSync.updateRibbon();
-		WebSync.dmp = new diff_match_patch();
 		rangy.init();
 		console.log(rangy)
         WebSync.resize();
@@ -211,12 +210,12 @@ WebSync = {
 			$(this.parentElement).toggleClass("active");
 		});
         WebSync.worker = new Worker("/js/edit-worker.js");
-        WebSync.worker.addEventListener('message', function(e) {
+        WebSync.worker.onmessage = function(e) {
             var data = e.data;
             if(data.cmd=='patched'){
                 WebSync.connection.sendJSON({type: "text_patch", patch: data.patch});
             }
-         }, false);
+         }
 		WebSync.applier = rangy.createCssClassApplier("tmp");
 		WebSync.setupWebRTC();
 	},
@@ -411,7 +410,9 @@ WebSync = {
 			}
 			else {
                 // Send it to the worker thread for processing.
-                WebSync.worker.postMessage({cmd:'patch',oldHtml:WebSync.old_html,newHtml:new_html});
+                var msg = {'cmd':'patch','oldHtml':WebSync.old_html,'newHtml':new_html};
+                console.log("Sending message:",msg);
+                WebSync.worker.postMessage(msg);
 			}
 			WebSync.old_html=new_html;
 		}

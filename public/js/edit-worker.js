@@ -1,24 +1,27 @@
 importScripts('/js/diff_match_patch.js');
 
+dmp = new diff_match_patch();
 
-self.addEventListener('message', function(e) {
+self.onmessage = function(e) {
     var data = e.data;
-    if(data.cmd=='diff'){
-        var new_html = data.newHtml;
-        var old_html = data.oldHtml;
-        var diffsHTML = diff_htmlMode(old_html,new_html);
-		var patchesHTML = dmp.patch_make(diffsHTML);
-		var patch_textHTML = dmp.patch_toText(patchesHTML);
-        self.postMessage({cmd:'patched',patch: patch_textHTML);
+    switch(data.cmd){
+        case 'patch':
+            var new_html = data.newHtml;
+            var old_html = data.oldHtml;
+            var diffsHTML = diff_htmlMode(old_html,new_html);
+
+            var patchesHTML = dmp.patch_make(diffsHTML);
+            var patch_textHTML = dmp.patch_toText(patchesHTML);
+            self.postMessage({'cmd':'patched','patch': patch_textHTML});
     }
-}, false);
+}
 diff_htmlMode = function (text1,text2){
-		var a = WebSync.dmp.diff_htmlToChars_(text1,text2);
+		var a = dmp.diff_htmlToChars_(text1,text2);
 		var lineText1 = a.chars1;
 		var lineText2 = a.chars2;
 		var lineArray = a.lineArray;
-		var diffs = WebSync.dmp.diff_main(lineText1,lineText2, false);
-		WebSync.dmp.diff_charsToHTML_(diffs, lineArray);
+		var diffs = dmp.diff_main(lineText1,lineText2, false);
+		dmp.diff_charsToHTML_(diffs, lineArray);
 		return diffs;
 }
 // Create a diff after replacing all HTML tags with unicode characters.
@@ -28,7 +31,7 @@ diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
 
 	// '\x00' is a valid character, but various debuggers don't like it.
 	// So we'll insert a junk entry to avoid generating a null character.
-	lineArray[0] = '';
+	//lineArray[0] = '';
 
 	/**
 	* Split a text into an array of strings.  Reduce the texts to a string of
@@ -62,9 +65,9 @@ diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
 
 			if (lineHash.hasOwnProperty ? lineHash.hasOwnProperty(line) :
 				(lineHash[line] !== undefined)) {
-				chars = chars.replace(line,String.fromCharCode(lineHash[line]));
+				chars = chars.replace(line,String.fromCharCode(1000000+lineHash[line]));
 			} else {
-				chars = chars.replace(line,String.fromCharCode(lineArrayLength));
+				chars = chars.replace(line,String.fromCharCode(1000000+lineArrayLength));
 				lineHash[line] = lineArrayLength;
 				lineArray[lineArrayLength++] = line;
 			}
@@ -81,7 +84,7 @@ diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {
     var chars = diffs[x][1];
     var text = ""+chars;
     for (var y = 0; y < lineArray.length; y++) {
-        var chara = String.fromCharCode(y);
+        var chara = String.fromCharCode(1000000+y);
         while(text.indexOf(chara)!=-1){
             var n_text=text.replace(chara,lineArray[y]);
             text=n_text;

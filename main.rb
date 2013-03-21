@@ -115,7 +115,6 @@ get '/:doc/edit' do
 			'/js/fontdetect.js',
             '/js/levenshtein.js',
             '/js/jquery.transform2d.js',
-			'/js/diff_match_patch.js',
 			'/js/webrtc-adapter.js',
             '/js/edit.js'
 		]

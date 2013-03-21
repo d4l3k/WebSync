@@ -9,6 +9,7 @@ self.onmessage = function(e) {
             var new_html = data.newHtml;
             var old_html = data.oldHtml;
             var diffsHTML = diff_htmlMode(old_html,new_html);
+            dmp.diff_cleanupSemantic(diffsHTML);
 
             var patchesHTML = dmp.patch_make(diffsHTML);
             var patch_textHTML = dmp.patch_toText(patchesHTML);

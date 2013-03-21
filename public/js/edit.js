@@ -56,6 +56,7 @@ WebSync = {
 			}
             else if(data.type=="text_patch"){
                 // Make sure there aren't any outstanding changes that need to be sent before patching document.
+                // TODO: Make this work with webworkers
                 WebSync.checkDiff();
                 // Get start selection.
 				var sel = getSelection();
@@ -411,7 +412,6 @@ WebSync = {
 			else {
                 // Send it to the worker thread for processing.
                 var msg = {'cmd':'patch','oldHtml':WebSync.old_html,'newHtml':new_html};
-                console.log("Sending message:",msg);
                 WebSync.worker.postMessage(msg);
 			}
 			WebSync.old_html=new_html;

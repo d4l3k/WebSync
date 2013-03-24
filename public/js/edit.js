@@ -9,6 +9,7 @@
     http://tristanrice.name/
 */
 WebSync = {
+    tmp: {},
 	webSocketFirstTime: true,
 	webSocketStart: function(){
 		WebSync.connection = new WebSocket("ws://"+window.location.host+window.location.pathname);
@@ -68,44 +69,17 @@ WebSync = {
                     endText = range.endContainer.nodeValue;
                     endOffset = range.endOffset;
                 }
+                WebSync.tmp.range = {
+                    startText: startText,
+                    startOffset: startOffset,
+                    endText: endText,
+                    endOffset: endOffset
+                }
                 // Patch the HTML.
                 var new_html = WebSync.getHTML();
-                var patches = WebSync.dmp.patch_fromText(data.patch);
-                var result = WebSync.dmp.patch_apply(patches,new_html)[0];
+                WebSync.worker.postMessage({cmd:'apply_patch',html:new_html,patch:data.patch});
                 // Set HTML. We don't use jQuery because it screws more things up. .html() clears the text then sets it.
-				$(".content .page").get(0).innerHTML=result;
-                if(sel.rangeCount>0){
-                    // Find all #text nodes.
-                    var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
-                        return this.nodeType == 3;
-                    });
-                    var startNode = {};
-                    var endNode = {};
-                    console.log(text_nodes);
-                    var startNodeDist = 99999;
-                    var endNodeDist = 99999;
-                    // Locate the start & end #text nodes based on a Levenstein string distance.
-                    text_nodes.each(function(index, node){
-                        var dist = levenshteinenator(node.nodeValue,startText);
-                        if(dist<startNodeDist){
-                            startNode = node;
-                            startNodeDist = dist;
-                        }
-                        dist = levenshteinenator(node.nodeValue,endText);
-                        if(dist<endNodeDist){
-                            endNode = node;
-                            endNodeDist = dist;
-                        }
-                    });
-                    // Update the text range.
-                    var range = document.createRange();
-                    range.setStart(startNode,startOffset);
-                    range.setEnd(endNode,endOffset);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
-                // Prevent checkDiff() from sending updates for patches.
-                WebSync.old_html = WebSync.getHTML();
+				/**/
             }
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
@@ -213,19 +187,61 @@ WebSync = {
         WebSync.worker = new Worker("/js/edit-worker.js");
         WebSync.worker.onmessage = function(e) {
             var data = e.data;
-            if(data.cmd=='patched'){
-                WebSync.connection.sendJSON({type: "text_patch", patch: data.patch});
+            console.log(data);
+            if(data.cmd=='diffed'){
+                WebSync.connection.sendJSON({type: "text_patch", patch: data.diff});
+            }
+            else if(data.cmd=='patched'){
+                $(".content .page").get(0).innerHTML=data.html;
+                WebSync.old_html = WebSync.getHTML();
+                if(sel.rangeCount>0){
+                    // Find all #text nodes.
+                    var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
+                        return this.nodeType == 3;
+                    });
+                    var startNode = {};
+                    var endNode = {};
+                    console.log(text_nodes);
+                    var startNodeDist = 99999;
+                    var endNodeDist = 99999;
+                    // Locate the start & end #text nodes based on a Levenstein string distance.
+                    text_nodes.each(function(index, node){
+                        var dist = levenshteinenator(node.nodeValue,startText);
+                        if(dist<startNodeDist){
+                            startNode = node;
+                            startNodeDist = dist;
+                        }
+                        dist = levenshteinenator(node.nodeValue,endText);
+                        if(dist<endNodeDist){
+                            endNode = node;
+                            endNodeDist = dist;
+                        }
+                    });
+                    // Update the text range.
+                    var range = document.createRange();
+                    range.setStart(startNode,startOffset);
+                    range.setEnd(endNode,endOffset);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                }
+                // Prevent checkDiff() from sending updates for patches.
+            }
+            else if(data.cmd=='log'){
+                console.log(data.msg);
             }
          }
 		WebSync.applier = rangy.createCssClassApplier("tmp");
-		WebSync.setupWebRTC();
+		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
+        $(".page").attr("contenteditable","true");
+        WebSync.setupWebRTC();
 	},
     viewMode: 'normal',
     menuVisible: true,
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
 	setupWebRTC: function(){
-		WebSync.createPeerConnection();
-		WebSync.createDataChannel();
+		if(WebSync.createPeerConnection()){
+		    WebSync.createDataChannel();
+        }
 	},
 	createPeerConnection: function() {
 		var pc_config = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
@@ -244,12 +260,13 @@ WebSync = {
 		} catch (e) {
 			console.log("Failed to create PeerConnection, exception: " + e.message);
 			alert("Cannot create RTCPeerConnection object; WebRTC is not supported by this browser.");
-			return;
+			return false;
 		}
 
 		WebSync.pc.onaddstream = WebSync.onRemoteStreamAdded;
 		WebSync.pc.onremovestream = WebSync.onRemoteStreamRemoved;
 		WebSync.pc.ondatachannel = WebSync.onDataChannel;
+        return true;
 	},
 	createDataChannel: function() {
 		WebSync.dataChannel = WebSync.pc.createDataChannel("chat",{reliable:false});
@@ -348,41 +365,8 @@ WebSync = {
 		return html;
 	},
 	fontsInit: function(){
-		var fonts = [];
+		var fonts = ["Cursive","Monospace","Serif","Sans-serif","Fantasy","Arial","Arial Black","Arial Narrow","Arial Rounded MT Bold","Bookman Old Style","Bradley Hand ITC","Century","Century Gothic","Comic Sans MS","Droid Sans","Courier","Courier New","Georgia","Gentium","Impact","King","Lucida Console","Lalit","Modena","Monotype Corsiva","Papyrus","TeX","Times","Times New Roman","Trebuchet MS","Tahoma","Verdana","Verona",'Helvetica','Segoe'];
     	var d = new Detector();
-	    fonts.push("Cursive");
-	    fonts.push("Monospace");
-	    fonts.push("Serif");
-	    fonts.push("Sans-serif");
-	    fonts.push("Fantasy");
-	    fonts.push("Arial");
-	    fonts.push("Arial Black");
-	    fonts.push("Arial Narrow");
-	    fonts.push("Arial Rounded MT Bold");
-	    fonts.push("Bookman Old Style");
-	    fonts.push("Bradley Hand ITC");
-	    fonts.push("Century");
-	    fonts.push("Century Gothic");
-	    fonts.push("Comic Sans MS");
-		fonts.push("Droid Sans")
-	    fonts.push("Courier");
-	    fonts.push("Courier New");
-	    fonts.push("Georgia");
-	    fonts.push("Gentium")
-		fonts.push("Impact");
-	    fonts.push("King");
-	    fonts.push("Lucida Console");
-	    fonts.push("Lalit");
-	    fonts.push("Modena");
-	    fonts.push("Monotype Corsiva");
-	    fonts.push("Papyrus");
-	    fonts.push("TeX");
-	    fonts.push("Times");
-	    fonts.push("Times New Roman");
-	    fonts.push("Trebuchet MS");
-		fonts.push("Tahoma");
-	    fonts.push("Verdana");
-	    fonts.push("Verona");
 		var font_list = [];
 	    fonts = fonts.sort(function(a,b){
 			if(a<b) return -1;
@@ -411,7 +395,7 @@ WebSync = {
 			}
 			else {
                 // Send it to the worker thread for processing.
-                var msg = {'cmd':'patch','oldHtml':WebSync.old_html,'newHtml':new_html};
+                var msg = {'cmd':'diff','oldHtml':WebSync.old_html,'newHtml':new_html};
                 WebSync.worker.postMessage(msg);
 			}
 			WebSync.old_html=new_html;

@@ -11,6 +11,29 @@ body,html {
 .menu {
     width: 100%;
 }
+/*
+// Flat buttons until hover
+.menu .btn {
+    background-color: white;
+    background-image: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    border-color: rgb(204, 204, 204);
+}
+.menu .btn:hover, .menu .btn:focus {
+    background-image: -moz-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -o-linear-gradient(top,#fff,#e6e6e6);
+    background-image: linear-gradient(to bottom,#fff,#e6e6e6);
+}*/
+.content div, .content li{
+    line-height: 1.15em;
+}
+.content ol, .content ul {
+    margin: 0 0 0px 25px;
+}
 .zen .menu {
     position: fixed;
     z-index: 1000;

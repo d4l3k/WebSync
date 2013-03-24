@@ -2,18 +2,32 @@ importScripts('/js/diff_match_patch.js');
 
 dmp = new diff_match_patch();
 
+function log(msg){
+    self.postMessage({'cmd':'log','msg':msg});
+}
+
 self.onmessage = function(e) {
     var data = e.data;
     switch(data.cmd){
-        case 'patch':
+        case 'diff':
             var new_html = data.newHtml;
             var old_html = data.oldHtml;
-            var diffsHTML = diff_htmlMode(old_html,new_html);
+            var blah = diff_htmlMode(old_html,new_html);
+            var diffsHTML = blah[0];
+            var lineArray = blah[1];
             dmp.diff_cleanupSemantic(diffsHTML);
-
             var patchesHTML = dmp.patch_make(diffsHTML);
             var patch_textHTML = dmp.patch_toText(patchesHTML);
-            self.postMessage({'cmd':'patched','patch': patch_textHTML});
+            //patch_textHTML = patchText2Html(patch_textHTML,lineArray);
+            //log(fixedHtml);
+            self.postMessage({'cmd':'diffed','diff': patch_textHTML});
+            break;
+        case 'apply_patch':
+            var html = data.html;
+            var patches = dmp.patch_fromText(data.patch);
+            var result = dmp.patch_apply(patches,html)[0];
+            self.postMessage({'cmd':'patched','html':result});
+            break;
     }
 }
 diff_htmlMode = function (text1,text2){
@@ -23,7 +37,7 @@ diff_htmlMode = function (text1,text2){
 		var lineArray = a.lineArray;
 		var diffs = dmp.diff_main(lineText1,lineText2, false);
 		dmp.diff_charsToHTML_(diffs, lineArray);
-		return diffs;
+		return [diffs,lineArray];
 }
 // Create a diff after replacing all HTML tags with unicode characters.
 diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
@@ -78,6 +92,7 @@ diff_match_patch.prototype.diff_htmlToChars_ = function(text1, text2){
 
 	var chars1 = diff_linesToCharsMunge_(text1);
 	var chars2 = diff_linesToCharsMunge_(text2);
+    log(["Line array:",lineArray]);
 	return {chars1: chars1, chars2: chars2, lineArray: lineArray};
 }
 diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {
@@ -94,4 +109,15 @@ diff_match_patch.prototype.diff_charsToHTML_ = function(diffs, lineArray) {
     diffs[x][1] = text;
   }
 };
+patchText2Html = function(patchText, lineArray) {
+    var text = ""+patchText;
+    for (var y = 0; y < lineArray.length; y++) {
+        var chara = encodeURI(String.fromCharCode(1000000+y));
+        while(text.indexOf(chara)!=-1){
+            var n_text=text.replace(chara,encodeURI(lineArray[y]));
+            text=n_text;
+        }
+    }
+    return text;
+}
 

@@ -70,6 +70,7 @@ WebSync = {
                     endOffset = range.endOffset;
                 }
                 WebSync.tmp.range = {
+                    active: (sel.rangeCount>1),
                     startText: startText,
                     startOffset: startOffset,
                     endText: endText,
@@ -194,11 +195,13 @@ WebSync = {
             else if(data.cmd=='patched'){
                 $(".content .page").get(0).innerHTML=data.html;
                 WebSync.old_html = WebSync.getHTML();
-                if(sel.rangeCount>0){
+                sel = WebSync.tmp.range;
+                if(sel.active){
                     // Find all #text nodes.
                     var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
                         return this.nodeType == 3;
                     });
+                    var startText = range.startText, startOffset = range.startOffset, endText = range.endText, endOffset = range.endOffset;
                     var startNode = {};
                     var endNode = {};
                     console.log(text_nodes);
@@ -345,13 +348,9 @@ WebSync = {
 		$($('#ribbon_buttons li').get(2)).click();
 	},
 	keypress: function(e){
-		/*
-		 * Pagination should go here probably.
-		console.log(e);
-		$(".page").each(function(page,list,index){
-			console.log(page,list);
-		});*/
-	},
+	    // TODO: Paginatino
+        // TODO: Instead of using keypresses mutation events should be used.
+    },
 	loadScripts: function(){
 		WebSync.connection.sendJSON({type: "load_scripts"});
 	},

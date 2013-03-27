@@ -8,7 +8,9 @@
     rice (at) outerearth (dot) net
     http://tristanrice.name/
 */
-WebSync = {
+
+var WebSyncProto = function(){};
+WebSyncProto.prototype = {
     tmp: {},
 	webSocketFirstTime: true,
 	webSocketStart: function(){
@@ -21,7 +23,7 @@ WebSync = {
 	webSocketCallbacks: {
 		onopen: function(e){
 			console.log(e);
-			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
+			WebSync.diffInterval = setInterval(WebSync.checkDiff,500);
 			$(".navbar-inner").removeClass("no-connection");
 			$("#connection_msg").remove();
 			if(WebSync.webSocketFirstTime){
@@ -95,8 +97,8 @@ WebSync = {
 		}
 
 	},
-	start: function(){
-		WebSync.webSocketStart();
+	initialize: function(){
+		this.webSocketStart();
 		$(".content .page").keydown(WebSync.keypress);
 		$("#name").keyup(function(){
 			var div = $("#name").get(0);
@@ -111,7 +113,7 @@ WebSync = {
 				document.execCommand('selectAll');
 			},100);*/
 		});
-		WebSync.text_buttons.forEach(function(elem){
+		this.text_buttons.forEach(function(elem){
 			$('button#'+elem).click(function(){
 				document.execCommand(elem);
 				//$(this).toggleClass("active");
@@ -168,12 +170,12 @@ WebSync = {
                 $("body").removeClass("zen").resize(); $("#zoom_level").val("100%").change(); $(".menu").animate({top: 0});
             }
         });
-		WebSync.fontsInit();
-		WebSync.updateRibbon();
+		this.fontsInit();
+		this.updateRibbon();
 		rangy.init();
 		console.log(rangy)
-        WebSync.resize();
-        $(window).resize(WebSync.resize);
+        this.resize();
+        $(window).resize(this.resize);
 		/*
 		 * Cursor Blink
 		 * For future other people.
@@ -185,8 +187,8 @@ WebSync = {
         $('[data-toggle="popover"]').popover().click(function(){
 			$(this.parentElement).toggleClass("active");
 		});
-        WebSync.worker = new Worker("/js/edit-worker.js");
-        WebSync.worker.onmessage = function(e) {
+        this.worker = new Worker("/js/edit-worker.js");
+        this.worker.onmessage = function(e) {
             var data = e.data;
             console.log(data);
             if(data.cmd=='diffed'){
@@ -233,10 +235,10 @@ WebSync = {
                 console.log(data.msg);
             }
          }
-		WebSync.applier = rangy.createCssClassApplier("tmp");
+		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         $(".page").attr("contenteditable","true");
-        WebSync.setupWebRTC();
+        this.setupWebRTC();
 	},
     viewMode: 'normal',
     menuVisible: true,
@@ -499,7 +501,10 @@ function capitaliseFirstLetter(string)
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-$(document).ready(WebSync.start);
+$(document).ready(function(){
+    window.WebSync=new WebSyncProto();
+    WebSync.initialize();
+});
 
 function selectText(containerid) {
     if (document.selection) {

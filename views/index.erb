@@ -31,7 +31,10 @@
 <script type="text/javascript">
 window.onload = function(){
     $("td").click(function(){
-        window.location.pathname="/"+this.parentElement.children[0].innerText+"/edit"
+        var id = this.parentElement.children[0].innerText;
+        c = this;
+        //location.pathname="/"+id+"/edit";
+        console.log("blah: ",id);
     });
 }
 </script>

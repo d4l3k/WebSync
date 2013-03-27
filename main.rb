@@ -1,6 +1,7 @@
 use Rack::Logger
 use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
 #use Rack::FiberPool
+use Rack::Deflater
 
 helpers do
 	def logger

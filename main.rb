@@ -72,10 +72,10 @@ DataMapper.auto_upgrade!
 $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/js/tables.js')
 
 get '/' do
-    $redis.cache("index",300) do
+    #$redis.cache("index",300) do
 	    @javascripts = []
 	    erb :index
-    end
+    #end
 end
 get '/error' do
 	error
@@ -101,6 +101,13 @@ get '/:doc/download' do
   	attachment(doc.name+'.docx')
   	response.write(doc.body)
 	#send_data doc.body, :filename=>doc.name+".docx"
+end
+get '/:doc/delete' do
+    login_required
+    doc_id = params[:doc].base62_decode
+    doc = Document.get doc_id
+    doc.destroy!
+    redirect '/'
 end
 get '/:doc/edit' do
     login_required

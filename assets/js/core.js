@@ -218,7 +218,7 @@ WebSyncProto.prototype = {
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         $(".page").attr("contenteditable","true");
-        this.setupWebRTC();
+        //this.setupWebRTC();
 	},
     // Variable: string viewMode;
     // This is the current visual mode. This can be either 'zen' or 'normal'

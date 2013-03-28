@@ -9,6 +9,8 @@ map '/assets' do
   environment = Sprockets::Environment.new
   environment.append_path 'assets/js'
   environment.append_path 'assets/css'
+  environment.js_compressor  = YUI::JavaScriptCompressor.new
+  environment.css_compressor = YUI::CssCompressor.new
   run environment
 end
 

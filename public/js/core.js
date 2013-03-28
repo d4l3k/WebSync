@@ -11,8 +11,14 @@
 
 var WebSyncProto = function(){};
 WebSyncProto.prototype = {
+    // Variable: hash tmp;
+    // Provides a location for temporary data to be stored.
     tmp: {},
+    // Variable: boolean webSocketFirstTime;
+    // Websocket first connection?
 	webSocketFirstTime: true,
+    // Function: void webSocketStart();
+    // Creates the websocket for communication.
 	webSocketStart: function(){
 		WebSync.connection = new WebSocket("ws://"+window.location.host+window.location.pathname);
 		WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
@@ -20,6 +26,8 @@ WebSyncProto.prototype = {
 		WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;
 		WebSync.connection.onerror = WebSync.webSocketCallbacks.onerror;
 	},
+    // Variable: hash webSocketCallbacks;
+    // An object with all of the callbacks for a websocket connection.
 	webSocketCallbacks: {
 		onopen: function(e){
 			console.log(e);

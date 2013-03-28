@@ -2,29 +2,6 @@ use Rack::Logger
 use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
 #use Rack::FiberPool
 use Rack::Deflater
-set :assets, Sprockets::Environment.new
-# Configure sprockets
-settings.assets.append_path "app/javascripts"
-settings.assets.append_path "app/stylesheets"
-
-# For compressed JS and CSS output
-require "yui/compressor"
-settings.assets.js_compressor  = YUI::JavaScriptCompressor.new
-settings.assets.css_compressor = YUI::CssCompressor.new
-
-get "/" do
-  haml :index
-end
-
-get "/javascripts/:file.js" do
-  content_type "application/javascript"
-  settings.assets["#{params[:file]}.js"]
-end
-
-get "/stylesheets/:file.css" do
-  content_type "text/css"
-  settings.assets["#{params[:file]}.css"]
-end
 
 helpers do
 	def logger
@@ -138,17 +115,7 @@ get '/:doc/edit' do
     doc = Document.get doc_id
 	if !request.websocket?
 		@javascripts = [
-            '/js/bootstrap.min.js',
-			'/js/bootstrap-contextmenu.js',
-			'/js/jquery.computedstyles.js',
-			'/js/rangy-core.js',
-			'/js/rangy-cssclassapplier.js',
-			'/js/fontdetect.js',
-            '/js/levenshtein.js',
-            '/js/jquery.transform2d.js',
-			'/js/webrtc-adapter.js',
-            '/js/core.js',
-            '/js/edit.js'
+            '/assets/bundle-edit.js'
 		]
 		@doc = doc
 		if !@doc.nil?

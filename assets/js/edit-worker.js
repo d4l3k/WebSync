@@ -1,4 +1,4 @@
-importScripts('/js/diff_match_patch.js');
+importScripts('/assets/diff_match_patch.js');
 
 dmp = new diff_match_patch();
 

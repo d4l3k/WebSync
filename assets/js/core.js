@@ -167,7 +167,7 @@ WebSyncProto.prototype = {
         $('[data-toggle="popover"]').popover().click(function(){
 			$(this.parentElement).toggleClass("active");
 		});
-        this.worker = new Worker("/js/edit-worker.js");
+        this.worker = new Worker("/assets/edit-worker.js");
         this.worker.onmessage = function(e) {
             var data = e.data;
             console.log(data);

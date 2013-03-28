@@ -1,0 +1,11 @@
+//= require bootstrap.min.js
+//= require bootstrap-contextmenu.js
+//= require jquery.computedstyles.js
+//= require rangy-core.js
+//= require rangy-cssclassapplier.js
+//= require fontdetect.js
+//= require levenshtein.js
+//= require jquery.transform2d.js
+//= require webrtc-adapter.js
+//= require core.js
+//= require edit.js

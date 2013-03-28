@@ -117,6 +117,7 @@ get '/:doc/edit' do
             '/js/levenshtein.js',
             '/js/jquery.transform2d.js',
 			'/js/webrtc-adapter.js',
+            '/js/core.js',
             '/js/edit.js'
 		]
 		@doc = doc

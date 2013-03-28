@@ -148,7 +148,7 @@ a#name {
 a#name:focus {
 	max-width: 6in;
 	//background-color: #777;
-
+    text-overflow: clip;
 	background-color: rgba(255,255,255,0.45) !important; 
 	outline: none;
 }

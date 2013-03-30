@@ -1,19 +1,17 @@
 #\ -p 4567
 require 'bundler'
 
-Bundler.require(:default,:development)
-use PryRescue::Rack
+Bundler.require(:default)
 require './main'
-
+=begin
 map '/assets' do
-  environment = Sprockets::Environment.new
-  environment.append_path 'assets/js'
-  environment.append_path 'assets/css'
-  environment.js_compressor  = YUI::JavaScriptCompressor.new
-  environment.css_compressor = YUI::CssCompressor.new
-  run environment
+    environment = Sprockets::Environment.new
+    environment.append_path 'public/js'
+    environment.append_path 'public/css'
+    run environment
 end
+=end
 
-map '/' do
-    run Sinatra::Application
-end
+#map '/' do
+    run WebSync
+#end

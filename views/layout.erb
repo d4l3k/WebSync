@@ -2,12 +2,12 @@
 <html>
 	<head>
 		<title>Web-Sync Editor</title>
-		<link rel="stylesheet" type="text/css" href="/assets/bundle.css">
+		<%= stylesheet_tag 'bundle' %>
+        <script type="text/javascript" src="/assets/jquery-1.9.1.min.js"></script>
 	</head>
 	<body>
 		<%= yield %>
 	</body>
-    <script type="text/javascript" src="/assets/jquery-1.9.1.min.js"></script>
     <% if !defined?(@javascripts).nil? %>
         <% @javascripts.each do |script| %>
             <script type="text/javascript" src="<%= script %>"></script>

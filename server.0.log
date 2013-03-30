@@ -1,0 +1,96 @@
+>> Writing PID to tmp/pids/thin.0.pid
+>> Thin web server (v1.5.0 codename Knife)
+>> Maximum connections set to 1024
+>> Listening on /run/thin.websync.0.sock, CTRL+C to stop
+>> Exiting!
+/home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_unix_server': no unix-domain acceptor (RuntimeError)
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:548:in `start_unix_domain_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/unix_server.rb:19:in `connect'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:55:in `block in start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `call'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run_machine'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:63:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/server.rb:159:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/controllers/controller.rb:86:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:187:in `run_command'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:152:in `run!'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/bin/thin:6:in `<top (required)>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `load'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `<main>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `eval'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `<main>'
+>> Writing PID to tmp/pids/thin.0.pid
+>> Thin web server (v1.5.0 codename Knife)
+>> Maximum connections set to 1024
+>> Listening on /run/thin.websync.0.sock, CTRL+C to stop
+>> Exiting!
+/home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_unix_server': no unix-domain acceptor (RuntimeError)
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:548:in `start_unix_domain_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/unix_server.rb:19:in `connect'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:55:in `block in start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `call'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run_machine'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:63:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/server.rb:159:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/controllers/controller.rb:86:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:187:in `run_command'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:152:in `run!'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/bin/thin:6:in `<top (required)>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `load'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `<main>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `eval'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `<main>'
+>> Writing PID to tmp/pids/thin.0.pid
+>> Thin web server (v1.5.0 codename Knife)
+>> Maximum connections set to 1024
+>> Listening on /var/run/user/1000/thin/websync.0.sock, CTRL+C to stop
+>> Exiting!
+/home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_unix_server': no unix-domain acceptor (RuntimeError)
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:548:in `start_unix_domain_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/unix_server.rb:19:in `connect'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:55:in `block in start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `call'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run_machine'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:63:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/server.rb:159:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/controllers/controller.rb:86:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:187:in `run_command'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:152:in `run!'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/bin/thin:6:in `<top (required)>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `load'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `<main>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `eval'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `<main>'
+>> Writing PID to tmp/pids/thin.0.pid
+>> Thin web server (v1.5.0 codename Knife)
+>> Maximum connections set to 1024
+>> Listening on /var/run/user/1000/thin/websync.0.sock, CTRL+C to stop
+>> Exiting!
+/home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_unix_server': no unix-domain acceptor (RuntimeError)
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:528:in `start_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:548:in `start_unix_domain_server'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/unix_server.rb:19:in `connect'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:55:in `block in start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `call'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run_machine'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/eventmachine-1.0.0/lib/eventmachine.rb:187:in `run'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/backends/base.rb:63:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/server.rb:159:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/controllers/controller.rb:86:in `start'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:187:in `run_command'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/lib/thin/runner.rb:152:in `run!'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/gems/thin-1.5.0/bin/thin:6:in `<top (required)>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `load'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/thin:19:in `<main>'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `eval'
+	from /home/rice/.rvm/gems/ruby-1.9.3-p362/bin/ruby_noexec_wrapper:14:in `<main>'
+>> Writing PID to tmp/pids/thin.0.pid
+>> Thin web server (v1.5.0 codename Knife)
+>> Maximum connections set to 1024
+>> Listening on /var/run/user/1000/thin.websync.0.sock, CTRL+C to stop

@@ -174,7 +174,7 @@ get '/:doc/edit' do
 						end
 						msg[arr].push asset.url
 					end
-					ws.send_data JSON.dump msg
+					ws.send JSON.dump msg
 				elsif data['type']=='connection'
 				end
 			end

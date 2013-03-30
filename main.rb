@@ -14,9 +14,6 @@ configure do
 	set :template_engine, :erb
 end
 $dmp = DiffMatchPatch.new
-class DataMapper::Adapters::RedisAdapter
-	attr_accessor :redis
-end
 DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))}/main.db")
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});

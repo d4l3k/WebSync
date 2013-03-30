@@ -98,7 +98,7 @@ module SinatraWebsocket
 
         # Set 'async.connection' Rack env
         def pre_process_with_websocket
-          @request.env['async.connection'] = self
+          @env['async.connection'] = self
           #pre_process_without_websocket
         end
 
@@ -111,7 +111,7 @@ module SinatraWebsocket
         # WebSocket connection
         def receive_data_with_websocket(data)
           if self.websocket?
-            #self.pre_process_with_websocket
+            self.pre_process_with_websocket
             self.websocket.receive_data(data)
           else
             receive_data_without_websocket(data)

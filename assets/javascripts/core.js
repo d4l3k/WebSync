@@ -154,8 +154,6 @@ WebSyncProto.prototype = {
 		this.updateRibbon();
 		rangy.init();
 		console.log(rangy)
-        this.resize();
-        $(window).resize(this.resize);
 		/*
 		 * Cursor Blink
 		 * For future other people.
@@ -164,8 +162,10 @@ WebSyncProto.prototype = {
 		},1000);
 		*/
         $('[data-toggle="tooltip"]').tooltip();
-        $('[data-toggle="popover"]').popover().click(function(){
+        $('#settingsBtn').click(function(){
 			$(this.parentElement).toggleClass("active");
+            $(".settings-popup").toggle();
+            WebSync.resize();
 		});
         this.worker = new Worker("/assets/edit-worker.js");
         this.worker.onmessage = function(e) {
@@ -218,6 +218,8 @@ WebSyncProto.prototype = {
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         $(".page").attr("contenteditable","true");
+        this.resize();
+        $(window).resize(this.resize);
         //this.setupWebRTC();
 	},
     // Variable: string viewMode;
@@ -340,6 +342,8 @@ WebSyncProto.prototype = {
     // When called, content resizes to window.
     resize: function(){
         $(".content_well").height(window.innerHeight-$(".content_well").position().top)
+        $(".settings-popup").css({left:(window.innerWidth-944)*0.5})
+        $(".arrow").offset({left:$("#settingsBtn").offset().left+16})
     },
     // Function: void checkDiff();
     // Internal method used for scheduling content diffs.

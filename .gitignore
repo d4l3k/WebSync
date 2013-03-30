@@ -3,3 +3,5 @@
 *.db
 *.lock
 *~
+*.log
+tmp

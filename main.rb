@@ -13,6 +13,39 @@ class Redis
 end
 # Ease of use connection to the redis server.
 $redis = Redis.new
+DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))}/main.db")
+# Redis has issues with datamapper associations especially Many-to-many.
+#$adapter = DataMapper.setup(:default, {:adapter => "redis"});
+#$redis = $adapter.redis
+
+class Document
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    property :body, Text
+    property :created, DateTime
+    property :last_edit_time, DateTime
+    property :public, Boolean, :default=>false
+    has n, :assets, :through => Resource
+    #belongs_to :dm_user
+end
+# Assets could be javascript or css
+class Asset
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    property :description, String
+    property :url, String
+    property :type, Discriminator
+    has n, :documents, :through => Resource
+end
+class Javascript < Asset; end
+class Stylesheet < Asset; end
+class DmUser
+    #has n, :documents
+end
+DataMapper.finalize
+DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
     use Rack::Logger
     use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
@@ -60,39 +93,6 @@ class WebSync < Sinatra::Base
         sprockets.css_compressor = YUI::CssCompressor.new
     end
     $dmp = DiffMatchPatch.new
-    DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))}/main.db")
-    # Redis has issues with datamapper associations especially Many-to-many.
-    #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
-    #$redis = $adapter.redis
-
-    class Document
-        include DataMapper::Resource
-        property :id, Serial
-        property :name, String
-        property :body, Text
-        property :created, DateTime
-        property :last_edit_time, DateTime
-        property :public, Boolean, :default=>false
-        has n, :assets, :through => Resource
-        #belongs_to :dm_user
-    end
-    # Assets could be javascript or css
-    class Asset
-        include DataMapper::Resource
-        property :id, Serial
-        property :name, String
-        property :description, String
-        property :url, String
-        property :type, Discriminator
-        has n, :documents, :through => Resource
-    end
-    class Javascript < Asset; end
-    class Stylesheet < Asset; end
-    class DmUser
-        #has n, :documents
-    end
-    DataMapper.finalize
-    DataMapper.auto_upgrade!
 
     $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
 

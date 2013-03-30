@@ -17,7 +17,7 @@ gem 'diff_match_patch_native'
 gem 'sinatra-authentication'
 gem 'haml'
 gem 'base62'
-gem 'rainbows'
+gem 'thin'
 group :development do
 	gem 'racksh'
 	gem 'pry-rescue'

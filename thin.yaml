@@ -1,0 +1,10 @@
+environment: production
+address: 0.0.0.0
+rackup: config.ru
+log: server.log
+max_conns: 1024
+timeout: 30
+max_persistent_conns: 512
+daemonize: true
+servers: 4
+socket: /run/thin.websync.sock

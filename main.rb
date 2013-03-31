@@ -1,3 +1,4 @@
+# It was the night before Christmas and all through the house, not a creature was coding: UTF-8, not even with a mouse.
 # Monkey patched Redis for easy caching.
 class Redis
   def cache(key, expire=nil)
@@ -80,7 +81,7 @@ class WebSync < Sinatra::Base
         def register email, pass
             email.downcase!
             if User.get(email).nil?
-                user = User.create({:email=>email,:pass=>pass})
+                user = User.create({:email=>email,:password=>pass})
                 authenticate email, pass
                 return user
             end
@@ -241,7 +242,7 @@ class WebSync < Sinatra::Base
         else
             #TODO: Authentication for websockets
             redis_sock = EM::Hiredis.connect
-            redis_sock.subscribe("doc.#{doc_id.base62_encode}")
+            redis_sock.subscribe("doc:#{doc_id.base62_encode}")
             authenticated = false
             user = nil
             client_id = nil
@@ -272,7 +273,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
+                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
                         # Google Diff-Match-Patch algorithm
                         elsif data['type']=='text_patch'
                             doc = Document.get doc_id
@@ -285,7 +286,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
+                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
                         # Sets the name
                         elsif data['type']=="name_update"
                             doc.name = data["name"]
@@ -293,10 +294,10 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
+                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
                         # Loads scripts
                         elsif data['type']=="load_scripts"
-                            msg = {type:'scripts', js:[]}
+                            msg = {type:'scripts', js:[],css:[]}
                             doc.assets.each do |asset|
                                 arr = :js;
                                 if asset.type=="javascript"
@@ -320,7 +321,7 @@ class WebSync < Sinatra::Base
                     data = JSON.parse(message)
                     if data['client']!=client_id
                         if data['type']=="client_bounce"
-                            ws.send JSON.dump(data['data'])
+                            ws.send data['data']
                         end
                     end
                 end

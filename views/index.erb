@@ -18,6 +18,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Owner</th>
                 <th>Last Edited</th>
                 <th>Created</th>
         </thead>
@@ -26,6 +27,7 @@
                 <tr>
                     <td><%= doc.id.base62_encode %></td>
                     <td><%= doc.name %></td>
+                    <td><%= doc.user.email %></td>
                     <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
                     <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
                 </tr>

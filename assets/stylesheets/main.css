@@ -67,6 +67,9 @@ cursor {
 .settings-popup .arrow {
     /*left: 914px !important;*/
 }
+.settings-popup .close {
+    color: black !important;
+}
 .navbar-inner a {
 	color: white !important;
 }

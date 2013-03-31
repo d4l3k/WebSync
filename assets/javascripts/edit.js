@@ -81,7 +81,7 @@ WebSync.register("TextEdit",function(){ var self = this;
 		clearTimeout(self._selectTimeout);
 		self._selectTimeout = null;
 	}
-    // Function: void fontsInit();
+    // Function: void [plugin=TextEdit].fontsInit();
     // Sets up the list of fonts
 	this.fontsInit = function(){
 		var fonts = ["Cursive","Monospace","Serif","Sans-serif","Fantasy","Arial","Arial Black","Arial Narrow","Arial Rounded MT Bold","Bookman Old Style","Bradley Hand ITC","Century","Century Gothic","Comic Sans MS","Droid Sans","Courier","Courier New","Georgia","Gentium","Impact","King","Lucida Console","Lalit","Modena","Monotype Corsiva","Papyrus","TeX","Times","Times New Roman","Trebuchet MS","Tahoma","Verdana","Verona",'Helvetica','Segoe'];

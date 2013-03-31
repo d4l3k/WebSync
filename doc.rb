@@ -67,7 +67,7 @@ __END__
                 <div class='func'>
                 <b><%=func_data[3]%></b>
                 <br>
-                <i>Line: <%=func_data[1]%></i>
+                <i>Type: <%=func_data[2]%>, Line: <%=func_data[1]%></i>
                 <br>
                 <span><%=func_data[4]%></span>
                 </div>

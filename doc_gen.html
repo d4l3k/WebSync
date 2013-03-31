@@ -32,161 +32,161 @@
                 <div class='func'>
                 <b>object WebSync.tmp;</b>
                 <br>
-                <i>Line: 14</i>
+                <i>Type: Variable, Line: 14</i>
                 <br>
                 <span>Provides a location for temporary data to be stored.</span>
                 </div>
                 <div class='func'>
                 <b>boolean WebSync.webSocketFirstTime;</b>
                 <br>
-                <i>Line: 17</i>
+                <i>Type: Variable, Line: 17</i>
                 <br>
                 <span>Websocket first connection?</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.webSocketStart();</b>
                 <br>
-                <i>Line: 20</i>
+                <i>Type: Function, Line: 20</i>
                 <br>
                 <span>Creates the websocket for communication.</span>
                 </div>
                 <div class='func'>
                 <b>object WebSync.webSocketCallbacks;</b>
                 <br>
-                <i>Line: 29</i>
+                <i>Type: Variable, Line: 29</i>
                 <br>
                 <span>An object with all of the callbacks for a websocket connection.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.initialize();</b>
                 <br>
-                <i>Line: 106</i>
+                <i>Type: Function, Line: 106</i>
                 <br>
                 <span>This is where the core of Web-Sync initializes.</span>
                 </div>
                 <div class='func'>
                 <b>string WebSync.viewMode;</b>
                 <br>
-                <i>Line: 229</i>
+                <i>Type: Variable, Line: 229</i>
                 <br>
                 <span>This is the current visual mode. This can be either 'zen' or 'normal'</span>
                 </div>
                 <div class='func'>
                 <b>boolean WebSync.menuVisible;</b>
                 <br>
-                <i>Line: 232</i>
+                <i>Type: Variable, Line: 232</i>
                 <br>
                 <span>This tells you if the menu ribbon is visible or not. In zen mode it can disappear.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.updateRibbon();</b>
                 <br>
-                <i>Line: 311</i>
+                <i>Type: Function, Line: 311</i>
                 <br>
                 <span>This updates the ribbon buttons based on the content in the ribbon bar. <span class="todo">TODO:</span> Use registration system & persist menu between updates.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.loadScripts();</b>
                 <br>
-                <i>Line: 327</i>
+                <i>Type: Function, Line: 327</i>
                 <br>
                 <span>Checks server for plugin scripts to load.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.showHTML();</b>
                 <br>
-                <i>Line: 332</i>
+                <i>Type: Function, Line: 332</i>
                 <br>
                 <span>Converts visible text to HTML. <span class="todo">TODO:</span> Delete/figure something out.</span>
                 </div>
                 <div class='func'>
                 <b>string WebSync.getHTML();</b>
                 <br>
-                <i>Line: 337</i>
+                <i>Type: Function, Line: 337</i>
                 <br>
                 <span>This will return sanitized document HTML. <span class="todo">TODO:</span> This should be migrated into the page handler.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.resize();</b>
                 <br>
-                <i>Line: 345</i>
+                <i>Type: Function, Line: 345</i>
                 <br>
                 <span>Event handler for when the window resizes. This is an <span class="internal">internal</span> method.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.checkDiff();</b>
                 <br>
-                <i>Line: 352</i>
+                <i>Type: Function, Line: 352</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.insertAtCursor(jQuery node);</b>
                 <br>
-                <i>Line: 371</i>
+                <i>Type: Function, Line: 371</i>
                 <br>
                 <span>Inserts a DOM element at selection cursor. This is probably going to be deprecated.</span>
                 </div>
                 <div class='func'>
                 <b>object WebSync.getCss();</b>
                 <br>
-                <i>Line: 387</i>
+                <i>Type: Function, Line: 387</i>
                 <br>
                 <span>Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.applyCssToSelection(object css);</b>
                 <br>
-                <i>Line: 395</i>
+                <i>Type: Function, Line: 395</i>
                 <br>
                 <span>Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.register(string PluginName, function Plugin);</b>
                 <br>
-                <i>Line: 401</i>
+                <i>Type: Function, Line: 401</i>
                 <br>
                 <span>Registers a plugin with the WebSync core. Plugin.enable() will be called afterwards. Plugin.disable() will be used to disable the plugin.</span>
                 </div>
                 <div class='func'>
                 <b>object WebSync.plugins;</b>
                 <br>
-                <i>Line: 409</i>
+                <i>Type: Variable, Line: 409</i>
                 <br>
                 <span>List of all the plugins loaded in the format of {myawesomeplugin: object Plugin, ...}.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.alert(string Message);</b>
                 <br>
-                <i>Line: 412</i>
+                <i>Type: Function, Line: 412</i>
                 <br>
                 <span>Displays an alert message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.error(string Message);</b>
                 <br>
-                <i>Line: 417</i>
+                <i>Type: Function, Line: 417</i>
                 <br>
                 <span>Displays an error message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.success(string Message);</b>
                 <br>
-                <i>Line: 422</i>
+                <i>Type: Function, Line: 422</i>
                 <br>
                 <span>Displays a success message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.info(string Message);</b>
                 <br>
-                <i>Line: 427</i>
+                <i>Type: Function, Line: 427</i>
                 <br>
                 <span>Displays an info message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.alert_msg(string Message, string Classes);</b>
                 <br>
-                <i>Line: 432</i>
+                <i>Type: Function, Line: 432</i>
                 <br>
                 <span>Displays an message in the lower right hand corner of the window with css classes.</span>
                 </div>
@@ -649,7 +649,7 @@ WebSync.initialize();</pre>
                 <div class='func'>
                 <b>void [plugin=TextEdit].fontsInit();</b>
                 <br>
-                <i>Line: 84</i>
+                <i>Type: Function, Line: 84</i>
                 <br>
                 <span>Sets up the list of fonts</span>
                 </div>

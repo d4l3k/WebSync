@@ -111,8 +111,8 @@ class WebSync < Sinatra::Base
             erb :index
         #end
     end
-    get '/error' do
-        error
+    get '/documentation' do
+        File.read('doc_gen.html')
     end
     get '/new' do
         login_required

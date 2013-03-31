@@ -122,6 +122,7 @@ WebSyncProto.prototype = {
                 },100);
             }
 		});
+        $(".settings-popup").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$(".content").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });

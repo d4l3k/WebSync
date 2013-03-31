@@ -70,6 +70,15 @@ cursor {
 .settings-popup .close {
     color: black !important;
 }
+.settings-popup td {
+    vertical-align: middle;
+}
+.settings-popup .input-append, .settings-popup select {
+    margin-bottom: 0px !important;
+}
+.settings-popup .input-append .active {
+    border-color: #f89406 #f89406 #ad6704 !important;
+}
 .navbar-inner a {
 	color: white !important;
 }

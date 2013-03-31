@@ -11,7 +11,7 @@ WebSync.register("Tables",function(){ var self = this;
 			var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
 			WebSync.insertAtCursor(new_table)
 		});
-		$(document).delegate("table","click.Tables",function(e){
+		$(".content_well").delegate("table","click.Tables",function(e){
 			if(self.selectedElem.contentEditable!="true"){
 				$('a:contains("Table")').click();
 			}
@@ -21,14 +21,14 @@ WebSync.register("Tables",function(){ var self = this;
 			console.log(e);
 			self.clearSelect();
 		});
-		$(document).delegate("td","click.Tables",function(e){
+		$(".content_well").delegate("td","click.Tables",function(e){
 			console.log(e);
 			console.log(this);
 			if(this!=self.selectedElem){
 				self.cursorSelect(this);
 			}
 		});
-		$(document).delegate("td","contextmenu.Tables",function(e){
+		$(".content_well").delegate("td","contextmenu.Tables",function(e){
 			if(this!=self.selectedElem){
 				self.cursorSelect(this);
 			}
@@ -37,10 +37,10 @@ WebSync.register("Tables",function(){ var self = this;
 				$(this).contextmenu();
 			}
 		});
-		$(document).delegate("td","dblclick.Tables",function(e){
+		$(".content_well").delegate("td","dblclick.Tables",function(e){
 			self.selectedEditable(true);
 		});
-		$(document).bind("keydown.Tables",function(e){
+		$(".content_well").bind("keydown.Tables",function(e){
 			if(self.selectedElem){
 				if(self.selected==true&&!e.shiftKey){
 					var editting = false;

@@ -14,8 +14,27 @@
                     </li>
 				</ul>
                 <div class="popover fade bottom in settings-popup"><div class="arrow"></div><h3 class="popover-title">Settings<a class="close pull-right"><i class="icon-remove"></i></a></h3><div class="popover-content">
-                    <table>
-
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Property</th>
+                                <th>Global Setting</th>
+                                <th>Document Setting</th>
+                            </tr>
+                            <tr>
+                                <td>Use spaces instead of tabs</td>
+                                <td><select>
+                                    <option>True</option>
+                                    <option>False</option>
+                                </select></td>
+                                <td><div class='input-append'><select>
+                                    <option>Use Global</option>
+                                    <option>True</option>
+                                    <option>False</option>
+                                </select>
+                                <button class="btn btn-warning">Override</button></div></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div></div>
 

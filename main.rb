@@ -12,7 +12,7 @@ class Redis
   end
 end
 # Ease of use connection to the redis server.
-$redis = Redis.new
+$redis = Redis.new :driver=>:hiredis
 DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))}/main.db")
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
@@ -27,7 +27,7 @@ class Document
     property :last_edit_time, DateTime
     property :public, Boolean, :default=>false
     has n, :assets, :through => Resource
-    #belongs_to :dm_user
+    belongs_to :user
 end
 # Assets could be javascript or css
 class Asset
@@ -41,27 +41,77 @@ class Asset
 end
 class Javascript < Asset; end
 class Stylesheet < Asset; end
-class DmUser
-    #has n, :documents
+class User
+    include DataMapper::Resource
+    property :email, String, :key=>true
+    property :password, BCryptHash
+    has n, :documents
 end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
     use Rack::Logger
-    use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
+    #enable :sessions
+    #use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
     #use Rack::FiberPool
     register Sinatra::Sprockets::Helpers
     set :sprockets, Sprockets::Environment.new(root)
     set :assets_prefix, '/assets'
     set :digest_assets, false
-
     helpers do
         def logger
             request.logger
         end
+        def current_user
+            if logged_in?
+                return User.get(session['user'])
+            end
+            nil
+        end
+        def logged_in?
+            puts session.inspect
+            (!session['userhash'].nil?)&&$redis.get('userhash:'+session['userhash'])==session['user']
+        end
+        def login_required
+            if !logged_in?
+                redirect '/login'
+            end
+        end
+        def register email, pass
+            email.downcase!
+            if User.get(email).nil?
+                user = User.create({:email=>email,:pass=>pass})
+                authenticate email, pass
+                return user
+            end
+            nil
+        end
+        def authenticate email, pass, expire=nil
+            email.downcase!
+            user = User.get(email)
+            if user.password==pass
+                session_key = SecureRandom.uuid
+                $redis.set("userhash:#{session_key}",email)
+                session['userhash']=session_key
+                session['user']=email
+                puts session.inspect
+                if !expire.nil?
+                    $redis.expire("userhash:#{session_key}",expire)
+                end
+                return true
+            end
+            false
+        end
+        def logout
+            $redis.del "userhash:#{session['userhash']}"
+            session['userhash']=nil
+            session['user']=nil
+        end
     end
 
     configure do
+        enable :sessions
+        set :session_secret, "Web-Sync sdkjfskadfh1h3248c99sj2j4j2343"
         set :server, 'thin'
         set :sockets, []
         set :template_engine, :erb
@@ -81,8 +131,8 @@ class WebSync < Sinatra::Base
         helpers do
             alias :javascript_tag_old :javascript_tag
             def javascript_tag tag
-                data = javascript_tag_old(tag, :expand=>true).split('><')
-                data[0..data.length-2].join('><')
+                # This just sends it to a nonexistant file so it won't load.
+                javascript_tag_old(tag, :expand=>true).gsub('bundle','DEBUG404')
             end
         end
     end
@@ -95,7 +145,33 @@ class WebSync < Sinatra::Base
     $dmp = DiffMatchPatch.new
 
     $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
-
+    get '/login' do
+        if !logged_in?
+            erb :login
+        else
+            redirect '/'
+        end
+    end
+    post '/login' do
+        if authenticate params[:email],params[:password]
+            redirect '/'
+        else
+            redirect '/login'
+        end
+    end
+    post '/register' do
+        if register params[:email],params[:password]
+            redirect '/'
+        else
+            redirect '/login'
+        end
+    end
+    get '/logout' do
+        if logged_in?
+            logout
+        end
+        redirect '/login'
+    end
     get '/assets/*.css' do
         content_type 'text/css'
         assets_environment[params[:splat][0]+'.css'].to_s
@@ -120,8 +196,8 @@ class WebSync < Sinatra::Base
             :name => 'Unnamed Document',
             :body => '',
             :created => Time.now,
-            :last_edit_time => Time.now
-            #,:dm_user => current_user.db_instance
+            :last_edit_time => Time.now,
+            :user => current_user
         )
         doc.assets << Asset.get(1)
         doc.save
@@ -144,25 +220,31 @@ class WebSync < Sinatra::Base
         redirect '/'
     end
     get '/:doc/edit' do
-        login_required
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
         if !request.websocket?
+            login_required
             @javascripts = [
                 #'/assets/bundle-edit.js'
             ]
             @doc = doc
             if !@doc.nil?
+                @client_id = $redis.incr("clientid")
+                @client_key = SecureRandom.uuid
+                $redis.set "websocket:id:#{@client_id}",current_user.email
+                $redis.set "websocket:key:#{@client_id}", @client_key
                 erb :edit
             else
                 redirect '/'
             end
         # Websocket edit
         else
+            #TODO: Authentication for websockets
             redis_sock = EM::Hiredis.connect
-            client_id = $redis.incr("clientid")
             redis_sock.subscribe("doc.#{doc_id.base62_encode}")
-            puts "Websocket Client ID: #{client_id}"
+            authenticated = false
+            user = nil
+            client_id = nil
             request.websocket do |ws|
                 websock = ws
                 ws.onopen do
@@ -171,49 +253,62 @@ class WebSync < Sinatra::Base
                 ws.onmessage do |msg|
                     data = JSON.parse(msg);
                     puts "JSON: #{data.to_s}"
-                    # This replaces all the text w/ the provided content.
-                    if data["type"]=="text_update"
-                        doc.body = data["text"]
-                        doc.last_edit_time = Time.now
-                        if !doc.save
-                            puts("Save errors: #{doc.errors.inspect}")
+                    if data['type']=='auth'
+                        if $redis.get("websocket:key:#{data['id']}") == data['key']
+                            authenticated = true
+                            client_id = data['id']
+                            email = $redis.get "websocket:id:#{data['id']}"
+                            user = User.get(email)
+                            puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
+                        else
+                            ws.close_connection
                         end
-                        $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
-                    # Google Diff-Match-Patch algorithm
-                    elsif data['type']=='text_patch'
-                        doc = Document.get doc_id
-                        #I'm pretty sure this works just fine. The main issue seems to be diffing w/ structure content. We'll see with time.
-                        #html_optimized_patches = diff_htmlToChars_ doc.body, URI::decode(data['patch'])
-                        #puts html_optimized_patches.inspect
-                        patches = $dmp.patch_from_text data['patch']
-                        doc.body = $dmp.patch_apply(patches,doc.body)[0]
-                        doc.last_edit_time = Time.now
-                        if !doc.save
-                            puts("Save errors: #{doc.errors.inspect}")
-                        end
-                        $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
-                    # Sets the name
-                    elsif data['type']=="name_update"
-                        doc.name = data["name"]
-                        doc.last_edit_time = Time.now
-                        if !doc.save
-                            puts("Save errors: #{doc.errors.inspect}")
-                        end
-                        $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
-                    # Loads scripts
-                    elsif data['type']=="load_scripts"
-                        msg = {type:'scripts', js:[]}
-                        doc.assets.each do |asset|
-                            arr = :js;
-                            if asset.type=="javascript"
-                                arr = :js
-                            elsif asset.type=="stylesheet"
-                                arr = :css
+                    end
+                    if authenticated
+                        # This replaces all the text w/ the provided content.
+                        if data["type"]=="text_update"
+                            doc.body = data["text"]
+                            doc.last_edit_time = Time.now
+                            if !doc.save
+                                puts("Save errors: #{doc.errors.inspect}")
                             end
-                            msg[arr].push asset.url
+                            $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
+                        # Google Diff-Match-Patch algorithm
+                        elsif data['type']=='text_patch'
+                            doc = Document.get doc_id
+                            #I'm pretty sure this works just fine. The main issue seems to be diffing w/ structure content. We'll see with time.
+                            #html_optimized_patches = diff_htmlToChars_ doc.body, URI::decode(data['patch'])
+                            #puts html_optimized_patches.inspect
+                            patches = $dmp.patch_from_text data['patch']
+                            doc.body = $dmp.patch_apply(patches,doc.body)[0]
+                            doc.last_edit_time = Time.now
+                            if !doc.save
+                                puts("Save errors: #{doc.errors.inspect}")
+                            end
+                            $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
+                        # Sets the name
+                        elsif data['type']=="name_update"
+                            doc.name = data["name"]
+                            doc.last_edit_time = Time.now
+                            if !doc.save
+                                puts("Save errors: #{doc.errors.inspect}")
+                            end
+                            $redis.publish "doc.#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:data})
+                        # Loads scripts
+                        elsif data['type']=="load_scripts"
+                            msg = {type:'scripts', js:[]}
+                            doc.assets.each do |asset|
+                                arr = :js;
+                                if asset.type=="javascript"
+                                    arr = :js
+                                elsif asset.type=="stylesheet"
+                                    arr = :css
+                                end
+                                msg[arr].push asset.url
+                            end
+                            ws.send JSON.dump msg
+                        elsif data['type']=='connection'
                         end
-                        ws.send JSON.dump msg
-                    elsif data['type']=='connection'
                     end
                 end
                 ws.onclose do

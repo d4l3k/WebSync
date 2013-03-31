@@ -8,6 +8,20 @@ body,html {
     overflow: hidden;
 	//background-color: #eee !important;
 }
+.hero-special {
+    display: inline-block;
+    text-align: left;
+}
+.hero-middle {
+    display: inline-block;
+    vertical-align: middle;
+    height: 250px;
+    margin: 20px;
+}
+.login-area {
+    text-align: center;
+    margin-top: 30px;
+}
 .menu {
     width: 100%;
 }

@@ -36,10 +36,10 @@ WebSyncProto.prototype = {
 			$("#connection_msg").remove();
 			if(WebSync.webSocketFirstTime){
 				WebSync.webSocketFirstTime = false;
-				WebSync.connection.sendJSON({type:'connect'});
+				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.loadScripts();
 			} else {
-				WebSync.connection.sendJSON({type:'reconnect'});
+				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.success("<strong>Success!</strong> Connection restablished.");
 			}
 		},

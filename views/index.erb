@@ -28,7 +28,15 @@
         </thead>
         <tbody>
             <% Document.all.each do |doc| %>
-                <tr class="<%= (doc.public||doc.user==current_user) ? 'success' : 'error' %>">
+                <%
+                    color = 'error'
+                    if doc.user==current_user
+                        color = 'success'
+                    elsif doc.public
+                        color = 'info'
+                    end
+                %>
+                <tr class="<%= color %>">
                     <td><%= doc.id.base62_encode %></td>
                     <td><%= doc.name %></td>
                     <td><%= doc.user.email %></td>

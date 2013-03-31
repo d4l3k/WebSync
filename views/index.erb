@@ -51,7 +51,7 @@
 <script type="text/javascript">
 window.onload = function(){
     $("td").click(function(){
-        var id = this.parentElement.children[0].innerText;
+        var id = $(this).parent().children().first().text();
         c = this;
         location.pathname="/"+id+"/edit";
         console.log("blah: ",id);

@@ -227,6 +227,9 @@ class WebSync < Sinatra::Base
     get '/:doc/edit' do
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
+        if doc.nil?
+            redirect 'notfound'
+        end
         if !request.websocket?
             login_required
             if (!doc.public)&&doc.user!=current_user
@@ -268,10 +271,14 @@ class WebSync < Sinatra::Base
                             # Extend key expiry time
                             $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
                             $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
-                            authenticated = true
-                            client_id = data['id']
                             email = $redis.get "websocket:id:#{data['id']}"
                             user = User.get(email)
+                            if (!doc.public)&&doc.user!=user
+                                ws.close_connection
+                                return
+                            end
+                            authenticated = true
+                            client_id = data['id']
                             puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
                         else
                             ws.close_connection
@@ -321,6 +328,17 @@ class WebSync < Sinatra::Base
                             end
                             ws.send JSON.dump msg
                         elsif data['type']=='connection'
+                        elsif data['type']=='config'
+                            if data['action']=='set'
+                                if data['property']=='public'
+                                    doc.public = doc['value']
+                                    doc.save
+                                end
+                            elsif data['action']=='get'
+                                if data['property']=='public'
+                                    ws.send JSON.dump {type: 'config',action: 'get', property:'public', value: doc.public}
+                                end
+                            end
                         end
                     end
                 end

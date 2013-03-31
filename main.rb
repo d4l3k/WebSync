@@ -176,6 +176,9 @@ class WebSync < Sinatra::Base
         end
         redirect '/login'
     end
+    not_found do
+        erb :not_found
+    end
     get '/assets/*.css' do
         content_type 'text/css'
         assets_environment[params[:splat][0]+'.css'].to_s

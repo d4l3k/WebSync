@@ -70,7 +70,6 @@ class WebSync < Sinatra::Base
             nil
         end
         def logged_in?
-            puts session.inspect
             (!session['userhash'].nil?)&&$redis.get('userhash:'+session['userhash'])==session['user']
         end
         def login_required
@@ -98,7 +97,6 @@ class WebSync < Sinatra::Base
                 $redis.set("userhash:#{session_key}",email)
                 session['userhash']=session_key
                 session['user']=email
-                puts session.inspect
                 if !expire.nil?
                     $redis.expire("userhash:#{session_key}",expire)
                 end

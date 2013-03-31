@@ -1,7 +1,7 @@
 <div class="container">
     <style>
         html {
-            overflow-y: scroll;
+            overflow-y: auto;
         }
     </style>
     <div class="hero-unit">
@@ -26,8 +26,8 @@
                 <tr>
                     <td><%= doc.id.base62_encode %></td>
                     <td><%= doc.name %></td>
-                    <td><%= doc.last_edit_time %></td>
-                    <td><%= doc.created %></td>
+                    <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
+                    <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
                 </tr>
             <% end %>
         </tbody>

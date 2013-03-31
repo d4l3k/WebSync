@@ -24,15 +24,17 @@
                 <th>Owner</th>
                 <th>Last Modified</th>
                 <th>Created</th>
+                <th>Public</th>
         </thead>
         <tbody>
             <% Document.all.each do |doc| %>
-                <tr>
+                <tr class="<%= (doc.public||doc.user==current_user) ? 'success' : 'error' %>">
                     <td><%= doc.id.base62_encode %></td>
                     <td><%= doc.name %></td>
                     <td><%= doc.user.email %></td>
                     <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
                     <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
+                    <td><%= doc.public ? 'Yes' : 'No' %></td>
                 </tr>
             <% end %>
         </tbody>

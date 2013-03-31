@@ -90,6 +90,9 @@ class WebSync < Sinatra::Base
         def authenticate email, pass, expire=nil
             email.downcase!
             user = User.get(email)
+            if user.nil?
+                return false
+            end
             if user.password==pass
                 session_key = SecureRandom.uuid
                 $redis.set("userhash:#{session_key}",email)
@@ -225,6 +228,9 @@ class WebSync < Sinatra::Base
         doc = Document.get doc_id
         if !request.websocket?
             login_required
+            if (!doc.public)&&doc.user!=current_user
+                redirect '/'
+            end
             @javascripts = [
                 #'/assets/bundle-edit.js'
             ]

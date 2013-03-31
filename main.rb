@@ -241,6 +241,8 @@ class WebSync < Sinatra::Base
                 @client_key = SecureRandom.uuid
                 $redis.set "websocket:id:#{@client_id}",current_user.email
                 $redis.set "websocket:key:#{@client_id}", @client_key
+                $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
+                $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
                 erb :edit
             else
                 redirect '/'
@@ -263,6 +265,9 @@ class WebSync < Sinatra::Base
                     puts "JSON: #{data.to_s}"
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']
+                            # Extend key expiry time
+                            $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
+                            $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
                             authenticated = true
                             client_id = data['id']
                             email = $redis.get "websocket:id:#{data['id']}"

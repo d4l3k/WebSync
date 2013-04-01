@@ -161,6 +161,9 @@ class WebSync < Sinatra::Base
             redirect '/login'
         end
     end
+    get '/register' do
+        redirect '/login'
+    end
     post '/register' do
         if register params[:email],params[:password]
             redirect '/'
@@ -331,12 +334,12 @@ class WebSync < Sinatra::Base
                         elsif data['type']=='config'
                             if data['action']=='set'
                                 if data['property']=='public'
-                                    doc.public = doc['value']
+                                    doc.public = data['value']
                                     doc.save
                                 end
                             elsif data['action']=='get'
                                 if data['property']=='public'
-                                    ws.send JSON.dump {type: 'config',action: 'get', property:'public', value: doc.public}
+                                    ws.send JSON.dump({type: 'config',action: 'get', property:'public', value: doc.public})
                                 end
                             end
                         end

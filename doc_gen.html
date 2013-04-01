@@ -27,166 +27,174 @@
     </head>
     <body>
         <h1>Web-Sync Client API</h1>
+        <p>Many of these functions are for internal use only and are provided merely for completeness.</p>
             <h3>File: assets/javascripts/core.js</h3>
             <hr>
                 <div class='func'>
+                <b>object WebSync;</b>
+                <br>
+                <i>Type: Variable, Line: 11</i>
+                <br>
+                <span>This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.</span>
+                </div>
+                <div class='func'>
                 <b>object WebSync.tmp;</b>
                 <br>
-                <i>Type: Variable, Line: 14</i>
+                <i>Type: Variable, Line: 15</i>
                 <br>
                 <span>Provides a location for temporary data to be stored.</span>
                 </div>
                 <div class='func'>
                 <b>boolean WebSync.webSocketFirstTime;</b>
                 <br>
-                <i>Type: Variable, Line: 17</i>
+                <i>Type: Variable, Line: 18</i>
                 <br>
                 <span>Websocket first connection?</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.webSocketStart();</b>
                 <br>
-                <i>Type: Function, Line: 20</i>
+                <i>Type: Function, Line: 21</i>
                 <br>
                 <span>Creates the websocket for communication.</span>
                 </div>
                 <div class='func'>
                 <b>object WebSync.webSocketCallbacks;</b>
                 <br>
-                <i>Type: Variable, Line: 29</i>
+                <i>Type: Variable, Line: 30</i>
                 <br>
                 <span>An object with all of the callbacks for a websocket connection.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.initialize();</b>
                 <br>
-                <i>Type: Function, Line: 106</i>
+                <i>Type: Function, Line: 115</i>
                 <br>
                 <span>This is where the core of Web-Sync initializes.</span>
                 </div>
                 <div class='func'>
                 <b>string WebSync.viewMode;</b>
                 <br>
-                <i>Type: Variable, Line: 229</i>
+                <i>Type: Variable, Line: 242</i>
                 <br>
                 <span>This is the current visual mode. This can be either 'zen' or 'normal'</span>
                 </div>
                 <div class='func'>
                 <b>boolean WebSync.menuVisible;</b>
                 <br>
-                <i>Type: Variable, Line: 232</i>
+                <i>Type: Variable, Line: 245</i>
                 <br>
                 <span>This tells you if the menu ribbon is visible or not. In zen mode it can disappear.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.updateRibbon();</b>
                 <br>
-                <i>Type: Function, Line: 311</i>
+                <i>Type: Function, Line: 324</i>
                 <br>
                 <span>This updates the ribbon buttons based on the content in the ribbon bar. <span class="todo">TODO:</span> Use registration system & persist menu between updates.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.loadScripts();</b>
                 <br>
-                <i>Type: Function, Line: 327</i>
+                <i>Type: Function, Line: 340</i>
                 <br>
                 <span>Checks server for plugin scripts to load.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.showHTML();</b>
                 <br>
-                <i>Type: Function, Line: 332</i>
+                <i>Type: Function, Line: 345</i>
                 <br>
                 <span>Converts visible text to HTML. <span class="todo">TODO:</span> Delete/figure something out.</span>
                 </div>
                 <div class='func'>
                 <b>string WebSync.getHTML();</b>
                 <br>
-                <i>Type: Function, Line: 337</i>
+                <i>Type: Function, Line: 350</i>
                 <br>
                 <span>This will return sanitized document HTML. <span class="todo">TODO:</span> This should be migrated into the page handler.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.resize();</b>
                 <br>
-                <i>Type: Function, Line: 345</i>
+                <i>Type: Function, Line: 358</i>
                 <br>
                 <span>Event handler for when the window resizes. This is an <span class="internal">internal</span> method.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.checkDiff();</b>
                 <br>
-                <i>Type: Function, Line: 352</i>
+                <i>Type: Function, Line: 365</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.insertAtCursor(jQuery node);</b>
                 <br>
-                <i>Type: Function, Line: 371</i>
+                <i>Type: Function, Line: 384</i>
                 <br>
                 <span>Inserts a DOM element at selection cursor. This is probably going to be deprecated.</span>
                 </div>
                 <div class='func'>
                 <b>object WebSync.getCss();</b>
                 <br>
-                <i>Type: Function, Line: 387</i>
+                <i>Type: Function, Line: 400</i>
                 <br>
                 <span>Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.applyCssToSelection(object css);</b>
                 <br>
-                <i>Type: Function, Line: 395</i>
+                <i>Type: Function, Line: 408</i>
                 <br>
                 <span>Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.register(string PluginName, function Plugin);</b>
                 <br>
-                <i>Type: Function, Line: 401</i>
+                <i>Type: Function, Line: 414</i>
                 <br>
                 <span>Registers a plugin with the WebSync core. Plugin.enable() will be called afterwards. Plugin.disable() will be used to disable the plugin.</span>
                 </div>
                 <div class='func'>
                 <b>object WebSync.plugins;</b>
                 <br>
-                <i>Type: Variable, Line: 409</i>
+                <i>Type: Variable, Line: 422</i>
                 <br>
                 <span>List of all the plugins loaded in the format of {myawesomeplugin: object Plugin, ...}.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.alert(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 412</i>
+                <i>Type: Function, Line: 425</i>
                 <br>
                 <span>Displays an alert message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.error(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 417</i>
+                <i>Type: Function, Line: 430</i>
                 <br>
                 <span>Displays an error message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.success(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 422</i>
+                <i>Type: Function, Line: 435</i>
                 <br>
                 <span>Displays a success message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.info(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 427</i>
+                <i>Type: Function, Line: 440</i>
                 <br>
                 <span>Displays an info message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='func'>
                 <b>void WebSync.alert_msg(string Message, string Classes);</b>
                 <br>
-                <i>Type: Function, Line: 432</i>
+                <i>Type: Function, Line: 445</i>
                 <br>
                 <span>Displays an message in the lower right hand corner of the window with css classes.</span>
                 </div>
@@ -201,7 +209,8 @@
     rice (at) outerearth (dot) net
     http://tristanrice.name/
 */
-
+// Variable: object WebSync;
+// This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.
 var WebSyncProto = function(){};
 WebSyncProto.prototype = {
     // Variable: object WebSync.tmp;
@@ -229,10 +238,11 @@ WebSyncProto.prototype = {
 			$("#connection_msg").remove();
 			if(WebSync.webSocketFirstTime){
 				WebSync.webSocketFirstTime = false;
-				WebSync.connection.sendJSON({type:'connect'});
+				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.loadScripts();
+                WebSync.connection.sendJSON({type:'config',action:'get',property:'public'});
 			} else {
-				WebSync.connection.sendJSON({type:'reconnect'});
+				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.success("&#60;strong&#62Success!&#60;/strong&#62 Connection restablished.");
 			}
 		},
@@ -290,6 +300,13 @@ WebSyncProto.prototype = {
 				$(".content .page").get(0).innerHTML=data.text;
 				WebSync.old_html = data.text;
 			}
+            else if(data.type='config'){
+                if(data.action=='get'){
+                    if(data.property=='public'){
+                        $("#public_mode").val(data.value ? "Public" : "Private");
+                    }
+                }
+            }
 		},
 		onerror:function(e){
 			console.log(e);
@@ -300,6 +317,9 @@ WebSyncProto.prototype = {
     // This is where the core of Web-Sync initializes.
 	initialize: function(){
 		this.webSocketStart();
+        $("#public_mode").select(function(){
+            WebSync.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
+        });
 		$("#name").keyup(function(){
 			var div = $("#name").get(0);
 			div.innerHTML = div.innerText;
@@ -315,6 +335,7 @@ WebSyncProto.prototype = {
                 },100);
             }
 		});
+        $(".settings-popup").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$(".content").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
@@ -758,6 +779,121 @@ WebSync.register("TextEdit",function(){ var self = this;
    	}
 
 });</pre>
+            <h3>File: views/edit.erb</h3>
+            <hr>
+                <div class='func'>
+                <b>object WebSyncAuth;</b>
+                <br>
+                <i>Type: Variable, Line: 2</i>
+                <br>
+                <span>This is an <span class="internal">internal</span> object used for authenticating the websocket connection.</span>
+                </div>
+                <div class='func'>
+                <b>int WebSyncAuth.id;</b>
+                <br>
+                <i>Type: Variable, Line: 5</i>
+                <br>
+                <span>This is the websocket connection id. Each connection has a unique id.</span>
+                </div>
+                <div class='func'>
+                <b>int WebSyncAuth.key;</b>
+                <br>
+                <i>Type: Variable, Line: 8</i>
+                <br>
+                <span>This is a randomly generated string used as an API key.</span>
+                </div>
+            <a href="#" onclick="$('#3').toggle(); false"><h4>View Source</h4></a>
+            <pre class="script prettyprint" id="3">&#60;script type="text/javascript"&#62
+// Variable: object WebSyncAuth;
+// This is an internal object used for authenticating the websocket connection.
+WebSyncAuth = {
+    // Variable: int WebSyncAuth.id;
+    // This is the websocket connection id. Each connection has a unique id.
+    id:&#60;%= @client_id %&#62,
+    // Variable: int WebSyncAuth.key;
+    // This is a randomly generated string used as an API key.
+    key:"&#60;%= @client_key %&#62"
+}
+&#60;/script&#62
+
+&#60;div class="menu"&#62
+	&#60;div class="navbar navbar-inverse navbar-fixed-top"&#62
+		&#60;div class="navbar-inner"&#62
+			&#60;div class="container"&#62
+				&#60;a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom"&#62Web-Sync&#60;/a&#62
+				&#60;ul class="nav"&#62
+					&#60;li class="active"&#62&#60;a id="name" contenteditable="true"&#62&#60;%= @doc.name %&#62&#60;/a&#62&#60;/li&#62
+				&#60;/ul&#62
+				&#60;ul id="ribbon_buttons" class="nav ribbon-opt"&#62
+				&#60;/ul&#62
+				&#60;ul id="settings" class="nav pull-right ribbon-opt"&#62
+					&#60;li class&#62
+                        &#60;a id="settingsBtn" data-toggle="popover" title="Settings" data-content="Blah blah blah." data-placement="bottom"&#62&#60;i class="icon-cog icon-large"&#62&#60;/i&#62&#60;/a&#62
+                    &#60;/li&#62
+				&#60;/ul&#62
+                &#60;div class="popover fade bottom in settings-popup"&#62&#60;div class="arrow"&#62&#60;/div&#62&#60;h3 class="popover-title"&#62Settings&#60;a class="close pull-right"&#62&#60;i class="icon-remove"&#62&#60;/i&#62&#60;/a&#62&#60;/h3&#62&#60;div class="popover-content"&#62
+                    &#60;table class="table table-bordered"&#62
+                        &#60;tbody&#62
+                            &#60;tr&#62
+                                &#60;th&#62Property&#60;/th&#62
+                                &#60;th&#62Global Setting&#60;/th&#62
+                                &#60;th&#62Document Setting&#60;/th&#62
+                            &#60;/tr&#62
+                            &#60;tr&#62
+                                &#60;td&#62Use spaces instead of tabs&#60;/td&#62
+                                &#60;td&#62&#60;select&#62
+                                    &#60;option&#62True&#60;/option&#62
+                                    &#60;option&#62False&#60;/option&#62
+                                &#60;/select&#62&#60;/td&#62
+                                &#60;td&#62&#60;div class='input-append'&#62&#60;select&#62
+                                    &#60;option&#62Use Global&#60;/option&#62
+                                    &#60;option&#62True&#60;/option&#62
+                                    &#60;option&#62False&#60;/option&#62
+                                &#60;/select&#62
+                                &#60;button class="btn btn-warning"&#62Override&#60;/button&#62&#60;/div&#62&#60;/td&#62
+                            &#60;/tr&#62
+                        &#60;/tbody&#62
+                    &#60;/table&#62
+                &#60;/div&#62&#60;/div&#62
+
+			&#60;/div&#62
+		&#60;/div&#62
+		&#60;div class="ribbon"&#62
+			&#60;div id="File" class="container"&#62
+				&#60;a href="download" class="btn"&#62&#60;i class="icon-cloud-download"&#62&#60;/i&#62 DOCX&#60;/a&#62
+                &#60;select id="zoom_level" title="Zoom Level" class="ribbon_button"&#62
+					&#60;option&#6250%&#60;/option&#62
+					&#60;option&#6280%&#60;/option&#62
+					&#60;option&#6290%&#60;/option&#62
+					&#60;option selected&#62100%&#60;/option&#62
+					&#60;option&#62120%&#60;/option&#62
+					&#60;option&#62150%&#60;/option&#62
+					&#60;option&#62200%&#60;/option&#62
+				&#60;/select&#62
+                &#60;select id="view_mode" title="View Mode" class="ribbon_button"&#62
+					&#60;option&#62Normal&#60;/option&#62
+					&#60;option&#62Zen&#60;/option&#62
+				&#60;/select&#62
+                &#60;a href="delete" class="btn"&#62&#60;i class="icon-trash "&#62&#60;/i&#62 Delete&#60;/a&#62
+                &#60;select id="public_mode" title="Publicly Accessable" class="ribbon_button"&#62
+					&#60;option&#62Public&#60;/option&#62
+					&#60;option&#62Private&#60;/option&#62
+				&#60;/select&#62
+			&#60;/div&#62
+			&#60;div id="Insert" class="container"&#62
+				&#60;button id="picture" title="Picture" class="btn"&#62&#60;i class="icon-picture"&#62&#60;/i&#62&#60;/button&#62
+			&#60;/div&#62
+		&#60;/div&#62
+	&#60;/div&#62
+&#60;/div&#62
+&#60;div class="content_well"&#62
+	&#60;div class="content"&#62
+		&#60;div class="page"&#62&#60;%= @doc.body %&#62&#60;/div&#62
+	&#60;/div&#62
+&#60;/div&#62
+&#60;div id="alert_well"&#62
+&#60;/div&#62
+&#60;%= javascript_tag 'bundle-edit' %&#62</pre>
         <script type='text/javascript'>
             $("a").click(function(e){
                 e.preventDefault();

@@ -8,7 +8,8 @@
     rice (at) outerearth (dot) net
     http://tristanrice.name/
 */
-
+// Variable: object WebSync;
+// This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.
 var WebSyncProto = function(){};
 WebSyncProto.prototype = {
     // Variable: object WebSync.tmp;
@@ -38,6 +39,7 @@ WebSyncProto.prototype = {
 				WebSync.webSocketFirstTime = false;
 				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.loadScripts();
+                WebSync.connection.sendJSON({type:'config',action:'get',property:'public'});
 			} else {
 				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.success("<strong>Success!</strong> Connection restablished.");
@@ -93,10 +95,17 @@ WebSyncProto.prototype = {
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
 			}
-			else if(data.type="text_update"){
+			else if(data.type=="text_update"){
 				$(".content .page").get(0).innerHTML=data.text;
 				WebSync.old_html = data.text;
 			}
+            else if(data.type=='config'){
+                if(data.action=='get'){
+                    if(data.property=='public'){
+                        $("#public_mode").val(data.value ? "Public" : "Private");
+                    }
+                }
+            }
 		},
 		onerror:function(e){
 			console.log(e);
@@ -107,6 +116,9 @@ WebSyncProto.prototype = {
     // This is where the core of Web-Sync initializes.
 	initialize: function(){
 		this.webSocketStart();
+        $("#public_mode").change(function(){
+            WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
+        });
 		$("#name").keyup(function(){
 			var div = $("#name").get(0);
 			div.innerHTML = div.innerText;

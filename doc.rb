@@ -1,7 +1,7 @@
 require 'erubis'
 require 'uri'
 
-raw_doc = `grep -nH -A1 -e " Function:" -e " Variable:" */*/*.js`.split "--"
+raw_doc = `grep -nH -A1 -e " Function:" -e " Variable:" */*/*.js views/*.erb`.split "--"
 scripts = {}
 functions = {}
 raw_doc.each do |doc_item|
@@ -58,6 +58,7 @@ __END__
     </head>
     <body>
         <h1>Web-Sync Client API</h1>
+        <p>Many of these functions are for internal use only and are provided merely for completeness.</p>
         <% script_num = 0
         scripts.each do |scriptname,script|
             script_num+=1%>

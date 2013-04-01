@@ -4,15 +4,29 @@
         <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
         <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <style>
+            html {
+                margin: 20px;
+                overflow: auto !important;
+            }
+            ol.linenums {
+                margin-left: 50px;
+            }
             body .script {
-                width: 100%;
                 word-wrap:break-word;
                 display:none;
             }
-            .func {
-                margin: 15px;
-                background-color: #ccc;
-                padding: 5px;
+            .well {
+                min-height: 20px;
+                padding: 19px;
+                margin-bottom: 20px;
+                background-color: #f5f5f5;
+                border: 1px solid #e3e3e3;
+                -webkit-border-radius: 4px;
+                -moz-border-radius: 4px;
+                border-radius: 4px;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+                -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+                box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
             }
             .todo {
                 background-color: yellow;
@@ -30,176 +44,176 @@
         <p>Many of these functions are for internal use only and are provided merely for completeness.</p>
             <h3>File: assets/javascripts/core.js</h3>
             <hr>
-                <div class='func'>
+                <div class='well'>
                 <b>object WebSync;</b>
                 <br>
                 <i>Type: Variable, Line: 11</i>
                 <br>
                 <span>This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>object WebSync.tmp;</b>
                 <br>
                 <i>Type: Variable, Line: 15</i>
                 <br>
                 <span>Provides a location for temporary data to be stored.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>boolean WebSync.webSocketFirstTime;</b>
                 <br>
                 <i>Type: Variable, Line: 18</i>
                 <br>
                 <span>Websocket first connection?</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.webSocketStart();</b>
                 <br>
                 <i>Type: Function, Line: 21</i>
                 <br>
                 <span>Creates the websocket for communication.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>object WebSync.webSocketCallbacks;</b>
                 <br>
                 <i>Type: Variable, Line: 30</i>
                 <br>
                 <span>An object with all of the callbacks for a websocket connection.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.initialize();</b>
                 <br>
                 <i>Type: Function, Line: 115</i>
                 <br>
                 <span>This is where the core of Web-Sync initializes.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>string WebSync.viewMode;</b>
                 <br>
                 <i>Type: Variable, Line: 242</i>
                 <br>
                 <span>This is the current visual mode. This can be either 'zen' or 'normal'</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>boolean WebSync.menuVisible;</b>
                 <br>
                 <i>Type: Variable, Line: 245</i>
                 <br>
                 <span>This tells you if the menu ribbon is visible or not. In zen mode it can disappear.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.updateRibbon();</b>
                 <br>
                 <i>Type: Function, Line: 324</i>
                 <br>
                 <span>This updates the ribbon buttons based on the content in the ribbon bar. <span class="todo">TODO:</span> Use registration system & persist menu between updates.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.loadScripts();</b>
                 <br>
                 <i>Type: Function, Line: 340</i>
                 <br>
                 <span>Checks server for plugin scripts to load.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.showHTML();</b>
                 <br>
                 <i>Type: Function, Line: 345</i>
                 <br>
                 <span>Converts visible text to HTML. <span class="todo">TODO:</span> Delete/figure something out.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>string WebSync.getHTML();</b>
                 <br>
                 <i>Type: Function, Line: 350</i>
                 <br>
                 <span>This will return sanitized document HTML. <span class="todo">TODO:</span> This should be migrated into the page handler.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.resize();</b>
                 <br>
                 <i>Type: Function, Line: 358</i>
                 <br>
                 <span>Event handler for when the window resizes. This is an <span class="internal">internal</span> method.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.checkDiff();</b>
                 <br>
                 <i>Type: Function, Line: 365</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.insertAtCursor(jQuery node);</b>
                 <br>
                 <i>Type: Function, Line: 384</i>
                 <br>
                 <span>Inserts a DOM element at selection cursor. This is probably going to be deprecated.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>object WebSync.getCss();</b>
                 <br>
                 <i>Type: Function, Line: 400</i>
                 <br>
                 <span>Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.applyCssToSelection(object css);</b>
                 <br>
                 <i>Type: Function, Line: 408</i>
                 <br>
                 <span>Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.register(string PluginName, function Plugin);</b>
                 <br>
                 <i>Type: Function, Line: 414</i>
                 <br>
                 <span>Registers a plugin with the WebSync core. Plugin.enable() will be called afterwards. Plugin.disable() will be used to disable the plugin.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>object WebSync.plugins;</b>
                 <br>
                 <i>Type: Variable, Line: 422</i>
                 <br>
                 <span>List of all the plugins loaded in the format of {myawesomeplugin: object Plugin, ...}.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.alert(string Message);</b>
                 <br>
                 <i>Type: Function, Line: 425</i>
                 <br>
                 <span>Displays an alert message in the lower right hand corner of the window.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.error(string Message);</b>
                 <br>
                 <i>Type: Function, Line: 430</i>
                 <br>
                 <span>Displays an error message in the lower right hand corner of the window.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.success(string Message);</b>
                 <br>
                 <i>Type: Function, Line: 435</i>
                 <br>
                 <span>Displays a success message in the lower right hand corner of the window.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.info(string Message);</b>
                 <br>
                 <i>Type: Function, Line: 440</i>
                 <br>
                 <span>Displays an info message in the lower right hand corner of the window.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>void WebSync.alert_msg(string Message, string Classes);</b>
                 <br>
                 <i>Type: Function, Line: 445</i>
                 <br>
                 <span>Displays an message in the lower right hand corner of the window with css classes.</span>
                 </div>
-            <a href="#" onclick="$('#1').toggle(); false"><h4>View Source</h4></a>
-            <pre class="script prettyprint" id="1">/*
+            <h4><a href="#" class="btn btn-primary" onclick="$('#1').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="1">/*
     Web-Sync: Edit.js
     This is the core file that runs the Web-Sync editor.
 
@@ -296,11 +310,11 @@ WebSyncProto.prototype = {
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
 			}
-			else if(data.type="text_update"){
+			else if(data.type=="text_update"){
 				$(".content .page").get(0).innerHTML=data.text;
 				WebSync.old_html = data.text;
 			}
-            else if(data.type='config'){
+            else if(data.type=='config'){
                 if(data.action=='get'){
                     if(data.property=='public'){
                         $("#public_mode").val(data.value ? "Public" : "Private");
@@ -317,8 +331,8 @@ WebSyncProto.prototype = {
     // This is where the core of Web-Sync initializes.
 	initialize: function(){
 		this.webSocketStart();
-        $("#public_mode").select(function(){
-            WebSync.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
+        $("#public_mode").change(function(){
+            WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
 		$("#name").keyup(function(){
 			var div = $("#name").get(0);
@@ -667,20 +681,43 @@ window.WebSync=new WebSyncProto();
 WebSync.initialize();</pre>
             <h3>File: assets/javascripts/edit.js</h3>
             <hr>
-                <div class='func'>
+                <div class='well'>
+                <b>void [plugin=TextEdit].enable();</b>
+                <br>
+                <i>Type: Function, Line: 7</i>
+                <br>
+                <span>Enables the TextEdit plugin.</span>
+                </div>
+                <div class='well'>
+                <b>void [plugin=TextEdit].disable();</b>
+                <br>
+                <i>Type: Function, Line: 62</i>
+                <br>
+                <span>Disables the TextEdit plugin.</span>
+                </div>
+                <div class='well'>
+                <b>void [plugin=TextEdit].selectHandler();</b>
+                <br>
+                <i>Type: Function, Line: 70</i>
+                <br>
+                <span>Handling function for displaying accurate information about text in ribbon.</span>
+                </div>
+                <div class='well'>
                 <b>void [plugin=TextEdit].fontsInit();</b>
                 <br>
-                <i>Type: Function, Line: 84</i>
+                <i>Type: Function, Line: 89</i>
                 <br>
                 <span>Sets up the list of fonts</span>
                 </div>
-            <a href="#" onclick="$('#2').toggle(); false"><h4>View Source</h4></a>
-            <pre class="script prettyprint" id="2">// Web-Sync: Text Editing Plugin
+            <h4><a href="#" class="btn btn-primary" onclick="$('#2').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="2">// Web-Sync: Text Editing Plugin
 WebSync.register("TextEdit",function(){ var self = this;
 	// Enable: This is where everything should be setup.
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
+    // Function: void [plugin=TextEdit].enable();
+    // Enables the TextEdit plugin.
 	this.enable = function(){
         self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"];
         // Add ribbon text
@@ -734,12 +771,15 @@ WebSync.register("TextEdit",function(){ var self = this;
 			WebSync.applyCssToSelection({'font-size':size});
 		});
     }
+    // Function: void [plugin=TextEdit].disable();
+    // Disables the TextEdit plugin.
     this.disable = function(){
 		var elem = $("#Text").remove();
 		WebSync.updateRibbon();
 		$("*").unbind(".TextEdit");
 		$("*").undelegate(".TextEdit");
     }
+    // Function: void [plugin=TextEdit].selectHandler();
     // Handling function for displaying accurate information about text in ribbon.
     this.selectHandler = function(){
 		var style = WebSync.getCss();
@@ -779,31 +819,184 @@ WebSync.register("TextEdit",function(){ var self = this;
    	}
 
 });</pre>
+            <h3>File: assets/javascripts/fontdetect.js</h3>
+            <hr>
+                <div class='well'>
+                <b>class Detector();</b>
+                <br>
+                <i>Type: Function, Line: 25</i>
+                <br>
+                <span>A class used for detecting fonts.</span>
+                </div>
+                <div class='well'>
+                <b>boolean [class=Detector].detect(string font);</b>
+                <br>
+                <i>Type: Function, Line: 55</i>
+                <br>
+                <span>Returns whether or not a font exists.</span>
+                </div>
+            <h4><a href="#" class="btn btn-primary" onclick="$('#3').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="3">/**
+ * JavaScript code to detect available availability of a
+ * particular font in a browser using JavaScript and CSS.
+ *
+ * Author : Lalit Patel
+ * Website: http://www.lalit.org/lab/javascript-css-font-detect/
+ * License: Apache Software License 2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ * Version: 0.15 (21 Sep 2009)
+ *          Changed comparision font to default from sans-default-default,
+ *          as in FF3.0 font of child element didn't fallback
+ *          to parent element if the font is missing.
+ * Version: 0.2 (04 Mar 2012)
+ *          Comparing font against all the 3 generic font families ie,
+ *          'monospace', 'sans-serif' and 'sans'. If it doesn't match all 3
+ *          then that font is 100% not available in the system
+ * Version: 0.3 (24 Mar 2012)
+ *          Replaced sans with serif in the list of baseFonts
+ */
+
+/**
+ * Usage: d = new Detector();
+ *        d.detect('font name');
+ */
+// Function: class Detector();
+// A class used for detecting fonts.
+var Detector = function() {
+    // a font will be compared against all the three default fonts.
+    // and if it doesn't match all 3 then that font is not available.
+    var baseFonts = ['monospace', 'sans-serif', 'serif'];
+
+    //we use m or w because these two characters take up the maximum width.
+    // And we use a LLi so that the same matching fonts can get separated
+    var testString = "mmmmmmmmmmlli";
+
+    //we test using 72px font size, we may use any size. I guess larger the better.
+    var testSize = '72px';
+
+    var h = document.getElementsByTagName("body")[0];
+
+    // create a SPAN in the document to get the width of the text we use to test
+    var s = document.createElement("span");
+    s.style.fontSize = testSize;
+    s.innerHTML = testString;
+    var defaultWidth = {};
+    var defaultHeight = {};
+    for (var index in baseFonts) {
+        //get the default width for the three base fonts
+        s.style.fontFamily = baseFonts[index];
+        h.appendChild(s);
+        defaultWidth[baseFonts[index]] = s.offsetWidth; //width for the default font
+        defaultHeight[baseFonts[index]] = s.offsetHeight; //height for the defualt font
+        h.removeChild(s);
+    }
+    // Function: boolean [class=Detector].detect(string font);
+    // Returns whether or not a font exists.
+    function detect(font) {
+        var detected = false;
+        for (var index in baseFonts) {
+            s.style.fontFamily = font + ',' + baseFonts[index]; // name of the font along with the base font for fallback.
+            h.appendChild(s);
+            var matched = (s.offsetWidth != defaultWidth[baseFonts[index]] || s.offsetHeight != defaultHeight[baseFonts[index]]);
+            h.removeChild(s);
+            detected = detected || matched;
+        }
+        return detected;
+    }
+
+    this.detect = detect;
+};</pre>
+            <h3>File: assets/javascripts/levenshtein.js</h3>
+            <hr>
+                <div class='well'>
+                <b>int levenshteinenator(string a, string b);</b>
+                <br>
+                <i>Type: Function, Line: 15</i>
+                <br>
+                <span>This calculates the Levenshtein distance between strings a and b.</span>
+                </div>
+                <div class='well'>
+                <b>int minimator(int a, int b, int c);</b>
+                <br>
+                <i>Type: Function, Line: 43</i>
+                <br>
+                <span>This returns the smallest of the three values passed in.</span>
+                </div>
+            <h4><a href="#" class="btn btn-primary" onclick="$('#4').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="4">/*
+
+Copyright (c) 2006. All Rights reserved.
+
+If you use this script, please email me and let me know, thanks!
+
+Andrew Hedges
+andrew (at) hedges (dot) name
+
+If you want to hire me to write JavaScript for you, see my resume.
+
+http://andrew.hedges.name/resume/
+
+*/
+// Function: int levenshteinenator(string a, string b);
+// This calculates the Levenshtein distance between strings a and b.
+levenshteinenator = function(a,b) {
+	var cost;
+	// get values
+	var m = a.length;
+	var n = b.length;
+	// make sure a.length &#62= b.length to use O(min(n,m)) space, whatever that is
+	if (m &#60; n) {
+		var c=a;a=b;b=c;
+		var o=m;m=n;n=o;
+	}
+	var r = new Array();
+	r[0] = new Array();
+	for (var c = 0; c &#60; n+1; c++) {
+		r[0][c] = c;
+	}
+	for (var i = 1; i &#60; m+1; i++) {
+		r[i] = new Array();
+		r[i][0] = i;
+		for (var j = 1; j &#60; n+1; j++) {
+			cost = (a.charAt(i-1) == b.charAt(j-1))? 0: 1;
+			r[i][j] = minimator(r[i-1][j]+1,r[i][j-1]+1,r[i-1][j-1]+cost);
+		}
+	}
+
+	return r[m][n];
+}
+// Function: int minimator(int a, int b, int c);
+// This returns the smallest of the three values passed in.
+minimator = function(x,y,z) {
+	if (x &#60; y && x &#60; z) return x;
+	if (y &#60; x && y &#60; z) return y;
+	return z;
+}</pre>
             <h3>File: views/edit.erb</h3>
             <hr>
-                <div class='func'>
+                <div class='well'>
                 <b>object WebSyncAuth;</b>
                 <br>
                 <i>Type: Variable, Line: 2</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> object used for authenticating the websocket connection.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>int WebSyncAuth.id;</b>
                 <br>
                 <i>Type: Variable, Line: 5</i>
                 <br>
                 <span>This is the websocket connection id. Each connection has a unique id.</span>
                 </div>
-                <div class='func'>
+                <div class='well'>
                 <b>int WebSyncAuth.key;</b>
                 <br>
                 <i>Type: Variable, Line: 8</i>
                 <br>
                 <span>This is a randomly generated string used as an API key.</span>
                 </div>
-            <a href="#" onclick="$('#3').toggle(); false"><h4>View Source</h4></a>
-            <pre class="script prettyprint" id="3">&#60;script type="text/javascript"&#62
+            <h4><a href="#" class="btn btn-primary" onclick="$('#5').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="5">&#60;script type="text/javascript"&#62
 // Variable: object WebSyncAuth;
 // This is an internal object used for authenticating the websocket connection.
 WebSyncAuth = {
@@ -828,7 +1021,10 @@ WebSyncAuth = {
 				&#60;/ul&#62
 				&#60;ul id="settings" class="nav pull-right ribbon-opt"&#62
 					&#60;li class&#62
-                        &#60;a id="settingsBtn" data-toggle="popover" title="Settings" data-content="Blah blah blah." data-placement="bottom"&#62&#60;i class="icon-cog icon-large"&#62&#60;/i&#62&#60;/a&#62
+                        &#60;a id="settingsBtn" title="Settings"&#62&#60;i class="icon-cog icon-large"&#62&#60;/i&#62&#60;/a&#62
+                    &#60;/li&#62
+					&#60;li class&#62
+                        &#60;a href="/logout" title="Sign Out"&#62&#60;i class="icon-signout icon-large"&#62&#60;/i&#62 Sign Out&#60;/a&#62
                     &#60;/li&#62
 				&#60;/ul&#62
                 &#60;div class="popover fade bottom in settings-popup"&#62&#60;div class="arrow"&#62&#60;/div&#62&#60;h3 class="popover-title"&#62Settings&#60;a class="close pull-right"&#62&#60;i class="icon-remove"&#62&#60;/i&#62&#60;/a&#62&#60;/h3&#62&#60;div class="popover-content"&#62

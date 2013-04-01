@@ -196,7 +196,7 @@ class WebSync < Sinatra::Base
         #end
     end
     get '/documentation' do
-        File.read('doc_gen.html')
+        erb :documentation
     end
     get '/new' do
         login_required

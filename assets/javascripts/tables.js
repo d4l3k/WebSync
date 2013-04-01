@@ -4,7 +4,7 @@ WebSync.register("Tables",function(){ var self = this;
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
-	this.enable = function(){		
+	this.enable = function(){
 		$("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
 		$("#table").bind("click.Tables",function(e){
 			console.log(e);

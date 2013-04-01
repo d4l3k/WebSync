@@ -22,6 +22,8 @@
  * Usage: d = new Detector();
  *        d.detect('font name');
  */
+// Function: class Detector();
+// A class used for detecting fonts.
 var Detector = function() {
     // a font will be compared against all the three default fonts.
     // and if it doesn't match all 3 then that font is not available.
@@ -50,7 +52,8 @@ var Detector = function() {
         defaultHeight[baseFonts[index]] = s.offsetHeight; //height for the defualt font
         h.removeChild(s);
     }
-
+    // Function: boolean [class=Detector].detect(string font);
+    // Returns whether or not a font exists.
     function detect(font) {
         var detected = false;
         for (var index in baseFonts) {

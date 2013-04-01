@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'erubis'
 require 'uri'
 
@@ -35,15 +36,29 @@ __END__
         <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
         <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <style>
+            html {
+                margin: 20px;
+                overflow: auto !important;
+            }
+            ol.linenums {
+                margin-left: 50px;
+            }
             body .script {
-                width: 100%;
                 word-wrap:break-word;
                 display:none;
             }
-            .func {
-                margin: 15px;
-                background-color: #ccc;
-                padding: 5px;
+            .well {
+                min-height: 20px;
+                padding: 19px;
+                margin-bottom: 20px;
+                background-color: #f5f5f5;
+                border: 1px solid #e3e3e3;
+                -webkit-border-radius: 4px;
+                -moz-border-radius: 4px;
+                border-radius: 4px;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+                -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+                box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
             }
             .todo {
                 background-color: yellow;
@@ -65,7 +80,7 @@ __END__
             <h3>File: <%=scriptname%></h3>
             <hr>
             <% functions[scriptname].each do |func_data| %>
-                <div class='func'>
+                <div class='well'>
                 <b><%=func_data[3]%></b>
                 <br>
                 <i>Type: <%=func_data[2]%>, Line: <%=func_data[1]%></i>
@@ -73,8 +88,8 @@ __END__
                 <span><%=func_data[4]%></span>
                 </div>
             <%end%>
-            <a href="#" onclick="$('#<%=script_num%>').toggle(); false"><h4>View Source</h4></a>
-            <pre class="script prettyprint" id="<%= script_num %>"><%= script.gsub('<','&#60;').gsub('>','&#62') %></pre>
+            <h4><a href="#" class="btn btn-primary" onclick="$('#<%=script_num%>').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="<%= script_num %>"><%= script.gsub('<','&#60;').gsub('>','&#62') %></pre>
         <% end %>
         <script type='text/javascript'>
             $("a").click(function(e){

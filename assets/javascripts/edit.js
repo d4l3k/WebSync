@@ -4,6 +4,8 @@ WebSync.register("TextEdit",function(){ var self = this;
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
+    // Function: void [plugin=TextEdit].enable();
+    // Enables the TextEdit plugin.
 	this.enable = function(){
         self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"];
         // Add ribbon text
@@ -57,12 +59,15 @@ WebSync.register("TextEdit",function(){ var self = this;
 			WebSync.applyCssToSelection({'font-size':size});
 		});
     }
+    // Function: void [plugin=TextEdit].disable();
+    // Disables the TextEdit plugin.
     this.disable = function(){
 		var elem = $("#Text").remove();
 		WebSync.updateRibbon();
 		$("*").unbind(".TextEdit");
 		$("*").undelegate(".TextEdit");
     }
+    // Function: void [plugin=TextEdit].selectHandler();
     // Handling function for displaying accurate information about text in ribbon.
     this.selectHandler = function(){
 		var style = WebSync.getCss();

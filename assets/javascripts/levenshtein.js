@@ -12,8 +12,8 @@ If you want to hire me to write JavaScript for you, see my resume.
 http://andrew.hedges.name/resume/
 
 */
-
-// calculate the Levenshtein distance between strings a and b
+// Function: int levenshteinenator(string a, string b);
+// This calculates the Levenshtein distance between strings a and b.
 levenshteinenator = function(a,b) {
 	var cost;
 	// get values
@@ -40,8 +40,8 @@ levenshteinenator = function(a,b) {
 
 	return r[m][n];
 }
-
-// return the smallest of the three values passed in
+// Function: int minimator(int a, int b, int c);
+// This returns the smallest of the three values passed in.
 minimator = function(x,y,z) {
 	if (x < y && x < z) return x;
 	if (y < x && y < z) return y;

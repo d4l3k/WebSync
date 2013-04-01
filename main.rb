@@ -27,8 +27,14 @@ class Document
     property :created, DateTime
     property :last_edit_time, DateTime
     property :public, Boolean, :default=>false
+    property :config, Object, :default=>{}
     has n, :assets, :through => Resource
     belongs_to :user
+    def config_set key, value
+        n_config = config
+        n_config[key]=value
+        self.config= n_config
+    end
 end
 # Assets could be javascript or css
 class Asset
@@ -47,6 +53,12 @@ class User
     property :email, String, :key=>true
     property :password, BCryptHash
     has n, :documents
+    property :config, Object, :default=>{}
+    def config_set key, value
+        n_config = config
+        n_config[key]=value
+        self.config= n_config
+    end
 end
 DataMapper.finalize
 DataMapper.auto_upgrade!
@@ -341,10 +353,25 @@ class WebSync < Sinatra::Base
                                 if data['property']=='public'
                                     doc.public = data['value']
                                     doc.save
+                                else
+                                    if data['space']=='user'
+                                            user.config_set data['property'],data['value']
+                                            user.save
+                                    elsif data['space']=='document'
+                                            doc.config_set data['property'],data['value']
+                                    end
                                 end
                             elsif data['action']=='get'
                                 if data['property']=='public'
                                     ws.send JSON.dump({type: 'config',action: 'get', property:'public', value: doc.public})
+                                else
+                                    if data['space']=='user'
+                                        if user.config.has_key? data['property']
+                                            ws.send JSON.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: user.config[data['property']]})
+                                        end
+                                    elsif data['space']=='document'
+                                            ws.send JSON.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: doc.config[data['property']]})
+                                    end
                                 end
                             end
                         end

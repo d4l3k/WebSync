@@ -8,9 +8,6 @@
                 margin: 20px;
                 overflow: auto !important;
             }
-            ol.linenums {
-                margin-left: 50px;
-            }
             body .script {
                 word-wrap:break-word;
                 display:none;
@@ -212,7 +209,7 @@
                 <br>
                 <span>Displays an message in the lower right hand corner of the window with css classes.</span>
                 </div>
-            <h4><a href="#" class="btn btn-primary" onclick="$('#1').toggle(); false">View Source</a></h4>
+            <h4><button class="btn btn-primary" onclick="$('#1').toggle(); false">View Source</a></h4>
             <pre class="script prettyprint linenums" id="1">/*
     Web-Sync: Edit.js
     This is the core file that runs the Web-Sync editor.
@@ -709,7 +706,7 @@ WebSync.initialize();</pre>
                 <br>
                 <span>Sets up the list of fonts</span>
                 </div>
-            <h4><a href="#" class="btn btn-primary" onclick="$('#2').toggle(); false">View Source</a></h4>
+            <h4><button class="btn btn-primary" onclick="$('#2').toggle(); false">View Source</a></h4>
             <pre class="script prettyprint linenums" id="2">// Web-Sync: Text Editing Plugin
 WebSync.register("TextEdit",function(){ var self = this;
 	// Enable: This is where everything should be setup.
@@ -835,7 +832,7 @@ WebSync.register("TextEdit",function(){ var self = this;
                 <br>
                 <span>Returns whether or not a font exists.</span>
                 </div>
-            <h4><a href="#" class="btn btn-primary" onclick="$('#3').toggle(); false">View Source</a></h4>
+            <h4><button class="btn btn-primary" onclick="$('#3').toggle(); false">View Source</a></h4>
             <pre class="script prettyprint linenums" id="3">/**
  * JavaScript code to detect available availability of a
  * particular font in a browser using JavaScript and CSS.
@@ -922,7 +919,7 @@ var Detector = function() {
                 <br>
                 <span>This returns the smallest of the three values passed in.</span>
                 </div>
-            <h4><a href="#" class="btn btn-primary" onclick="$('#4').toggle(); false">View Source</a></h4>
+            <h4><button class="btn btn-primary" onclick="$('#4').toggle(); false">View Source</a></h4>
             <pre class="script prettyprint linenums" id="4">/*
 
 Copyright (c) 2006. All Rights reserved.
@@ -995,7 +992,7 @@ minimator = function(x,y,z) {
                 <br>
                 <span>This is a randomly generated string used as an API key.</span>
                 </div>
-            <h4><a href="#" class="btn btn-primary" onclick="$('#5').toggle(); false">View Source</a></h4>
+            <h4><button class="btn btn-primary" onclick="$('#5').toggle(); false">View Source</a></h4>
             <pre class="script prettyprint linenums" id="5">&#60;script type="text/javascript"&#62
 // Variable: object WebSyncAuth;
 // This is an internal object used for authenticating the websocket connection.
@@ -1091,7 +1088,7 @@ WebSyncAuth = {
 &#60;/div&#62
 &#60;%= javascript_tag 'bundle-edit' %&#62</pre>
         <script type='text/javascript'>
-            $("a").click(function(e){
+            $("button").click(function(e){
                 e.preventDefault();
             });
         </script>

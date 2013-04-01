@@ -85,11 +85,11 @@ __END__
                 <span><%=func_data[4]%></span>
                 </div>
             <%end%>
-            <h4><a href="#" class="btn btn-primary" onclick="$('#<%=script_num%>').toggle(); false">View Source</a></h4>
+            <h4><button class="btn btn-primary" onclick="$('#<%=script_num%>').toggle(); false">View Source</a></h4>
             <pre class="script prettyprint linenums" id="<%= script_num %>"><%= script.gsub('<','&#60;').gsub('>','&#62') %></pre>
         <% end %>
         <script type='text/javascript'>
-            $("a").click(function(e){
+            $("button").click(function(e){
                 e.preventDefault();
             });
         </script>

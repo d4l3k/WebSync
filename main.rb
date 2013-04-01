@@ -215,6 +215,9 @@ class WebSync < Sinatra::Base
         login_required
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
+        if (!doc.public)&&doc.user!=current_user
+            redirect '/'
+        end
         response.headers['content_type'] = "application/octet-stream"
         attachment(doc.name+'.docx')
         response.write(doc.body)
@@ -224,7 +227,9 @@ class WebSync < Sinatra::Base
         login_required
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
-        doc.destroy!
+        if doc.user==current_user
+            doc.destroy!
+        end
         redirect '/'
     end
     get '/:doc/edit' do

@@ -119,10 +119,6 @@ WebSyncProto.prototype = {
         $("#public_mode").change(function(){
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
-		$("#name").keyup(function(){
-			var div = $("#name").get(0);
-			div.innerHTML = div.innerText;
-		});
 		$("#name").blur(function(){
 			$(this).html($(this).text());
 			WebSync.connection.sendJSON({type: "name_update", name: $("#name").text()});

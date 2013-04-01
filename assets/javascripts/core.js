@@ -112,6 +112,16 @@ WebSyncProto.prototype = {
 		}
 
 	},
+    // Function: void WebSync.config_set(string key, object value, string space);
+    // Sends a request to the server to set config[key] to value. Space can be "user" or "document".
+    config_set = function(key, value, space='document'){
+        WebSync.connection.sendJSON({type:'config',action:'set', property: key, value: value, space: space});
+    },
+    // Function: void WebSync.config_get(string key, string space);
+    // Sends a request to the server for the key value. Space can be "user" or "document".
+    config_get = function(key, space='document'){
+        WebSync.connection.sendJSON({type:'config',action:'get', property: key, space: space});
+    },
     // Function: void WebSync.initialize();
     // This is where the core of Web-Sync initializes.
 	initialize: function(){

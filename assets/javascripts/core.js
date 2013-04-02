@@ -104,6 +104,13 @@ WebSyncProto.prototype = {
                     if(data.property=='public'){
                         $("#public_mode").val(data.value ? "Public" : "Private");
                     }
+                    else {
+                        var callback = WebSync._config_callbacks[data.id]
+                        if(callback){
+                            callback(data.property,data.value,data.space);
+                            delete WebSync._config_callbacks[data.id];
+                        }
+                    }
                 }
             }
 		},
@@ -112,6 +119,7 @@ WebSyncProto.prototype = {
 		}
 
 	},
+    _config_callbacks: {},
     // Function: void WebSync.config_set(string key, object value, string space);
     // Sends a request to the server to set config[key] to value. Space can be "user" or "document".
     config_set: function(key, value, space){
@@ -122,11 +130,15 @@ WebSyncProto.prototype = {
     },
     // Function: void WebSync.config_get(string key, string space);
     // Sends a request to the server for the key value. Space can be "user" or "document".
-    config_get: function(key, space){
+    config_get: function(key, callback, space){
+        var id = btoa(Date.now());
+        if(callback){
+            WebSync._config_callbacks[id]=callback;
+        }
         if(space==null){
             space='document';
         }
-        WebSync.connection.sendJSON({type:'config',action:'get', property: key, space: space});
+        WebSync.connection.sendJSON({type:'config',action:'get', property: key, space: space, id: id});
     },
     // Function: void WebSync.initialize();
     // This is where the core of Web-Sync initializes.

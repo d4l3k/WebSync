@@ -7,11 +7,34 @@
         <script type="text/javascript" src="/assets/jquery-1.9.1.min.js"></script>
 	</head>
 	<body>
+        <% if !(defined?(@no_menu)&&@no_menu) %>
+<div class="menu">
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">Web-Sync</a>
+                <ul class="nav">
+                    <li class="text">is a document editing tool similar to Google Drive or Microsoft Skydrive. </li>
+                </ul>
+                <ul id="settings" class="nav pull-right ribbon-opt">
+                    <li>
+                        <%= render_login_button %>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+        <% end %>
 		<%= yield %>
 	</body>
+    <script type="text/javascript" src="/assets/bootstrap.min.js"></script>
     <% if !defined?(@javascripts).nil? %>
         <% @javascripts.each do |script| %>
             <script type="text/javascript" src="<%= script %>"></script>
         <% end %>
     <% end %>
+    <script type="text/javascript">
+        $('[data-toggle="tooltip"]').tooltip();
+    </script>
 </html>

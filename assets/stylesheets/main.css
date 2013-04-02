@@ -96,6 +96,11 @@ cursor {
 .navbar-inner a {
 	color: white !important;
 }
+.navbar-inner .text {
+    color: white !important;
+    vertical-align: middle;
+    padding: 10px 0px;
+}
 .ribbon {
 	width: 100%;
 	background-color: white;
@@ -123,7 +128,7 @@ cursor {
     );
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
     background-attachment: fixed;
-	min-width: 100%;
+	max-width: 100%;
 	display: inline-block;
     height: 100%;
     overflow: auto;
@@ -139,9 +144,7 @@ cursor {
 	min-height: 9in;
 	width: 6.5in;
 	padding: 1in;
-	margin:auto;
-    margin-top: 0.1in;
-    margin-bottom: 0.1in;
+    margin: 0.1in auto;
 	border: 1px solid #aaa;
 	background-color: white;
     //box-shadow: 0 0 8px #aaa;

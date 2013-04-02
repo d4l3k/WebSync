@@ -198,7 +198,6 @@ WebSyncProto.prototype = {
 			$("cursor").toggleClass("hidden");
 		},1000);
 		*/
-        $('[data-toggle="tooltip"]').tooltip();
         $('#settingsBtn').click(function(){
 			$(this.parentElement).toggleClass("active");
             $(".settings-popup").toggle();

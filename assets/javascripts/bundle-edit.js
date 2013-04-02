@@ -1,4 +1,3 @@
-//= require bootstrap.min.js
 //= require bootstrap-contextmenu.js
 //= require jquery.computedstyles.js
 //= require rangy-core.js

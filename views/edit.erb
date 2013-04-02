@@ -26,7 +26,7 @@ WebSyncAuth = {
                         <a id="settingsBtn" title="Settings"><i class="icon-cog icon-large"></i></a>
                     </li>
 					<li class>
-                        <a href="/logout" title="Sign Out"><i class="icon-signout icon-large"></i> Sign Out</a>
+                        <%= render_login_button %>
                     </li>
 				</ul>
                 <div class="popover fade bottom in settings-popup"><div class="arrow"></div><h3 class="popover-title">Settings<a class="close pull-right"><i class="icon-remove"></i></a></h3><div class="popover-content">
@@ -59,6 +59,7 @@ WebSyncAuth = {
 		<div class="ribbon">
 			<div id="File" class="container">
 				<a href="download" class="btn"><i class="icon-cloud-download"></i> DOCX</a>
+				<a href="pdf" class="btn"><i class="icon-cloud-download"></i> PDF</a>
                 <select id="zoom_level" title="Zoom Level" class="ribbon_button">
 					<option>50%</option>
 					<option>80%</option>

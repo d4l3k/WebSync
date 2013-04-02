@@ -121,6 +121,13 @@ class WebSync < Sinatra::Base
             session['userhash']=nil
             session['user']=nil
         end
+        def render_login_button
+            if logged_in?
+               return '<a href="/logout" title="Sign Out"><i class="icon-signout icon-large"></i> Sign Out</a>'
+            else
+               return '<a href="/login" title="Sign In"><i class="icon-signin icon-large"></i> Sign In</a>'
+            end
+        end
     end
 
     configure do
@@ -239,6 +246,21 @@ class WebSync < Sinatra::Base
         response.write(doc.body)
         #send_data doc.body, :filename=>doc.name+".docx"
     end
+    # TODO: Switch PDF generation to a dedicated server w/ xorg-server
+    # Requires wkhtmltopdf
+    get '/:doc/pdf' do
+        login_required
+        doc_id = params[:doc].base62_decode
+        doc = Document.get doc_id
+        if (!doc.public)&&doc.user!=current_user
+            redirect '/'
+        end
+        response.headers['content_type'] = "application/pdf"
+        kit = PDFKit.new(doc.body, :page_size => 'Letter')
+        attachment(doc.name+'.pdf')
+        response.write(kit.to_pdf)
+        #send_data doc.body, :filename=>doc.name+".docx"
+    end
     get '/:doc/delete' do
         login_required
         doc_id = params[:doc].base62_decode
@@ -270,6 +292,7 @@ class WebSync < Sinatra::Base
                 $redis.set "websocket:key:#{@client_id}", @client_key
                 $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
                 $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
+                @no_menu = true
                 erb :edit
             else
                 redirect '/'

@@ -8,6 +8,7 @@ html {
   <h1>Login</h1>
   <p>
   <form class="form-horizontal" action='login' method='post'>
+    <input type="hidden" name="redirect" value="<%= env["QUERY_STRING"] %>">
   <div class="control-group">
     <label class="control-label" for="email">Email</label>
     <div class="controls">
@@ -36,6 +37,7 @@ html {
   <h1>Register</h1>
   <p>
   <form class="form-horizontal" action='register' method='post'>
+    <input type="hidden" name="redirect" value="<%= env["QUERY_STRING"] %>">
   <div class="control-group">
     <label class="control-label" for="email">Email</label>
     <div class="controls">

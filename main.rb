@@ -86,7 +86,7 @@ class WebSync < Sinatra::Base
         end
         def login_required
             if !logged_in?
-                redirect '/login'
+                redirect "/login?#{env["REQUEST_PATH"]}"
             end
         end
         def register email, pass
@@ -167,10 +167,14 @@ class WebSync < Sinatra::Base
         end
     end
     post '/login' do
+        redirect_loc = '/'
+        if params[:redirect]!=''
+            redirect_loc = params[:redirect]
+        end
         if authenticate params[:email],params[:password]
-            redirect '/'
+            redirect redirect_loc
         else
-            redirect '/login'
+            redirect "/login?#{redirect_loc}"
         end
     end
     get '/register' do

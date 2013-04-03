@@ -128,7 +128,7 @@ cursor {
     );
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
     background-attachment: fixed;
-	max-width: 100%;
+	width: 100%;
 	display: inline-block;
     height: 100%;
     overflow: auto;

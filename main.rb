@@ -234,7 +234,39 @@ class WebSync < Sinatra::Base
         doc.save
         redirect "/#{doc.id.base62_encode}/edit"
     end
-    get '/:doc/download' do
+    get '/upload' do
+        erb :upload
+    end
+    post '/upload' do
+        tempfile = params[:file][:tempfile]
+        filename = params[:file][:filename]
+        filetype = params[:file][:type]
+        content = nil
+        if filetype=="application/pdf"
+            content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
+        elsif filetype=='text/html'
+            content = File.read(tempfile.path)
+        elsif filename.split('.').pop=='docx'
+            content = Docx::Document.open(tempfile.path).to_html.force_encoding("UTF-8")
+        else
+            logger.info "Unrecognized filetype: #{params[:file][:type]}"
+        end
+        if content!=nil
+            doc = Document.create(
+                :name => filename,
+                :body => content,
+                :created => Time.now,
+                :last_edit_time => Time.now,
+                :user => current_user
+            )
+            doc.assets << Asset.get(1)
+            doc.save
+            redirect "/#{doc.id.base62_encode}/edit"
+        else
+            redirect "/"
+        end
+    end
+    get '/:doc/download/docx' do
         login_required
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
@@ -248,7 +280,7 @@ class WebSync < Sinatra::Base
     end
     # TODO: Switch PDF generation to a dedicated server w/ xorg-server
     # Requires wkhtmltopdf
-    get '/:doc/pdf' do
+    get '/:doc/download/pdf' do
         login_required
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
@@ -259,7 +291,17 @@ class WebSync < Sinatra::Base
         kit = PDFKit.new(doc.body, :page_size => 'Letter')
         attachment(doc.name+'.pdf')
         response.write(kit.to_pdf)
-        #send_data doc.body, :filename=>doc.name+".docx"
+    end
+    get '/:doc/download/html' do
+        login_required
+        doc_id = params[:doc].base62_decode
+        doc = Document.get doc_id
+        if (!doc.public)&&doc.user!=current_user
+            redirect '/'
+        end
+        response.headers['content_type'] = "text/html"
+        attachment(doc.name+'.html')
+        response.write(doc.body)
     end
     get '/:doc/delete' do
         login_required
@@ -311,7 +353,7 @@ class WebSync < Sinatra::Base
                     warn "websocket open"
                 end
                 ws.onmessage do |msg|
-                    data = JSON.parse(msg);
+                    data = JSON.parse(msg.force_encoding("UTF-8"));
                     puts "JSON: #{data.to_s}"
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']

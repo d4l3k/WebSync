@@ -247,7 +247,13 @@ class WebSync < Sinatra::Base
         elsif filetype=='text/html'
             content = File.read(tempfile.path)
         elsif filename.split('.').pop=='docx'
-            content = Docx::Document.open(tempfile.path).to_html.force_encoding("UTF-8")
+            `unoconv -f html #{tempfile.path}`
+            exit_status = $?.to_i
+            if exit_status == 0
+                content = File.read(tempfile.path+".html")
+            end
+            # This pretty much just reads plain text...
+            #content = Docx::Document.open(tempfile.path).to_html.force_encoding("UTF-8")
         else
             logger.info "Unrecognized filetype: #{params[:file][:type]}"
         end

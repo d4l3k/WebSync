@@ -1,6 +1,6 @@
 #\ -p 4567
 require 'bundler'
-
+require 'tempfile'
 Bundler.require(:default)
 require './main'
 =begin

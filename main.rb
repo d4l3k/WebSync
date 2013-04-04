@@ -242,20 +242,22 @@ class WebSync < Sinatra::Base
         filename = params[:file][:filename]
         filetype = params[:file][:type]
         content = nil
-        if filetype=="application/pdf"
-            content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
-        elsif filetype=='text/html'
-            content = File.read(tempfile.path)
-        elsif filename.split('.').pop=='docx'
-            `unoconv -f html #{tempfile.path}`
-            exit_status = $?.to_i
-            if exit_status == 0
-                content = File.read(tempfile.path+".html")
-            end
-            # This pretty much just reads plain text...
-            #content = Docx::Document.open(tempfile.path).to_html.force_encoding("UTF-8")
+        # TODO: Split upload/download into its own external server. Right now Unoconv is blocking.
+        `unoconv -f html #{tempfile.path}`
+        exit_status = $?.to_i
+        if exit_status == 0
+            content = File.read(tempfile.path+".html")
         else
-            logger.info "Unrecognized filetype: #{params[:file][:type]}"
+            if filetype=="application/pdf"
+                content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
+            elsif filetype=='text/html'
+                content = File.read(tempfile.path)
+            elsif filename.split('.').pop=='docx'
+                    # This pretty much just reads plain text...
+                    content = Docx::Document.open(tempfile.path).to_html.force_encoding("UTF-8")
+            else
+                logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
+            end
         end
         if content!=nil
             doc = Document.create(
@@ -272,6 +274,31 @@ class WebSync < Sinatra::Base
             redirect "/"
         end
     end
+    get '/:doc/download/:format' do
+        if !%w(bib doc doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
+            redirect '/'
+        end
+        login_required
+        doc_id = params[:doc].base62_decode
+        doc = Document.get doc_id
+        if (!doc.public)&&doc.user!=current_user
+            redirect '/'
+        end
+        file = Tempfile.new('websync-export')
+        file.write doc.body
+        file.close
+        `unoconv -f #{params[:format]} #{file.path}`
+        if $?.to_i==0
+            export_file = file.path+"."+params[:format]
+            response.headers['content_type'] = `file --mime -b export_file`.split(';')[0]
+            attachment(doc.name+'.'+params[:format])
+            response.write(File.read(export_file))
+        else
+            redirect '/'
+        end
+        file.unlink
+    end
+=begin
     get '/:doc/download/docx' do
         login_required
         doc_id = params[:doc].base62_decode
@@ -309,6 +336,7 @@ class WebSync < Sinatra::Base
         attachment(doc.name+'.html')
         response.write(doc.body)
     end
+=end
     get '/:doc/delete' do
         login_required
         doc_id = params[:doc].base62_decode

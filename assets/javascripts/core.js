@@ -373,6 +373,7 @@ WebSyncProto.prototype = {
     // Function: string WebSync.getHTML();
     // This will return sanitized document HTML. TODO: This should be migrated into the page handler.
 	getHTML: function(){
+        $(".page").get(0).normalize();
 		var html = $(".page").html().trim();
 		// Remove other cursors.
 		html = html.replace(/\<cursor[^\/]+\/?\<\/cursor\>/g,"")
@@ -476,7 +477,85 @@ WebSyncProto.prototype = {
 		return div;
 	}
 }
-
+dmp = new diff_match_patch();
+function NODEtoJSON(obj){
+    var jso = {
+        name: obj.nodeName,
+        childNodes:[]
+    }
+    if(obj.nodeName=="#text"){
+        jso.textContent = obj.textContent;
+    }
+    if(obj.attributes){
+        $.each(obj.attributes,function(k,v){
+            jso[v.name]=v.value;
+        });
+    }
+    $.each(obj.childNodes,function(index,child){
+        jso.childNodes.push(NODEtoJSON(child));
+    });
+    if(_.isEmpty(jso.childNodes)){
+        delete jso.childNodes;
+    }
+    return jso;
+}
+function DOMToJSON(obj){
+    var jso = [];
+    obj.each(function(index, elem){
+        elem.normalize();
+        jso.push(NODEtoJSON(elem));
+    });
+    return jso;
+}
+// Finds differences between obj1 and obj2.
+function diff(obj1, obj2){
+    var diffs = {}
+    if(_.isEqual(obj1,obj2)){
+    } else if(typeof(obj2)=='undefined'){
+        diffs = {op:'delete'}
+    } else if(typeof(obj1)!=typeof(obj2)){
+        diffs = {op:'replace',new:obj2};
+    } else if(typeof(obj1)=="string"){
+        diffs = {op:'patch',patch:dmp.patch_toText(dmp.patch_make(obj1,obj2))}
+    } else if($.isArray(obj1)&&$.isArray(obj2)){
+        $.each(obj1,function(i1,val1){
+            if(!_.isEqual(val1,obj2[i1])){
+                var index_found = [];
+                $.each(obj2,function(i2,val2){
+                    if(_.isEqual(val1,val2)){
+                        if(i1!=i2){
+                            index_found.push([i1,i2]);
+                        }
+                    }
+                });
+                if(index_found.length>0){
+                    $.each(index_found,function(i,val){
+                        diffs[val[0]]={op:'move',new:val[1]};
+                    });
+                } else {
+                    if(obj1.length!=obj2.length){
+                        diffs[i1]={op:'delete'};
+                    } else {
+                        // TODO: This is rather weird...
+                        var val = diff(val1,obj2[i1]);
+                        if(!_.isEmpty(val)){
+                            diffs[i1]=val;
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        // Both Objects
+        $.each(obj1, function(k,v){
+            var val = diff(v,obj2[k]);
+            if(!_.isEmpty(val)){
+                diffs[k]=val;
+            }
+        });
+    }
+    return diffs;
+}
 WebSocket.prototype.sendJSON = function(object){
 	this.send(JSON.stringify(object));
 }

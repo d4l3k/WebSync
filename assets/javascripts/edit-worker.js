@@ -15,7 +15,7 @@ self.onmessage = function(e) {
             var blah = diff_htmlMode(old_html,new_html);
             var diffsHTML = blah[0];
             var lineArray = blah[1];
-            dmp.diff_cleanupSemantic(diffsHTML);
+            dmp.diff_cleanupEfficiency(diffsHTML);
             var patchesHTML = dmp.patch_make(diffsHTML);
             var patch_textHTML = dmp.patch_toText(patchesHTML);
             //patch_textHTML = patchText2Html(patch_textHTML,lineArray);

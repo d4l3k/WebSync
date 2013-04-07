@@ -171,7 +171,7 @@ cursor {
 	background-color: #ccc;
 }
 ::selection {
-	background-color: #ccc;
+	background-color: #b3d4fc;
 }
 .no-connection {
 	background-image: -webkit-gradient(linear,0 0,0 100%,from(#f33),to(#c11)) !important;
@@ -230,10 +230,10 @@ a#name:hover {
     height: 36px !important;
 }
 .content table {
-	/*-user-modify: read-only;
+	-user-modify: read-only;
 	-moz-user-modify: read-only;
 	-webkit-user-modify: read-only;
-	user-select: none;
+	/*user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;	*/

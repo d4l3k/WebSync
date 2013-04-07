@@ -1,4 +1,5 @@
 // Web-Sync: Tables Plugin
+// TODO: Setup RequireJS
 WebSync.register("Tables",function(){ var self = this;
 	// Enable: This is where everything should be setup.
 	// Plugins should use a jQuery namespace for ease of use.
@@ -45,26 +46,26 @@ WebSync.register("Tables",function(){ var self = this;
 				if(self.selected==true&&!e.shiftKey){
 					var editting = false;
 					if(self.selectedElem.contentEditable){
-						edditing=self.selectedElem.contedEditable=="true";
+						editting=self.selectedElem.contedEditable=="true";
 					}
 					if(e.keyCode==13){
 						self.cursorMove(0,1);
 					} else if(e.keyCode==27){
 						// Escape
 						self.selectedEditable(false);
-					} else if(e.keyCode==37&&!editting){ 
+					} else if(e.keyCode==37&&!editting){
 						// Left arrow
 						self.cursorMove(-1,0);
 						e.preventDefault();
-					}else if(e.keyCode==39&&!editting){ 
+					}else if(e.keyCode==39&&!editting){
 						// Right arrow
 						self.cursorMove(1,0);
 						e.preventDefault();
-					}else if(e.keyCode==38&&!editting){ 
+					}else if(e.keyCode==38&&!editting){
 						// Up arrow
 						self.cursorMove(0,-1);
 						e.preventDefault();
-					}else if(e.keyCode==40&&!editting){ 
+					}else if(e.keyCode==40&&!editting){
 						// Down arrow
 						self.cursorMove(0,1);
 						e.preventDefault();
@@ -140,7 +141,7 @@ WebSync.register("Tables",function(){ var self = this;
 	}
 	this.selectedEditable = function(edit){
 		if(!edit){
-			self.selectedElem.contentEditable=false;
+			self.selectedElem.contentEditable=null;
 			$("#table_cursor").css({borderStyle: 'solid', outlineStyle: 'solid'});
 			$('a:contains("Table")').click();
 		}else{

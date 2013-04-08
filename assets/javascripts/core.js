@@ -517,34 +517,75 @@ function diff(obj1, obj2){
         diffs = {op:'replace',new:obj2};
     } else if(typeof(obj1)=="string"){
         diffs = {op:'patch',patch:dmp.patch_toText(dmp.patch_make(obj1,obj2))}
-    } else if($.isArray(obj1)&&$.isArray(obj2)){
-        $.each(obj1,function(i1,val1){
-            if(!_.isEqual(val1,obj2[i1])){
-                var index_found = [];
-                $.each(obj2,function(i2,val2){
-                    if(_.isEqual(val1,val2)){
-                        if(i1!=i2){
-                            index_found.push([i1,i2]);
-                        }
-                    }
-                });
-                if(index_found.length>0){
-                    $.each(index_found,function(i,val){
-                        diffs[val[0]]={op:'move',new:val[1]};
-                    });
-                } else {
-                    if(obj1.length!=obj2.length){
-                        diffs[i1]={op:'delete'};
-                    } else {
-                        // TODO: This is rather weird...
-                        var val = diff(val1,obj2[i1]);
-                        if(!_.isEmpty(val)){
-                            diffs[i1]=val;
-                        }
-                    }
+    } else if($.isArray(obj1)){
+        diffs = [];
+        var C = []
+        // Generate a table of matching areas.
+        $.each(obj2,function(i1,val1){
+            C[i1]=[]
+            $.each(obj1,function(i2,val2){
+                if(_.isEqual(val1,val2)){
+                    C[i1][i2]=true;
                 }
+            });
+        });
+        log_array(C);
+        // First pass through C looking for non-matching patterns found in the new array.
+        var last_i2 = 0;
+        var last_i1 = 0;
+        $.each(C,function(i1,R){
+            var exists = false;
+            $.each(R,function(i2,val){
+                // This deletes duplicates.
+                if(val&&exists){
+                    delete C[i1][i2];
+                } else if(val){
+                    exists = true;
+                    for(var y=last_found_i2;y<=i2;y++){
+                        for(var x=(i1+1);x<C.length;x++){
+                            // Prune the rest of the false positives on this line.
+                            delete C[x][y];
+                        }
+                    }
+                    last_i2 = i2;
+                    last_i1 = i1;
+                }
+            });
+            if(!exists){
+                var action = {op:'new',new:obj2[i1],index:i1}
+                last_found_i2++;
+                for(var x=(i1+1);x<C.length;x++){
+                        // Prune the rest of the false positives on this line.
+                    delete C[x][last_i2];
+                }
+                diffs.push(action)
             }
         });
+        // Second pass through C looking for non-matching patterns found in the old array.
+        for(var i1=0;i1<obj1.length;i1++){
+            var exists = false;
+            for(var i2=0;i2<obj2.length;i2++){
+                if(C[i2][i1]){
+                    exists = true;
+                }
+            }
+            if(!exists){
+                diffs.push({op:'delete',index:i1})
+            }
+        }
+        /*var tmp_diff = [];
+        for(var i=(diffs.length-1);i>=0;i--){
+            var diff = diffs[i];
+            var diff_index = tmp_diff[diff.index];
+            if(diff_index!=null){
+                {op:'diff',diff:diff(obj1[diff_index],obj2[diff_index]);
+                delete diffs[diff_index];
+                delete diffs[i];
+            } else {
+                tmp_diff[diff.index]=i;
+            }
+        }*/
+        log_array(C);
     } else {
         // Both Objects
         $.each(obj1, function(k,v){
@@ -555,6 +596,22 @@ function diff(obj1, obj2){
         });
     }
     return diffs;
+}
+function log_array(arr){
+    var output = "";
+    $.each(arr,function(i1,R){
+        var exists = false;
+        $.each(R,function(i2,val){
+            if(val){
+                output+='0';
+            } else {
+                output+=' ';
+            }
+        });
+        output += "\n";
+    });
+    console.log(output);
+
 }
 WebSocket.prototype.sendJSON = function(object){
 	this.send(JSON.stringify(object));

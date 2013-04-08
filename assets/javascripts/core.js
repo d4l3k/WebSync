@@ -541,10 +541,38 @@ function diff(obj1, obj2){
                     delete C[i1][i2];
                 } else if(val){
                     exists = true;
-                    for(var y=last_found_i2;y<=i2;y++){
-                        for(var x=(i1+1);x<C.length;x++){
+                    /*var x = last_i1;
+                    var y = last_i2;
+                    while(x!=i1&&y!=i2){
+                        var slope_x = 0;
+                        var slope_y = 0;
+                        if(x!=i1){
+                            slope_x = 1;
+                        }
+                        if(y!=i2){
+                            slope_y = 1;
+                        }
+                        x+=slope_x;
+                        y+=slope_y;
+                        if(!C[x][y]){
+                            if(slope_x&&slope_y){
+                                console.log(x,y,obj1,obj2);
+                                diffs.push({op:'diff',index:i2,diff:diff(obj1[y-1],obj2[x])});
+                            } else if(slope_x){
+                                diffs.push({op:'new',new:obj2[x],index:x});
+                            } else if(slope_y){
+                                diffs.push({op:'delete',index:y});
+                            }
+                        }
+                        for(var b=(x+2);b<C.length;b++){
                             // Prune the rest of the false positives on this line.
-                            delete C[x][y];
+                            delete C[b][y];
+                        }
+                    }//*/
+                    for(var y=(last_i2);y<i2;y++){
+                        for(var b=(i1+1);b<C.length;b++){
+                            // Prune the rest of the false positives on this line.
+                            delete C[b][y];
                         }
                     }
                     last_i2 = i2;
@@ -553,7 +581,7 @@ function diff(obj1, obj2){
             });
             if(!exists){
                 var action = {op:'new',new:obj2[i1],index:i1}
-                last_found_i2++;
+                last_i2++;
                 for(var x=(i1+1);x<C.length;x++){
                         // Prune the rest of the false positives on this line.
                     delete C[x][last_i2];
@@ -572,7 +600,7 @@ function diff(obj1, obj2){
             if(!exists){
                 diffs.push({op:'delete',index:i1})
             }
-        }
+        }//*/
         /*var tmp_diff = [];
         for(var i=(diffs.length-1);i>=0;i--){
             var diff = diffs[i];

@@ -10,8 +10,7 @@
 */
 // Variable: object WebSync;
 // This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.
-var WebSyncProto = function(){};
-WebSyncProto.prototype = {
+define('/assets/core.js',{
     // Variable: object WebSync.tmp;
     // Provides a location for temporary data to be stored.
     tmp: {},
@@ -474,7 +473,7 @@ WebSyncProto.prototype = {
 		},10000);
 		return div;
 	}
-}
+});
 dmp = new diff_match_patch();
 function NODEtoJSON(obj){
     var jso = {
@@ -647,9 +646,10 @@ function capitaliseFirstLetter(string)
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-window.WebSync=new WebSyncProto();
 requirejs.config({
-    //By default load any module IDs from js/lib
     baseUrl: 'assets'
 });
-WebSync.initialize();
+require(['/assets/core.js'],function(websync){
+    window.WebSync = websync;
+    WebSync.initialize();
+});

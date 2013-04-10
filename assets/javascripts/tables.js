@@ -1,8 +1,11 @@
 // Web-Sync: Tables Plugin
-define('/assets/tables.js',function(){ var self = this;
-	// TODO: Fix commenting to bring it up to spec w/ RequireJS.
-    // Enable: This is where everything should be setup.
-	// Plugins should use a jQuery namespace for ease of use.
+// WebSync uses RequireJS for modules.
+// define( [pluginName], [requiredModules], definition);
+// pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS.
+define('/assets/tables.js',['/assets/edit.js'],function(editplugin){ var self = {};
+    // Save all variables and information to the self object.
+
+    // Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
     $("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
@@ -103,15 +106,16 @@ define('/assets/tables.js',function(){ var self = this;
     $('#tablemenu a:contains("Delete Row")').bind("click.Tables",function(e){
     });
     WebSync.updateRibbon();
-	// Disable: Plugin should clean itself up.
-	this.disable = function(){
+	// Function: void [plugin=edit].disable();
+    // Disables the plugin. This has to be set for possible plugin unloading.
+	self.disable = function(){
 		var elem = $(".Table").remove();
 		WebSync.updateRibbon();
 		$("*").unbind(".Tables");
 		$("*").undelegate(".Tables");
 	}
 	// Helper methods:
-	this.cursorSelect = function(td){
+	self.cursorSelect = function(td){
 		// Cleanup last elem.
 		if(self.selectedElem){
 			self.selectedEditable(false);
@@ -122,7 +126,7 @@ define('/assets/tables.js',function(){ var self = this;
 		self.selectedEditable(false);
 		self.cursorUpdate();
 	}
-	this.cursorMove = function(dColumn, dRow){
+	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
 		var pos = self.selectedPos();
 		var column = pos[0];
@@ -133,11 +137,11 @@ define('/assets/tables.js',function(){ var self = this;
 		}
 
 	}
-	this.cursorUpdate = function(){
+	self.cursorUpdate = function(){
 		var pos = $(self.selectedElem).position();
 		$("#table_cursor").offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()).get(0).scrollIntoViewIfNeeded();
 	}
-	this.selectedEditable = function(edit){
+	self.selectedEditable = function(edit){
 		if(!edit){
 			self.selectedElem.contentEditable=null;
 			$("#table_cursor").css({borderStyle: 'solid', outlineStyle: 'solid'});
@@ -149,7 +153,7 @@ define('/assets/tables.js',function(){ var self = this;
 			WebSync.setEndOfContenteditable(self.selectedElem);
 		}
 	}
-	this.clearSelect = function(){
+    self.clearSelect = function(){
 		if(self.selected){
 			self.selected = false;
 			self.selectedEditable(false);
@@ -158,7 +162,7 @@ define('/assets/tables.js',function(){ var self = this;
 			$('a:contains("Text")').click();
 		}
 	}
-	this.selectedPos = function(){
+	self.selectedPos = function(){
 		var child = self.selectedElem;
 		var column = 0;
 		while( (child = child.previousSibling) != null )
@@ -169,7 +173,10 @@ define('/assets/tables.js',function(){ var self = this;
 			row++;
 		return [column,row];
 	}
-	this.tableSize = function(){
+	self.tableSize = function(){
 		return [self.selectedElem.parentElement.children.length,self.selectedElem.parentElement.parentElement.children.length]
 	}
+
+    // Return self so other modules can hook into this one.
+    return self;
 });

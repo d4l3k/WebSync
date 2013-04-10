@@ -62,10 +62,7 @@ WebSyncProto.prototype = {
 			console.log("Message data:",data);
 			if(data.type=="scripts"){
                 // Load scripts from server.
-				data.js.forEach(function(script){
-					console.log("Loading script:",script);
-					$(document.body).append($('<script type="text/javascript" src="'+script+'"></script>'))
-				});
+				require(data.js);
 			}
             else if(data.type=="text_patch"){
                 // Make sure there aren't any outstanding changes that need to be sent before patching document.
@@ -188,6 +185,7 @@ WebSyncProto.prototype = {
                 $("body").removeClass("zen").resize(); $("#zoom_level").val("100%").change(); $(".menu").animate({top: 0});
             }
         });
+        require(['/assets/edit.js']);
 		this.updateRibbon();
 		rangy.init();
 		console.log(rangy)
@@ -650,4 +648,8 @@ function capitaliseFirstLetter(string)
 }
 
 window.WebSync=new WebSyncProto();
+requirejs.config({
+    //By default load any module IDs from js/lib
+    baseUrl: 'assets'
+});
 WebSync.initialize();

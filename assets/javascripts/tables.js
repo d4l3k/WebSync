@@ -1,110 +1,108 @@
 // Web-Sync: Tables Plugin
-// TODO: Setup RequireJS
-WebSync.register("Tables",function(){ var self = this;
-	// Enable: This is where everything should be setup.
+define('/assets/tables.js',function(){ var self = this;
+	// TODO: Fix commenting to bring it up to spec w/ RequireJS.
+    // Enable: This is where everything should be setup.
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
-	this.enable = function(){
-		$("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
-		$("#table").bind("click.Tables",function(e){
-			console.log(e);
-			var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
-			WebSync.insertAtCursor(new_table)
-		});
-		$(".content_well").delegate("table","click.Tables",function(e){
-			if(self.selectedElem.contentEditable!="true"){
-				$('a:contains("Table")').click();
-			}
-			e.stopPropagation();
-		});
-		$(".page").bind("click.Tables",function(e){
-			console.log(e);
-			self.clearSelect();
-		});
-		$(".content_well").delegate("td","click.Tables",function(e){
-			console.log(e);
-			console.log(this);
-			if(this!=self.selectedElem){
-				self.cursorSelect(this);
-			}
-		});
-		$(".content_well").delegate("td","contextmenu.Tables",function(e){
-			if(this!=self.selectedElem){
-				self.cursorSelect(this);
-			}
-			if(self.selectedElem.contentEditable!="true"){
-				e.preventDefault();
-				$(this).contextmenu();
-			}
-		});
-		$(".content_well").delegate("td","dblclick.Tables",function(e){
-			self.selectedEditable(true);
-		});
-		$(".content_well").bind("keydown.Tables",function(e){
-			if(self.selectedElem){
-				if(self.selected==true&&!e.shiftKey){
-					var editting = false;
-					if(self.selectedElem.contentEditable){
-						editting=self.selectedElem.contedEditable=="true";
-					}
-					if(e.keyCode==13){
-						self.cursorMove(0,1);
-					} else if(e.keyCode==27){
-						// Escape
-						self.selectedEditable(false);
-					} else if(e.keyCode==37&&!editting){
-						// Left arrow
-						self.cursorMove(-1,0);
-						e.preventDefault();
-					}else if(e.keyCode==39&&!editting){
-						// Right arrow
-						self.cursorMove(1,0);
-						e.preventDefault();
-					}else if(e.keyCode==38&&!editting){
-						// Up arrow
-						self.cursorMove(0,-1);
-						e.preventDefault();
-					}else if(e.keyCode==40&&!editting){
-						// Down arrow
-						self.cursorMove(0,1);
-						e.preventDefault();
-					} else {
-						if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="false"){
-							self.selectedEditable(true);
+    $("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
+    $("#table").bind("click.Tables",function(e){
+        console.log(e);
+        var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
+        WebSync.insertAtCursor(new_table)
+    });
+    $(".content_well").delegate("table","click.Tables",function(e){
+        if(self.selectedElem.contentEditable!="true"){
+            $('a:contains("Table")').click();
+        }
+        e.stopPropagation();
+    });
+    $(".page").bind("click.Tables",function(e){
+        console.log(e);
+        self.clearSelect();
+    });
+    $(".content_well").delegate("td","click.Tables",function(e){
+        console.log(e);
+        console.log(this);
+        if(this!=self.selectedElem){
+            self.cursorSelect(this);
+        }
+    });
+    $(".content_well").delegate("td","contextmenu.Tables",function(e){
+        if(this!=self.selectedElem){
+            self.cursorSelect(this);
+        }
+        if(self.selectedElem.contentEditable!="true"){
+            e.preventDefault();
+            $(this).contextmenu();
+        }
+    });
+    $(".content_well").delegate("td","dblclick.Tables",function(e){
+        self.selectedEditable(true);
+    });
+    $(".content_well").bind("keydown.Tables",function(e){
+        if(self.selectedElem){
+            if(self.selected==true&&!e.shiftKey){
+                var editting = false;
+                if(self.selectedElem.contentEditable){
+                    editting=self.selectedElem.contedEditable=="true";
+                }
+                if(e.keyCode==13){
+                    self.cursorMove(0,1);
+                } else if(e.keyCode==27){
+                    // Escape
+                    self.selectedEditable(false);
+                } else if(e.keyCode==37&&!editting){
+                    // Left arrow
+                    self.cursorMove(-1,0);
+                    e.preventDefault();
+                }else if(e.keyCode==39&&!editting){
+                    // Right arrow
+                    self.cursorMove(1,0);
+                    e.preventDefault();
+                }else if(e.keyCode==38&&!editting){
+                    // Up arrow
+                    self.cursorMove(0,-1);
+                    e.preventDefault();
+                }else if(e.keyCode==40&&!editting){
+                    // Down arrow
+                    self.cursorMove(0,1);
+                    e.preventDefault();
+                } else {
+                    if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="false"){
+                        self.selectedEditable(true);
 
-							$(self.selectedElem).focus();
-							//WebSync.setCaretPosition(self.selectedElem,0);
-						}
-						setTimeout(self.cursorUpdate,1);
-					}
-				} else {
-					if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="false"){
-						self.selectedEditable(true);
+                        $(self.selectedElem).focus();
+                        //WebSync.setCaretPosition(self.selectedElem,0);
+                    }
+                    setTimeout(self.cursorUpdate,1);
+                }
+            } else {
+                if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="false"){
+                    self.selectedEditable(true);
 
-						$(self.selectedElem).focus();
-						//WebSync.setCaretPosition(self.selectedElem,0);
-					}
-					setTimeout(self.cursorUpdate,1);
-				}
-			}
-		});
-		$(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));
-		$(document.body).append($('<div id="table_cursor" class="Table"></div><div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
-		$("td").attr("data-target","#tablemenu");
-		$("#tablemenu a").bind("click.Tables",function(e){
-			e.preventDefault();
-		});
-		$('#tablemenu a:contains("Insert Column")').bind("click.Tables",function(e){
-		});
-		$('#tablemenu a:contains("Delete Column")').bind("click.Tables",function(e){
-		});
-		$('#tablemenu a:contains("Insert Row")').bind("click.Tables",function(e){
-		});
-		$('#tablemenu a:contains("Delete Row")').bind("click.Tables",function(e){
-		});
-		WebSync.updateRibbon();
-	}
+                    $(self.selectedElem).focus();
+                    //WebSync.setCaretPosition(self.selectedElem,0);
+                }
+                setTimeout(self.cursorUpdate,1);
+            }
+        }
+    });
+    $(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));
+    $(document.body).append($('<div id="table_cursor" class="Table"></div><div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
+    $("td").attr("data-target","#tablemenu");
+    $("#tablemenu a").bind("click.Tables",function(e){
+        e.preventDefault();
+    });
+    $('#tablemenu a:contains("Insert Column")').bind("click.Tables",function(e){
+    });
+    $('#tablemenu a:contains("Delete Column")').bind("click.Tables",function(e){
+    });
+    $('#tablemenu a:contains("Insert Row")').bind("click.Tables",function(e){
+    });
+    $('#tablemenu a:contains("Delete Row")').bind("click.Tables",function(e){
+    });
+    WebSync.updateRibbon();
 	// Disable: Plugin should clean itself up.
 	this.disable = function(){
 		var elem = $(".Table").remove();

@@ -10,7 +10,7 @@
 */
 // Variable: object WebSync;
 // This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.
-define('/assets/core.js',{
+define('websync',{
     // Variable: object WebSync.tmp;
     // Provides a location for temporary data to be stored.
     tmp: {},
@@ -165,11 +165,11 @@ define('/assets/core.js',{
         $('body').mousemove(function(e){
             if(WebSync.viewMode=='Zen'){
                 if(e.pageY<85&&!WebSync.menuVisible){
-                    $(".menu").animate({top: 0});
+                    $(".menu").animate({top: 0},200);
                     WebSync.menuVisible = true;
                 }
                 else if(e.pageY>85&&WebSync.menuVisible) {
-                    $(".menu").animate({top: -85});
+                    $(".menu").animate({top: -85},200);
                     WebSync.menuVisible = false;
                 }
             }
@@ -178,13 +178,17 @@ define('/assets/core.js',{
             var mode = $('#view_mode').val();
             WebSync.viewMode = mode;
             if(mode=='Zen'){
-                $("body").addClass("zen").resize(); $("#zoom_level").val("120%").change(); $(".menu").animate({top:-85});
+                $("body").addClass("zen").resize();
+                $("#zoom_level").val("120%").change();
+                $(".menu").animate({top:-85},200);
             }
             else {
-                $("body").removeClass("zen").resize(); $("#zoom_level").val("100%").change(); $(".menu").animate({top: 0});
+                $("body").removeClass("zen").resize();
+                $("#zoom_level").val("100%").change();
+                $(".menu").animate({top: 0},200);
             }
         });
-        require(['/assets/edit.js']);
+        require(['edit']);
 		this.updateRibbon();
 		rangy.init();
 		console.log(rangy)
@@ -381,7 +385,7 @@ define('/assets/core.js',{
     resize: function(){
         $(".content_well").height(window.innerHeight-$(".content_well").position().top)
         $(".settings-popup").css({left:(window.innerWidth-944)*0.5})
-        $(".arrow").offset({left:$("#settingsBtn").offset().left+16})
+        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15})
     },
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
@@ -649,7 +653,7 @@ function capitaliseFirstLetter(string)
 requirejs.config({
     baseUrl: 'assets'
 });
-require(['/assets/core.js'],function(websync){
+require(['websync'],function(websync){
     window.WebSync = websync;
     WebSync.initialize();
 });

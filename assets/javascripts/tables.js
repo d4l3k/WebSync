@@ -1,8 +1,8 @@
 // Web-Sync: Tables Plugin
 // WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
-// pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS.
-define('/assets/tables.js',['/assets/edit.js'],function(editplugin){ var self = {};
+// pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
+define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self = {};
     // Save all variables and information to the self object.
 
     // Plugins should use a jQuery namespace for ease of use.

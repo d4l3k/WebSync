@@ -1,3 +1,18 @@
+@mixin ex($key, $val) {
+    -moz-#{$key}: $val;
+    -o-#{$key}: $val;
+    -ms-#{$key}: $val;
+    -webkit-#{$key}: $val;
+    #{$key}: $val;
+}
+@mixin keyframes($name) {
+    @-moz-keyframes #{$name} { @content; }
+    @-o-keyframes #{$name} { @content; }
+    @-webkit-keyframes #{$name} { @content; }
+    @-ms-keyframes #{$name} { @content; }
+    @keyframes #{$name} { @content; }
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -72,7 +87,7 @@ cursor {
 .settings-popup {
     position: absolute;
     display: none;
-    top: 35px;
+    top: 40px;
     left: 0;
     margin: 0 auto;
     max-width: none;
@@ -134,11 +149,7 @@ cursor {
     overflow: auto;
 }
 .content_well > div {
-    -moz-transform-origin: top center;
-    -webkit-transform-origin: top center;
-    -o-transform-origin: top center;
-    -ms-transform-origin: top center;
-    transform-origin: top center;
+    @include ex(transform-origin, top center);
 }
 .content {
 	min-height: 9in;
@@ -148,21 +159,21 @@ cursor {
 	border: 1px solid #aaa;
 	background-color: white;
     //box-shadow: 0 0 8px #aaa;
-}
-.content .page {
-	-user-modify: read-write;
-	-moz-user-modify: read-write;
-	-webkit-user-modify: read-write;
-	min-height: 9in;
-	border: 1px solid #eee;
-	word-wrap: break-word;
-	overflow-wrap: break-work;
-	hyphens: auto;
-	-webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-	font-size: 14px;
-	line-height: normal;
+    .page {
+        -user-modify: read-write;
+        -moz-user-modify: read-write;
+        -webkit-user-modify: read-write;
+        min-height: 9in;
+        border: 1px solid #eee;
+        word-wrap: break-word;
+        overflow-wrap: break-work;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+        font-size: 14px;
+        line-height: normal;
+    }
 }
 :focus, :active {
 	outline: none;
@@ -178,26 +189,25 @@ cursor {
 }
 a#name {
 	//background-color: #555;
-	background-color: rgba(255,255,255,0.3) !important; 
+	background-color: rgba(255,255,255,0.3) !important;
 	font-size: 1.5em;
 	overflow: hidden;
 	text-overflow:ellipsis;
 	max-width: 3in;
 	max-height: 25px;
-	white-space: nowrap
+	white-space: nowrap;
+    &:focus {
+        max-width: 6in;
+        //background-color: #777;
+        text-overflow: clip;
+        background-color: rgba(255,255,255,0.45) !important;
+        outline: none;
+    }
+    &:hover {
+        //background-color: #777;
+        background-color: rgba(255,255,255,0.45) !important;
+    }
 }
-a#name:focus {
-	max-width: 6in;
-	//background-color: #777;
-    text-overflow: clip;
-	background-color: rgba(255,255,255,0.45) !important; 
-	outline: none;
-}
-a#name:hover {
-	//background-color: #777;
-	background-color: rgba(255,255,255,0.45) !important; 
-}
-
 .preformatted {
     font-family: monospace;
     white-space: pre;
@@ -215,41 +225,38 @@ a#name:hover {
 	top: 1px;
 }
 .ribbon-opt li.active a, .ribbon-opt li.active a:hover  {
-	background-color: rgba(255,255,255,0.45) !important; 
+	background-color: rgba(255,255,255,0.45) !important;
 	//background-color: #777 !important;
 	font-weight: bold;
 }
 .ribbon-opt li {
 	cursor: pointer;
-}
-.ribbon-opt li a:hover {
-	background-color: rgba(255,255,255,0.3) !important; 
+    a:hover {
+        background-color: rgba(255,255,255,0.3) !important;
+    }
+
 }
 .ribbon .container {
 	display: none;
     height: 36px !important;
 }
 .content table {
-	-user-modify: read-only;
-	-moz-user-modify: read-only;
-	-webkit-user-modify: read-only;
-	/*user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;	*/
+    @include ex(user-modify, read-only);
 }
-.content table, .content th, .content td {
-	border: 1px solid #888;
-	word-wrap: break-word;
-	overflow-wrap: break-work;
-	hyphens: auto;
-	border-collapse:collapse;
-}
-.content td {
-	padding-left: 1px;
-	padding-right: 1px;
-	min-width: 0.25in;
-	height: 11pt;
+.content {
+    table, th, td {
+        border: 1px solid #888;
+        word-wrap: break-word;
+        overflow-wrap: break-work;
+        hyphens: auto;
+        border-collapse:collapse;
+    }
+    td {
+        padding-left: 1px;
+        padding-right: 1px;
+        min-width: 0.25in;
+        height: 11pt;
+    }
 }
 #table_cursor {
 	position: absolute;
@@ -275,9 +282,98 @@ a#name:hover {
 	bottom: 0;
 	right: 0;
 	margin-right: 20px;
+    .alert {
+        display: table;
+        margin-left: auto;
+        margin-bottom: 10px;
+    }
 }
-#alert_well .alert {
-	display: table;
-	margin-left: auto;
-    margin-bottom: 10px;
+
+.sidebar {
+    width: 250px;
+    float: right;
+    position:absolute;
+    right: 0;
+    bottom: 0;
+    background-color: #eee;
+    border-left: 1px solid #ccc;
+    &#chat {
+        position: fixed;
+        #user_list{
+            padding: 5px;
+            padding-bottom: 0;
+            a {
+                margin-right: 5px;
+            }
+        }
+        a {
+            img {
+                border: 1px solid #ccc;
+            }
+        }
+        a img:hover, .sidebar#chat a img:active, .sidebar#chat a:hover img, .sidebar#chat a:active img {
+            border: 1px solid black;
+        }
+        #chat_well {
+            margin: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            position: absolute;
+            font-size: 10pt;
+            right: 0px;
+            bottom: 35px;
+            top: 45px;
+            width: 238px;
+
+            span {
+                font-weight: bold;
+                margin-right: 5px;
+            }
+            a img {
+                margin-right: 5px;
+                height: 24px;
+                float: left;
+            }
+            p {
+                vertical-align: top;
+                padding: 5px;
+                border-bottom: 1px solid #ccc;
+                line-height: 10pt;
+                word-wrap: break-word;
+                min-height: 26px;
+            }
+        }
+        .chat_input {
+            margin: 5px;
+            position: absolute;
+            bottom: 0;
+            * {
+                border-radius: 0px !important;
+                font-size: 10pt;
+            }
+            input {
+                width: 168px;
+            }
+        }
+    }
+}
+
+.container {
+    width: auto !important;
+    margin: 0 100px;
+}
+
+.badge-pulse {
+    @include ex(animation-duration, 1s);
+    @include ex(animation-name, badge-glow);
+    @include ex(animation-iteration-count, infinite);
+    @include ex(animation-direction, alternate);
+}
+@include keyframes(badge-glow) {
+    from {
+        background-color: #999;
+    }
+    to {
+        background-color: #f89406;
+    }
 }

@@ -1,6 +1,5 @@
 // Web-Sync: Text Editing Plugin
-define("/assets/edit.js",function(){ var self = this;
-	// Enable: This is where everything should be setup.
+define("edit",['websync'],function(websync){ var self = this;
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");

@@ -10,7 +10,6 @@ define(['websync'],function(edit,websync){ var self = {};
 	// Unbind Example: $("*").unbind(".Tables");
     self.open = false;
     $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well"><p><a target="_blank" href="https://secure.gravatar.com/b280c8b6b26d1ec3d2fcd45f5c56053f"><img src="https://secure.gravatar.com/avatar/b280c8b6b26d1ec3d2fcd45f5c56053f?size=38"></img><span>Tristan Rice:</span></a>Blah blah blah.</p></div><div class="chat_input input-append"><input class="span2" id="appendedInputButton" type="text"><button class="btn" type="button">Send</button></div></div>'));
-    // <a target="_blank" href="https://secure.gravatar.com/b280c8b6b26d1ec3d2fcd45f5c56053f"><img data-toggle="tooltip" data-placement="bottom" src="https://secure.gravatar.com/avatar/b280c8b6b26d1ec3d2fcd45f5c56053f?size=38" title="Tristan Rice"></img></a><a target="_blank" href="https://secure.gravatar.com/119eaf07c4c2572aa80ee79d4d011dc2"><img data-toggle="tooltip" data-placement="bottom" src="https://secure.gravatar.com/avatar/119eaf07c4c2572aa80ee79d4d011dc2?size=38" title="arkaniad"></img></a>
     $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><i class="icon-phone icon-large"></i><span id="user_count" class="badge badge-pulse">1</span></a></li>'));
     $("#chat").offset({left:window.innerWidth+1});
     $("#chat img").tooltip();

@@ -2,7 +2,6 @@
 //= require jquery.computedstyles.js
 //= require rangy-core.js
 //= require rangy-cssclassapplier.js
-// require jsondiffpatch.min.js
 //= require fontdetect.js
 //= require underscore-min.js
 //= require levenshtein.js

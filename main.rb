@@ -160,7 +160,8 @@ class WebSync < Sinatra::Base
 
     configure :production do
         Bundler.require(:production)
-        sprockets.js_compressor  = YUI::JavaScriptCompressor.new
+        sprockets.js_compressor = Closure::Compiler.new
+        #sprockets.js_compressor  = YUI::JavaScriptCompressor.new
         sprockets.css_compressor = YUI::CssCompressor.new
     end
     $dmp = DiffMatchPatch.new

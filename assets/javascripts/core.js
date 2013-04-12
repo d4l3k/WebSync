@@ -112,8 +112,8 @@ define('websync',{
                 }
             }
             else if(data.type=='info'){
-                WebSync.clients = data['users']
-                var to_trigger = {}
+                WebSync.clients = data['users'];
+                var to_trigger = {};
                 $.each(WebSync.clients,function(k,v){
                     if(!WebSync.users[v.id]){
                         to_trigger[v.id]=[k];
@@ -122,11 +122,8 @@ define('websync',{
                             dataType:'jsonp',
                             timeout: 2000
                         }).done(function(data){
-                            console.log("Success",data);
                             WebSync.users[v.id]=data.entry[0];
-                            console.log("Blah",to_trigger[v])
                         }).complete(function(){
-                            console.log("Client load fail");
                             $.each(to_trigger[v.id],function(i, item){
                                 $(document).trigger('client_load',{client:item});
                             });

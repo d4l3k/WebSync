@@ -4,7 +4,7 @@
 		<link rel="shortcut icon" href="/favicon.ico?v=3" />
         <title>Web-Sync Editor</title>
 		<%= stylesheet_tag 'bundle' %>
-        <%= javascript_tag 'require-jquery' %>
+        <%= javascript_tag 'bundle-norm' %>
 	</head>
 	<body>
         <% if !(defined?(@no_menu)&&@no_menu) %>
@@ -28,7 +28,6 @@
         <% end %>
 		<%= yield %>
 	</body>
-    <%= javascript_tag 'bootstrap.min' %>
     <% if !defined?(@javascripts).nil? %>
         <% @javascripts.each do |script| %>
             <script type="text/javascript" src="<%= script %>"></script>

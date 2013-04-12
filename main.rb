@@ -175,7 +175,7 @@ class WebSync < Sinatra::Base
         Bundler.require(:production)
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
-        set :assets_precompile, %w(bundle.css bundle-edit.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
+        set :assets_precompile, %w(bundle.css *.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
         #sprockets.js_compressor = Closure::Compiler.new
         #sprockets.js_compressor  = YUI::JavaScriptCompressor.new
         #sprockets.css_compressor = YUI::CssCompressor.new

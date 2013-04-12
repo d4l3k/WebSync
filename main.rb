@@ -395,7 +395,7 @@ class WebSync < Sinatra::Base
         # Websocket edit
         else
             #TODO: Authentication for websockets
-            redis_sock = EM::Hiredis.connect
+            redis_sock = EM::Hiredis::PubsubClient.connect
             redis_sock.subscribe("doc:#{doc_id.base62_encode}")
             authenticated = false
             user = nil

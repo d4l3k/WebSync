@@ -183,6 +183,7 @@ class WebSync < Sinatra::Base
     $dmp = DiffMatchPatch.new
 
     $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
+    $chat = Javascript.first_or_create(:name=>'Chat',:description=>'Talk with other users!',:url=>'/assets/chat.js')
     get '/login' do
         if !logged_in?
             erb :login
@@ -248,6 +249,7 @@ class WebSync < Sinatra::Base
             :user => current_user
         )
         doc.assets << Asset.get(1)
+        doc.assets << Asset.get(2)
         doc.save
         redirect "/#{doc.id.base62_encode}/edit"
     end

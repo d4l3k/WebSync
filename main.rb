@@ -82,7 +82,6 @@ class WebSync < Sinatra::Base
     #register Sinatra::Sprockets::Helpers
     #set :sprockets, Sprockets::Environment.new(root)
     #set :assets_prefix, '/assets'
-    set :assets_digest, false
     #set :asset_path, 'public/assets'
     helpers do
         def logger
@@ -175,7 +174,8 @@ class WebSync < Sinatra::Base
         Bundler.require(:production)
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
-        set :assets_precompile, %w(bundle.css *.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
+        set :assets_precompile, %w(bundle.css bundle-edit.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
+        set :assets_precompile_no_digest, %w(*.js)
         #sprockets.js_compressor = Closure::Compiler.new
         #sprockets.js_compressor  = YUI::JavaScriptCompressor.new
         #sprockets.css_compressor = YUI::CssCompressor.new

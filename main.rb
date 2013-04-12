@@ -82,7 +82,7 @@ class WebSync < Sinatra::Base
     #register Sinatra::Sprockets::Helpers
     #set :sprockets, Sprockets::Environment.new(root)
     #set :assets_prefix, '/assets'
-    #set :digest_assets, false
+    set :assets_digest, false
     #set :asset_path, 'public/assets'
     helpers do
         def logger

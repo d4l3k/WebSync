@@ -37,6 +37,7 @@ define(['websync'],function(edit,websync){ var self = {};
     });
     self.updateUserList = function(){
         $("#user_count").text(_.size(WebSync.clients));
+        $("#chat_well").css({top: $("#user_list").height()+5});
     }
     self.toggle = function(){
         $("#chat_btn").parent().toggleClass("active");

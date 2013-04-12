@@ -4,7 +4,7 @@
 		<link rel="shortcut icon" href="/favicon.ico?v=3" />
         <title>Web-Sync Editor</title>
 		<%= stylesheet_tag 'bundle' %>
-        <script type="text/javascript" src="/assets/require-jquery.js"></script>
+        <%= javascript_tag 'require-jquery' %>
 	</head>
 	<body>
         <% if !(defined?(@no_menu)&&@no_menu) %>
@@ -12,7 +12,7 @@
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">Web-Sync</a>
+				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom">Web-Sync</a>
                 <ul class="nav">
                     <li class="text">is a document editing tool similar to Google Drive or Microsoft Skydrive. </li>
                 </ul>
@@ -28,7 +28,7 @@
         <% end %>
 		<%= yield %>
 	</body>
-    <script type="text/javascript" src="/assets/bootstrap.min.js"></script>
+    <%= javascript_tag 'bootstrap.min' %>
     <% if !defined?(@javascripts).nil? %>
         <% @javascripts.each do |script| %>
             <script type="text/javascript" src="<%= script %>"></script>

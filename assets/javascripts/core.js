@@ -33,6 +33,7 @@ define('websync',{
 			console.log(e);
 			WebSync.diffInterval = setInterval(WebSync.checkDiff,500);
 			$(".navbar-inner").removeClass("no-connection");
+            $(document).trigger("connection");
 			$("#connection_msg").remove();
 			if(WebSync.webSocketFirstTime){
 				WebSync.webSocketFirstTime = false;
@@ -52,6 +53,7 @@ define('websync',{
 				$(".navbar-inner").addClass("no-connection");
 				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg";
 				WebSync.diffInterval=null;
+                $(document).trigger("noconnection");
 			}
 			setTimeout(WebSync.webSocketStart,2000);
 		},
@@ -109,12 +111,65 @@ define('websync',{
                     }
                 }
             }
+            else if(data.type=='info'){
+                WebSync.clients = data['users']
+                var to_trigger = {}
+                $.each(WebSync.clients,function(k,v){
+                    if(!WebSync.users[v.id]){
+                        to_trigger[v.id]=[k];
+                        $.ajax({
+                            url:"https://secure.gravatar.com/"+v.id+".json",
+                            dataType:'jsonp',
+                            timeout: 2000
+                        }).done(function(data){
+                            console.log("Success",data);
+                            WebSync.users[v.id]=data.entry[0];
+                            console.log("Blah",to_trigger[v])
+                        }).complete(function(){
+                            console.log("Client load fail");
+                            $.each(to_trigger[v.id],function(i, item){
+                                $(document).trigger('client_load',{client:item});
+                            });
+                        })
+                        WebSync.users[v.id]={};
+                    } else {
+                        if(!to_trigger[v.id]){
+                            $(document).trigger('client_load',{client:k});
+                        } else {
+                            to_trigger[v.id].push(k);
+                        }
+                    }
+                });
+            }
+            else if(data.type=='new_user'){
+                WebSync.clients[data['id']]=data['user'];
+                if(!WebSync.users[data['user'].id]){
+                    $.ajax({
+                        url:"https://secure.gravatar.com/"+data['user'].id+".json",
+                        dataType:'jsonp'
+                    }).done(function(data){
+                        console.log(data);
+                        WebSync.users[data['user'].id]=data.entry[0];
+                        $(document).trigger('client_load',{client:data['id']});
+                    }).fail(function(){
+                        $(document).trigger('client_load',{client:data['id']});
+                    });
+                    WebSync.users[data['user'].id]={};
+                } else {
+                    $(document).trigger('client_load',{client:data['id']});
+                }
+            }
+            else if(data.type=='exit_user'){
+                delete WebSync.clients[data['id']];
+                $(document).trigger('client_leave',{client:data['id']});
+            }
 		},
 		onerror:function(e){
 			console.log(e);
 		}
 
 	},
+    users:{},
     _config_callbacks: {},
     // Function: void WebSync.config_set(string key, object value, string space);
     // Sends a request to the server to set config[key] to value. Space can be "user" or "document".

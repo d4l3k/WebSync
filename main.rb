@@ -362,7 +362,7 @@ class WebSync < Sinatra::Base
             ]
             @doc = doc
             if !@doc.nil?
-                @client_id = $redis.incr("clientid")
+                @client_id = $redis.incr("clientid").base62_encode
                 @client_key = SecureRandom.uuid
                 $redis.set "websocket:id:#{@client_id}",current_user.email
                 $redis.set "websocket:key:#{@client_id}", @client_key
@@ -392,16 +392,29 @@ class WebSync < Sinatra::Base
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']
                             # Extend key expiry time
-                            $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
-                            $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
                             email = $redis.get "websocket:id:#{data['id']}"
                             user = User.get(email)
                             if (!doc.public)&&doc.user!=user
+                                redis_sock.close_connection
                                 ws.close_connection
                                 return
                             end
                             authenticated = true
                             client_id = data['id']
+                            $redis.expire "websocket:id:#{client_id}", 60*60*24*7
+                            $redis.expire "websocket:key:#{client_id}", 60*60*24*7
+                            user_prop = "doc:#{doc_id.base62_encode}:users"
+                            user_raw = $redis.get(user_prop)
+                            if !user_raw.nil?
+                                users = JSON.parse(user_raw)
+                            else
+                                users = {}
+                            end
+                            user_id = Digest::MD5.hexdigest(email.strip.downcase)
+                            users[client_id]={id:user_id,email:email.strip}
+                            $redis.set user_prop,JSON.dump(users)
+                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
+                            ws.send JSON.dump({type:'info',user_id:user_id,users:users})
                             puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
                         else
                             ws.close_connection
@@ -482,6 +495,13 @@ class WebSync < Sinatra::Base
                 ws.onclose do
                     warn("websocket closed")
                     redis_sock.close_connection
+                    if authenticated
+                        user_prop = "doc:#{doc_id.base62_encode}:users"
+                        users = JSON.parse($redis.get(user_prop))
+                        users.delete client_id
+                        $redis.set user_prop,JSON.dump(users)
+                        $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"exit_user",id:client_id})})
+                    end
                 end
                 redis_sock.on(:message) do |channel, message|
                     puts "[#{client_id}]#{channel}: #{message}"

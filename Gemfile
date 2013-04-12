@@ -23,7 +23,6 @@ gem 'base62'
 gem 'thin'
 gem 'sass'
 gem 'sprockets'
-gem 'sprockets-sass'
 gem 'sprockets-helpers', :require=>'sinatra/sprockets-helpers'
 group :development do
 	gem 'racksh'

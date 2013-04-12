@@ -173,6 +173,7 @@ class WebSync < Sinatra::Base
 
     configure :production do
         Bundler.require(:production)
+        set :assets_digest, false
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
         set :assets_precompile, %w(bundle.css *.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)

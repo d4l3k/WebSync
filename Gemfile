@@ -11,7 +11,6 @@ gem 'docx'
 gem 'docx-html'
 gem 'pdfkit'
 gem 'pdftohtmlr'
-gem 'closure-compiler'
 #gem 'dm-redis-adapter'
 gem 'em-hiredis'
 gem 'sinatra', :require=>'sinatra/base'
@@ -22,9 +21,9 @@ gem 'diff_match_patch_native'
 gem 'haml'
 gem 'base62'
 gem 'thin'
-gem 'sass'
-gem 'sprockets'
-gem 'sprockets-helpers', :require=>'sinatra/sprockets-helpers'
+#gem 'sass'
+gem 'sinatra-asset-pipeline', :require=>'sinatra/asset_pipeline'
+#gem 'sprockets-helpers'
 group :development do
 	gem 'racksh'
 	gem 'pry-rescue'
@@ -32,4 +31,5 @@ group :development do
 end
 group :production do
     gem 'yui-compressor'
+    gem 'closure-compiler'
 end

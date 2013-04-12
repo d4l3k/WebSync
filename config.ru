@@ -1,8 +1,4 @@
 #\ -p 4567
-require 'bundler'
-require 'tempfile'
-require 'digest/md5'
-Bundler.require(:default)
 require './main'
 =begin
 map '/assets' do

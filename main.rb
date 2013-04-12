@@ -1,4 +1,12 @@
 # It was the night before Christmas and all through the house, not a creature was coding: UTF-8, not even with a mouse.
+require 'bundler'
+require 'tempfile'
+require 'digest/md5'
+Bundler.require(:default)
+require 'sinatra/sprockets-helpers'
+require 'sinatra/asset_pipeline'
+
+
 # Monkey patched Redis for easy caching.
 class Redis
   def cache(key, expire=nil)
@@ -18,6 +26,9 @@ DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
 #$redis = $adapter.redis
+
+Sinatra::Sprockets = Sprockets
+
 
 class Document
     include DataMapper::Resource
@@ -64,13 +75,15 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
     use Rack::Logger
+    register Sinatra::AssetPipeline
     #enable :sessions
     #use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
     #use Rack::FiberPool
-    register Sinatra::Sprockets::Helpers
-    set :sprockets, Sprockets::Environment.new(root)
-    set :assets_prefix, '/assets'
-    set :digest_assets, false
+    #register Sinatra::Sprockets::Helpers
+    #set :sprockets, Sprockets::Environment.new(root)
+    #set :assets_prefix, '/assets'
+    #set :digest_assets, false
+    #set :asset_path, 'public/assets'
     helpers do
         def logger
             request.logger
@@ -138,13 +151,13 @@ class WebSync < Sinatra::Base
         set :template_engine, :erb
         sprockets.append_path File.join(root, 'assets', 'stylesheets')
         sprockets.append_path File.join(root, 'assets', 'javascripts')
-        #sprockets.append_path File.join(root, 'assets', 'images')
-        configure_sprockets_helpers do |helpers|
+        sprockets.append_path File.join(root, 'assets', 'images')
+        #configure_sprockets_helpers do |helpers|
           # This will automatically configure Sprockets::Helpers based on the
           # `sprockets`, `public_folder`, `assets_prefix`, and `digest_assets`
           # settings if they exist. Otherwise you can configure as normal:
           #helpers.asset_host = 'some-bucket.s3.amazon.com'
-        end
+        #end
     end
     configure :development do
         Bundler.require(:development)
@@ -160,9 +173,12 @@ class WebSync < Sinatra::Base
 
     configure :production do
         Bundler.require(:production)
-        sprockets.js_compressor = Closure::Compiler.new
+        set :assets_css_compressor, :sass
+        set :assets_js_compressor, :closure
+        set :assets_precompile, %w(bundle.css bundle-edit.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
+        #sprockets.js_compressor = Closure::Compiler.new
         #sprockets.js_compressor  = YUI::JavaScriptCompressor.new
-        sprockets.css_compressor = YUI::CssCompressor.new
+        #sprockets.css_compressor = YUI::CssCompressor.new
     end
     $dmp = DiffMatchPatch.new
 
@@ -204,14 +220,14 @@ class WebSync < Sinatra::Base
     not_found do
         erb :not_found
     end
-    get '/assets/*.css' do
-        content_type 'text/css'
-        assets_environment[params[:splat][0]+'.css'].to_s
-    end
-    get '/assets/*.js' do
-        content_type 'text/javascript'
-        assets_environment[params[:splat][0]+'.js'].to_s
-    end
+    #get '/assets/*.css' do
+    #    content_type 'text/css'
+    #    assets_environment[params[:splat][0]+'.css'].to_s
+    #end
+    #get '/assets/*.js' do
+    #    content_type 'text/javascript'
+    #    assets_environment[params[:splat][0]+'.js'].to_s
+    #end
 
     get '/' do
         #$redis.cache("index",300) do

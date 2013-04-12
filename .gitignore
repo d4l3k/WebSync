@@ -2,7 +2,7 @@
 .*.swp
 .*.swo
 *.db
-*.lock
+public/assets
 *~
 *.log
 tmp

@@ -22,6 +22,7 @@ gem 'haml'
 gem 'base62'
 gem 'thin'
 #gem 'sass'
+#gem 'sinatra-asset-pipeline', :git=>'file:///home/rice/Git/sinatra-asset-pipeline', :require=>'sinatra/asset_pipeline'
 gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeline.git', :require=>'sinatra/asset_pipeline'
 #gem 'sprockets-helpers'
 group :development do

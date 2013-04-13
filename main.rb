@@ -75,7 +75,6 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
     use Rack::Logger
-    register Sinatra::AssetPipeline
     #enable :sessions
     #use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
     #use Rack::FiberPool
@@ -148,9 +147,6 @@ class WebSync < Sinatra::Base
         set :server, 'thin'
         set :sockets, []
         set :template_engine, :erb
-        sprockets.append_path File.join(root, 'assets', 'stylesheets')
-        sprockets.append_path File.join(root, 'assets', 'javascripts')
-        sprockets.append_path File.join(root, 'assets', 'images')
         #configure_sprockets_helpers do |helpers|
           # This will automatically configure Sprockets::Helpers based on the
           # `sprockets`, `public_folder`, `assets_prefix`, and `digest_assets`
@@ -160,12 +156,13 @@ class WebSync < Sinatra::Base
     end
     configure :development do
         Bundler.require(:development)
-        Sprockets::Helpers.configure do |config|
-            config.expand = true
-            config.digest = false
-            #config.manifest = false
-            #config.debug       = true
-        end
+        #Sprockets::Helpers.configure do |config|
+        #    config.expand = true
+        #    config.digest = false
+        #    #config.manifest = false
+        #    #config.debug       = true
+        #end
+        set :assets_debug, true
         use PryRescue::Rack
     end
 
@@ -178,6 +175,12 @@ class WebSync < Sinatra::Base
         #sprockets.js_compressor = Closure::Compiler.new
         #sprockets.js_compressor  = YUI::JavaScriptCompressor.new
         #sprockets.css_compressor = YUI::CssCompressor.new
+    end
+    register Sinatra::AssetPipeline
+    configure do
+        sprockets.append_path File.join(root, 'assets', 'stylesheets')
+        sprockets.append_path File.join(root, 'assets', 'javascripts')
+        sprockets.append_path File.join(root, 'assets', 'images')
     end
     $dmp = DiffMatchPatch.new
 

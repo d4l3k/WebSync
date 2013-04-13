@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/d4l3k/sinatra-asset-pipeline.git
-  revision: 67f16897cfbf48e1fbee5eadd16c904318f4817b
+  revision: 8c6755a14c4d7acd51bb8f37cec070cb6fbac29f
   specs:
     sinatra-asset-pipeline (0.2.0)
       coffee-script

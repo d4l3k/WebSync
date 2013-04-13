@@ -1,3 +1,16 @@
+GIT
+  remote: git://github.com/d4l3k/sinatra-asset-pipeline.git
+  revision: 67f16897cfbf48e1fbee5eadd16c904318f4817b
+  specs:
+    sinatra-asset-pipeline (0.2.0)
+      coffee-script
+      rake
+      sass
+      sinatra
+      sprockets
+      sprockets-helpers
+      sprockets-sass
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -126,14 +139,6 @@ GEM
       rack (~> 1.5, >= 1.5.2)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
-    sinatra-asset-pipeline (0.2.0)
-      coffee-script
-      rake
-      sass
-      sinatra
-      sprockets
-      sprockets-helpers
-      sprockets-sass
     sinatra-websocket (0.3.0)
       em-websocket (~> 0.3.6)
       eventmachine
@@ -184,7 +189,7 @@ DEPENDENCIES
   racksh
   redis
   sinatra
-  sinatra-asset-pipeline
+  sinatra-asset-pipeline!
   sinatra-websocket
   thin
   yui-compressor

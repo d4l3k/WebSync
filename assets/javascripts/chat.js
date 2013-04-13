@@ -67,7 +67,7 @@ define(['websync'],function(edit,websync){ var self = {};
     self.updateUserList = function(){setTimeout(function(){
         $("#user_count").text(_.size(WebSync.clients));
         $("#chat_well").css({top: $("#user_list").height()-5});
-    },1);};
+    },100);};
     self.clientMsg = function(client, msg){
         var user = WebSync.clients[client];
         var user_info = WebSync.users[user.id];

@@ -123,6 +123,8 @@ GEM
       binding_of_caller (>= 0.7)
       pry (~> 0.9.11)
     rack (1.5.2)
+    rack-flash (0.1.2)
+      rack
     rack-protection (1.5.0)
       rack
     rack-test (0.6.2)
@@ -186,8 +188,10 @@ DEPENDENCIES
   pdftohtmlr
   pry-rescue
   pry-stack_explorer
+  rack-flash
   racksh
   redis
+  sass
   sinatra
   sinatra-asset-pipeline!
   sinatra-websocket

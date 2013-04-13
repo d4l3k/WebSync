@@ -75,13 +75,6 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
     use Rack::Logger
-    #enable :sessions
-    #use Rack::Session::Cookie, :secret => 'Web-Sync sdkjfskadfh1h3248c99sj2j4j2343'
-    #use Rack::FiberPool
-    #register Sinatra::Sprockets::Helpers
-    #set :sprockets, Sprockets::Environment.new(root)
-    #set :assets_prefix, '/assets'
-    #set :asset_path, 'public/assets'
     helpers do
         def logger
             request.logger
@@ -106,6 +99,8 @@ class WebSync < Sinatra::Base
                 user = User.create({:email=>email,:password=>pass})
                 authenticate email, pass
                 return user
+            elsif authenticate email, pass
+                return current_user
             end
             nil
         end
@@ -141,28 +136,8 @@ class WebSync < Sinatra::Base
         end
     end
 
-    configure do
-        enable :sessions
-        set :session_secret, "Web-Sync sdkjfskadfh1h3248c99sj2j4j2343"
-        set :server, 'thin'
-        set :sockets, []
-        set :template_engine, :erb
-        #configure_sprockets_helpers do |helpers|
-          # This will automatically configure Sprockets::Helpers based on the
-          # `sprockets`, `public_folder`, `assets_prefix`, and `digest_assets`
-          # settings if they exist. Otherwise you can configure as normal:
-          #helpers.asset_host = 'some-bucket.s3.amazon.com'
-        #end
-    end
     configure :development do
         Bundler.require(:development)
-        #Sprockets::Helpers.configure do |config|
-        #    config.expand = true
-        #    config.digest = false
-        #    #config.manifest = false
-        #    #config.debug       = true
-        #end
-        set :assets_debug, true
         use PryRescue::Rack
     end
 
@@ -172,12 +147,14 @@ class WebSync < Sinatra::Base
         set :assets_js_compressor, :closure
         set :assets_precompile, %w(bundle.css bundle-norm.js bundle-edit.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
         set :assets_precompile_no_digest, %w(*.js)
-        #sprockets.js_compressor = Closure::Compiler.new
-        #sprockets.js_compressor  = YUI::JavaScriptCompressor.new
-        #sprockets.css_compressor = YUI::CssCompressor.new
     end
-    register Sinatra::AssetPipeline
     configure do
+        enable :sessions
+        set :session_secret, "Web-Sync sdkjfskadfh1h3248c99sj2j4j2343"
+        set :server, 'thin'
+        set :sockets, []
+        set :template_engine, :erb
+        register Sinatra::AssetPipeline
         sprockets.append_path File.join(root, 'assets', 'stylesheets')
         sprockets.append_path File.join(root, 'assets', 'javascripts')
         sprockets.append_path File.join(root, 'assets', 'images')
@@ -256,6 +233,7 @@ class WebSync < Sinatra::Base
         redirect "/#{doc.id.base62_encode}/edit"
     end
     get '/upload' do
+        login_required
         erb :upload
     end
     post '/upload' do

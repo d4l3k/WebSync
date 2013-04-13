@@ -140,16 +140,18 @@ define('websync',{
             }
             else if(data.type=='new_user'){
                 WebSync.clients[data['id']]=data['user'];
+                var user_id = data['user'].id;
+                var client_id = data['id']
                 if(!WebSync.users[data['user'].id]){
                     $.ajax({
                         url:"https://secure.gravatar.com/"+data['user'].id+".json",
                         dataType:'jsonp'
                     }).done(function(data){
                         console.log(data);
-                        WebSync.users[data['user'].id]=data.entry[0];
-                        $(document).trigger('client_load',{client:data['id']});
+                        WebSync.users[user_id]=data.entry[0];
+                        $(document).trigger('client_load',{client:client_id});
                     }).fail(function(){
-                        $(document).trigger('client_load',{client:data['id']});
+                        $(document).trigger('client_load',{client:client_id});
                     });
                     WebSync.users[data['user'].id]={};
                 } else {
@@ -160,12 +162,18 @@ define('websync',{
                 delete WebSync.clients[data['id']];
                 $(document).trigger('client_leave',{client:data['id']});
             }
+            else if(data.type=='client_event'){
+                $(document).trigger('client_event_'+data.event,{from:data.from,data:data.data});
+            }
 		},
 		onerror:function(e){
 			console.log(e);
 		}
 
 	},
+    broadcastEvent: function(event,data){
+        WebSync.connection.sendJSON({type:'client_event',event: event, data: data});
+    },
     users:{},
     _config_callbacks: {},
     // Function: void WebSync.config_set(string key, object value, string space);

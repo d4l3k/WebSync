@@ -79,6 +79,10 @@ body,html {
 }
 .navbar {
     position: relative !important;
+    li img {
+        margin: -10px 0;
+        height: 22px;
+    }
 }
 cursor {
 	background-color: red;

@@ -10,7 +10,7 @@ define(['websync'],function(edit,websync){ var self = {};
 	// Unbind Example: $("*").unbind(".Tables");
     self.open = false;
     $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well"></div><div class="chat_input input-append"><input class="span2" id="appendedInputButton" type="text"><button id="msg_btn" class="btn" type="button">Send</button></div></div>'));
-    $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><i class="icon-phone icon-large"></i><span id="user_count" class="badge">1</span></a></li>'));
+    $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><img src="http://i.imgur.com/FNE5L42.png"></img> <span id="user_count" class="badge">1</span></a></li>'));
     $("#chat").offset({left:window.innerWidth+1});
     $("#chat img").tooltip();
     $(document).bind('client_load.Chat',function(e,data){
@@ -36,8 +36,13 @@ define(['websync'],function(edit,websync){ var self = {};
             self.msg();
         }
     });
+    $(document).bind("client_event_chat_msg.Chat",function(e,data){
+        self.clientMsg(data.from,data.data);
+    });
     self.msg = function(){
-        self.clientMsg(WebSyncAuth.id,$(".chat_input input").val());
+        var msg = $(".chat_input input").val();
+        WebSync.broadcastEvent('chat_msg',msg);
+        self.clientMsg(WebSyncAuth.id,msg);
         $(".chat_input input").val("");
     }
     self.addUser = function(client){

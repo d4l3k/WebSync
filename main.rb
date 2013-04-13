@@ -507,6 +507,8 @@ class WebSync < Sinatra::Base
                                     end
                                 end
                             end
+                        elsif data['type']=='client_event'
+                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
                         end
                     end
                 end

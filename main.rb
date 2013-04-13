@@ -160,14 +160,13 @@ class WebSync < Sinatra::Base
     end
     configure :development do
         Bundler.require(:development)
-        use PryRescue::Rack
-        helpers do
-            alias :javascript_tag_old :javascript_tag
-            def javascript_tag tag
-                # This just sends it to a nonexistant file so it won't load.
-                javascript_tag_old(tag, :expand=>true).gsub('bundle','DEBUG404')
-            end
+        Sprockets::Helpers.configure do |config|
+            config.expand = true
+            config.digest = false
+            #config.manifest = false
+            #config.debug       = true
         end
+        use PryRescue::Rack
     end
 
     configure :production do
@@ -395,7 +394,7 @@ class WebSync < Sinatra::Base
         # Websocket edit
         else
             #TODO: Authentication for websockets
-            redis_sock = EM::Hiredis::PubsubClient.connect
+            redis_sock = EM::Hiredis.connect.pubsub
             redis_sock.subscribe("doc:#{doc_id.base62_encode}")
             authenticated = false
             user = nil

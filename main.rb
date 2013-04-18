@@ -138,6 +138,7 @@ class WebSync < Sinatra::Base
 
     configure :development do
         Bundler.require(:development)
+        set :assets_debug, true
         use PryRescue::Rack
     end
 

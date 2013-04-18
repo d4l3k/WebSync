@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/d4l3k/sinatra-asset-pipeline.git
+  remote: file:///home/rice/Git/sinatra-asset-pipeline
   revision: 8c6755a14c4d7acd51bb8f37cec070cb6fbac29f
   specs:
     sinatra-asset-pipeline (0.2.0)
@@ -123,8 +123,6 @@ GEM
       binding_of_caller (>= 0.7)
       pry (~> 0.9.11)
     rack (1.5.2)
-    rack-flash (0.1.2)
-      rack
     rack-protection (1.5.0)
       rack
     rack-test (0.6.2)
@@ -188,7 +186,6 @@ DEPENDENCIES
   pdftohtmlr
   pry-rescue
   pry-stack_explorer
-  rack-flash
   racksh
   redis
   sass

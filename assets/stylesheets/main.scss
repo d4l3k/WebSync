@@ -73,15 +73,36 @@
 }
 #alert_well {
 	position: fixed;
-	text-align: right;
+	text-align: left;
     z-index: 500;
 	bottom: 0;
-	right: 0;
-	margin-right: 20px;
+	left: 0;
+	margin-left: 10px;
     .alert {
         display: table;
-        margin-left: auto;
+        margin-right: auto;
         margin-bottom: 10px;
     }
 }
-
+.ad {
+    &.skyscraper {
+        @media (min-width: 1260px) {
+            position: absolute;
+            top: 70px;
+        }
+        @media (max-width: 1259px) {
+            display: none;
+        }
+    }
+    &.link {
+        @media (max-width: 1259px) {
+            display: table;
+            margin: 0 auto;
+            top: -15px;
+            position: relative;
+        }
+        @media (min-width: 1260px) {
+            display: none;
+        }
+    }
+}

@@ -504,6 +504,7 @@ class WebSync < Sinatra::Base
                         $redis.set user_prop,JSON.dump(users)
                         $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"exit_user",id:client_id})})
                     end
+                    ws.close_connection
                 end
                 redis_sock.on(:message) do |channel, message|
                     puts "[#{client_id}]#{channel}: #{message}"

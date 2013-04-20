@@ -46,6 +46,22 @@ define("edit",['websync'],function(websync){ var self = this;
             self._selectTimeout = setTimeout(self.selectHandler,200);
         }
     });
+    $(document).bind("keydown.TextEdit","li",function(e){
+        console.log(e);
+        if(e.keyCode==9){
+            console.log(this);
+            var list_index = document.getSelection().baseNode.parentNode;
+            while(list_index.tagName!="LI"){
+                list_index = list_index.parentElement;
+            }
+            var indent = parseInt($(list_index).getStyleObject().marginLeft)+(e.shiftKey ? -40 : 40);
+            if(indent<0){
+                indent=0;
+            }
+            $(list_index).animate({marginLeft: indent+"px"},200);
+            e.preventDefault();
+        }
+    });
     $('#font').bind("change.TextEdit",function(){
         document.execCommand('fontname',false,$('#font').val());
     });

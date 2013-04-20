@@ -19,6 +19,7 @@ body,html {
     position: fixed;
     width: 100%;
     height: 100%;
+    color: black;
 }
 .menu {
     width: 100%;
@@ -42,6 +43,9 @@ body,html {
 }*/
 .content div, .content li{
     line-height: 1.15em;
+}
+.content li p {
+    display: inline;
 }
 .content ol, .content ul {
     margin: 0 0 0px 25px;
@@ -250,7 +254,7 @@ a#name {
                 border: 1px solid #ccc;
             }
         }
-        a img:hover, .sidebar#chat a img:active, .sidebar#chat a:hover img, .sidebar#chat a:active img {
+        a img:hover, a img:active, a:hover img, a:active img {
             border: 1px solid black;
         }
         #chat_well {

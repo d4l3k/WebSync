@@ -41,9 +41,11 @@ define(['websync'],function(edit,websync){ var self = {};
     });
     self.msg = function(){
         var msg = $(".chat_input input").val();
-        WebSync.broadcastEvent('chat_msg',msg);
-        self.clientMsg(WebSyncAuth.id,msg);
-        $(".chat_input input").val("");
+        if(msg.length>0){
+            WebSync.broadcastEvent('chat_msg',msg);
+            self.clientMsg(WebSyncAuth.id,msg);
+            $(".chat_input input").val("");
+        }
     }
     self.addUser = function(client){
         var user = WebSync.clients[client];

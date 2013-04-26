@@ -26,15 +26,26 @@ DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
 #$redis = $adapter.redis
+data = "window = {};"+File.read("./assets/javascripts/diff_match_patch.js") + File.read("./assets/javascripts/jsondiffpatch.min.js")
+$jsondiffpatch = ExecJS.compile data
 
 Sinatra::Sprockets = Sprockets
 
+module BJSONDiffPatch
+    def diff object1, object2
+        return $jsondiffpatch.eval "jsondiffpatch.diff(#{JSON.dump(object1)},#{JSON.dump(object2)})"
+    end
+end
+class JSONDiffPatch
+    extend BJSONDiffPatch
+end
 
 class Document
     include DataMapper::Resource
     property :id, Serial
     property :name, String
     property :body, Text
+    #property :body, Json, :default=>{}, :lazy=>true
     property :created, DateTime
     property :last_edit_time, DateTime
     property :public, Boolean, :default=>false

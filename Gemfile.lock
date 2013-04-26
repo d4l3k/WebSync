@@ -179,6 +179,7 @@ DEPENDENCIES
   em-hiredis
   erubis
   eventmachine
+  execjs
   haml
   hiredis
   json

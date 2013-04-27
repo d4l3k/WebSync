@@ -320,6 +320,7 @@ class WebSync < Sinatra::Base
         if (!doc.public)&&doc.user!=current_user
             redirect '/'
         end
+        content_type 'application/json'
         MultiJson.dump(doc.body)
     end
     get '/:doc/delete' do

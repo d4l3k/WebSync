@@ -204,8 +204,10 @@ define('websync',{
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
 		$("#name").blur(function(){
-			$(this).html($(this).text());
-			WebSync.connection.sendJSON({type: "name_update", name: $("#name").text()});
+			var name = $(this).text();
+			$(this).html(name);
+            document.title = name+" - WebSink";
+            WebSync.connection.sendJSON({type: "name_update", name: name});
 		});
 		$("#name").focus(function(){
 			if(this.innerText=="Unnamed Document"){

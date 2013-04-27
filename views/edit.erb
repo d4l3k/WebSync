@@ -13,8 +13,10 @@ WebSyncAuth = {
 // Variable: object WebSyncData;
 // This contains the data for the document. This is automatically synced with the server.
 WebSyncData = <%= MultiJson.dump(@doc.body) %>;
-</script>
 
+// Set document title.
+document.title = <%= @doc.name.inspect %> + " - WebSink";
+</script>
 <div class="menu">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
@@ -65,6 +67,7 @@ WebSyncData = <%= MultiJson.dump(@doc.body) %>;
 				<a href="download/docx" class="btn"><i class="icon-cloud-download"></i> DOCX</a>
 				<a href="download/pdf" class="btn"><i class="icon-cloud-download"></i> PDF</a>
 				<a href="download/html" class="btn"><i class="icon-cloud-download"></i> HTML</a>
+                <a href="json" class="btn"><i class="icon-eye-open"></i> JSON</a>
                 <select id="zoom_level" title="Zoom Level" class="ribbon_button">
 					<option>50%</option>
 					<option>80%</option>

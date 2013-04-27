@@ -65,6 +65,67 @@ define('websync',{
                 // Load scripts from server.
 				require(data.js);
 			}
+            else if(data.type=='data_patch'){
+                // Make sure there aren't any outstanding changes that need to be sent before patching document.
+                // TODO: Make this work with webworkers
+                WebSync.checkDiff();
+                // Get start selection.
+				var sel = getSelection();
+                var range, startText,startOffset,endText,endOffset;
+                if(sel.rangeCount>0){
+                    range = sel.getRangeAt(0);
+                    startText = range.startContainer.nodeValue;
+                    startOffset = range.startOffset;
+                    endText = range.endContainer.nodeValue;
+                    endOffset = range.endOffset;
+                }
+                WebSync.tmp.range = {
+                    active: (sel.rangeCount>1),
+                    startText: startText,
+                    startOffset: startOffset,
+                    endText: endText,
+                    endOffset: endOffset
+                }
+                // Patch the HTML.
+                var new_html = WebSyncData;
+                WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
+                WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+                //WebSync.worker.postMessage({cmd:'apply_patch',html:new_html,patch:data.patch});
+                $(".page").html(JSONToDOM(WebSyncData.body));
+                sel = WebSync.tmp.range;
+                if(sel.active){
+                    // Find all #text nodes.
+                    var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
+                        return this.nodeType == 3;
+                    });
+                    var startText = range.startText, startOffset = range.startOffset, endText = range.endText, endOffset = range.endOffset;
+                    var startNode = {};
+                    var endNode = {};
+                    console.log(text_nodes);
+                    var startNodeDist = 99999;
+                    var endNodeDist = 99999;
+                    // Locate the start & end #text nodes based on a Levenstein string distance.
+                    text_nodes.each(function(index, node){
+                        var dist = levenshteinenator(node.nodeValue,startText);
+                        if(dist<startNodeDist){
+                            startNode = node;
+                            startNodeDist = dist;
+                        }
+                        dist = levenshteinenator(node.nodeValue,endText);
+                        if(dist<endNodeDist){
+                            endNode = node;
+                            endNodeDist = dist;
+                        }
+                    });
+                    // Update the text range.
+                    var range = document.createRange();
+                    range.setStart(startNode,startOffset);
+                    range.setEnd(endNode,endOffset);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                }
+                $(document).trigger("data_patch",{patch: data.patch});
+            }
             else if(data.type=="text_patch"){
                 // Make sure there aren't any outstanding changes that need to be sent before patching document.
                 // TODO: Make this work with webworkers

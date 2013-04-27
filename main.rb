@@ -73,6 +73,36 @@ def json_to_html obj
     return html
 end
 
+def node_to_json html
+    if html.name=="text"
+        return { name: "#text", textContent: html.to_s}
+    end
+    json = {
+        name: html.name.upcase
+    }
+    if defined? html.attributes
+        html.attributes.each do |name, attr|
+            json[attr.name]=attr.value
+        end
+    end
+    if html.children.length > 0
+        json['childNodes']=[]
+        html.children.each do |child|
+            json['childNodes'].push( node_to_json(child) )
+        end
+    end
+    return json
+end
+
+def html_to_json html
+    dom = Nokogiri::HTML(html)
+    json = []
+    dom.document.children.each do |elem|
+        json.push node_to_json(elem)
+    end
+    return json
+end
+
 class Document
     include DataMapper::Resource
     property :id, Serial
@@ -307,12 +337,13 @@ class WebSync < Sinatra::Base
             # TODO: Upload into JSON format
             doc = Document.create(
                 :name => filename,
-                :body => content,
+                :body => {body:html_to_json(content)},
                 :created => Time.now,
                 :last_edit_time => Time.now,
                 :user => current_user
             )
             doc.assets << Asset.get(1)
+            doc.assets << Asset.get(2)
             doc.save
             redirect "/#{doc.id.base62_encode}/edit"
         else

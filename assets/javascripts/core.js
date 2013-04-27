@@ -456,7 +456,7 @@ define('websync',{
         if(!WebSync.oldData){
             WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
         }
-		WebSyncData.body = DOMToJSON($(".page").children());
+		WebSyncData.body = DOMToJSON($($(".page").get(0).childNodes));
 		if(!_.isEqual(WebSyncData,WebSync.oldData)){
             console.log("Diff: Not EQUAL");
             // Send it to the worker thread for processing.

@@ -313,6 +313,15 @@ class WebSync < Sinatra::Base
         end
         file.unlink
     end
+    get '/:doc/json' do
+        login_required
+        doc_id = params[:doc].base62_decode
+        doc = Document.get doc_id
+        if (!doc.public)&&doc.user!=current_user
+            redirect '/'
+        end
+        MultiJson.dump(doc.body)
+    end
     get '/:doc/delete' do
         login_required
         doc_id = params[:doc].base62_decode

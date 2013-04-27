@@ -64,9 +64,16 @@ document.title = <%= @doc.name.inspect %> + " - WebSink";
 		</div>
 		<div class="ribbon">
 			<div id="File" class="container">
-				<a href="download/docx" class="btn"><i class="icon-cloud-download"></i> DOCX</a>
-				<a href="download/pdf" class="btn"><i class="icon-cloud-download"></i> PDF</a>
-				<a href="download/html" class="btn"><i class="icon-cloud-download"></i> HTML</a>
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-cloud-download"></i> Download <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="download/docx">Microsoft Word (.docx)</a></li>
+                        <li><a href="download/pdf">PDF (.pdf)</a></li>
+                        <li><a href="download/html">HTML (.html)</a></li>
+                        <li><a href="download/odt">Libre Office (.odt)</a></li>
+                        <li><a href="download/txt">Raw Text (.txt)</a></li>
+                    </ul>
+                </div>
                 <a href="json" class="btn"><i class="icon-eye-open"></i> JSON</a>
                 <select id="zoom_level" title="Zoom Level" class="ribbon_button">
 					<option>50%</option>

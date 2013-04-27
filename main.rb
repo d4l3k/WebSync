@@ -33,7 +33,7 @@ Sinatra::Sprockets = Sprockets
 
 module BJSONDiffPatch
     def diff object1, object2
-        return $jsondiffpatch.eval "jsondiffpatch.diff(#{JSON.dump(object1)},#{JSON.dump(object2)})"
+        return $jsondiffpatch.eval "jsondiffpatch.diff(#{MultiJson.dump(object1)},#{MultiJson.dump(object2)})"
     end
 end
 class JSONDiffPatch
@@ -360,7 +360,7 @@ class WebSync < Sinatra::Base
                     warn "websocket open"
                 end
                 ws.onmessage do |msg|
-                    data = MultiJson.parse(msg.force_encoding("UTF-8"));
+                    data = MultiJson.load(msg.force_encoding("UTF-8"));
                     puts "JSON: #{data.to_s}"
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']
@@ -379,7 +379,7 @@ class WebSync < Sinatra::Base
                             user_prop = "doc:#{doc_id.base62_encode}:users"
                             user_raw = $redis.get(user_prop)
                             if !user_raw.nil?
-                                users = MultiJson.parse(user_raw)
+                                users = MultiJson.load(user_raw)
                             else
                                 users = {}
                             end
@@ -472,7 +472,7 @@ class WebSync < Sinatra::Base
                     redis_sock.close_connection
                     if authenticated
                         user_prop = "doc:#{doc_id.base62_encode}:users"
-                        users = MultiJson.parse($redis.get(user_prop))
+                        users = MultiJson.load($redis.get(user_prop))
                         users.delete client_id
                         $redis.set user_prop,MultiJson.dump(users)
                         $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"exit_user",id:client_id})})
@@ -481,7 +481,7 @@ class WebSync < Sinatra::Base
                 end
                 redis_sock.on(:message) do |channel, message|
                     puts "[#{client_id}]#{channel}: #{message}"
-                    data = MultiJson.parse(message)
+                    data = MultiJson.load(message)
                     if data['client']!=client_id
                         if data['type']=="client_bounce"
                             ws.send data['data']

@@ -253,7 +253,7 @@ class WebSync < Sinatra::Base
         filename = params[:file][:filename]
         filetype = params[:file][:type]
         content = nil
-        # TODO: Split upload/download into its own external server. Right now Unoconv is blocking.
+        # TODO: Split upload/download into its own external server. Right now Unoconv is blocking. Also issues may arise if multiple copies of LibreOffice are running on the same server. Should probably use a single server instance of LibreOffice
         `unoconv -f html #{tempfile.path}`
         exit_status = $?.to_i
         if exit_status == 0
@@ -271,6 +271,7 @@ class WebSync < Sinatra::Base
             end
         end
         if content!=nil
+            # TODO: Upload into JSON format
             doc = Document.create(
                 :name => filename,
                 :body => content,
@@ -309,45 +310,6 @@ class WebSync < Sinatra::Base
         end
         file.unlink
     end
-=begin
-    get '/:doc/download/docx' do
-        login_required
-        doc_id = params[:doc].base62_decode
-        doc = Document.get doc_id
-        if (!doc.public)&&doc.user!=current_user
-            redirect '/'
-        end
-        response.headers['content_type'] = "application/octet-stream"
-        attachment(doc.name+'.docx')
-        response.write(doc.body)
-        #send_data doc.body, :filename=>doc.name+".docx"
-    end
-    # TODO: Switch PDF generation to a dedicated server w/ xorg-server
-    # Requires wkhtmltopdf
-    get '/:doc/download/pdf' do
-        login_required
-        doc_id = params[:doc].base62_decode
-        doc = Document.get doc_id
-        if (!doc.public)&&doc.user!=current_user
-            redirect '/'
-        end
-        response.headers['content_type'] = "application/pdf"
-        kit = PDFKit.new(doc.body, :page_size => 'Letter')
-        attachment(doc.name+'.pdf')
-        response.write(kit.to_pdf)
-    end
-    get '/:doc/download/html' do
-        login_required
-        doc_id = params[:doc].base62_decode
-        doc = Document.get doc_id
-        if (!doc.public)&&doc.user!=current_user
-            redirect '/'
-        end
-        response.headers['content_type'] = "text/html"
-        attachment(doc.name+'.html')
-        response.write(doc.body)
-    end
-=end
     get '/:doc/delete' do
         login_required
         doc_id = params[:doc].base62_decode
@@ -398,7 +360,7 @@ class WebSync < Sinatra::Base
                     warn "websocket open"
                 end
                 ws.onmessage do |msg|
-                    data = JSON.parse(msg.force_encoding("UTF-8"));
+                    data = MultiJson.parse(msg.force_encoding("UTF-8"));
                     puts "JSON: #{data.to_s}"
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']
@@ -417,15 +379,15 @@ class WebSync < Sinatra::Base
                             user_prop = "doc:#{doc_id.base62_encode}:users"
                             user_raw = $redis.get(user_prop)
                             if !user_raw.nil?
-                                users = JSON.parse(user_raw)
+                                users = MultiJson.parse(user_raw)
                             else
                                 users = {}
                             end
                             user_id = Digest::MD5.hexdigest(email.strip.downcase)
                             users[client_id]={id:user_id,email:email.strip}
-                            $redis.set user_prop,JSON.dump(users)
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
-                            ws.send JSON.dump({type:'info',user_id:user_id,users:users})
+                            $redis.set user_prop,MultiJson.dump(users)
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
+                            ws.send MultiJson.dump({type:'info',user_id:user_id,users:users})
                             puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
                         else
                             ws.close_connection
@@ -439,7 +401,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Google Diff-Match-Patch algorithm
                         elsif data['type']=='text_patch'
                             doc = Document.get doc_id
@@ -452,7 +414,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Sets the name
                         elsif data['type']=="name_update"
                             doc.name = data["name"]
@@ -460,7 +422,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Loads scripts
                         elsif data['type']=="load_scripts"
                             msg = {type:'scripts', js:[],css:[]}
@@ -473,7 +435,7 @@ class WebSync < Sinatra::Base
                                 end
                                 msg[arr].push asset.url
                             end
-                            ws.send JSON.dump msg
+                            ws.send MultiJson.dump msg
                         elsif data['type']=='connection'
                         elsif data['type']=='config'
                             if data['action']=='set'
@@ -491,17 +453,17 @@ class WebSync < Sinatra::Base
                                 end
                             elsif data['action']=='get'
                                 if data['property']=='public'
-                                    ws.send JSON.dump({type: 'config',action: 'get', property:'public', value: doc.public})
+                                    ws.send MultiJson.dump({type: 'config',action: 'get', property:'public', value: doc.public})
                                 else
                                     if data['space']=='user'
-                                            ws.send JSON.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: user.config[data['property']],id:data['id']})
+                                            ws.send MultiJson.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: user.config[data['property']],id:data['id']})
                                     elsif data['space']=='document'
-                                            ws.send JSON.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: doc.config[data['property']],id:data['id']})
+                                            ws.send MultiJson.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: doc.config[data['property']],id:data['id']})
                                     end
                                 end
                             end
                         elsif data['type']=='client_event'
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
                         end
                     end
                 end
@@ -510,16 +472,16 @@ class WebSync < Sinatra::Base
                     redis_sock.close_connection
                     if authenticated
                         user_prop = "doc:#{doc_id.base62_encode}:users"
-                        users = JSON.parse($redis.get(user_prop))
+                        users = MultiJson.parse($redis.get(user_prop))
                         users.delete client_id
-                        $redis.set user_prop,JSON.dump(users)
-                        $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"exit_user",id:client_id})})
+                        $redis.set user_prop,MultiJson.dump(users)
+                        $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"exit_user",id:client_id})})
                     end
                     ws.close_connection
                 end
                 redis_sock.on(:message) do |channel, message|
                     puts "[#{client_id}]#{channel}: #{message}"
-                    data = JSON.parse(message)
+                    data = MultiJson.parse(message)
                     if data['client']!=client_id
                         if data['type']=="client_bounce"
                             ws.send data['data']

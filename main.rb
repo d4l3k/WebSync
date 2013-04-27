@@ -35,8 +35,11 @@ module BJSONDiffPatch
     def diff object1, object2
         return $jsondiffpatch.eval "jsondiffpatch.diff(#{MultiJson.dump(object1)},#{MultiJson.dump(object2)})"
     end
+    def patch object1, delta
+        return $jsondiffpatch.eval "jsondiffpatch.patch(#{MultiJson.dump(object1)},#{MultiJson.dump(delta)})"
+    end
 end
-class JSONDiffPatch
+class JsonDiffPatch
     extend BJSONDiffPatch
 end
 
@@ -394,22 +397,10 @@ class WebSync < Sinatra::Base
                         end
                     end
                     if authenticated
-                        # This replaces all the text w/ the provided content.
-                        if data["type"]=="text_update"
-                            doc.body = data["text"]
-                            doc.last_edit_time = Time.now
-                            if !doc.save
-                                puts("Save errors: #{doc.errors.inspect}")
-                            end
-                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
-                        # Google Diff-Match-Patch algorithm
-                        elsif data['type']=='text_patch'
+                        # Patch data
+                        if data['type']=='data_patch'&&data.has_key?('patch')
                             doc = Document.get doc_id
-                            #I'm pretty sure this works just fine. The main issue seems to be diffing w/ structure content. We'll see with time.
-                            #html_optimized_patches = diff_htmlToChars_ doc.body, URI::decode(data['patch'])
-                            #puts html_optimized_patches.inspect
-                            patches = $dmp.patch_from_text data['patch']
-                            doc.body = $dmp.patch_apply(patches,doc.body)[0]
+                            doc.body = JsonDiffPatch.patch(doc.body,data['patch'])
                             doc.last_edit_time = Time.now
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")

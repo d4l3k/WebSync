@@ -450,20 +450,23 @@ define('websync',{
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
 	checkDiff: function(){
-		var new_html = WebSync.getHTML();
-		if(typeof WebSync.old_html == "undefined"){
-			WebSync.old_html = new_html;
-		}
-		if(new_html!=WebSync.old_html){
-			if(WebSync.old_html==""){
-				WebSync.connection.sendJSON({type: "text_update",text: new_html})
-			}
-			else {
-                // Send it to the worker thread for processing.
-                var msg = {'cmd':'diff','oldHtml':WebSync.old_html,'newHtml':new_html};
-                WebSync.worker.postMessage(msg);
-			}
-			WebSync.old_html=new_html;
+        if(!WebSyncData.body){
+            WebSyncData.body = {};
+        }
+        if(!WebSync.oldData){
+            WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+        }
+		WebSyncData.body = DOMToJSON($(".page").children());
+		if(!_.isEqual(WebSyncData,WebSync.oldData)){
+            console.log("Diff: Not EQUAL");
+            // Send it to the worker thread for processing.
+            //var msg = {'cmd':'diff','oldHtml':WebSync.old_html,'newHtml':new_html};
+            //WebSync.worker.postMessage(msg);
+            var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
+            if(patch){
+                WebSync.connection.sendJSON({type: "data_patch", patch: patch});
+			    WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+            }
 		}
 	},
     // Function: void WebSync.insertAtCursor(jQuery node);

@@ -44,8 +44,8 @@ class Document
     include DataMapper::Resource
     property :id, Serial
     property :name, String
-    property :body, Text
-    #property :body, Json, :default=>{}, :lazy=>true
+    #property :body, Text
+    property :body, Json, :default=>{}, :lazy=>true
     property :created, DateTime
     property :last_edit_time, DateTime
     property :public, Boolean, :default=>false
@@ -234,7 +234,7 @@ class WebSync < Sinatra::Base
         login_required
         doc = Document.create(
             :name => 'Unnamed Document',
-            :body => '',
+            :body => {},
             :created => Time.now,
             :last_edit_time => Time.now,
             :user => current_user

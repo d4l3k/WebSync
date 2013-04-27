@@ -200,6 +200,7 @@ define('websync',{
     // This is where the core of Web-Sync initializes.
 	initialize: function(){
 		this.webSocketStart();
+        $(".page").html(JSONToDOM(WebSyncData.body));
         $("#public_mode").change(function(){
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
@@ -567,11 +568,42 @@ function NODEtoJSON(obj){
 }
 function DOMToJSON(obj){
     var jso = [];
-    obj.each(function(index, elem){
+    $.each(obj,function(index, elem){
         elem.normalize();
         jso.push(NODEtoJSON(elem));
     });
     return jso;
+}
+function NODEtoDOM(obj){
+    var html = "";
+    if(obj.name=="#text"){
+        return obj.textContent;
+    }
+    html+="<"+obj.name;
+    $.each(obj,function(k,v){
+        if(k!="name"&&k!="textContent"&&k!="childNodes"){
+            html+=" "+k+"="+JSON.stringify(v);
+        }
+    });
+
+    if(obj.childNodes){
+        html+=">";
+        $.each(obj.childNodes,function(index, elem){
+            html+= NODEtoDOM(elem);
+        });
+        html+="</"+obj.name+">";
+    }
+    else {
+        html+="/>";
+    }
+    return html;
+}
+function JSONToDOM(obj){
+    var html = "";
+    $.each(obj,function(index,elem){
+        html += NODEtoDOM(elem);
+    });
+    return html;
 }
 // Finds differences between obj1 and obj2.
 function diff(obj1, obj2){

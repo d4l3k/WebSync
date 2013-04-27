@@ -42,6 +42,36 @@ end
 class JsonDiffPatch
     extend BJSONDiffPatch
 end
+def json_to_html_node obj
+    html = "";
+    if obj['name']=="#text"
+        return obj['textContent']
+    end
+    html+="<"+obj['name']
+    obj.each do |k,v|
+        if k!="name"&&k!="textContent"&&k!="childNodes"
+            html+=" "+k+"="+MultiJson.dump(v)
+        end
+    end
+
+    if obj.has_key? 'childNodes'
+        html+=">";
+        obj['childNodes'].each do |elem|
+            html+= json_to_html_node(elem)
+        end
+        html+="</"+obj['name']+">"
+    else
+        html+="/>"
+    end
+    return html
+end
+def json_to_html obj
+    html = ""
+    obj.each do |elem|
+        html += json_to_html_node(elem)
+    end
+    return html
+end
 
 class Document
     include DataMapper::Resource
@@ -290,7 +320,7 @@ class WebSync < Sinatra::Base
         end
     end
     get '/:doc/download/:format' do
-        if !%w(bib doc doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
+        if !%w(bib doc docx doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
             redirect '/'
         end
         login_required
@@ -300,7 +330,7 @@ class WebSync < Sinatra::Base
             redirect '/'
         end
         file = Tempfile.new('websync-export')
-        file.write doc.body
+        file.write( json_to_html( doc.body['body'] ) )
         file.close
         `unoconv -f #{params[:format]} #{file.path}`
         if $?.to_i==0

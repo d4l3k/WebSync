@@ -126,37 +126,8 @@ define('websync',{
                 }
                 $(document).trigger("data_patch",{patch: data.patch});
             }
-            else if(data.type=="text_patch"){
-                // Make sure there aren't any outstanding changes that need to be sent before patching document.
-                // TODO: Make this work with webworkers
-                WebSync.checkDiff();
-                // Get start selection.
-				var sel = getSelection();
-                var range, startText,startOffset,endText,endOffset;
-                if(sel.rangeCount>0){
-                    range = sel.getRangeAt(0);
-                    startText = range.startContainer.nodeValue;
-                    startOffset = range.startOffset;
-                    endText = range.endContainer.nodeValue;
-                    endOffset = range.endOffset;
-                }
-                WebSync.tmp.range = {
-                    active: (sel.rangeCount>1),
-                    startText: startText,
-                    startOffset: startOffset,
-                    endText: endText,
-                    endOffset: endOffset
-                }
-                // Patch the HTML.
-                var new_html = WebSync.getHTML();
-                WebSync.worker.postMessage({cmd:'apply_patch',html:new_html,patch:data.patch});
-            }
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
-			}
-			else if(data.type=="text_update"){
-				$(".content .page").get(0).innerHTML=data.text;
-				WebSync.old_html = data.text;
 			}
             else if(data.type=='config'){
                 if(data.action=='get'){

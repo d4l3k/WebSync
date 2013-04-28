@@ -297,7 +297,7 @@ class WebSync < Sinatra::Base
         login_required
         doc = Document.create(
             :name => 'Unnamed Document',
-            :body => {},
+            :body => {body:[]},
             :created => Time.now,
             :last_edit_time => Time.now,
             :user => current_user

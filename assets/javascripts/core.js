@@ -9,7 +9,7 @@
     http://tristanrice.name/
 */
 // Variable: object WebSync;
-// This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth.
+// This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
 define('websync',{
     // Variable: object WebSync.tmp;
     // Provides a location for temporary data to be stored.
@@ -198,6 +198,9 @@ define('websync',{
     // This is where the core of Web-Sync initializes.
 	initialize: function(){
 		this.webSocketStart();
+        if(!WebSyncData.body){
+            WebSyncData.body = [];
+        }
         $(".page").html(JSONToDOM(WebSyncData.body));
         $("#public_mode").change(function(){
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})

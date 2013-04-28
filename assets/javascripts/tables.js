@@ -42,11 +42,10 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		}
 	});
 	$('.Table [title="Delete Row"]').bind("click.Tables",function(e){
-		self.cursorMove(0,1);
 		if(self.selected){
 			self.selectedElem.parentElement.remove();
 		}
-		self.cursorUpdate();
+		self.clearSelect();
 	});
 	$('.Table [title="Insert Column Left"]').bind("click.Tables",function(e){
 		if(self.selected){
@@ -70,20 +69,19 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	});
 	$('.Table [title="Delete Column"]').bind("click.Tables",function(e){
 		if(self.selected){
-			self.cursorMove(1,0);
 			var size = self.tableSize();
 			var pos = self.selectedPos();
 			var parentElem = self.selectedElem.parentElement.parentElement
 			for(var i=0;i<size[1];i++){
 				parentElem.children[i].children[pos[0]].remove();
 			}
-			self.cursorUpdate();
+			self.clearSelect();
 		}
 	});
 	$('.Table [title="Delete Table"]').bind("click.Tables",function(e){
 		if(self.selected){
 			self.selectedElem.parentElement.parentElement.parentElement.remove();
-			self.cursorUpdate();
+			self.clearSelect();
 		}
 	});
     self.observer = new MutationObserver(function(mutations) {

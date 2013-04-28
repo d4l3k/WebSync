@@ -83,6 +83,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	$('.Table [title="Delete Table"]').bind("click.Tables",function(e){
 		if(self.selected){
 			self.selectedElem.parentElement.parentElement.parentElement.remove();
+			self.cursorUpdate();
 		}
 	});
     self.observer = new MutationObserver(function(mutations) {

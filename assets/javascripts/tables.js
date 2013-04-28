@@ -8,14 +8,87 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     // Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
+    $(".ribbon").append($('<div id="Table" class="Table container"><div class="btn-group"><button class="btn" type="button" title="Insert Row Above"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Row"><i class="icon-trash"></i> Row</button><button class="btn" type="button" title="Insert Row Below"><i class="icon-plus"></i></button></div>     <div class="btn-group"><button class="btn" type="button" title="Insert Column Left"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Column"><i class="icon-trash"></i> Column</button><button class="btn" type="button" title="Insert Column Right"><i class="icon-plus"></i></button></div><button class="btn" type="button" title="Delete Table"><i class="icon-trash"></i> Table</button></div>'));
+    $(".content").append($('<div id="table_cursor" class="Table"></div>'));
+    $(document.body).append($('<div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
     $("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
     $("#table").bind("click.Tables",function(e){
         console.log(e);
         var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
         WebSync.insertAtCursor(new_table)
     });
+	$('.Table [title="Insert Row Above"]').bind("click.Tables",function(e){
+		if(self.selected){
+			var html = "<tr>";
+			var size = self.tableSize();
+			for(var i=0;i<size[0];i++){
+				html+="<td></td>";
+			}
+			html+="</tr>";
+			$(html).insertBefore( self.selectedElem.parentElement);
+			self.cursorMove(0,-1);
+		}
+	});
+	$('.Table [title="Insert Row Below"]').bind("click.Tables",function(e){
+		if(self.selected){
+			var html = "<tr>";
+			var size = self.tableSize();
+			for(var i=0;i<size[0];i++){
+				html+="<td></td>";
+			}
+			html+="</tr>";
+			$(html).insertAfter( self.selectedElem.parentElement);
+			self.cursorMove(0,1);
+		}
+	});
+	$('.Table [title="Delete Row"]').bind("click.Tables",function(e){
+		self.cursorMove(0,1);
+		if(self.selected){
+			self.selectedElem.parentElement.remove();
+		}
+		self.cursorUpdate();
+	});
+	$('.Table [title="Insert Column Left"]').bind("click.Tables",function(e){
+		if(self.selected){
+			var size = self.tableSize();
+			var pos = self.selectedPos();
+			for(var i=0;i<size[1];i++){
+				$("<td></td>").insertBefore(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
+			}
+			self.cursorMove(-1,0);
+		}
+	});
+	$('.Table [title="Insert Column Right"]').bind("click.Tables",function(e){
+		if(self.selected){
+			var size = self.tableSize();
+			var pos = self.selectedPos();
+			for(var i=0;i<size[1];i++){
+				$("<td></td>").insertAfter(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
+			}
+			self.cursorMove(1,0);
+		}
+	});
+	$('.Table [title="Delete Column"]').bind("click.Tables",function(e){
+		if(self.selected){
+			self.cursorMove(1,0);
+			var size = self.tableSize();
+			var pos = self.selectedPos();
+			var parentElem = self.selectedElem.parentElement.parentElement
+			for(var i=0;i<size[1];i++){
+				parentElem.children[i].children[pos[0]].remove();
+			}
+			self.cursorUpdate();
+		}
+	});
+	$('.Table [title="Delete Table"]').bind("click.Tables",function(e){
+		if(self.selected){
+			self.selectedElem.parentElement.parentElement.parentElement.remove();
+		}
+	});
     self.observer = new MutationObserver(function(mutations) {
-        self.cursorUpdate()
+        setTimeout(function(){
+			self.cursorUpdate();
+		},1);
     });
     $(".page").delegate("table","click.Tables",function(e){
         if(self.selectedElem.contentEditable!="true"){
@@ -37,12 +110,14 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             self.cursorSelect(this);
         }
         if(self.selectedElem.contentEditable!="true"){
-            e.preventDefault();
-            $(this).contextmenu();
+            //e.preventDefault();
+            //$(this).contextmenu();
         }
     });
     $(".content_well").delegate("td","dblclick.Tables",function(e){
-        self.selectedEditable(true);
+		if(self.selectedElem.contentEditable!="true"){        
+			self.selectedEditable(true);
+		}
     });
     $(".content_well").bind("keydown.Tables",function(e){
         //console.log(e);
@@ -52,7 +127,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 if(self.selectedElem.contentEditable){
                     editting=self.selectedElem.contentEditable=="true";
                 }
-                if(e.keyCode==13){
+                if(e.keyCode==13&&!e.shiftKey){
                     self.cursorMove(0,1);
                 } else if(e.keyCode==27){
                     // Escape
@@ -92,21 +167,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
         }
     });
-    $(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));
-    $(".content").append($('<div id="table_cursor" class="Table"></div>'));
-    $(document.body).append($('<div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
-    $("td").attr("data-target","#tablemenu");
-    $("#tablemenu a").bind("click.Tables",function(e){
-        e.preventDefault();
-    });
-    $('#tablemenu a:contains("Insert Column")').bind("click.Tables",function(e){
-    });
-    $('#tablemenu a:contains("Delete Column")').bind("click.Tables",function(e){
-    });
-    $('#tablemenu a:contains("Insert Row")').bind("click.Tables",function(e){
-    });
-    $('#tablemenu a:contains("Delete Row")').bind("click.Tables",function(e){
-    });
+
     WebSync.updateRibbon();
 	// Function: void [plugin=edit].disable();
     // Disables the plugin. This has to be set for possible plugin unloading.

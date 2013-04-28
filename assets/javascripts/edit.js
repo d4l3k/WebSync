@@ -47,7 +47,7 @@ define("edit",['websync'],function(websync){ var self = this;
         }
     });
     $(document).bind("keydown.TextEdit","li",function(e){
-        console.log(e);
+        //console.log(e);
         if(e.keyCode==9){
             console.log(this);
             var list_index = document.getSelection().baseNode.parentNode;
@@ -93,7 +93,7 @@ define("edit",['websync'],function(websync){ var self = this;
 				button.removeClass('active');
 			}
 		});
-		$('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split("'").join("")));
+		$('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split(",")[0].split("'").join("")));
 		clearTimeout(self._selectTimeout);
 		self._selectTimeout = null;
 	}

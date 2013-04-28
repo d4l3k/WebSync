@@ -31,7 +31,7 @@ define('websync',{
 	webSocketCallbacks: {
 		onopen: function(e){
 			console.log(e);
-			WebSync.diffInterval = setInterval(WebSync.checkDiff,500);
+			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
 			$(".navbar-inner").removeClass("no-connection");
             $(document).trigger("connection");
 			$("#connection_msg").remove();
@@ -80,50 +80,16 @@ define('websync',{
                     endOffset = range.endOffset;
                 }
                 WebSync.tmp.range = {
-                    active: (sel.rangeCount>1),
+                    active: (sel.rangeCount>0),
                     startText: startText,
                     startOffset: startOffset,
                     endText: endText,
                     endOffset: endOffset
                 }
                 // Patch the HTML.
-                var new_html = WebSyncData;
-                WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
-                WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-                //WebSync.worker.postMessage({cmd:'apply_patch',html:new_html,patch:data.patch});
-                $(".page").html(JSONToDOM(WebSyncData.body));
-                sel = WebSync.tmp.range;
-                if(sel.active){
-                    // Find all #text nodes.
-                    var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
-                        return this.nodeType == 3;
-                    });
-                    var startText = range.startText, startOffset = range.startOffset, endText = range.endText, endOffset = range.endOffset;
-                    var startNode = {};
-                    var endNode = {};
-                    console.log(text_nodes);
-                    var startNodeDist = 99999;
-                    var endNodeDist = 99999;
-                    // Locate the start & end #text nodes based on a Levenstein string distance.
-                    text_nodes.each(function(index, node){
-                        var dist = levenshteinenator(node.nodeValue,startText);
-                        if(dist<startNodeDist){
-                            startNode = node;
-                            startNodeDist = dist;
-                        }
-                        dist = levenshteinenator(node.nodeValue,endText);
-                        if(dist<endNodeDist){
-                            endNode = node;
-                            endNodeDist = dist;
-                        }
-                    });
-                    // Update the text range.
-                    var range = document.createRange();
-                    range.setStart(startNode,startOffset);
-                    range.setEnd(endNode,endOffset);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
+                //WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
+                //WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+                WebSync.worker.postMessage({cmd:'apply_patch',html:WebSyncData,patch:data.patch});
                 $(document).trigger("data_patch",{patch: data.patch});
             }
 			else if(data.type=="name_update"){
@@ -287,13 +253,6 @@ define('websync',{
 		this.updateRibbon();
 		rangy.init();
 		console.log(rangy)
-		/*
-		 * Cursor Blink
-		 * For future other people.
-		setInterval(function(){
-			$("cursor").toggleClass("hidden");
-		},1000);
-		*/
         $('#settingsBtn').click(function(){
 			$(this.parentElement).toggleClass("active");
             $(".settings-popup").toggle();
@@ -308,18 +267,21 @@ define('websync',{
             var data = e.data;
             console.log(data);
             if(data.cmd=='diffed'){
-                WebSync.connection.sendJSON({type: "text_patch", patch: data.diff});
+                if(data.patch){
+                    WebSync.connection.sendJSON({type: "data_patch", patch: data.patch});
+                }
             }
             else if(data.cmd=='patched'){
-                $(".content .page").get(0).innerHTML=data.html;
-                WebSync.old_html = WebSync.getHTML();
+                WebSync.oldData = JSON.parse(JSON.stringify(data.json));
+                WebSyncData = data.json;
+                $(".content .page").get(0).innerHTML=JSONToDOM(WebSyncData.body);
                 sel = WebSync.tmp.range;
                 if(sel.active){
                     // Find all #text nodes.
                     var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
                         return this.nodeType == 3;
                     });
-                    var startText = range.startText, startOffset = range.startOffset, endText = range.endText, endOffset = range.endOffset;
+                    var startText = sel.startText, startOffset = sel.startOffset, endText = sel.endText, endOffset = sel.endOffset;
                     var startNode = {};
                     var endNode = {};
                     console.log(text_nodes);
@@ -489,19 +451,22 @@ define('websync',{
             WebSyncData.body = {};
         }
         if(!WebSync.oldData){
-            WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+            WebSync.oldDataString = JSON.stringify(WebSyncData);
+            WebSync.oldData = JSON.parse(WebSync.oldDataString);
         }
-		WebSyncData.body = DOMToJSON($($(".page").get(0).childNodes));
-		if(!_.isEqual(WebSyncData,WebSync.oldData)){
-            console.log("Diff: Not EQUAL");
+		WebSyncData.body = DOMToJSON($(".page").get(0).childNodes);
+        var stringWebSync = JSON.stringify(WebSyncData);
+		if(stringWebSync!=WebSync.oldDataString){
             // Send it to the worker thread for processing.
-            //var msg = {'cmd':'diff','oldHtml':WebSync.old_html,'newHtml':new_html};
-            //WebSync.worker.postMessage(msg);
-            var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
+            var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
+            WebSync.worker.postMessage(msg);
+            WebSync.oldData = JSON.parse(stringWebSync);
+            WebSync.oldDataString = stringWebSync;
+            /*var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
             if(patch){
                 WebSync.connection.sendJSON({type: "data_patch", patch: patch});
 			    WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-            }
+            }*/
 		}
 	},
     // Function: void WebSync.insertAtCursor(jQuery node);

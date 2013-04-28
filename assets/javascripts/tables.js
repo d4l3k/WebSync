@@ -21,7 +21,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         e.stopPropagation();
     });
     $(".page").bind("click.Tables",function(e){
-        console.log(e);
+        //console.log(e);
         self.clearSelect();
     });
     $(".content_well").delegate("td","click.Tables",function(e){

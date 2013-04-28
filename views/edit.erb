@@ -10,13 +10,18 @@ WebSyncAuth = {
     // This is a randomly generated string used as an API key.
     key:"<%= @client_key %>"
 }
-</script>
+// Variable: object WebSyncData;
+// This contains the data for the document. This is automatically synced with the server.
+WebSyncData = <%= MultiJson.dump(@doc.body) %>;
 
+// Set document title.
+document.title = <%= @doc.name.inspect %> + " - WebSink";
+</script>
 <div class="menu">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">Web-Sync</a>
+				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">WebSink</a>
 				<ul class="nav">
 					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
 				</ul>
@@ -59,9 +64,17 @@ WebSyncAuth = {
 		</div>
 		<div class="ribbon">
 			<div id="File" class="container">
-				<a href="download/docx" class="btn"><i class="icon-cloud-download"></i> DOCX</a>
-				<a href="download/pdf" class="btn"><i class="icon-cloud-download"></i> PDF</a>
-				<a href="download/html" class="btn"><i class="icon-cloud-download"></i> HTML</a>
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-cloud-download"></i> Download <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="download/docx">Microsoft Word (.docx)</a></li>
+                        <li><a href="download/pdf">PDF (.pdf)</a></li>
+                        <li><a href="download/html">HTML (.html)</a></li>
+                        <li><a href="download/odt">Libre Office (.odt)</a></li>
+                        <li><a href="download/txt">Raw Text (.txt)</a></li>
+                    </ul>
+                </div>
+                <a href="json" class="btn"><i class="icon-eye-open"></i> JSON</a>
                 <select id="zoom_level" title="Zoom Level" class="ribbon_button">
 					<option>50%</option>
 					<option>80%</option>
@@ -89,7 +102,7 @@ WebSyncAuth = {
 </div>
 <div class="content_well">
 	<div class="content">
-		<div class="page"><%= @doc.body %></div>
+		<div class="page"></div>
 	</div>
 </div>
 <div id="alert_well">

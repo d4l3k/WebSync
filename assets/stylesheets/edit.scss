@@ -23,6 +23,10 @@ body,html {
 }
 .menu {
     width: 100%;
+    .dropdown-menu {
+        max-height: 250px;
+        overflow-y: auto;
+    }
 }
 /*
 // Flat buttons until hover

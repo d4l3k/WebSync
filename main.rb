@@ -26,15 +26,89 @@ DataMapper.setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
 #$redis = $adapter.redis
+data = "window = {};"+File.read("./assets/javascripts/diff_match_patch.js") + File.read("./assets/javascripts/jsondiffpatch.min.js")
+$jsondiffpatch = ExecJS.compile data
 
 Sinatra::Sprockets = Sprockets
 
+module BJSONDiffPatch
+    def diff object1, object2
+        return $jsondiffpatch.eval "jsondiffpatch.diff(#{MultiJson.dump(object1)},#{MultiJson.dump(object2)})"
+    end
+    def patch object1, delta
+        return $jsondiffpatch.eval "jsondiffpatch.patch(#{MultiJson.dump(object1)},#{MultiJson.dump(delta)})"
+    end
+end
+class JsonDiffPatch
+    extend BJSONDiffPatch
+end
+def json_to_html_node obj
+    html = "";
+    if obj['name']=="#text"
+        return obj['textContent']
+    end
+    html+="<"+obj['name']
+    obj.each do |k,v|
+        if k!="name"&&k!="textContent"&&k!="childNodes"
+            html+=" "+k+"="+MultiJson.dump(v)
+        end
+    end
+
+    if obj.has_key? 'childNodes'
+        html+=">";
+        obj['childNodes'].each do |elem|
+            html+= json_to_html_node(elem)
+        end
+        html+="</"+obj['name']+">"
+    else
+        html+="/>"
+    end
+    return html
+end
+def json_to_html obj
+    html = ""
+    obj.each do |elem|
+        html += json_to_html_node(elem)
+    end
+    return html
+end
+
+def node_to_json html
+    if html.name=="text"
+        return { name: "#text", textContent: html.to_s}
+    end
+    json = {
+        name: html.name.upcase
+    }
+    if defined? html.attributes
+        html.attributes.each do |name, attr|
+            json[attr.name]=attr.value
+        end
+    end
+    if html.children.length > 0
+        json['childNodes']=[]
+        html.children.each do |child|
+            json['childNodes'].push( node_to_json(child) )
+        end
+    end
+    return json
+end
+
+def html_to_json html
+    dom = Nokogiri::HTML(html)
+    json = []
+    dom.document.children.each do |elem|
+        json.push node_to_json(elem)
+    end
+    return json
+end
 
 class Document
     include DataMapper::Resource
     property :id, Serial
     property :name, String
-    property :body, Text
+    #property :body, Text
+    property :body, Json, :default=>{}, :lazy=>true
     property :created, DateTime
     property :last_edit_time, DateTime
     property :public, Boolean, :default=>false
@@ -223,7 +297,7 @@ class WebSync < Sinatra::Base
         login_required
         doc = Document.create(
             :name => 'Unnamed Document',
-            :body => '',
+            :body => {},
             :created => Time.now,
             :last_edit_time => Time.now,
             :user => current_user
@@ -242,7 +316,7 @@ class WebSync < Sinatra::Base
         filename = params[:file][:filename]
         filetype = params[:file][:type]
         content = nil
-        # TODO: Split upload/download into its own external server. Right now Unoconv is blocking.
+        # TODO: Split upload/download into its own external server. Right now Unoconv is blocking. Also issues may arise if multiple copies of LibreOffice are running on the same server. Should probably use a single server instance of LibreOffice
         `unoconv -f html #{tempfile.path}`
         exit_status = $?.to_i
         if exit_status == 0
@@ -260,14 +334,16 @@ class WebSync < Sinatra::Base
             end
         end
         if content!=nil
+            # TODO: Upload into JSON format
             doc = Document.create(
                 :name => filename,
-                :body => content,
+                :body => {body:html_to_json(content)},
                 :created => Time.now,
                 :last_edit_time => Time.now,
                 :user => current_user
             )
             doc.assets << Asset.get(1)
+            doc.assets << Asset.get(2)
             doc.save
             redirect "/#{doc.id.base62_encode}/edit"
         else
@@ -275,7 +351,7 @@ class WebSync < Sinatra::Base
         end
     end
     get '/:doc/download/:format' do
-        if !%w(bib doc doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
+        if !%w(bib doc docx doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
             redirect '/'
         end
         login_required
@@ -285,7 +361,7 @@ class WebSync < Sinatra::Base
             redirect '/'
         end
         file = Tempfile.new('websync-export')
-        file.write doc.body
+        file.write( json_to_html( doc.body['body'] ) )
         file.close
         `unoconv -f #{params[:format]} #{file.path}`
         if $?.to_i==0
@@ -298,45 +374,16 @@ class WebSync < Sinatra::Base
         end
         file.unlink
     end
-=begin
-    get '/:doc/download/docx' do
+    get '/:doc/json' do
         login_required
         doc_id = params[:doc].base62_decode
         doc = Document.get doc_id
         if (!doc.public)&&doc.user!=current_user
             redirect '/'
         end
-        response.headers['content_type'] = "application/octet-stream"
-        attachment(doc.name+'.docx')
-        response.write(doc.body)
-        #send_data doc.body, :filename=>doc.name+".docx"
+        content_type 'application/json'
+        MultiJson.dump(doc.body)
     end
-    # TODO: Switch PDF generation to a dedicated server w/ xorg-server
-    # Requires wkhtmltopdf
-    get '/:doc/download/pdf' do
-        login_required
-        doc_id = params[:doc].base62_decode
-        doc = Document.get doc_id
-        if (!doc.public)&&doc.user!=current_user
-            redirect '/'
-        end
-        response.headers['content_type'] = "application/pdf"
-        kit = PDFKit.new(doc.body, :page_size => 'Letter')
-        attachment(doc.name+'.pdf')
-        response.write(kit.to_pdf)
-    end
-    get '/:doc/download/html' do
-        login_required
-        doc_id = params[:doc].base62_decode
-        doc = Document.get doc_id
-        if (!doc.public)&&doc.user!=current_user
-            redirect '/'
-        end
-        response.headers['content_type'] = "text/html"
-        attachment(doc.name+'.html')
-        response.write(doc.body)
-    end
-=end
     get '/:doc/delete' do
         login_required
         doc_id = params[:doc].base62_decode
@@ -387,7 +434,7 @@ class WebSync < Sinatra::Base
                     warn "websocket open"
                 end
                 ws.onmessage do |msg|
-                    data = JSON.parse(msg.force_encoding("UTF-8"));
+                    data = MultiJson.load(msg.force_encoding("UTF-8"));
                     puts "JSON: #{data.to_s}"
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']
@@ -406,42 +453,30 @@ class WebSync < Sinatra::Base
                             user_prop = "doc:#{doc_id.base62_encode}:users"
                             user_raw = $redis.get(user_prop)
                             if !user_raw.nil?
-                                users = JSON.parse(user_raw)
+                                users = MultiJson.load(user_raw)
                             else
                                 users = {}
                             end
                             user_id = Digest::MD5.hexdigest(email.strip.downcase)
                             users[client_id]={id:user_id,email:email.strip}
-                            $redis.set user_prop,JSON.dump(users)
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
-                            ws.send JSON.dump({type:'info',user_id:user_id,users:users})
+                            $redis.set user_prop,MultiJson.dump(users)
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
+                            ws.send MultiJson.dump({type:'info',user_id:user_id,users:users})
                             puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
                         else
                             ws.close_connection
                         end
                     end
                     if authenticated
-                        # This replaces all the text w/ the provided content.
-                        if data["type"]=="text_update"
-                            doc.body = data["text"]
-                            doc.last_edit_time = Time.now
-                            if !doc.save
-                                puts("Save errors: #{doc.errors.inspect}")
-                            end
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
-                        # Google Diff-Match-Patch algorithm
-                        elsif data['type']=='text_patch'
+                        # Patch data
+                        if data['type']=='data_patch'&&data.has_key?('patch')
                             doc = Document.get doc_id
-                            #I'm pretty sure this works just fine. The main issue seems to be diffing w/ structure content. We'll see with time.
-                            #html_optimized_patches = diff_htmlToChars_ doc.body, URI::decode(data['patch'])
-                            #puts html_optimized_patches.inspect
-                            patches = $dmp.patch_from_text data['patch']
-                            doc.body = $dmp.patch_apply(patches,doc.body)[0]
+                            doc.body = JsonDiffPatch.patch(doc.body,data['patch'])
                             doc.last_edit_time = Time.now
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Sets the name
                         elsif data['type']=="name_update"
                             doc.name = data["name"]
@@ -449,7 +484,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Loads scripts
                         elsif data['type']=="load_scripts"
                             msg = {type:'scripts', js:[],css:[]}
@@ -462,7 +497,7 @@ class WebSync < Sinatra::Base
                                 end
                                 msg[arr].push asset.url
                             end
-                            ws.send JSON.dump msg
+                            ws.send MultiJson.dump msg
                         elsif data['type']=='connection'
                         elsif data['type']=='config'
                             if data['action']=='set'
@@ -480,17 +515,17 @@ class WebSync < Sinatra::Base
                                 end
                             elsif data['action']=='get'
                                 if data['property']=='public'
-                                    ws.send JSON.dump({type: 'config',action: 'get', property:'public', value: doc.public})
+                                    ws.send MultiJson.dump({type: 'config',action: 'get', property:'public', value: doc.public})
                                 else
                                     if data['space']=='user'
-                                            ws.send JSON.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: user.config[data['property']],id:data['id']})
+                                            ws.send MultiJson.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: user.config[data['property']],id:data['id']})
                                     elsif data['space']=='document'
-                                            ws.send JSON.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: doc.config[data['property']],id:data['id']})
+                                            ws.send MultiJson.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: doc.config[data['property']],id:data['id']})
                                     end
                                 end
                             end
                         elsif data['type']=='client_event'
-                            $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
+                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
                         end
                     end
                 end
@@ -499,16 +534,16 @@ class WebSync < Sinatra::Base
                     redis_sock.close_connection
                     if authenticated
                         user_prop = "doc:#{doc_id.base62_encode}:users"
-                        users = JSON.parse($redis.get(user_prop))
+                        users = MultiJson.load($redis.get(user_prop))
                         users.delete client_id
-                        $redis.set user_prop,JSON.dump(users)
-                        $redis.publish "doc:#{doc_id.base62_encode}", JSON.dump({type:"client_bounce",client:client_id,data:JSON.dump({type:"exit_user",id:client_id})})
+                        $redis.set user_prop,MultiJson.dump(users)
+                        $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"exit_user",id:client_id})})
                     end
                     ws.close_connection
                 end
                 redis_sock.on(:message) do |channel, message|
                     puts "[#{client_id}]#{channel}: #{message}"
-                    data = JSON.parse(message)
+                    data = MultiJson.load(message)
                     if data['client']!=client_id
                         if data['type']=="client_bounce"
                             ws.send data['data']

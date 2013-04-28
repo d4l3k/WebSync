@@ -8,5 +8,6 @@
 //= require jquery.transform2d.js
 //= require webrtc-adapter.js
 //= require diff_match_patch.js
+//= require jsondiffpatch.min.js
 //= require core.js
 //= require edit.js

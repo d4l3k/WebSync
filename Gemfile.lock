@@ -179,9 +179,12 @@ DEPENDENCIES
   em-hiredis
   erubis
   eventmachine
+  execjs
   haml
   hiredis
   json
+  multi_json
+  nokogiri
   pdfkit
   pdftohtmlr
   pry-rescue

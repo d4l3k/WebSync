@@ -14,22 +14,23 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
         WebSync.insertAtCursor(new_table)
     });
-    $(".content_well").delegate("table","click.Tables",function(e){
+    self.observer = new MutationObserver(function(mutations) {
+        self.cursorUpdate()
+    });
+    $(".page").delegate("table","click.Tables",function(e){
         if(self.selectedElem.contentEditable!="true"){
             $('a:contains("Table")').click();
         }
         e.stopPropagation();
     });
-    $(".page").bind("click.Tables",function(e){
-        //console.log(e);
-        self.clearSelect();
-    });
-    $(".content_well").delegate("td","click.Tables",function(e){
-        console.log(e);
-        console.log(this);
+    $(".page").delegate("td","click.Tables",function(e){
         if(this!=self.selectedElem){
             self.cursorSelect(this);
         }
+    });
+    $(".page").bind("click.Tables",function(e){
+        //console.log(e);
+        self.clearSelect();
     });
     $(".content_well").delegate("td","contextmenu.Tables",function(e){
         if(this!=self.selectedElem){
@@ -44,11 +45,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         self.selectedEditable(true);
     });
     $(".content_well").bind("keydown.Tables",function(e){
+        //console.log(e);
         if(self.selectedElem){
-            if(self.selected==true&&!e.shiftKey){
+            if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
                 if(self.selectedElem.contentEditable){
-                    editting=self.selectedElem.contedEditable=="true";
+                    editting=self.selectedElem.contentEditable=="true";
                 }
                 if(e.keyCode==13){
                     self.cursorMove(0,1);
@@ -72,7 +74,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     self.cursorMove(0,1);
                     e.preventDefault();
                 } else {
-                    if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="false"){
+                    if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="inherit"){
                         self.selectedEditable(true);
 
                         $(self.selectedElem).focus();
@@ -87,12 +89,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     $(self.selectedElem).focus();
                     //WebSync.setCaretPosition(self.selectedElem,0);
                 }
-                setTimeout(self.cursorUpdate,1);
             }
         }
     });
     $(".ribbon").append($('<div id="Table" class="Table container">Table Editting</div>'));
-    $(document.body).append($('<div id="table_cursor" class="Table"></div><div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
+    $(".content").append($('<div id="table_cursor" class="Table"></div>'));
+    $(document.body).append($('<div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
     $("td").attr("data-target","#tablemenu");
     $("#tablemenu a").bind("click.Tables",function(e){
         e.preventDefault();
@@ -125,6 +127,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		self.selectedElem = td;
 		self.selectedEditable(false);
 		self.cursorUpdate();
+        self.observer.observe(self.selectedElem,{characterData:true});
 	}
 	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
@@ -138,19 +141,21 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 
 	}
 	self.cursorUpdate = function(){
-		var pos = $(self.selectedElem).position();
-		$("#table_cursor").offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()).get(0).scrollIntoViewIfNeeded();
+		var pos = $(self.selectedElem).offset();
+        pos.top += 1;
+        pos.left += 1;
+		$("#table_cursor").offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){
-			self.selectedElem.contentEditable=null;
+			self.selectedElem.contentEditable="inherit";
 			$("#table_cursor").css({borderStyle: 'solid', outlineStyle: 'solid'});
 			$('a:contains("Table")').click();
 		}else{
 			self.selectedElem.contentEditable=true;
 			$("#table_cursor").css({borderStyle: 'dashed', outlineStyle: 'dashed'});
 			$('a:contains("Text")').click();
-			WebSync.setEndOfContenteditable(self.selectedElem);
+			self.setEndOfContenteditable(self.selectedElem);
 		}
 	}
     self.clearSelect = function(){
@@ -160,8 +165,29 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			$("#table_cursor").offset({left:-10000});
 			delete self.selectedElem;
 			$('a:contains("Text")').click();
+            self.observer.disconnect();
 		}
 	}
+    self.setEndOfContenteditable = function(contentEditableElement)
+    {
+        var range,selection;
+        if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+        {
+            range = document.createRange();//Create a range (a range is a like the selection but invisible)
+            range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+            selection = window.getSelection();//get the selection object (allows you to change selection)
+            selection.removeAllRanges();//remove any selections already made
+            selection.addRange(range);//make the range you have just created the visible selection
+        }
+        else if(document.selection)//IE 8 and lower
+        { 
+            range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+            range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+            range.select();//Select the range (make it the visible selection
+        }
+    }
 	self.selectedPos = function(){
 		var child = self.selectedElem;
 		var column = 0;

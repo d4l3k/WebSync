@@ -142,7 +142,7 @@ cursor {
         -moz-hyphens: auto;
         -ms-hyphens: auto;
         font-size: 14px;
-        line-height: normal;
+        line-height: 1.15;
     }
 }
 :focus, :active {
@@ -198,6 +198,7 @@ a#name {
     @include ex(user-modify, read-only);
 }
 .content {
+    position: relative;
     table, th, td {
         border: 1px solid #888;
         word-wrap: break-word;
@@ -210,17 +211,16 @@ a#name {
         padding-right: 1px;
         min-width: 0.25in;
         height: 11pt;
+        cursor: text;
     }
 }
 #table_cursor {
 	position: absolute;
-	outline: 1px solid black;
-	border: 1px solid black;
+	outline: 2px solid black;
+	border: 0px solid transparent;
 	padding-left: 1px;
 	padding-right: 1px;
 	padding-bottom: 1px;
-	min-height: 1px;
-	min-width: 1px;
 	pointer-events: none;
 	background: none !important;
 	left: -1000px;

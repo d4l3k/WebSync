@@ -17,6 +17,14 @@ WebSyncData = <%= MultiJson.dump(@doc.body) %>;
 // Set document title.
 document.title = <%= @doc.name.inspect %> + " - WebSink";
 </script>
+<style media="print" type="text/css">
+    body > * {
+        display: none;
+    }
+    .content_well, .content_well * {
+        display: block !important;
+    }
+</style>
 <div class="menu">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">

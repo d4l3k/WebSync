@@ -1,18 +1,18 @@
 <%= stylesheet_tag 'edit' %>
 <script type="text/javascript">
-// Variable: object WebSyncAuth;
+// Variable: object WebSinkAuth;
 // This is an internal object used for authenticating the websocket connection.
-WebSyncAuth = {
-    // Variable: int WebSyncAuth.id;
+WebSinkAuth = {
+    // Variable: int WebSinkAuth.id;
     // This is the websocket connection id. Each connection has a unique id.
     id:"<%= @client_id %>",
-    // Variable: int WebSyncAuth.key;
+    // Variable: int WebSinkAuth.key;
     // This is a randomly generated string used as an API key.
     key:"<%= @client_key %>"
 }
-// Variable: object WebSyncData;
+// Variable: object WebSinkData;
 // This contains the data for the document. This is automatically synced with the server.
-WebSyncData = <%= MultiJson.dump(@doc.body) %>;
+WebSinkData = <%= MultiJson.dump(@doc.body) %>;
 
 // Set document title.
 document.title = <%= @doc.name.inspect %> + " - WebSink";

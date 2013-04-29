@@ -1,6 +1,6 @@
 /*
-    Web-Sync: Edit.js
-    This is the core file that runs the Web-Sync editor.
+    WebSink: Edit.js
+    This is the core file that runs the WebSink editor.
 
     Copyright (c) 2013. All Rights reserved.
 
@@ -8,54 +8,54 @@
     rice (at) outerearth (dot) net
     http://tristanrice.name/
 */
-// Variable: object WebSync;
-// This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
-define('websync',{
-    // Variable: object WebSync.tmp;
+// Variable: object WebSink;
+// This is the core of WebSink. Everything is stored under the WebSink object except for websocket authentication information which is under WebSinkAuth, and the main WebSinkData object.
+define('websink',{
+    // Variable: object WebSink.tmp;
     // Provides a location for temporary data to be stored.
     tmp: {},
-    // Variable: boolean WebSync.webSocketFirstTime;
+    // Variable: boolean WebSink.webSocketFirstTime;
     // Websocket first connection?
 	webSocketFirstTime: true,
-    // Function: void WebSync.webSocketStart();
+    // Function: void WebSink.webSocketStart();
     // Creates the websocket for communication.
 	webSocketStart: function(){
-		WebSync.connection = new WebSocket("ws://"+window.location.host+window.location.pathname);
-		WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
-		WebSync.connection.onclose = WebSync.webSocketCallbacks.onclose;
-		WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;
-		WebSync.connection.onerror = WebSync.webSocketCallbacks.onerror;
+		WebSink.connection = new WebSocket("ws://"+window.location.host+window.location.pathname);
+		WebSink.connection.onopen = WebSink.webSocketCallbacks.onopen;
+		WebSink.connection.onclose = WebSink.webSocketCallbacks.onclose;
+		WebSink.connection.onmessage = WebSink.webSocketCallbacks.onmessage;
+		WebSink.connection.onerror = WebSink.webSocketCallbacks.onerror;
 	},
-    // Variable: object WebSync.webSocketCallbacks;
+    // Variable: object WebSink.webSocketCallbacks;
     // An object with all of the callbacks for a websocket connection.
 	webSocketCallbacks: {
 		onopen: function(e){
 			console.log(e);
-			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
+			WebSink.diffInterval = setInterval(WebSink.checkDiff,1000);
 			$(".navbar-inner").removeClass("no-connection");
             $(document).trigger("connection");
 			$("#connection_msg").remove();
-			if(WebSync.webSocketFirstTime){
-				WebSync.webSocketFirstTime = false;
-				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-				WebSync.loadScripts();
-                WebSync.connection.sendJSON({type:'config',action:'get',property:'public'});
+			if(WebSink.webSocketFirstTime){
+				WebSink.webSocketFirstTime = false;
+				WebSink.connection.sendJSON({type:'auth',id:WebSinkAuth.id,key:WebSinkAuth.key});
+				WebSink.loadScripts();
+                WebSink.connection.sendJSON({type:'config',action:'get',property:'public'});
 			} else {
-				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-				WebSync.success("<strong>Success!</strong> Connection restablished.");
+				WebSink.connection.sendJSON({type:'auth',id:WebSinkAuth.id,key:WebSinkAuth.key});
+				WebSink.success("<strong>Success!</strong> Connection restablished.");
 			}
 		},
 
 		onclose: function(e){
 			console.log(e);
-			if(WebSync.diffInterval){
-				clearInterval(WebSync.diffInterval);
+			if(WebSink.diffInterval){
+				clearInterval(WebSink.diffInterval);
 				$(".navbar-inner").addClass("no-connection");
-				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg";
-				WebSync.diffInterval=null;
+				WebSink.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg";
+				WebSink.diffInterval=null;
                 $(document).trigger("noconnection");
 			}
-			setTimeout(WebSync.webSocketStart,2000);
+			setTimeout(WebSink.webSocketStart,2000);
 		},
 		onmessage: function(e){
 			console.log(e);
@@ -68,7 +68,7 @@ define('websync',{
             else if(data.type=='data_patch'){
                 // Make sure there aren't any outstanding changes that need to be sent before patching document.
                 // TODO: Make this work with webworkers
-                WebSync.checkDiff();
+                WebSink.checkDiff();
                 // Get start selection.
 				var sel = getSelection();
                 var range, startText,startOffset,endText,endOffset;
@@ -79,7 +79,7 @@ define('websync',{
                     endText = range.endContainer.nodeValue;
                     endOffset = range.endOffset;
                 }
-                WebSync.tmp.range = {
+                WebSink.tmp.range = {
                     active: (sel.rangeCount>0),
                     startText: startText,
                     startOffset: startOffset,
@@ -87,9 +87,9 @@ define('websync',{
                     endOffset: endOffset
                 }
                 // Patch the HTML.
-                //WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
-                //WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-                WebSync.worker.postMessage({cmd:'apply_patch',html:WebSyncData,patch:data.patch});
+                //WebSinkData = jsondiffpatch.patch(WebSinkData,data.patch);
+                //WebSink.oldData = JSON.parse(JSON.stringify(WebSinkData));
+                WebSink.worker.postMessage({cmd:'apply_patch',html:WebSinkData,patch:data.patch});
                 $(document).trigger("data_patch",{patch: data.patch});
             }
 			else if(data.type=="name_update"){
@@ -101,32 +101,32 @@ define('websync',{
                         $("#public_mode").val(data.value ? "Public" : "Private");
                     }
                     else {
-                        var callback = WebSync._config_callbacks[data.id]
+                        var callback = WebSink._config_callbacks[data.id]
                         if(callback){
                             callback(data.property,data.value,data.space);
-                            delete WebSync._config_callbacks[data.id];
+                            delete WebSink._config_callbacks[data.id];
                         }
                     }
                 }
             }
             else if(data.type=='info'){
-                WebSync.clients = data['users'];
+                WebSink.clients = data['users'];
                 var to_trigger = {};
-                $.each(WebSync.clients,function(k,v){
-                    if(!WebSync.users[v.id]){
+                $.each(WebSink.clients,function(k,v){
+                    if(!WebSink.users[v.id]){
                         to_trigger[v.id]=[k];
                         $.ajax({
                             url:"https://secure.gravatar.com/"+v.id+".json",
                             dataType:'jsonp',
                             timeout: 2000
                         }).done(function(data){
-                            WebSync.users[v.id]=data.entry[0];
+                            WebSink.users[v.id]=data.entry[0];
                         }).complete(function(){
                             $.each(to_trigger[v.id],function(i, item){
                                 $(document).trigger('client_load',{client:item});
                             });
                         })
-                        WebSync.users[v.id]={};
+                        WebSink.users[v.id]={};
                     } else {
                         if(!to_trigger[v.id]){
                             $(document).trigger('client_load',{client:k});
@@ -137,27 +137,27 @@ define('websync',{
                 });
             }
             else if(data.type=='new_user'){
-                WebSync.clients[data['id']]=data['user'];
+                WebSink.clients[data['id']]=data['user'];
                 var user_id = data['user'].id;
                 var client_id = data['id']
-                if(!WebSync.users[data['user'].id]){
+                if(!WebSink.users[data['user'].id]){
                     $.ajax({
                         url:"https://secure.gravatar.com/"+data['user'].id+".json",
                         dataType:'jsonp'
                     }).done(function(data){
                         console.log(data);
-                        WebSync.users[user_id]=data.entry[0];
+                        WebSink.users[user_id]=data.entry[0];
                         $(document).trigger('client_load',{client:client_id});
                     }).fail(function(){
                         $(document).trigger('client_load',{client:client_id});
                     });
-                    WebSync.users[data['user'].id]={};
+                    WebSink.users[data['user'].id]={};
                 } else {
                     $(document).trigger('client_load',{client:data['id']});
                 }
             }
             else if(data.type=='exit_user'){
-                delete WebSync.clients[data['id']];
+                delete WebSink.clients[data['id']];
                 $(document).trigger('client_leave',{client:data['id']});
             }
             else if(data.type=='client_event'){
@@ -170,46 +170,46 @@ define('websync',{
 
 	},
     broadcastEvent: function(event,data){
-        WebSync.connection.sendJSON({type:'client_event',event: event, data: data});
+        WebSink.connection.sendJSON({type:'client_event',event: event, data: data});
     },
     users:{},
     _config_callbacks: {},
-    // Function: void WebSync.config_set(string key, object value, string space);
+    // Function: void WebSink.config_set(string key, object value, string space);
     // Sends a request to the server to set config[key] to value. Space can be "user" or "document".
     config_set: function(key, value, space){
         if(space==null){
             space='document';
         }
-        WebSync.connection.sendJSON({type:'config',action:'set', property: key, value: value, space: space});
+        WebSink.connection.sendJSON({type:'config',action:'set', property: key, value: value, space: space});
     },
-    // Function: void WebSync.config_get(string key, string space);
+    // Function: void WebSink.config_get(string key, string space);
     // Sends a request to the server for the key value. Space can be "user" or "document".
     config_get: function(key, callback, space){
         var id = btoa(Date.now());
         if(callback){
-            WebSync._config_callbacks[id]=callback;
+            WebSink._config_callbacks[id]=callback;
         }
         if(space==null){
             space='document';
         }
-        WebSync.connection.sendJSON({type:'config',action:'get', property: key, space: space, id: id});
+        WebSink.connection.sendJSON({type:'config',action:'get', property: key, space: space, id: id});
     },
-    // Function: void WebSync.initialize();
-    // This is where the core of Web-Sync initializes.
+    // Function: void WebSink.initialize();
+    // This is where the core of WebSink initializes.
 	initialize: function(){
 		this.webSocketStart();
-        if(!WebSyncData.body){
-            WebSyncData.body = [];
+        if(!WebSinkData.body){
+            WebSinkData.body = [];
         }
-        $(".page").html(JSONToDOM(WebSyncData.body));
+        $(".page").html(JSONToDOM(WebSinkData.body));
         $("#public_mode").change(function(){
-            WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
+            WebSink.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
 		$("#name").blur(function(){
 			var name = $(this).text();
 			$(this).html(name);
             document.title = name+" - WebSink";
-            WebSync.connection.sendJSON({type: "name_update", name: name});
+            WebSink.connection.sendJSON({type: "name_update", name: name});
 		});
 		$("#name").focus(function(){
 			if(this.innerText=="Unnamed Document"){
@@ -227,20 +227,20 @@ define('websync',{
 			$(".content_well").children().animate({"transform":"scale("+zoom+")"});
         });
         $('body').mousemove(function(e){
-            if(WebSync.viewMode=='Zen'){
-                if(e.pageY<85&&!WebSync.menuVisible){
+            if(WebSink.viewMode=='Zen'){
+                if(e.pageY<85&&!WebSink.menuVisible){
                     $(".menu").animate({top: 0},200);
-                    WebSync.menuVisible = true;
+                    WebSink.menuVisible = true;
                 }
-                else if(e.pageY>85&&WebSync.menuVisible) {
+                else if(e.pageY>85&&WebSink.menuVisible) {
                     $(".menu").animate({top: -85},200);
-                    WebSync.menuVisible = false;
+                    WebSink.menuVisible = false;
                 }
             }
         });
         $('#view_mode').change(function(){
             var mode = $('#view_mode').val();
-            WebSync.viewMode = mode;
+            WebSink.viewMode = mode;
             if(mode=='Zen'){
                 $("body").addClass("zen").resize();
                 $("#zoom_level").val("120%").change();
@@ -259,7 +259,7 @@ define('websync',{
         $('#settingsBtn').click(function(){
 			$(this.parentElement).toggleClass("active");
             $(".settings-popup").toggle();
-            WebSync.resize();
+            WebSink.resize();
 		});
         $('.settings-popup .close').click(function(){
 			$($("#settingsBtn").get(0).parentElement).toggleClass("active");
@@ -272,15 +272,15 @@ define('websync',{
             if(data.cmd=='diffed'){
                 if(data.patch){
                     setTimeout(function(){
-                        WebSync.connection.sendJSON({type: "data_patch", patch: data.patch});
+                        WebSink.connection.sendJSON({type: "data_patch", patch: data.patch});
                     },10);
                 }
             }
             else if(data.cmd=='patched'){
-                WebSync.oldData = JSON.parse(JSON.stringify(data.json));
-                WebSyncData = data.json;
-                $(".content .page").get(0).innerHTML=JSONToDOM(WebSyncData.body);
-                sel = WebSync.tmp.range;
+                WebSink.oldData = JSON.parse(JSON.stringify(data.json));
+                WebSinkData = data.json;
+                $(".content .page").get(0).innerHTML=JSONToDOM(WebSinkData.body);
+                sel = WebSink.tmp.range;
                 if(sel.active){
                     // Find all #text nodes.
                     var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
@@ -325,17 +325,17 @@ define('websync',{
         $(window).resize(this.resize);
         //this.setupWebRTC();
 	},
-    // Variable: string WebSync.viewMode;
+    // Variable: string WebSink.viewMode;
     // This is the current visual mode. This can be either 'zen' or 'normal'
     viewMode: 'normal',
-    // Variable: boolean WebSync.menuVisible;
+    // Variable: boolean WebSink.menuVisible;
     // This tells you if the menu ribbon is visible or not. In zen mode it can disappear.
     menuVisible: true,
     // WARNING: Experimental & Unsupported in many browsers!
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
 	setupWebRTC: function(){
-		if(WebSync.createPeerConnection()){
-		    WebSync.createDataChannel();
+		if(WebSink.createPeerConnection()){
+		    WebSink.createDataChannel();
         }
 	},
 	createPeerConnection: function() {
@@ -347,8 +347,8 @@ define('websync',{
 		}
 		try {
 		// Create an RTCPeerConnection via the polyfill (adapter.js).
-		WebSync.pc = new RTCPeerConnection(pc_config, pc_constraints);
-		WebSync.pc.onicecandidate = WebSync.onIceCandidate;
+		WebSink.pc = new RTCPeerConnection(pc_config, pc_constraints);
+		WebSink.pc.onicecandidate = WebSink.onIceCandidate;
 		console.log("Created RTCPeerConnnection with:\n" +
 			  "  config: \"" + JSON.stringify(pc_config) + "\";\n" +
 			  "  constraints: \"" + JSON.stringify(pc_constraints) + "\".");
@@ -358,23 +358,23 @@ define('websync',{
 			return false;
 		}
 
-		WebSync.pc.onaddstream = WebSync.onRemoteStreamAdded;
-		WebSync.pc.onremovestream = WebSync.onRemoteStreamRemoved;
-		WebSync.pc.ondatachannel = WebSync.onDataChannel;
+		WebSink.pc.onaddstream = WebSink.onRemoteStreamAdded;
+		WebSink.pc.onremovestream = WebSink.onRemoteStreamRemoved;
+		WebSink.pc.ondatachannel = WebSink.onDataChannel;
         return true;
 	},
 	createDataChannel: function() {
-		WebSync.dataChannel = WebSync.pc.createDataChannel("chat",{reliable:false});
-		WebSync.dataChannel.onopen = WebSync.reportEvent;
-		WebSync.dataChannel.onclose = WebSync.reportEvent;
-		WebSync.dataChannel.onerror = WebSync.reportEvent;
-		WebSync.dataChannel.onmessage = WebSync.reportEvent;
+		WebSink.dataChannel = WebSink.pc.createDataChannel("chat",{reliable:false});
+		WebSink.dataChannel.onopen = WebSink.reportEvent;
+		WebSink.dataChannel.onclose = WebSink.reportEvent;
+		WebSink.dataChannel.onerror = WebSink.reportEvent;
+		WebSink.dataChannel.onmessage = WebSink.reportEvent;
 	},
 	setupPeerOffer: function(isCaller){
 		if (isCaller)
-		    WebSync.pc.createOffer(gotDescription);
+		    WebSink.pc.createOffer(gotDescription);
 		else
-		    WebSync.pc.createAnswer(WebSync.pc.remoteDescription, gotDescription);
+		    WebSink.pc.createAnswer(WebSink.pc.remoteDescription, gotDescription);
 
 		function gotDescription(desc) {
 		    pc.setLocalDescription(desc);
@@ -407,7 +407,7 @@ define('websync',{
 	onDataChannel: function(event){
 		console.log("Data Channel:",event);
 	},
-    // Function: void WebSync.updateRibbon();
+    // Function: void WebSink.updateRibbon();
     // This updates the ribbon buttons based on the content in the ribbon bar. TODO: Use registration system & persist menu between updates.
 	updateRibbon: function(){
 		var menu_buttons = "";
@@ -430,17 +430,17 @@ define('websync',{
 		});
 		$($('#ribbon_buttons li').get(2)).click();
 	},
-    // Function: void WebSync.loadScripts();
+    // Function: void WebSink.loadScripts();
     // Checks server for plugin scripts to load.
 	loadScripts: function(){
-		WebSync.connection.sendJSON({type: "load_scripts"});
+		WebSink.connection.sendJSON({type: "load_scripts"});
 	},
-    // Function: void WebSync.showHTML();
+    // Function: void WebSink.showHTML();
     // Converts visible text to HTML. TODO: Delete/figure something out.
 	showHTML: function(){
-		$('.page').html("<code>"+WebSync.getHTML()+"</code>");
+		$('.page').html("<code>"+WebSink.getHTML()+"</code>");
 	},
-    // Function: string WebSync.getHTML();
+    // Function: string WebSink.getHTML();
     // This will return sanitized document HTML. TODO: This should be migrated into the page handler.
 	getHTML: function(){
         $(".page").get(0).normalize();
@@ -449,39 +449,39 @@ define('websync',{
 		html = html.replace(/\<cursor[^\/]+\/?\<\/cursor\>/g,"")
 		return html;
 	},
-    // Function: void WebSync.resize();
+    // Function: void WebSink.resize();
     // Event handler for when the window resizes. This is an internal method.
     resize: function(){
         $(".content_well").height(window.innerHeight-$(".content_well").position().top)
         $(".settings-popup").css({left:(window.innerWidth-944)*0.5})
         $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15})
     },
-    // Function: void WebSync.checkDiff();
+    // Function: void WebSink.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
 	checkDiff: function(){
-        if(!WebSyncData.body){
-            WebSyncData.body = {};
+        if(!WebSinkData.body){
+            WebSinkData.body = {};
         }
-        if(!WebSync.oldData){
-            WebSync.oldDataString = JSON.stringify(WebSyncData);
-            WebSync.oldData = JSON.parse(WebSync.oldDataString);
+        if(!WebSink.oldData){
+            WebSink.oldDataString = JSON.stringify(WebSinkData);
+            WebSink.oldData = JSON.parse(WebSink.oldDataString);
         }
-		WebSyncData.body = DOMToJSON($(".page").get(0).childNodes);
-        var stringWebSync = JSON.stringify(WebSyncData);
-		if(stringWebSync!=WebSync.oldDataString){
+		WebSinkData.body = DOMToJSON($(".page").get(0).childNodes);
+        var stringWebSink = JSON.stringify(WebSinkData);
+		if(stringWebSink!=WebSink.oldDataString){
             // Send it to the worker thread for processing.
-            var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
-            WebSync.worker.postMessage(msg);
-            WebSync.oldData = JSON.parse(stringWebSync);
-            WebSync.oldDataString = stringWebSync;
-            /*var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
+            var msg = {'cmd':'diff','oldHtml':WebSink.oldData,'newHtml':WebSinkData};
+            WebSink.worker.postMessage(msg);
+            WebSink.oldData = JSON.parse(stringWebSink);
+            WebSink.oldDataString = stringWebSink;
+            /*var patch = jsondiffpatch.diff(WebSink.oldData,WebSinkData);
             if(patch){
-                WebSync.connection.sendJSON({type: "data_patch", patch: patch});
-			    WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+                WebSink.connection.sendJSON({type: "data_patch", patch: patch});
+			    WebSink.oldData = JSON.parse(JSON.stringify(WebSinkData));
             }*/
 		}
 	},
-    // Function: void WebSync.insertAtCursor(jQuery node);
+    // Function: void WebSink.insertAtCursor(jQuery node);
     // Inserts a DOM element at selection cursor. This is probably going to be deprecated.
 	insertAtCursor: function(node) {
 		node = node.get(0);
@@ -497,61 +497,61 @@ define('websync',{
 			document.selection.createRange().html = node;
 		}
 	},
-    // Function: object WebSync.getCss();
+    // Function: object WebSink.getCss();
     // Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.
 	getCss: function(){
-		/*WebSync.applier.toggleSelection();
+		/*WebSink.applier.toggleSelection();
 		if($(".tmp").length==0) return {};
 		return $(".tmp").removeClass("tmp").getStyleObject();*/
         var selNode = getSelection().baseNode.parentNode;
-        if(WebSync.tmp.lastSelNode == selNode){
-            return WebSync.tmp.lastSelCss;
+        if(WebSink.tmp.lastSelNode == selNode){
+            return WebSink.tmp.lastSelCss;
         }
         else {
             var css_object = $(selNode).getStyleObject();
-            WebSync.tmp.lastSelCss=css_object;
-            WebSync.tmp.lastSelNode = selNode;
+            WebSink.tmp.lastSelCss=css_object;
+            WebSink.tmp.lastSelNode = selNode;
             return css_object;
         }
 	},
-    // Function: void WebSync.applyCssToSelection(object css);
+    // Function: void WebSink.applyCssToSelection(object css);
 	// Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.
 	applyCssToSelection: function(css){
-		WebSync.applier.toggleSelection();
+		WebSink.applier.toggleSelection();
 		$(".tmp").css(css).removeClass("tmp");
 	},
-    // Function: void WebSync.register(string PluginName, function Plugin);
-	// Registers a plugin with the WebSync core. Plugin.enable() will be called afterwards. Plugin.disable() will be used to disable the plugin.
+    // Function: void WebSink.register(string PluginName, function Plugin);
+	// Registers a plugin with the WebSink core. Plugin.enable() will be called afterwards. Plugin.disable() will be used to disable the plugin.
     register: function(pluginname, plugin){
 		plugin = new plugin();
 		console.log("Loading plugin:",pluginname);
-		WebSync.plugins[pluginname]=plugin;
-		WebSync.plugins[pluginname].enable();
+		WebSink.plugins[pluginname]=plugin;
+		WebSink.plugins[pluginname].enable();
 	},
-    // Variable: object WebSync.plugins;
+    // Variable: object WebSink.plugins;
     // List of all the plugins loaded in the format of {myawesomeplugin: object Plugin, ...}.
 	plugins: {},
-    // Function: void WebSync.alert(string Message);
+    // Function: void WebSink.alert(string Message);
     // Displays an alert message in the lower right hand corner of the window.
 	alert: function(msg){
-		return WebSync.alert_msg(msg,"");
+		return WebSink.alert_msg(msg,"");
 	},
-    // Function: void WebSync.error(string Message);
+    // Function: void WebSink.error(string Message);
     // Displays an error message in the lower right hand corner of the window.
 	error: function(msg){
-		return WebSync.alert_msg(msg,"alert-error");
+		return WebSink.alert_msg(msg,"alert-error");
 	},
-    // Function: void WebSync.success(string Message);
+    // Function: void WebSink.success(string Message);
     // Displays a success message in the lower right hand corner of the window.
 	success: function(msg){
-		return WebSync.alert_msg(msg,"alert-success");
+		return WebSink.alert_msg(msg,"alert-success");
 	},
-    // Function: void WebSync.info(string Message);
+    // Function: void WebSink.info(string Message);
     // Displays an info message in the lower right hand corner of the window.
 	info: function(msg){
-		return WebSync.alert_msg(msg,"alert-info");
+		return WebSink.alert_msg(msg,"alert-info");
 	},
-    // Function: void WebSync.alert_msg(string Message, string Classes);
+    // Function: void WebSink.alert_msg(string Message, string Classes);
     // Displays an message in the lower right hand corner of the window with css classes.
 	alert_msg: function(msg,classes){
 		var div = $('<div class="alert '+classes+'"><a class="close" data-dismiss="alert">&times;</a>'+msg+'</div>');
@@ -768,7 +768,7 @@ function capitaliseFirstLetter(string)
 requirejs.config({
     baseUrl: 'assets'
 });
-require(['websync'],function(websync){
-    window.WebSync = websync;
-    WebSync.initialize();
+require(['websink'],function(websink){
+    window.WebSink = websink;
+    WebSink.initialize();
 });

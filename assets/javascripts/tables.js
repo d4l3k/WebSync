@@ -1,8 +1,8 @@
-// WebSink: Tables Plugin
-// WebSink uses RequireJS for modules.
+// WebSync: Tables Plugin
+// WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
 // pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
-define('/assets/tables.js',['edit','websink'],function(edit,websink){ var self = {};
+define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self = {};
     // Save all variables and information to the self object.
 
     // Plugins should use a jQuery namespace for ease of use.
@@ -14,7 +14,7 @@ define('/assets/tables.js',['edit','websink'],function(edit,websink){ var self =
     $("#table").bind("click.Tables",function(e){
         console.log(e);
         var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
-        WebSink.insertAtCursor(new_table)
+        WebSync.insertAtCursor(new_table)
     });
 	$('.Table [title="Insert Row Above"]').bind("click.Tables",function(e){
 		if(self.selected){
@@ -151,7 +151,7 @@ define('/assets/tables.js',['edit','websink'],function(edit,websink){ var self =
                         self.selectedEditable(true);
 
                         $(self.selectedElem).focus();
-                        //WebSink.setCaretPosition(self.selectedElem,0);
+                        //WebSync.setCaretPosition(self.selectedElem,0);
                     }
                     setTimeout(self.cursorUpdate,1);
                 }
@@ -160,19 +160,19 @@ define('/assets/tables.js',['edit','websink'],function(edit,websink){ var self =
                     self.selectedEditable(true);
 
                     $(self.selectedElem).focus();
-                    //WebSink.setCaretPosition(self.selectedElem,0);
+                    //WebSync.setCaretPosition(self.selectedElem,0);
                 }
             }
         }
     });
 
-    WebSink.updateRibbon();
+    WebSync.updateRibbon();
     $(".menu li a:contains('Table')").parent().hide();
 	// Function: void [plugin=edit].disable();
     // Disables the plugin. This has to be set for possible plugin unloading.
 	self.disable = function(){
 		var elem = $(".Table").remove();
-		WebSink.updateRibbon();
+		WebSync.updateRibbon();
 		$("*").unbind(".Tables");
 		$("*").undelegate(".Tables");
 	}

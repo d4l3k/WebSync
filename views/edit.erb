@@ -1,21 +1,21 @@
 <%= stylesheet_tag 'edit' %>
 <script type="text/javascript">
-// Variable: object WebSinkAuth;
+// Variable: object WebSyncAuth;
 // This is an internal object used for authenticating the websocket connection.
-WebSinkAuth = {
-    // Variable: int WebSinkAuth.id;
+WebSyncAuth = {
+    // Variable: int WebSyncAuth.id;
     // This is the websocket connection id. Each connection has a unique id.
     id:"<%= @client_id %>",
-    // Variable: int WebSinkAuth.key;
+    // Variable: int WebSyncAuth.key;
     // This is a randomly generated string used as an API key.
     key:"<%= @client_key %>"
 }
-// Variable: object WebSinkData;
+// Variable: object WebSyncData;
 // This contains the data for the document. This is automatically synced with the server.
-WebSinkData = <%= MultiJson.dump(@doc.body) %>;
+WebSyncData = <%= MultiJson.dump(@doc.body) %>;
 
 // Set document title.
-document.title = <%= @doc.name.inspect %> + " - WebSink";
+document.title = <%= @doc.name.inspect %> + " - WebSync";
 </script>
 <style media="print" type="text/css">
     body > * {
@@ -29,7 +29,7 @@ document.title = <%= @doc.name.inspect %> + " - WebSink";
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">WebSink</a>
+				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">WebSync</a>
 				<ul class="nav">
 					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
 				</ul>

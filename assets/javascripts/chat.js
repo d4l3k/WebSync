@@ -1,5 +1,5 @@
-// WebSink: Chat Plugin
-// WebSink uses RequireJS for modules.
+// WebSync: Chat Plugin
+// WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
 // pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
 define(['websink'],function(edit,websink){ var self = {};
@@ -17,8 +17,8 @@ define(['websink'],function(edit,websink){ var self = {};
         console.log("Client_load",data);
         var client = data.client;
         var client_dom = $("#client_"+client);
-        var user = WebSink.clients[client];
-        var user_info = WebSink.users[user.id];
+        var user = WebSync.clients[client];
+        var user_info = WebSync.users[user.id];
         if(client_dom.length>0){
             if(user_info.displayName){
                 client_dom.children().attr('data-original-title',_.escape(user_info.displayName));
@@ -42,14 +42,14 @@ define(['websink'],function(edit,websink){ var self = {};
     self.msg = function(){
         var msg = $(".chat_input input").val();
         if(msg.length>0){
-            WebSink.broadcastEvent('chat_msg',msg);
-            self.clientMsg(WebSinkAuth.id,msg);
+            WebSync.broadcastEvent('chat_msg',msg);
+            self.clientMsg(WebSyncAuth.id,msg);
             $(".chat_input input").val("");
         }
     }
     self.addUser = function(client){
-        var user = WebSink.clients[client];
-        var user_info = WebSink.users[user.id];
+        var user = WebSync.clients[client];
+        var user_info = WebSync.users[user.id];
         var display_name = user_info.displayName;
         if(!display_name){
             display_name = user.email;
@@ -67,12 +67,12 @@ define(['websink'],function(edit,websink){ var self = {};
         self.updateUserList();
     });
     self.updateUserList = function(){setTimeout(function(){
-        $("#user_count").text(_.size(WebSink.clients));
+        $("#user_count").text(_.size(WebSync.clients));
         $("#chat_well").css({top: $("#user_list").height()-5});
     },100);};
     self.clientMsg = function(client, msg){
-        var user = WebSink.clients[client];
-        var user_info = WebSink.users[user.id];
+        var user = WebSync.clients[client];
+        var user_info = WebSync.users[user.id];
         var display_name = user_info.displayName;
         if(!display_name){
             display_name = user.email;
@@ -119,7 +119,7 @@ define(['websink'],function(edit,websink){ var self = {};
 		$("*").unbind(".Chat");
 		$("*").undelegate(".Chat");
 	}
-    $.each(WebSink.clients,function(k, v){
+    $.each(WebSync.clients,function(k, v){
         self.addUser(k);
         self.updateUserList();
     });

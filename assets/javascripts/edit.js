@@ -1,5 +1,5 @@
-// WebSink: Text Editing Plugin
-define("edit",['websink'],function(websink){ var self = this;
+// WebSync: Text Editing Plugin
+define("edit",['websync'],function(websync){ var self = this;
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
@@ -68,20 +68,20 @@ define("edit",['websink'],function(websink){ var self = this;
     $('#font_size').change(function(){
         var size = $('#font_size').val()
         console.log(size);
-        WebSink.applyCssToSelection({'font-size':size});
+        WebSync.applyCssToSelection({'font-size':size});
     });
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     this.disable = function(){
 		var elem = $("#Text").remove();
-		WebSink.updateRibbon();
+		WebSync.updateRibbon();
 		$("*").unbind(".TextEdit");
 		$("*").undelegate(".TextEdit");
     }
     // Function: void [plugin=TextEdit].selectHandler();
     // Handling function for displaying accurate information about text in ribbon.
     this.selectHandler = function(){
-		var style = WebSink.getCss();
+		var style = WebSync.getCss();
 		$('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
 
 		self.text_buttons.forEach(function(elem){

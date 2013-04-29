@@ -50,7 +50,7 @@ define("edit",['websync'],function(websync){ var self = this;
         //console.log(e);
         if(e.keyCode==9){
             console.log(this);
-            var list_index = document.getSelection().baseNode.parentNode;
+            var list_index = document.getSelection().baseNode;
             while(list_index.tagName!="LI"){
                 list_index = list_index.parentElement;
             }
@@ -58,7 +58,7 @@ define("edit",['websync'],function(websync){ var self = this;
             if(indent<0){
                 indent=0;
             }
-            $(list_index).animate({marginLeft: indent+"px"},200);
+            $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
             e.preventDefault();
         }
     });

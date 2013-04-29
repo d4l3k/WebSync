@@ -27,6 +27,22 @@ body,html {
         max-height: 250px;
         overflow-y: auto;
     }
+    #ribbon_button_active {
+        height: 40px;
+        position: absolute;
+        width: 0;
+        background-color: #e5e5e5;
+        background-color: rgba(255, 255, 255, 0.45) !important;
+        -webkit-box-shadow: inset 0 3px 8px rgba(0,0,0,0.125);
+        -moz-box-shadow: inset 0 3px 8px rgba(0,0,0,0.125);
+        box-shadow: inset 0 3px 8px rgba(0,0,0,0.125);
+    }
+    #ribbon_buttons {
+        li.active>a {
+            background-color: transparent !important;
+            box-shadow: none;
+        }
+    }
 }
 /*
 // Flat buttons until hover
@@ -190,10 +206,6 @@ a#name {
 #font_size {
 	width: auto !important;
 }
-.btn-group {
-	position: relative;
-	top: 1px;
-}
 .content table {
     @include ex(user-modify, read-only);
 }
@@ -227,6 +239,9 @@ a#name {
 	.btn-group {
 		margin-left: 0px !important;
 	}
+    .btn+.btn-group {
+        margin-left: 5px !important;
+    }
 }
 #table_cursor {
 	position: absolute;

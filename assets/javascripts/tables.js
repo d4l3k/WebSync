@@ -8,9 +8,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     // Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
-    $(".ribbon").append($('<div id="Table" class="Table container"><div class="btn-group"><button class="btn" type="button" title="Insert Row Above"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Row"><i class="icon-trash"></i> Row</button><button class="btn" type="button" title="Insert Row Below"><i class="icon-plus"></i></button></div>     <div class="btn-group"><button class="btn" type="button" title="Insert Column Left"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Column"><i class="icon-trash"></i> Column</button><button class="btn" type="button" title="Insert Column Right"><i class="icon-plus"></i></button></div><button class="btn" type="button" title="Delete Table"><i class="icon-trash"></i> Table</button></div>'));
+    $(".ribbon").append($('<div id="Table" class="Table container"><button class="btn" title="Delete Table"><i class="icon-trash"></i> Table</button><div class="btn-group"><button class="btn" type="button" title="Insert Row Above"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Row"><i class="icon-trash"></i> Row</button><button class="btn" type="button" title="Insert Row Below"><i class="icon-plus"></i></button></div>     <div class="btn-group"><button class="btn" type="button" title="Insert Column Left"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Column"><i class="icon-trash"></i> Column</button><button class="btn" type="button" title="Insert Column Right"><i class="icon-plus"></i></button></div></div>'));
     $(".content").append($('<div id="table_cursor" class="Table"></div>'));
-    $(document.body).append($('<div id="tablemenu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Column</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Column</a></li><li><a tabindex="-1" href="#"><i class="icon-plus"></i>Insert Row</a></li><li><a tabindex="-1" href="#"><i class="icon-trash"></i>Delete Row</a></li><li class="divider"></li><li><a tabindex="-1" href="#"><i class="icon-pencil"></i>Customize Cell</a></li></ul></div>'));
     $("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
     $("#table").bind("click.Tables",function(e){
         console.log(e);
@@ -168,6 +167,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
 
     WebSync.updateRibbon();
+    $(".menu li a:contains('Table')").parent().hide();
 	// Function: void [plugin=edit].disable();
     // Disables the plugin. This has to be set for possible plugin unloading.
 	self.disable = function(){
@@ -178,6 +178,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	}
 	// Helper methods:
 	self.cursorSelect = function(td){
+        $(".menu li a:contains('Table')").parent().fadeIn(200);
 		// Cleanup last elem.
 		if(self.selectedElem){
 			self.selectedEditable(false);
@@ -224,6 +225,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedEditable(false);
 			$("#table_cursor").offset({left:-10000});
 			delete self.selectedElem;
+            $(".menu li a:contains('Table')").parent().fadeOut(200);
 			$('a:contains("Text")').click();
             self.observer.disconnect();
 		}
@@ -241,7 +243,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             selection.addRange(range);//make the range you have just created the visible selection
         }
         else if(document.selection)//IE 8 and lower
-        { 
+        {
             range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
             range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
             range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start

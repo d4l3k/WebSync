@@ -271,7 +271,9 @@ define('websync',{
             console.log(data);
             if(data.cmd=='diffed'){
                 if(data.patch){
-                    WebSync.connection.sendJSON({type: "data_patch", patch: data.patch});
+                    setTimeout(function(){
+                        WebSync.connection.sendJSON({type: "data_patch", patch: data.patch});
+                    },10);
                 }
             }
             else if(data.cmd=='patched'){
@@ -418,6 +420,13 @@ define('websync',{
 			$(this).addClass('active');
 			$('.ribbon .container').hide();
 			$("#"+$(this).text()).show();
+            var offset = $(this).offset();
+            var width = $(this).width();
+            var active_pos = $("#ribbon_button_active").offset().left;
+            var speed = Math.abs(offset.left-active_pos)*2;
+            if(speed>500)
+                speed = 0;
+            $('#ribbon_button_active').animate({left:offset.left,width: width},speed);
 		});
 		$($('#ribbon_buttons li').get(2)).click();
 	},
@@ -494,7 +503,16 @@ define('websync',{
 		/*WebSync.applier.toggleSelection();
 		if($(".tmp").length==0) return {};
 		return $(".tmp").removeClass("tmp").getStyleObject();*/
-		return $(getSelection().baseNode.parentNode).getStyleObject();
+        var selNode = getSelection().baseNode.parentNode;
+        if(WebSync.tmp.lastSelNode == selNode){
+            return WebSync.tmp.lastSelCss;
+        }
+        else {
+            var css_object = $(selNode).getStyleObject();
+            WebSync.tmp.lastSelCss=css_object;
+            WebSync.tmp.lastSelNode = selNode;
+            return css_object;
+        }
 	},
     // Function: void WebSync.applyCssToSelection(object css);
 	// Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.

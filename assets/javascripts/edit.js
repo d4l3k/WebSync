@@ -48,8 +48,8 @@ define("edit",['websync'],function(websync){ var self = this;
     });
     $(document).bind("keydown.TextEdit","li",function(e){
         //console.log(e);
-        if(e.keyCode==9){
-            console.log(this);
+        if(e.keyCode==9&&this!=document){
+            //console.log(this);
             var list_index = document.getSelection().baseNode;
             while(list_index.tagName!="LI"){
                 list_index = list_index.parentElement;

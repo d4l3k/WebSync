@@ -1,5 +1,5 @@
 /*
-    WebSync: Edit.js
+    WebSync: Core.js
     This is the core file that runs the WebSync editor.
 
     Copyright (c) 2013. All Rights reserved.
@@ -503,6 +503,10 @@ define('websync',{
 		/*WebSync.applier.toggleSelection();
 		if($(".tmp").length==0) return {};
 		return $(".tmp").removeClass("tmp").getStyleObject();*/
+        var selection = getSelection();
+        if(selection.type=="None"){
+            return {};
+        }
         var selNode = getSelection().baseNode.parentNode;
         if(WebSync.tmp.lastSelNode == selNode){
             return WebSync.tmp.lastSelCss;
@@ -573,7 +577,9 @@ function NODEtoJSON(obj){
     }
     if(obj.attributes){
         $.each(obj.attributes,function(k,v){
-            jso[v.name]=v.value;
+            if(v.name!="contenteditable"){
+                jso[v.name]=v.value;
+            }
         });
     }
     $.each(obj.childNodes,function(index,child){

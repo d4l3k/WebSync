@@ -9,7 +9,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
     $(".ribbon").append($('<div id="Table" class="Table container"><button class="btn" title="Delete Table"><i class="icon-trash"></i> Table</button><div class="btn-group"><button class="btn" type="button" title="Insert Row Above"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Row"><i class="icon-trash"></i> Row</button><button class="btn" type="button" title="Insert Row Below"><i class="icon-plus"></i></button></div>     <div class="btn-group"><button class="btn" type="button" title="Insert Column Left"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Column"><i class="icon-trash"></i> Column</button><button class="btn" type="button" title="Insert Column Right"><i class="icon-plus"></i></button></div></div>'));
-    $(".content").append($('<div id="table_cursor" class="Table"></div>'));
+    $(".content").append($('<div id="table_cursor" class="Table"></div><div id="table_selection" class="Table"></div>'));
     $("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
     $("#table").bind("click.Tables",function(e){
         console.log(e);
@@ -95,16 +95,23 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         e.stopPropagation();
     });
     $(".page").delegate("td","mouseenter.Tables",function(e){
-        $(this).css({backgroundColor:'red'});
+        if(self.selectionActive){
+            self.selectionEnd = this;
+        }
     });
     $(".page").delegate("td","mouseleave.Tables",function(e){
-        $(this).css({backgroundColor:''});
     });
-    $(".page").delegate("td","click.Tables",function(e){
+    $(".page").delegate("td","mousedown.Tables",function(e){
         if(this!=self.selectedElem){
             self.cursorSelect(this);
         }
+        self.selectionActive=true;
+        e.preventDefault();
     });
+    $(".page").delegate("td","mouseup.Tables",function(e){
+        self.selectionActive=false;
+    });
+    self.selectionActive = false;
     $(".page").bind("click.Tables",function(e){
         //console.log(e);
         self.clearSelect();

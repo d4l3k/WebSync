@@ -48,18 +48,21 @@ define("edit",['websync'],function(websync){ var self = this;
     });
     $(document).bind("keydown.TextEdit","li",function(e){
         //console.log(e);
-        if(e.keyCode==9&&this!=document){
+        if(e.keyCode==9){
             //console.log(this);
-            var list_index = document.getSelection().baseNode;
-            while(list_index.tagName!="LI"){
-                list_index = list_index.parentElement;
+            var selection = document.getSelection();
+            if(selection.type!="None"){
+                var list_index = document.getSelection().baseNode;
+                while(list_index.tagName!="LI"){
+                    list_index = list_index.parentElement;
+                }
+                var indent = parseInt($(list_index).getStyleObject().marginLeft)+(e.shiftKey ? -40 : 40);
+                if(indent<0){
+                    indent=0;
+                }
+                $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
+                e.preventDefault();
             }
-            var indent = parseInt($(list_index).getStyleObject().marginLeft)+(e.shiftKey ? -40 : 40);
-            if(indent<0){
-                indent=0;
-            }
-            $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
-            e.preventDefault();
         }
     });
     $('#font').bind("change.TextEdit",function(){

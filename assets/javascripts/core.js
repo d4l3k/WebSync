@@ -577,6 +577,7 @@ function NODEtoJSON(obj){
     }
     if(obj.attributes){
         $.each(obj.attributes,function(k,v){
+            // TODO: Add blacklist of classnames & attributes for DOM serialization.
             if(v.name!="contenteditable"){
                 jso[v.name]=v.value;
             }

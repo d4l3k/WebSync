@@ -94,6 +94,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
         e.stopPropagation();
     });
+    $(".page").delegate("td","mouseenter.Tables",function(e){
+        $(this).css({backgroundColor:'red'});
+    });
+    $(".page").delegate("td","mouseleave.Tables",function(e){
+        $(this).css({backgroundColor:''});
+    });
     $(".page").delegate("td","click.Tables",function(e){
         if(this!=self.selectedElem){
             self.cursorSelect(this);
@@ -118,6 +124,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		}
     });
     $(".content_well").bind("keydown.Tables",function(e){
+        //console.log(e);
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
@@ -127,8 +134,9 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 if(e.keyCode==13&&!e.shiftKey){
                     self.cursorMove(0,1);
                 } else if(e.keyCode==9){
+                    // Tab key
                     self.selectedEditable(false);
-                    self.cursorMove(1,0);
+                    self.cursorMove(1-2*e.shiftKey,0);
                     e.preventDefault();
                 } else if(e.keyCode==27){
                     // Escape
@@ -150,7 +158,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     self.cursorMove(0,1);
                     e.preventDefault();
                 } else {
-                    if(!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="inherit"){
+                    if((!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="inherit")&&_.indexOf([16,17,18,91,92],e.keyCode)==-1){
                         self.selectedEditable(true);
 
                         $(self.selectedElem).focus();

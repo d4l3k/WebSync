@@ -258,7 +258,10 @@ a#name {
 #table_selection {
     position: absolute;
     pointer-events: none;
-    background-color: rgba(0.5,0.3,0.3,0.3);
+    background-color: rgba(0,0,255,0.2);
+    left:-1000px;
+    top: 0px;
+    padding: 1px 2px;
 }
 .dropdown-menu i {
 	position: relative;

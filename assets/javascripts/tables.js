@@ -97,6 +97,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     $(".page").delegate("td","mouseenter.Tables",function(e){
         if(self.selectionActive){
             self.selectionEnd = this;
+            self.updateSelectedArea();
         }
     });
     $(".page").delegate("td","mouseleave.Tables",function(e){
@@ -106,6 +107,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             self.cursorSelect(this);
         }
         self.selectionActive=true;
+        self.selectionEnd = null;
+        self.updateSelectedArea();
         e.preventDefault();
     });
     $(".page").delegate("td","mouseup.Tables",function(e){
@@ -224,6 +227,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         pos.top += 1;
         pos.left += 1;
 		$("#table_cursor").offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
+        self.updateSelectedArea();
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){
@@ -248,6 +252,32 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             self.observer.disconnect();
 		}
 	}
+    self.updateSelectedArea = function(){
+        if(self.selectedElem===self.selectionEnd||!self.selectionEnd){
+            $("#table_selection").offset({left:-1000});
+        }
+        else {
+            var pos = $(self.selectedElem).offset();
+            var endPos = $(self.selectionEnd).offset();
+            var baseWidth = $(self.selectionEnd).width();
+            var baseHeight = $(self.selectionEnd).height();
+            if(pos.left>endPos.left){
+                var tmp_left = pos.left;
+                pos.left = endPos.left;
+                endPos.left = tmp_left;
+                baseWidth = $(self.selectedElem).width();
+            }
+            if(pos.top>endPos.top){
+                var tmp_top = pos.top;
+                pos.top = endPos.top;
+                endPos.top = tmp_top;
+                baseHeight = $(self.selectedElem).height();
+            }
+            var height = endPos.top+baseHeight -pos.top;
+            var width = endPos.left+baseWidth -pos.left;
+            $("#table_selection").offset(pos).height(height).width(width);
+        }
+    }
     self.setEndOfContenteditable = function(contentEditableElement)
     {
         var range,selection;

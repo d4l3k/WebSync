@@ -9,7 +9,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
     $(".ribbon").append($('<div id="Table" class="Table container"><button class="btn" title="Delete Table"><i class="icon-trash"></i> Table</button><div class="btn-group"><button class="btn" type="button" title="Insert Row Above"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Row"><i class="icon-trash"></i> Row</button><button class="btn" type="button" title="Insert Row Below"><i class="icon-plus"></i></button></div>     <div class="btn-group"><button class="btn" type="button" title="Insert Column Left"><i class="icon-plus"></i></button></span><button class="btn" type="button" title="Delete Column"><i class="icon-trash"></i> Column</button><button class="btn" type="button" title="Insert Column Right"><i class="icon-plus"></i></button></div></div>'));
-    $(".content").append($('<div id="table_cursor" class="Table"></div><div id="table_selection" class="Table"></div>'));
+    $(".content").append($('<div id="table_cursor" class="Table"></div><div id="table_selection" class="Table"></div><div id="table_clip" style="position:absolute; left:-1000px;top:-1000px;"></div>'));
     $("#Insert").append($('<button id="table" title="Table" class="btn Table"><i class="icon-table"></i></button>'))
     $("#table").bind("click.Tables",function(e){
         console.log(e);
@@ -250,10 +250,11 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             $(".menu li a:contains('Table')").parent().fadeOut(200);
 			$('a:contains("Text")').click();
             self.observer.disconnect();
+            self.updateSelectedArea();
 		}
 	}
     self.updateSelectedArea = function(){
-        if(self.selectedElem===self.selectionEnd||!self.selectionEnd){
+        if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected){
             $("#table_selection").offset({left:-1000});
         }
         else {
@@ -276,6 +277,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             var height = endPos.top+baseHeight -pos.top;
             var width = endPos.left+baseWidth -pos.left;
             $("#table_selection").offset(pos).height(height).width(width);
+            // Hidden selection area for copying.
+            var range = rangy.createRange();
+            range.selectNodeContents($("#table_clip").get(0));
+            var sel = rangy.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
         }
     }
     self.setEndOfContenteditable = function(contentEditableElement)
@@ -298,12 +305,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             range.select();//Select the range (make it the visible selection
         }
     }
-	self.selectedPos = function(){
-		var child = self.selectedElem;
+	self.selectedPos = function(targetElem){
+        var child = (targetElem||self.selectedElem);
 		var column = 0;
 		while( (child = child.previousSibling) != null )
 			column++;
-		child = self.selectedElem.parentElement
+		child = (targetElem||self.selectedElem).parentElement
 		var row = 0
 		while( (child = child.previousSibling) != null )
 			row++;

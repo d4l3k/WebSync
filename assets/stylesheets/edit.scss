@@ -255,6 +255,11 @@ a#name {
 	left: -1000px;
 	top: 0px;
 }
+#table_selection {
+    position: absolute;
+    pointer-events: none;
+    background-color: rgba(0.5,0.3,0.3,0.3);
+}
 .dropdown-menu i {
 	position: relative;
 	left: -10px;

@@ -95,7 +95,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         e.stopPropagation();
     });
     $(".page").delegate("td","mouseenter.Tables",function(e){
-        if(self.selectionActive){
+        if(self.selectionActive&&self.primaryTable()===self.primaryTable(this)){
             self.selectionEnd = this;
             self.updateSelectedArea();
         }
@@ -133,8 +133,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedEditable(true);
 		}
     });
+    $(document).bind("paste.Tables",function(e){
+        if(self.selected){
+            console.log($(e.originalEvent.clipboardData.getData('text/html')));
+        }
+    });
     $(".content_well").bind("keydown.Tables",function(e){
-        //console.log(e);
+        console.log(e);
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
@@ -168,7 +173,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     self.cursorMove(0,1);
                     e.preventDefault();
                 } else {
-                    if((!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="inherit")&&_.indexOf([16,17,18,91,92],e.keyCode)==-1){
+                    if((!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="inherit")&&_.indexOf([16,17,18,91,92],e.keyCode)==-1&&!(e.keyCode==67&&e.ctrlKey)){
                         self.selectedEditable(true);
 
                         $(self.selectedElem).focus();
@@ -250,12 +255,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             $(".menu li a:contains('Table')").parent().fadeOut(200);
 			$('a:contains("Text")').click();
             self.observer.disconnect();
+            self.selectedElem=null;
             self.updateSelectedArea();
 		}
 	}
     self.updateSelectedArea = function(){
-        if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected){
-            $("#table_selection").offset({left:-1000});
+        if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){
+            $("#table_selection").hide();
         }
         else {
             var pos = $(self.selectedElem).offset();
@@ -276,7 +282,25 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
             var height = endPos.top+baseHeight -pos.top;
             var width = endPos.left+baseWidth -pos.left;
-            $("#table_selection").offset(pos).height(height).width(width);
+            $("#table_selection").show().offset(pos).height(height).width(width);
+            // Set hidden selection area contents to mini-table.
+            var selection_html = "<table><tbody>";
+            var tpos_start = self.selectedPos();
+            var tpos_end = self.selectedPos(self.selectionEnd);
+
+            var top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
+            var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
+            var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
+            var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
+            for(var y=top;y<=bottom;y++){
+                selection_html+="<tr>";
+                for(var x=left;x<=right;x++){
+                    selection_html+="<td>"+self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML+"</td>";
+                }
+                selection_html+="</tr>";
+            }
+            selection_html+="</tbody></table>";
+            $("#table_clip").html(selection_html);
             // Hidden selection area for copying.
             var range = rangy.createRange();
             range.selectNodeContents($("#table_clip").get(0));
@@ -304,6 +328,9 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
             range.select();//Select the range (make it the visible selection
         }
+    }
+    self.primaryTable = function(elem){
+        return (elem||self.selectedElem).parentElement.parentElement.parentElement;
     }
 	self.selectedPos = function(targetElem){
         var child = (targetElem||self.selectedElem);

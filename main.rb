@@ -148,6 +148,7 @@ end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
+    register Sinatra::Synchrony
     use Rack::Logger
     helpers do
         def logger

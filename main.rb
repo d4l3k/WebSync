@@ -436,7 +436,7 @@ class WebSync < Sinatra::Base
                 end
                 ws.onmessage do |msg|
                     data = MultiJson.load(msg.force_encoding("UTF-8"));
-                    puts "JSON: #{data.to_s}"
+                    puts "JSON: #{msg}"
                     if data['type']=='auth'
                         if $redis.get("websocket:key:#{data['id']}") == data['key']
                             # Extend key expiry time
@@ -543,7 +543,7 @@ class WebSync < Sinatra::Base
                     ws.close_connection
                 end
                 redis_sock.on(:message) do |channel, message|
-                    puts "[#{client_id}]#{channel}: #{message}"
+                    #puts "[#{client_id}]#{channel}: #{message}"
                     data = MultiJson.load(message)
                     if data['client']!=client_id
                         if data['type']=="client_bounce"

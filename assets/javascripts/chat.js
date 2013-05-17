@@ -85,6 +85,7 @@ define(['websync'],function(edit,websink){ var self = {};
         $("#chat_well").animate({scrollTop:$("#chat_well").get(0).scrollHeight},200);
     }
     self.toggle = function(){
+        self.resize();
         $("#chat_btn").parent().toggleClass("active");
         if(self.open){
             $("#chat").animate({left:window.innerWidth+1},200);

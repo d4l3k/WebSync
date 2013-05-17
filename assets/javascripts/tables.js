@@ -212,9 +212,24 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		document.getSelection().empty();
 		self.selected = true;
 		self.selectedElem = td;
+        $(self.selectedElem).focus();
 		self.selectedEditable(false);
-		self.cursorUpdate();
         self.observer.observe(self.selectedElem,{characterData:true});
+        if($(".Table.axis").length==0) {
+            var size = self.tableSize();
+            var nodes = '<table class="Table axis" id="x"><thead><tr>';
+            for(var i=0;i<size[0];i++){
+                nodes+='<th>'+(i+1)+'</th>';
+            }
+            nodes+='</tr></thead></table><table class="Table axis" id="y"><thead>';
+            for(var i=0;i<size[1];i++){
+                nodes+='<tr><th>'+(i+1)+'</th></tr>';
+            }
+            nodes+='</thead></table>';
+            $(".content").append($(nodes));
+            $(".Table.axis").fadeIn(200);
+        }
+		self.cursorUpdate();
 	}
 	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
@@ -225,14 +240,18 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			var new_td = self.selectedElem.parentElement.parentElement.children[row+dRow].children[column+dColumn];
 			self.cursorSelect(new_td);
 		}
-
 	}
 	self.cursorUpdate = function(){
-		var pos = $(self.selectedElem).offset();
+		var pos = $(self.selectedElem).position();
         pos.top += 1;
         pos.left += 1;
-		$("#table_cursor").offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
+		$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();//.offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
+        var table = $(self.primaryTable());
+        var offset = table.offset()
+        $(".Table.axis#x").offset({left:offset.left,top:offset.top-17}).width(table.width()+2);
+        $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
+
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){
@@ -257,6 +276,10 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             self.observer.disconnect();
             self.selectedElem=null;
             self.updateSelectedArea();
+            $(".Table.axis").fadeOut(200).promise().done(function(){
+                $(".Table.axis#x").remove();
+                $(".Table.axis#y").remove();
+            });
 		}
 	}
     self.updateSelectedArea = function(){
@@ -264,8 +287,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             $("#table_selection").hide();
         }
         else {
-            var pos = $(self.selectedElem).offset();
-            var endPos = $(self.selectionEnd).offset();
+            var pos = $(self.selectedElem).position();//offset();
+            var endPos = $(self.selectionEnd).position();//offset();
             var baseWidth = $(self.selectionEnd).width();
             var baseHeight = $(self.selectionEnd).height();
             if(pos.left>endPos.left){
@@ -282,7 +305,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
             var height = endPos.top+baseHeight -pos.top;
             var width = endPos.left+baseWidth -pos.left;
-            $("#table_selection").show().offset(pos).height(height).width(width);
+            //$("#table_selection").show().offset(pos).height(height).width(width);
+            $("#table_selection").show().animate({top:pos.top,left:pos.left,height:height,width:width},50,'linear');//offset(pos).height(height).width(width);
             // Set hidden selection area contents to mini-table.
             var selection_html = "<table><tbody>";
             var tpos_start = self.selectedPos();

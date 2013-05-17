@@ -165,7 +165,7 @@ cursor {
 	outline: none;
 }
 ::-moz-selection {
-	background-color: #ccc;
+	background-color: #b3d4fc;
 }
 ::selection {
 	background-color: #b3d4fc;
@@ -228,6 +228,13 @@ a#name {
         height: 16px;
         cursor: text;
     }
+    th {
+        cursor: pointer;
+        padding-left: 1px;
+        padding-right: 1px;
+        min-width: 0.25in;
+        height: 16px;
+    }
 }
 .ribbon {
 	.input-append, .input-prepend {
@@ -254,14 +261,16 @@ a#name {
 	background: none !important;
 	left: -1000px;
 	top: 0px;
+    z-index: 900;
 }
 #table_selection {
     position: absolute;
     pointer-events: none;
-    background-color: rgba(0,0,255,0.2);
     left:-1000px;
     top: 0px;
     padding: 1px 2px;
+    z-index: 899;
+	background-color: rgba(0,120,252,0.2);
 }
 .dropdown-menu i {
 	position: relative;
@@ -342,7 +351,17 @@ a#name {
         }
     }
 }
-
+.Table.axis {
+    position: absolute;
+    font-size: 11pt;
+    line-height: 11pt;
+    color: black;
+    background-color: #eee;
+    display: none;
+    &#y {
+        width: 40px;
+    }
+}
 
 .badge-pulse {
     @include ex(animation-duration, 1s);

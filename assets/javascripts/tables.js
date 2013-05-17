@@ -193,7 +193,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
 
     WebSync.updateRibbon();
-    $(".menu li a:contains('Table')").parent().hide();
+    $("#ribbon_buttons a:contains('Table')").parent().hide();
 	// Function: void [plugin=edit].disable();
     // Disables the plugin. This has to be set for possible plugin unloading.
 	self.disable = function(){
@@ -204,7 +204,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	}
 	// Helper methods:
 	self.cursorSelect = function(td){
-        $(".menu li a:contains('Table')").parent().fadeIn(200);
+        $("#ribbon_buttons a:contains('Table')").parent().fadeIn(200);
 		// Cleanup last elem.
 		if(self.selectedElem){
 			self.selectedEditable(false);
@@ -257,11 +257,11 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		if(!edit){
 			self.selectedElem.contentEditable="inherit";
 			$("#table_cursor").css({borderStyle: 'solid', outlineStyle: 'solid'});
-			$('a:contains("Table")').click();
+			$('#ribbon_buttons a:contains("Table")').click();
 		}else{
 			self.selectedElem.contentEditable=true;
 			$("#table_cursor").css({borderStyle: 'dashed', outlineStyle: 'dashed'});
-			$('a:contains("Text")').click();
+			$('#ribbon_buttons a:contains("Text")').click();
 			self.setEndOfContenteditable(self.selectedElem);
 		}
 	}
@@ -271,8 +271,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedEditable(false);
 			$("#table_cursor").offset({left:-10000});
 			delete self.selectedElem;
-            $(".menu li a:contains('Table')").parent().fadeOut(200);
-			$('a:contains("Text")').click();
+            $("#ribbon_buttons a:contains('Table')").parent().fadeOut(200);
+			$('#ribbon_buttons a:contains("Text")').click();
             self.observer.disconnect();
             self.selectedElem=null;
             self.updateSelectedArea();

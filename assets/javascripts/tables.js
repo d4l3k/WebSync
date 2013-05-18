@@ -265,7 +265,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		var pos = $(self.selectedElem).position();
         pos.top += 1;
         pos.left += 1;
-		$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();//.offset(pos).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
+		//$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();
+        $("#table_cursor").css({left:pos.left,top:pos.top}).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
         var table = $(self.primaryTable());
         var offset = table.offset()
@@ -330,8 +331,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
             var height = endPos.top+baseHeight -pos.top;
             var width = endPos.left+baseWidth -pos.left;
-            //$("#table_selection").show().offset(pos).height(height).width(width);
-            $("#table_selection").show().animate({top:pos.top,left:pos.left,height:height,width:width},50,'linear');//offset(pos).height(height).width(width);
+            $("#table_selection").show().css({left:pos.left,top:pos.top}).height(height).width(width);
+            //$("#table_selection").show().animate({top:pos.top,left:pos.left,height:height,width:width},50,'linear');//offset(pos).height(height).width(width);
             // Set hidden selection area contents to mini-table.
             var selection_html = "<table><tbody>";
             var tpos_start = self.selectedPos();

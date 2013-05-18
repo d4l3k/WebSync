@@ -272,7 +272,6 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         var offset = table.offset()
         $(".Table.axis#x").offset({left:offset.left,top:offset.top-17}).width(table.width()+2);
         $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
-
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){

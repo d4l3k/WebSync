@@ -133,6 +133,24 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedEditable(true);
 		}
     });
+    $(".content_well").delegate(".Table.axis#x th", "click.Tables", function(e){
+        var pos = self.selectedPos(this);
+        var size = self.tableSize();
+        self.cursorSelect(self.posToElem(pos[0],0));
+        if(!e.shiftKey){
+            self.selectionEnd = self.posToElem(pos[0],size[1]-1);
+        }
+        self.updateSelectedArea();
+    });
+    $(".content_well").delegate(".Table.axis#y th", "click.Tables", function(e){
+        var pos = self.selectedPos(this);
+        var size = self.tableSize();
+        self.cursorSelect(self.posToElem(0,pos[1]));
+        if(!e.shiftKey){
+            self.selectionEnd = self.posToElem(size[0]-1,pos[1]);
+        }
+        self.updateSelectedArea();
+    });
     $(document).bind("paste.Tables",function(e){
         if(self.selected){
             console.log($(e.originalEvent.clipboardData.getData('text/html')));
@@ -219,11 +237,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             var size = self.tableSize();
             var nodes = '<table class="Table axis" id="x"><thead><tr>';
             for(var i=0;i<size[0];i++){
-                nodes+='<th>'+(i+1)+'</th>';
+                var elem = self.posToElem(i,0);
+                nodes+='<th style="width: '+($(elem).width()+1)+'px">'+self.columnLabel(i)+'</th>';
             }
             nodes+='</tr></thead></table><table class="Table axis" id="y"><thead>';
             for(var i=0;i<size[1];i++){
-                nodes+='<tr><th>'+(i+1)+'</th></tr>';
+                var elem = self.posToElem(0,i);
+                nodes+='<tr><th style="height: '+($(elem).height()+1)+'px">'+(i+1)+'</th></tr>';
             }
             nodes+='</thead></table>';
             $(".content").append($(nodes));
@@ -283,8 +303,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		}
 	}
     self.updateSelectedArea = function(){
+        $(".Table.axis th").removeClass("active");
         if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){
             $("#table_selection").hide();
+            if(self.selected){
+                $($(".Table.axis#x").children().children().children()[self.selectedPos()[0]]).addClass("active");
+                $($(".Table.axis#y").children().children()[self.selectedPos()[1]]).children().addClass("active");
+            }
         }
         else {
             var pos = $(self.selectedElem).position();//offset();
@@ -316,6 +341,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
             var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
             var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
+            $(".Table.axis#x").children().children().children().slice(left,right+1).addClass("active");
+            $(".Table.axis#y").children().children().slice(top,bottom+1).children().addClass("active");
             for(var y=top;y<=bottom;y++){
                 selection_html+="<tr>";
                 for(var x=left;x<=right;x++){
@@ -356,6 +383,9 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     self.primaryTable = function(elem){
         return (elem||self.selectedElem).parentElement.parentElement.parentElement;
     }
+    self.posToElem = function(x, y){
+        return self.selectedElem.parentElement.parentElement.children[y].children[x];
+    }
 	self.selectedPos = function(targetElem){
         var child = (targetElem||self.selectedElem);
 		var column = 0;
@@ -370,6 +400,29 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	self.tableSize = function(){
 		return [self.selectedElem.parentElement.children.length,self.selectedElem.parentElement.parentElement.children.length]
 	}
+    // Taken from Stack Overflow
+    // http://stackoverflow.com/questions/8603480/how-to-create-a-function-that-converts-a-number-to-a-bijective-hexavigesimal
+    var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    self.columnLabel = function(a) {
+      // First figure out how many digits there are.
+      a += 1; // This line is funky
+      c = 0;
+      var x = 1;
+      while (a >= x) {
+        c++;
+        a -= x;
+        x *= 26;
+      }
+
+      // Now you can do normal base conversion.
+      var s = "";
+      for (var i = 0; i < c; i++) {
+        s = alpha.charAt(a % 26) + s;
+        a = Math.floor(a/26);
+      }
+
+      return s;
+    }
 
     // Return self so other modules can hook into this one.
     return self;

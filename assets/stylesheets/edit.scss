@@ -358,6 +358,10 @@ a#name {
     color: black;
     background-color: #eee;
     display: none;
+    th.active {
+        background-color: #666;
+        color: white;
+    }
     &#y {
         width: 40px;
     }

@@ -20,7 +20,11 @@ define('websync',{
     // Function: void WebSync.webSocketStart();
     // Creates the websocket for communication.
 	webSocketStart: function(){
-		WebSync.connection = new WebSocket("ws://"+window.location.host+window.location.pathname);
+        var protocol = 'ws';
+        if(window.location.protocol=='https:'){
+            protocol = 'wss';
+        }
+		WebSync.connection = new WebSocket(protocol+"://"+window.location.host+window.location.pathname);
 		WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
 		WebSync.connection.onclose = WebSync.webSocketCallbacks.onclose;
 		WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;

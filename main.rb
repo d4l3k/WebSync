@@ -306,7 +306,7 @@ class WebSync < Sinatra::Base
         doc.assets << Asset.get(1)
         doc.assets << Asset.get(2)
         doc.save
-        redirect "/#{doc.id.base62_encode}/edit"
+        redirect "/#{doc.id.encode62}/edit"
     end
     get '/upload' do
         login_required
@@ -346,7 +346,7 @@ class WebSync < Sinatra::Base
             doc.assets << Asset.get(1)
             doc.assets << Asset.get(2)
             doc.save
-            redirect "/#{doc.id.base62_encode}/edit"
+            redirect "/#{doc.id.encode62}/edit"
         else
             redirect "/"
         end
@@ -356,7 +356,7 @@ class WebSync < Sinatra::Base
             redirect '/'
         end
         login_required
-        doc_id = params[:doc].base62_decode
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if (!doc.public)&&doc.user!=current_user
             redirect '/'
@@ -377,7 +377,7 @@ class WebSync < Sinatra::Base
     end
     get '/:doc/json' do
         login_required
-        doc_id = params[:doc].base62_decode
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if (!doc.public)&&doc.user!=current_user
             redirect '/'
@@ -387,7 +387,7 @@ class WebSync < Sinatra::Base
     end
     get '/:doc/delete' do
         login_required
-        doc_id = params[:doc].base62_decode
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if doc.user==current_user
             doc.destroy!
@@ -395,7 +395,7 @@ class WebSync < Sinatra::Base
         redirect '/'
     end
     get '/:doc/edit' do
-        doc_id = params[:doc].base62_decode
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if doc.nil?
             redirect 'notfound'
@@ -410,7 +410,7 @@ class WebSync < Sinatra::Base
             ]
             @doc = doc
             if !@doc.nil?
-                @client_id = $redis.incr("clientid").base62_encode
+                @client_id = $redis.incr("clientid").encode62
                 @client_key = SecureRandom.uuid
                 $redis.set "websocket:id:#{@client_id}",current_user.email
                 $redis.set "websocket:key:#{@client_id}", @client_key
@@ -425,7 +425,7 @@ class WebSync < Sinatra::Base
         else
             #TODO: Authentication for websockets
             redis_sock = EM::Hiredis.connect.pubsub
-            redis_sock.subscribe("doc:#{doc_id.base62_encode}")
+            redis_sock.subscribe("doc:#{doc_id.encode62}")
             authenticated = false
             user = nil
             client_id = nil
@@ -451,7 +451,7 @@ class WebSync < Sinatra::Base
                             client_id = data['id']
                             $redis.expire "websocket:id:#{client_id}", 60*60*24*7
                             $redis.expire "websocket:key:#{client_id}", 60*60*24*7
-                            user_prop = "doc:#{doc_id.base62_encode}:users"
+                            user_prop = "doc:#{doc_id.encode62}:users"
                             user_raw = $redis.get(user_prop)
                             if !user_raw.nil?
                                 users = MultiJson.load(user_raw)
@@ -461,7 +461,7 @@ class WebSync < Sinatra::Base
                             user_id = Digest::MD5.hexdigest(email.strip.downcase)
                             users[client_id]={id:user_id,email:email.strip}
                             $redis.set user_prop,MultiJson.dump(users)
-                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
+                            $redis.publish "doc:#{doc_id.encode62}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
                             ws.send MultiJson.dump({type:'info',user_id:user_id,users:users})
                             puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
                         else
@@ -477,7 +477,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.encode62}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Sets the name
                         elsif data['type']=="name_update"
                             doc.name = data["name"]
@@ -485,7 +485,7 @@ class WebSync < Sinatra::Base
                             if !doc.save
                                 puts("Save errors: #{doc.errors.inspect}")
                             end
-                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
+                            $redis.publish "doc:#{doc_id.encode62}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
                         # Loads scripts
                         elsif data['type']=="load_scripts"
                             msg = {type:'scripts', js:[],css:[]}
@@ -526,7 +526,7 @@ class WebSync < Sinatra::Base
                                 end
                             end
                         elsif data['type']=='client_event'
-                            $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
+                            $redis.publish "doc:#{doc_id.encode62}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
                         end
                     end
                 end
@@ -534,11 +534,11 @@ class WebSync < Sinatra::Base
                     warn("websocket closed")
                     redis_sock.close_connection
                     if authenticated
-                        user_prop = "doc:#{doc_id.base62_encode}:users"
+                        user_prop = "doc:#{doc_id.encode62}:users"
                         users = MultiJson.load($redis.get(user_prop))
                         users.delete client_id
                         $redis.set user_prop,MultiJson.dump(users)
-                        $redis.publish "doc:#{doc_id.base62_encode}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"exit_user",id:client_id})})
+                        $redis.publish "doc:#{doc_id.encode62}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"exit_user",id:client_id})})
                     end
                     ws.close_connection
                 end

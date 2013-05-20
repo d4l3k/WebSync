@@ -19,7 +19,6 @@ GEM
       open4
     Platform (0.4.0)
     addressable (2.2.8)
-    base62 (0.1.4)
     bcrypt-ruby (3.0.1)
     binding_of_caller (0.7.1)
       debug_inspector (>= 0.0.1)
@@ -144,6 +143,7 @@ GEM
     racksh (1.0.0)
       rack (>= 1.0)
       rack-test (>= 0.5)
+    radix62 (1.0.1)
     rake (10.0.4)
     redis (3.0.3)
     rice (1.4.3)
@@ -189,7 +189,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  base62
   closure-compiler
   data_mapper
   diff_match_patch_native
@@ -211,6 +210,7 @@ DEPENDENCIES
   pry-rescue
   pry-stack_explorer
   racksh
+  radix62
   redis
   sass
   sinatra

@@ -789,7 +789,7 @@ $(document).ready(function(){
 });
 
 
-// Polyfill for non-standard webkit method scrollIntoViewIfNeeded by Hubert SABLONNIÈRE @hsablonniere
+// Polyfill for non-standard webkit method scrollIntoViewIfNeeded by Hubert SABLONNIERE @hsablonniere
 if (!Element.prototype.scrollIntoViewIfNeeded) {
   Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
     centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;

@@ -42,10 +42,7 @@ define('websync',{
             $(document).trigger("connection");
 			$("#connection_msg").remove();
 			if(WebSync.webSocketFirstTime){
-				WebSync.webSocketFirstTime = false;
 				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-				WebSync.loadScripts();
-                WebSync.connection.sendJSON({type:'config',action:'get',property:'public'});
 			} else {
 				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
 				WebSync.success("<strong>Success!</strong> Connection restablished.");
@@ -116,6 +113,9 @@ define('websync',{
                 }
             }
             else if(data.type=='info'){
+				WebSync.webSocketFirstTime = false;
+				WebSync.loadScripts();
+                WebSync.connection.sendJSON({type:'config',action:'get',property:'public'});
                 WebSync.clients = data['users'];
                 var to_trigger = {};
                 $.each(WebSync.clients,function(k,v){

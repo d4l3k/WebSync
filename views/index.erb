@@ -42,7 +42,7 @@
                     end
                 %>
                 <tr class="<%= color %>">
-                    <td><%= doc.id.encode62 %></td>
+                    <td><%= doc.id %></td>
                     <td><%= doc.name %></td>
                     <td><%= doc.user.email %></td>
                     <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>

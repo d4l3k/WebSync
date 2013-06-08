@@ -1,15 +1,23 @@
+<%= stylesheet_tag 'bootstrap-fileupload' %>
 <style>
 html {
     overflow: auto !important;
 }
 .icon-massive {
     font-size: 12em;
+    margin-left: 0 !important;
 }
 form {
     margin-top: 30px;
 }
-span {
-    width: 60%;
+.form-horizontal .controls {
+    margin-left: 100px !important;
+}
+.form-horizontal .control-label {
+    width: 80px !important;
+}
+.form-horizontal .control-group {
+    height: 31px !important;
 }
 </style>
 <div class="container">
@@ -22,7 +30,11 @@ span {
   <div class="control-group">
     <label class="control-label" for="email">File</label>
     <div class="controls">
-      <input type="file" name='file' placeholder="Email">
+<div class="fileupload fileupload-new" data-provides="fileupload">
+  <div class="input-append">
+    <div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div><span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span><input name='file' type="file" /></span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+  </div>
+</div>
     </div>
   </div>
   <div class="control-group">
@@ -34,3 +46,4 @@ span {
 </span>
 </div>
 </div>
+<%= javascript_tag 'bootstrap-fileupload' %>

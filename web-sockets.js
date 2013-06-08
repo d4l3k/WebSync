@@ -134,12 +134,12 @@ wss.on('connection', function(ws) {
                     .on("row", function(row){
                         var body = JSON.parse(row.body);
                         var n_body = jsondiffpatch.patch(body,data.patch);
-                        postgres.query("UPDATE documents SET body=$2 WHERE id = $1",[doc_id,JSON.stringify(n_body)]);
+                        postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1",[doc_id,JSON.stringify(n_body), new Date()]);
                         // TODO: Update last modified!
                         redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                     });
                 } else if(data.type=='name_update'){
-                    postgres.query("UPDATE documents SET name=$2 WHERE id = $1",[doc_id,data.name]);
+                    postgres.query("UPDATE documents SET name=$2,last_edit_time=$3 WHERE id = $1",[doc_id,data.name, new Date()]);
                     // TODO: Update last modified
                     redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                 } else if(data.type=='client_event'){

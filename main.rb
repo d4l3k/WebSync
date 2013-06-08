@@ -318,6 +318,9 @@ class WebSync < Sinatra::Base
         erb :upload
     end
     post '/upload' do
+        if params[:file]==nil
+            redirect "/upload"
+        end
         tempfile = params[:file][:tempfile]
         filename = params[:file][:filename]
         filetype = params[:file][:type]

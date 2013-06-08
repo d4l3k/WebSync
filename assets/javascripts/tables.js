@@ -83,11 +83,11 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.clearSelect();
 		}
 	});
-    self.observer = new MutationObserver(function(mutations) {
+    self.observer = function(){
         setTimeout(function(){
 			self.cursorUpdate();
 		},1);
-    });
+    };
     $(".page").delegate("table","click.Tables",function(e){
         if(self.selectedElem.contentEditable!="true"){
             $('a:contains("Table")').click();
@@ -227,12 +227,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		if(self.selectedElem){
 			self.selectedEditable(false);
 		}
-		document.getSelection().empty();
+		document.getSelection().removeAllRanges();
 		self.selected = true;
 		self.selectedElem = td;
         $(self.selectedElem).focus();
 		self.selectedEditable(false);
-        self.observer.observe(self.selectedElem,{characterData:true});
+        //self.observer.observe(self.selectedElem,{characterData:true});
+        self.selectedElem.addEventListener("DOMSubtreeModified",self.observer);
         if($(".Table.axis").length==0) {
             var size = self.tableSize();
             var nodes = '<table class="Table axis" id="x"><thead><tr>';
@@ -290,10 +291,10 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selected = false;
 			self.selectedEditable(false);
 			$("#table_cursor").offset({left:-10000});
+            self.selectedElem.removeEventListener("DOMSubtreeModified",self.observer);
 			delete self.selectedElem;
             $("#ribbon_buttons a:contains('Table')").parent().fadeOut(200);
 			$('#ribbon_buttons a:contains("Text")').click();
-            self.observer.disconnect();
             self.selectedElem=null;
             self.updateSelectedArea();
             $(".Table.axis").fadeOut(200).promise().done(function(){

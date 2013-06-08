@@ -52,6 +52,12 @@ wss.on('connection', function(ws) {
                         redis_sock.subscribe('doc:'+parts[1]);
                         ws.on('close',function(ws) {
                             redis_sock.quit();
+                            redis.get('doc:'+doc_id+':users',function(err,reply){
+                                var users = JSON.parse(reply);
+                                delete users[client_id];
+                                redis.set('doc:'+doc_id+':users',JSON.stringify(users));
+                                redis.publish("doc:"+doc_id, JSON.stringify({type:"client_bounce",client:client_id,data:JSON.stringify({type:"exit_user",id:client_id})}));
+                            });
                         });
                         redis.expire('websocket:id:'+client_id,60*60*24*7);
                         redis.expire('websocket:key:'+client_id,60*60*24*7);

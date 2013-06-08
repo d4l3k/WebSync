@@ -422,6 +422,7 @@ class WebSync < Sinatra::Base
                 $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
                 $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
                 @no_menu = true
+                @edit = true
                 erb :edit
             else
                 redirect '/'

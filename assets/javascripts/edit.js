@@ -51,8 +51,8 @@ define("edit",['websync'],function(websync){ var self = this;
         if(e.keyCode==9){
             //console.log(this);
             var selection = document.getSelection();
-            if(selection.type!="None"){
-                var list_index = document.getSelection().baseNode;
+            if(selection.type!="None" && !_.isNull(selection.baseNode)){
+                var list_index = selection.baseNode;
                 while(list_index.tagName!="LI"){
                     list_index = list_index.parentElement;
                 }

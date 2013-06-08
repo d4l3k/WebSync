@@ -5,6 +5,9 @@
         <title>WebSync</title>
 		<%= stylesheet_tag 'default' %>
         <%= javascript_tag 'bundle-norm' %>
+        <% if defined?(@edit)&&@edit %>
+            <%= javascript_tag 'bundle-edit' %>
+        <% end %>
 	</head>
 	<body>
         <% if !(defined?(@no_menu)&&@no_menu) %>

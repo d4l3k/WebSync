@@ -56,7 +56,7 @@ wss.on('connection', function(ws) {
                         redis.expire('websocket:id:'+client_id,60*60*24*7);
                         redis.expire('websocket:key:'+client_id,60*60*24*7);
                         redis.get('websocket:id:'+data.id, function(err,email){
-                            redis.get('doc:'+data.id+':users',function(err,reply){
+                            redis.get('doc:'+doc_id+':users',function(err,reply){
                                 var users = {};
                                 if(reply){
                                     users = JSON.parse(reply);
@@ -64,7 +64,7 @@ wss.on('connection', function(ws) {
                                 user_id = md5(email.trim().toLowerCase());
                                 users[client_id]={id:user_id,email:email.trim()};
                                 // TODO: Finish reimplementing the rest o' this shiz.
-                                redis.set('doc:'+data.id+':users',JSON.stringify(users));
+                                redis.set('doc:'+doc_id+':users',JSON.stringify(users));
                                 redis.publish("doc:"+doc_id, JSON.stringify({type:"client_bounce",client:client_id,data:JSON.stringify({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})}));
                                 ws.send(JSON.stringify({type:'info',user_id:user_id,users:users}))
                                 console.log("[Websocket Client Authed] ID: "+client_id+", Email: "+email);
@@ -72,7 +72,7 @@ wss.on('connection', function(ws) {
                         });
                     }
                     else {
-                        console.log("INVALID!!! CLOSING!!! WTF BOOM!!!");
+                        console.log("INVALID KEY!!! CLOSING!!! WTF BOOM!!!");
                         ws.close();
                     }
                 });

@@ -781,7 +781,9 @@ function capitaliseFirstLetter(string)
 requirejs.config({
     baseUrl: 'assets'
 });
-require(['websync'],function(websync){
-    window.WebSync = websync;
-    WebSync.initialize();
+$(document).ready(function(){
+    require(['websync'],function(websync){
+        window.WebSync = websync;
+        WebSync.initialize();
+    });
 });

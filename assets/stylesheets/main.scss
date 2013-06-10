@@ -11,8 +11,13 @@
 .hero-middle {
     display: inline-block;
     vertical-align: middle;
-    height: 250px;
-    margin: 20px;
+    margin-top: 165px;
+    text-align: center;
+    width: 100%;
+}
+.hero-unit > form {
+    position: relative;
+    left: -80px;
 }
 .login-area {
     text-align: center;
@@ -34,7 +39,7 @@
 	border-bottom: 1px solid #ccc;
 	height: 36px !important;
 }
-body > .container {
+body > .container, body > .container-fluid {
     margin-top: 70px;
 }
 .menu {

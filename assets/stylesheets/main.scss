@@ -34,7 +34,7 @@
 	border-bottom: 1px solid #ccc;
 	height: 36px !important;
 }
-.hero-unit {
+body > .container {
     margin-top: 70px;
 }
 .menu {
@@ -85,15 +85,6 @@
     }
 }
 .ad {
-    &.skyscraper {
-        @media (min-width: 1260px) {
-            position: absolute;
-            top: 70px;
-        }
-        @media (max-width: 1259px) {
-            display: none;
-        }
-    }
     &.link {
         @media (max-width: 1259px) {
             display: table;

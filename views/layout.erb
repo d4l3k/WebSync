@@ -3,6 +3,7 @@
 	<head>
 		<link rel="shortcut icon" href="/favicon.ico?v=3" />
         <title>WebSync</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<%= stylesheet_tag 'default' %>
         <%= javascript_tag 'bundle-norm' %>
         <% if defined?(@edit)&&@edit %>
@@ -32,7 +33,7 @@
 <div class="menu">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
-			<div class="container">
+			<div class="container-fluid">
 				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom">WebSync</a>
                 <ul class="nav">
                     <li class="text">is a document editing tool similar to Google Drive or Microsoft Skydrive. </li>

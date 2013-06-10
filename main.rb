@@ -119,12 +119,20 @@ class Document
     property :public, Boolean, :default=>false
     property :config, Json, :default=>{}
     has n, :assets, :through => Resource
+    has n, :changes
     belongs_to :user
     def config_set key, value
         n_config = config.dup
         n_config[key]=value
         self.config= n_config
     end
+end
+class Change
+    include DataMapper::Resource
+    property :id, Serial
+    property :time, DateTime
+    property :patch, Json
+    belongs_to :document
 end
 # Assets could be javascript or css
 class Asset

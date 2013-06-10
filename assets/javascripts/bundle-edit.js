@@ -1,4 +1,5 @@
 //= require bootstrap-contextmenu.js
+//= require bootstrapSwitch.js
 //= require jquery.computedstyles.js
 //= require rangy-core.js
 //= require rangy-cssclassapplier.js

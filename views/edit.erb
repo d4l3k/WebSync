@@ -10,7 +10,7 @@
 <div class="menu">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
-			<div class="container">
+			<div class="container-fluid">
 				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interacttive" data-placement="bottom">WebSync</a>
 				<ul class="nav">
 					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
@@ -26,31 +26,56 @@
                         <%= render_login_button %>
                     </li>
 				</ul>
-                <div class="popover fade bottom in settings-popup"><div class="arrow"></div><h3 class="popover-title">Settings<a class="close pull-right"><i class="icon-remove"></i></a></h3><div class="popover-content">
-                    <table class="table table-bordered">
-                        <tbody>
-                            <tr>
-                                <th>Property</th>
-                                <th>Global Setting</th>
-                                <th>Document Setting</th>
-                            </tr>
-                            <tr>
-                                <td>Use spaces instead of tabs</td>
-                                <td><select>
-                                    <option>True</option>
-                                    <option>False</option>
-                                </select></td>
-                                <td><div class='input-append'><select>
-                                    <option>Use Global</option>
-                                    <option>True</option>
-                                    <option>False</option>
-                                </select>
-                                <button class="btn btn-warning">Override</button></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div></div>
-
+                <div class="popover fade bottom in settings-popup"><div class="arrow"></div><h3 class="popover-title"><b>Settings</b>
+                    <ul class="nav tab-nav">
+                        <li class="active" ><a href="#config" data-toggle="tab">Config</a></li>
+                        <li><a href="#assets" data-toggle="tab">Assets</a></li>
+                    </ul>
+                <a class="close pull-right"><i class="icon-remove"></i></a></h3><div class="popover-content">
+                    <div class="tab-content">
+                        <div class="tab-pane" id="assets">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>URL</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                       </div>
+                        <div class="tab-pane active" id="config">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Property</th>
+                                        <th>Global Setting</th>
+                                        <th>Document Setting</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Use spaces instead of tabs</td>
+                                        <td><select>
+                                            <option>True</option>
+                                            <option>False</option>
+                                        </select></td>
+                                        <td><div class='input-append'><select>
+                                            <option>Use Global</option>
+                                            <option>True</option>
+                                            <option>False</option>
+                                        </select>
+                                        <button class="btn btn-warning">Override</button></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </div>
 			</div>
 		</div>
 		<div class="ribbon">

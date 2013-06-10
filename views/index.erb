@@ -1,60 +1,78 @@
 <div class="container">
-    <div class="hero-unit">
-        <h1>Welcome to WebSync</h1>
-        <p>
-            Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
-        </p>
-        <p>
-            <a href="/new" class='btn btn-primary btn-large'><i class="icon-file-alt"></i> Create a Document</a> or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="/documentation" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View Javascript Documentation</a>
-        </p>
+    <div class="row-fluid">
+        <div class="span10">
+            <div class="hero-unit">
+                <h1>Welcome to WebSync</h1>
+                <p>
+                    Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
+                </p>
+                <p>
+                    <a href="/new" class='btn btn-primary btn-large'><i class="icon-file-alt"></i> Create a Document</a> or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="/documentation" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View Javascript Documentation</a>
+                </p>
+            </div>
+            <div class="ad link">
+                <script type="text/javascript"><!--
+                google_ad_client = "ca-pub-6781356745519353";
+                /* WebSync Link Ad */
+                google_ad_slot = "7740799799";
+                google_ad_width = 728;
+                google_ad_height = 15;
+                //-->
+                </script>
+                <script type="text/javascript"
+                src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
+                </script>
+            </div>
+            <table class="table table-bordered table-hover table-click">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th>Last Modified</th>
+                        <th>Created</th>
+                        <th>Public</th>
+                </thead>
+                <tbody>
+                    <% Document.all.each do |doc| %>
+                        <%
+                            color = 'error'
+                            if doc.user==current_user
+                                color = 'success'
+                            elsif doc.public
+                                color = 'info'
+                            end
+                        %>
+                        <tr class="<%= color %>">
+                            <td><%= doc.id %></td>
+                            <td><%= doc.name %></td>
+                            <td><%= doc.user.email %></td>
+                            <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
+                            <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
+                            <td><%= doc.public ? 'Yes' : 'No' %></td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <p>
+                <i>Works with Chrome, Firefox, Opera, and other modern browsers.</i>
+            </p>
+        </div>
+        <div class="span2">
+            <script type="text/javascript"><!--
+            google_ad_client = "ca-pub-6781356745519353";
+            /* WebSync Index */
+            //google_ad_slot = "7880400590";
+            //google_ad_slot = "9357133790";
+            google_ad_slot = "1833866998";
+            google_ad_width = 160; //(window.innerWidth-960)/2;
+            google_ad_height = 600;
+            //-->
+            </script>
+            <script type="text/javascript"
+            src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
+            </script>
     </div>
-    <div class="ad link">
-        <script type="text/javascript"><!--
-        google_ad_client = "ca-pub-6781356745519353";
-        /* WebSync Link Ad */
-        google_ad_slot = "7740799799";
-        google_ad_width = 728;
-        google_ad_height = 15;
-        //-->
-        </script>
-        <script type="text/javascript"
-        src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-        </script>
-    </div>
-    <table class="table table-bordered table-hover table-click">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Owner</th>
-                <th>Last Modified</th>
-                <th>Created</th>
-                <th>Public</th>
-        </thead>
-        <tbody>
-            <% Document.all.each do |doc| %>
-                <%
-                    color = 'error'
-                    if doc.user==current_user
-                        color = 'success'
-                    elsif doc.public
-                        color = 'info'
-                    end
-                %>
-                <tr class="<%= color %>">
-                    <td><%= doc.id %></td>
-                    <td><%= doc.name %></td>
-                    <td><%= doc.user.email %></td>
-                    <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
-                    <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
-                    <td><%= doc.public ? 'Yes' : 'No' %></td>
-                </tr>
-            <% end %>
-        </tbody>
-    </table>
-    <p>
-        <i>Works with Chrome, Firefox, Opera, and other modern browsers.</i>
-    </p>
 </div>
 <script type="text/javascript">
 window.onload = function(){
@@ -65,20 +83,6 @@ window.onload = function(){
         console.log("blah: ",id);
     });
 }
-</script>
-<div class="ad skyscraper">
-<script type="text/javascript"><!--
-google_ad_client = "ca-pub-6781356745519353";
-/* WebSync Index */
-//google_ad_slot = "7880400590";
-//google_ad_slot = "9357133790";
-google_ad_slot = "1833866998";
-google_ad_width = 160; //(window.innerWidth-960)/2;
-google_ad_height = 600;
-//-->
-</script>
-<script type="text/javascript"
-src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
 </div>
 

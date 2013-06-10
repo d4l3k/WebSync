@@ -96,6 +96,26 @@ cursor {
     margin: 0 auto;
     max-width: none;
     width: 940px;
+    ul.tab-nav {
+        float:none;
+        margin-top: -8px;
+        margin-bottom: -12px;
+        margin-left: 8px;
+        display: inline-block;
+        li a {
+            padding: 8px 14px;
+            line-height: 18px;
+            color: black !important;
+            text-shadow: none;
+            &:hover {
+                background-color: #ccc;
+            }
+        }
+        li.active a {
+            color: white !important;
+            text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+        }
+    }
 }
 .settings-popup .arrow {
     /*left: 914px !important;*/
@@ -143,6 +163,7 @@ cursor {
 	padding: 1in;
     margin: 0.1in auto;
 	border: 1px solid #aaa;
+    border-radius: 4px;
 	background-color: white;
     //box-shadow: 0 0 8px #aaa;
     .page {
@@ -314,6 +335,7 @@ a#name {
             position: absolute;
             font-size: 10pt;
             right: 0px;
+            border-radius: 4px;
             bottom: 35px;
             top: 45px;
             width: 238px;
@@ -342,7 +364,6 @@ a#name {
             position: absolute;
             bottom: 0;
             * {
-                border-radius: 0px !important;
                 font-size: 10pt;
             }
             input {

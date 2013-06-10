@@ -169,6 +169,17 @@ define('websync',{
             else if(data.type=='client_event'){
                 $(document).trigger('client_event_'+data.event,{from:data.from,data:data.data});
             }
+            else if(data.type=='asset_list'){
+                var row = $("<tr><td></td><td></td><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' "+(($("script[src='"+data.url+"']").length>0)? "checked" : "")+"/></div></td></tr>");
+                row.get(0).dataset['id']=data.id;
+                var children = row.children();
+                children.get(0).innerText = data.name;
+                children.get(1).innerText = data.description;
+                children.get(2).innerText = data.url;
+                children.get(3).innerText = data.atype;
+                $($(children.get(4)).children().get(0)).bootstrapSwitch();
+                $("#assets tbody").append(row);
+            }
 		},
 		onerror:function(e){
 			console.log(e);
@@ -323,7 +334,22 @@ define('websync',{
             else if(data.cmd=='log'){
                 console.log(data.msg);
             }
-         }
+        }
+        $("a[href='#assets']").click(function(){
+            $("#assets tbody").html("");
+            WebSync.connection.sendJSON({type:'assets',action:'list'});
+        });
+        $(".tab-pane#assets").delegate(".switch","switch-change", function(e, data){
+            var id = e.target.parentElement.parentElement.dataset.id;
+            var url = e.target.parentElement.parentElement.children[2].innerText;
+            WebSync.connection.sendJSON({type:'assets',action: (data.value ? 'add' : 'delete'), id: id});
+            if(data.value){
+                require([url]);
+            } else {
+                require(url).disable();
+                requirejs.undef(url);
+            }
+        });
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         $(".page").attr("contenteditable","true");

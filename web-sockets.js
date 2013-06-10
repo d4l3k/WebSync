@@ -135,6 +135,7 @@ wss.on('connection', function(ws) {
                         var body = JSON.parse(row.body);
                         var n_body = jsondiffpatch.patch(body,data.patch);
                         postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1",[doc_id,JSON.stringify(n_body), new Date()]);
+                        postgres.query("INSERT INTO changes (time, patch, document_id) VALUES ($3, $2, $1)",[doc_id,data.patch,new Date()]);
                         // TODO: Update last modified!
                         redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                     });
@@ -144,6 +145,17 @@ wss.on('connection', function(ws) {
                     redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                 } else if(data.type=='client_event'){
                     redis.publish('doc:'+doc_id,JSON.stringify({type:'client_bounce',client:client_id, data:JSON.stringify({type:'client_event',event:data.event, from:client_id, data:data.data})}));
+                } else if(data.type='assets') {
+                    if(data.action=='list'){
+                        postgres.query("SELECT * FROM assets ORDER BY name")
+                        .on('row',function(row){
+                            ws.send(JSON.stringify({type:'asset_list',id:row.id,name:row.name,description:row.description,url:row.url,atype:row.type}));
+                        });
+                    } else if(data.action=='add'){
+                        postgres.query("INSERT INTO asset_documents (document_id, asset_id) VALUES ($1, $2)",[doc_id,data.id]);
+                    } else if(data.action=='delete'){
+                        postgres.query("DELETE FROM asset_documents WHERE document_id = $1 AND asset_id = $2",[doc_id,data.id]);
+                    }
                 }
             }
         });

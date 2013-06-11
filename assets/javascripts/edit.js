@@ -116,5 +116,6 @@ define("edit",['websync'],function(websync){ var self = this;
         }
     }
     $('#font').html(font_list.join("\n"));
+    WebSync.updateRibbon();
 });
 

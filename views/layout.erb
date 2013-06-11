@@ -42,6 +42,11 @@
                     <li>
                         <a href="/upload" title="Upload"><i class="icon-large icon-cloud-upload"></i></a>
                     </li>
+                    <% if admin? %>
+                        <li>
+                            <a href="/admin" title="Admin Control Panel"><i class="icon-cog icon-large"></i></a>
+                        </li>
+                    <% end %>
                     <li>
                         <%= render_login_button %>
                     </li>

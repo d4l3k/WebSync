@@ -1,0 +1,91 @@
+<div class="container">
+    <h1>Editing/Creating Asset Group <%= params[:asset] %></h1>
+    <div class="row-fluid">
+    <% ass = AssetGroup.get(params[:asset])
+        if not ass.nil? %>
+            <div class="span5">
+                <h2>Details</h2>
+                <form class="form-horizontal" method="post">
+                    <div class="control-group">
+                        <label class="control-label" for="name">Name</label>
+                        <div class="controls">
+                            <input type="text" name="name" id="name" value="<%= ass.name %>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="desc">Description</label>
+                        <div class="controls">
+                            <input type="text" name="desc" id="desc" value="<%= ass.description %>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="span7">
+                <h2>Assets Enabled</h2>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </thead>
+                    <tbody>
+                        <% ass.assets.each do |a| %>
+                            <tr>
+                                <td><%= a.id %></td>
+                                <td><%= a.name %></td>
+                                <td><%= a.description %></td>
+                                <td><a class="btn btn-danger" href="<%= a.id %>/remove">Remove</td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+                <h2>Assets Availible</h2>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </thead>
+                    <tbody>
+                        <% Asset.each do |a| %>
+                            <tr>
+                                <td><%= a.id %></td>
+                                <td><%= a.name %></td>
+                                <td><%= a.description %></td>
+                                <td><a class="btn btn-success" href="<%= a.id %>/add">Add</a></td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+        <% else %>
+            <form class="form-horizontal" method="post">
+                <div class="control-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" name="name" id="name">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="desc">Description</label>
+                    <div class="controls">
+                        <input type="text" name="desc" id="desc">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+
+        <% end %>
+    </div>
+</div>

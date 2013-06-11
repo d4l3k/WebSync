@@ -7,7 +7,16 @@
                     Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
                 </p>
                 <p>
-                    <a href="/new" class='btn btn-primary btn-large'><i class="icon-file-alt"></i> Create a Document</a> or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="/documentation" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View Javascript Documentation</a>
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown"><i class="icon-file-alt"></i> Create a Document
+ <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <% AssetGroup.each do |ass| %>
+                                <li><a href="/new/<%= ass.id %>"><%= ass.name %></a></li>
+                            <% end %>
+                        </ul>
+                    </div>
+                    or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="/documentation" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Documentation</a>
                 </p>
             </div>
             <div class="ad link">

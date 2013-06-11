@@ -135,6 +135,13 @@ class Change
     belongs_to :document
 end
 # Assets could be javascript or css
+class AssetGroup
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    property :description, String
+    has n, :assets, :through => Resource
+end
 class Asset
     include DataMapper::Resource
     property :id, Serial
@@ -143,6 +150,7 @@ class Asset
     property :url, String
     property :type, Discriminator
     has n, :documents, :through => Resource
+    has n, :asset_groups, :through => Resource
 end
 class Javascript < Asset; end
 class Stylesheet < Asset; end
@@ -150,6 +158,7 @@ class User
     include DataMapper::Resource
     property :email, String, :key=>true
     property :password, BCryptHash
+    property :group, String, :default=>'user'
     has n, :documents
     property :config, Json, :default=>{}
     def config_set key, value
@@ -158,6 +167,7 @@ class User
         self.config= n_config
     end
 end
+class AnonymousUser < User; end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 class WebSync < Sinatra::Base
@@ -172,6 +182,15 @@ class WebSync < Sinatra::Base
                 return User.get(session['user'])
             end
             nil
+        end
+        def admin_required
+            if not admin?
+                redirect "/"
+            end
+        end
+        def admin?
+            c_user = current_user
+            not c_user.nil? and c_user.group=="admin"
         end
         def logged_in?
             (!session['userhash'].nil?)&&$redis.get('userhash:'+session['userhash'])==session['user']
@@ -250,8 +269,8 @@ class WebSync < Sinatra::Base
     end
     $dmp = DiffMatchPatch.new
 
-    $table = Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
-    $chat = Javascript.first_or_create(:name=>'Chat',:description=>'Talk with other users!',:url=>'/assets/chat.js')
+    Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
+    Javascript.first_or_create(:name=>'Chat',:description=>'Talk with other users!',:url=>'/assets/chat.js')
     get '/login' do
         if !logged_in?
             erb :login
@@ -307,7 +326,83 @@ class WebSync < Sinatra::Base
     get '/documentation' do
         erb :documentation
     end
-    get '/new' do
+    get '/admin' do
+        admin_required
+        erb :admin
+    end
+    get '/admin/assets' do
+        admin_required
+        erb :admin_assets
+    end
+    get '/admin/assets/:asset/edit' do
+        admin_required
+        erb :admin_assets_edit
+    end
+    get '/admin/assets/:asset/delete' do
+        admin_required
+        ass = Asset.get(params[:asset])
+        if not ass.nil?
+            ass.destroy
+        end
+        redirect '/admin/assets'
+    end
+    post '/admin/assets/:asset/edit' do
+        admin_required
+        ass = Asset.get(params[:asset])
+        if not ass.nil?
+            ass.name = params[:name]
+            ass.description = params[:desc]
+            ass.url = params[:url]
+            ass.type = params[:type]
+            ass.save
+        else
+            n_ass = Asset.create(:name=>params[:name],:description=>params[:desc],:url=>params[:url], :type=>params[:type])
+            n_ass.save
+        end
+        redirect '/admin/assets'
+    end
+    get '/admin/asset_groups/:asset/edit' do
+        admin_required
+        erb :admin_asset_groups_edit
+    end
+    get '/admin/asset_groups/:asset_group/:asset/add' do
+        ass = AssetGroup.get(params[:asset_group])
+        ass.assets << Asset.get(params[:asset])
+        ass.save
+        redirect "/admin/asset_groups/#{params[:asset_group]}/edit"
+    end
+    get '/admin/asset_groups/:asset_group/:asset/remove' do
+        ass = AssetGroup.get(params[:asset_group])
+        ass.assets.each do |a|
+            if a.id==params[:asset].to_i
+                ass.assets.delete a
+            end
+        end
+        ass.save
+        redirect "/admin/asset_groups/#{params[:asset_group]}/edit"
+    end
+    get '/admin/asset_groups/:asset/delete' do
+        admin_required
+        ass = AssetGroup.get(params[:asset])
+        if not ass.nil?
+            ass.destroy
+        end
+        redirect '/admin/assets'
+    end
+    post '/admin/asset_groups/:asset/edit' do
+        admin_required
+        ass = AssetGroup.get(params[:asset])
+        if not ass.nil?
+            ass.name = params[:name]
+            ass.description = params[:desc]
+            ass.save
+        else
+            n_ass = AssetGroup.create(:name=>params[:name],:description=>params[:desc])
+            n_ass.save
+        end
+        redirect '/admin/assets'
+    end
+    get '/new/:group' do
         login_required
         doc = Document.create(
             :name => 'Unnamed Document',
@@ -316,8 +411,8 @@ class WebSync < Sinatra::Base
             :last_edit_time => Time.now,
             :user => current_user
         )
-        doc.assets << $table
-        doc.assets << $chat
+        group = AssetGroup.get(params[:group])
+        doc.assets = group.assets
         doc.save
         redirect "/#{doc.id}/edit"
     end

@@ -1,0 +1,58 @@
+<div class="container">
+    <h1>Assets Admin Panel</h1>
+    <div class="row-fluid">
+        <div class="span7">
+            <h2>Assets <a href="/admin/assets/new/edit" class="btn btn-primary">Create</a></h2>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>URL</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    <% Asset.each do |ass| %>
+                        <tr>
+                            <td><%= ass.id %></td>
+                            <td><%= ass.name %></td>
+                            <td><%= ass.description %></td>
+                            <td><%= ass.url %></td>
+                            <td><%= ass.type %></td>
+                            <td>
+                                <a class="btn btn-warning" href="/admin/assets/<%= ass.id %>/edit">Edit</a>
+                                <a class="btn btn-danger" href="/admin/assets/<%= ass.id %>/delete">Delete</a>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+        <div class="span5">
+            <h2>Asset Groups <a href="/admin/asset_groups/new/edit" class="btn btn-primary">Create</a></h2>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    <% AssetGroup.each do |ass| %>
+                        <tr>
+                            <td><%= ass.id %></td>
+                            <td><%= ass.name %></td>
+                            <td><%= ass.description %></td>
+                            <td>
+                                <a class="btn btn-warning" href="/admin/asset_groups/<%= ass.id %>/edit">Edit</a>
+                                <a class="btn btn-danger" href="/admin/asset_groups/<%= ass.id %>/delete">Delete</a>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

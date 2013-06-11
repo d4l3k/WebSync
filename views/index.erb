@@ -41,6 +41,7 @@
                         <th>Last Modified</th>
                         <th>Created</th>
                         <th>Public</th>
+                        <th>Actions</th>
                 </thead>
                 <tbody>
                     <% Document.all.each do |doc| %>
@@ -59,6 +60,11 @@
                             <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
                             <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
                             <td><%= doc.public ? 'Yes' : 'No' %></td>
+                            <% if doc.user=current_user %>
+                                <td>
+                                    <a href="/<%= doc.id %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
+                                </td>
+                            <% end %>
                         </tr>
                     <% end %>
                 </tbody>

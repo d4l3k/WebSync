@@ -23,7 +23,7 @@ wss.on('connection', function(ws) {
     var base = url.split('?')[0];
     var parts = base.split('/');
     console.log(parts)
-    if(parts[2]=='edit'){
+    if(parts[2]=='edit'||parts[2]=='view'){
         var doc_id = Base62.decode(parts[1]);
         console.log('Connection! (Document: '+doc_id+')');
         var authenticated = false;

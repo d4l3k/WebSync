@@ -215,10 +215,6 @@ define('websync',{
     // This is where the core of WebSync initializes.
 	initialize: function(){
 		this.webSocketStart();
-        if(!WebSyncData.body){
-            WebSyncData.body = [];
-        }
-        $(".page").html(JSONToDOM(WebSyncData.body));
         $("#public_mode").change(function(){
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
@@ -237,7 +233,6 @@ define('websync',{
 		});
         $(".settings-popup").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
-		$(".content").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').change(function(){
 			var zoom = parseInt($('#zoom_level').val())/100.0
@@ -262,6 +257,10 @@ define('websync',{
                 $("body").addClass("zen").resize();
                 $("#zoom_level").val("120%").change();
                 $(".menu").animate({top:-85},200);
+            }
+            else if(mode=='Presentation') {
+                $("body").removeClass("edit").addClass("view")
+                WebSync.resize();
             }
             else {
                 $("body").removeClass("zen").resize();
@@ -296,11 +295,13 @@ define('websync',{
             else if(data.cmd=='patched'){
                 WebSync.oldData = JSON.parse(JSON.stringify(data.json));
                 WebSyncData = data.json;
-                $(".content .page").get(0).innerHTML=JSONToDOM(WebSyncData.body);
+                if(WebSync.fromJSON){
+                    WebSync.fromJSON();
+                }
                 sel = WebSync.tmp.range;
                 if(sel.active){
                     // Find all #text nodes.
-                    var text_nodes = $(".page").find(":not(iframe)").addBack().contents().filter(function() {
+                    var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
                         return this.nodeType == 3;
                     });
                     var startText = sel.startText, startOffset = sel.startOffset, endText = sel.endText, endOffset = sel.endOffset;
@@ -352,7 +353,6 @@ define('websync',{
         });
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
-        $(".page").attr("contenteditable","true");
         this.resize();
         $(window).resize(this.resize);
         //this.setupWebRTC();
@@ -498,7 +498,9 @@ define('websync',{
             WebSync.oldDataString = JSON.stringify(WebSyncData);
             WebSync.oldData = JSON.parse(WebSync.oldDataString);
         }
-		WebSyncData.body = DOMToJSON($(".page").get(0).childNodes);
+        if(WebSync.toJSON){
+            WebSync.toJSON();
+        }
         var stringWebSync = JSON.stringify(WebSyncData);
 		if(stringWebSync!=WebSync.oldDataString){
             // Send it to the worker thread for processing.

@@ -157,7 +157,7 @@ cursor {
 .content_well > div {
     @include ex(transform-origin, top center);
 }
-.content {
+.content-page {
 	min-height: 9in;
 	width: 6.5in;
 	padding: 1in;
@@ -180,6 +180,24 @@ cursor {
         -ms-hyphens: auto;
         font-size: 14px;
         line-height: 1.15;
+    }
+}
+.view {
+    .menu {
+        display:none;
+    }
+    .content_well {
+        background-image: none;
+        background-color: black !important;
+    }
+    .content {
+        border: none;
+    }
+    .page {
+        border: none;
+        -user-modify: read-only  !important;
+        -moz-user-modify: read-only !important;
+        -webkit-user-modify: read-only !important;
     }
 }
 :focus, :active {

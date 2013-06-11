@@ -385,6 +385,8 @@ class WebSync < Sinatra::Base
         admin_required
         ass = AssetGroup.get(params[:asset])
         if not ass.nil?
+            ass.assets = []
+            ass.save
             ass.destroy
         end
         redirect '/admin/assets'
@@ -505,7 +507,7 @@ class WebSync < Sinatra::Base
         end
         redirect '/'
     end
-    get '/:doc/edit' do
+    get '/:doc/:op' do
         doc_id = params[:doc]
         doc = Document.get doc_id
         if doc.nil?

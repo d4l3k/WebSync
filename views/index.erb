@@ -12,7 +12,7 @@
  <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <% AssetGroup.each do |ass| %>
-                                <li><a href="/new/<%= ass.id %>"><%= ass.name %></a></li>
+                                <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
                             <% end %>
                         </ul>
                     </div>

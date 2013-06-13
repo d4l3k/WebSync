@@ -46,7 +46,7 @@ define("edit",['websync'],function(websync){ var self = this;
             self._selectTimeout = setTimeout(self.selectHandler,200);
         }
     });
-    $(document).bind("keydown.TextEdit","li",function(e){
+    $(".content_well").bind("keydown.TextEdit","li",function(e){
         //console.log(e);
         if(e.keyCode==9){
             //console.log(this);

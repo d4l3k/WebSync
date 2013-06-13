@@ -257,6 +257,7 @@ class WebSync < Sinatra::Base
         set :assets_precompile_no_digest, %w(*.js)
     end
     configure do
+        use Rack::Session::Cookie, :expire_after => 60*60*24*7
         enable :sessions
         set :session_secret, "Web-Sync sdkjfskadfh1h3248c99sj2j4j2343"
         set :server, 'thin'

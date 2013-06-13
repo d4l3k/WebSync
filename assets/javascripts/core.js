@@ -259,8 +259,9 @@ define('websync',{
                 $(".menu").animate({top:-85},200);
             }
             else if(mode=='Presentation') {
-                $("body").removeClass("edit").addClass("view")
-                WebSync.resize();
+                $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
+                window.history.pushState("","WebSync - Presentation Mode","view");
+                $(".menu").animate({top: -85},200);
             }
             else {
                 $("body").removeClass("zen").resize();
@@ -484,8 +485,9 @@ define('websync',{
     // Function: void WebSync.resize();
     // Event handler for when the window resizes. This is an internal method.
     resize: function(){
-        $(".content_well").height(window.innerHeight-$(".content_well").position().top)
-        $(".settings-popup").css({left:(window.innerWidth-944)*0.5})
+        $(".content_well").height(window.innerHeight-$(".content_well").position().top);
+        var width = window.innerWidth-260;
+        $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width})
         $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15})
     },
     // Function: void WebSync.checkDiff();

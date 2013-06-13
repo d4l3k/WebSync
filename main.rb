@@ -132,6 +132,7 @@ class Change
     property :id, Serial
     property :time, DateTime
     property :patch, Json
+    belongs_to :user
     belongs_to :document
 end
 # Assets could be javascript or css
@@ -160,6 +161,7 @@ class User
     property :password, BCryptHash
     property :group, String, :default=>'user'
     has n, :documents
+    has n, :changes
     property :config, Json, :default=>{}
     def config_set key, value
         n_config = config.dup

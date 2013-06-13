@@ -485,7 +485,7 @@ define('websync',{
     // Function: void WebSync.resize();
     // Event handler for when the window resizes. This is an internal method.
     resize: function(){
-        $(".content_well").height(window.innerHeight-$(".content_well").position().top);
+        //$(".content_well").height(window.innerHeight-$(".content_well").position().top);
         var width = window.innerWidth-260;
         $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width})
         $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15})

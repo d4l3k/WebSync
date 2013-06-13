@@ -27,7 +27,7 @@ wss.on('connection', function(ws) {
         var doc_id = Base62.decode(parts[1]);
         console.log('Connection! (Document: '+doc_id+')');
         var authenticated = false;
-        var redis_sock, client_id;
+        var redis_sock, client_id, user_email;
         ws.on('message', function(message) {
             var data = JSON.parse(message);
             console.log('JSON: '+message);
@@ -68,6 +68,7 @@ wss.on('connection', function(ws) {
                                     users = JSON.parse(reply);
                                 }
                                 user_id = md5(email.trim().toLowerCase());
+                                user_email = email;
                                 users[client_id]={id:user_id,email:email.trim()};
                                 // TODO: Finish reimplementing the rest o' this shiz.
                                 redis.set('doc:'+doc_id+':users',JSON.stringify(users));
@@ -135,7 +136,7 @@ wss.on('connection', function(ws) {
                         var body = JSON.parse(row.body);
                         var n_body = jsondiffpatch.patch(body,data.patch);
                         postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1",[doc_id,JSON.stringify(n_body), new Date()]);
-                        postgres.query("INSERT INTO changes (time, patch, document_id) VALUES ($3, $2, $1)",[doc_id,data.patch,new Date()]);
+                        postgres.query("INSERT INTO changes (time, patch, document_id, user_email) VALUES ($3, $2, $1, $4)",[doc_id,data.patch,new Date(),user_email]);
                         // TODO: Update last modified!
                         redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                     });

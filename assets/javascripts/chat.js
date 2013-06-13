@@ -89,9 +89,7 @@ define(['websync'],function(edit,websink){ var self = {};
         $("#chat_btn").parent().toggleClass("active");
         if(self.open){
             $("#chat").animate({left:window.innerWidth+1},200);
-            $(".content_well").animate({width:window.innerWidth},200,function(){
-                $(".content_well").get(0).style.width=null;
-            });
+            $(".content_well").animate({right: 0},200);
             self.open=false;
         } else {
             //$("#chat").animate({left:window.innerWidth-251},200);
@@ -104,7 +102,7 @@ define(['websync'],function(edit,websink){ var self = {};
     self.resize = function(e){
         if(self.open){
             $("#chat").animate({left:window.innerWidth-251},200);
-            $('.content_well').animate({width:window.innerWidth-251},200);
+            $('.content_well').animate({right:251},200);
         }
         $("#chat").height(window.innerHeight-$(".content_well").position().top)
     }

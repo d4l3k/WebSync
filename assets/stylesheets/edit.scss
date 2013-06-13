@@ -149,13 +149,34 @@ cursor {
     );
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
     background-attachment: fixed;
-	width: 100%;
-	display: inline-block;
+	position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 83px;
+    display: inline-block;
     height: 100%;
     overflow: auto;
 }
 .content_well > div {
     @include ex(transform-origin, top center);
+}
+.content-presentation {
+    //box-shadow: 0 0 8px #aaa;
+    .slide {
+        height: 6in;
+        width: 8in;
+        margin: 0.1in auto;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 24px;
+        line-height: 1.15;
+        display:none;
+        &.active {
+            display:block;
+        }
+    }
 }
 .content-page {
 	min-height: 9in;
@@ -325,8 +346,41 @@ a#name {
     position:absolute;
     right: 0;
     bottom: 0;
+    top: 83px;
     background-color: #eee;
     border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    &#presentation-nav {
+        width: 240px;
+        float: left;
+        left: 0;
+        padding: 5px;
+        .slideWell {
+            position: absolute;
+            top: 40px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 10pt;
+            border-radius: 4px;
+            overflow-y: auto;
+            .slidePreview {
+                color: black;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                height: 1.5in;
+                margin: 5px;
+                padding: 5px;
+                cursor: pointer;
+                &.active {
+                    border: 2px solid black;
+                    margin: 4px;
+                }
+            }
+        }
+    }
     &#chat {
         position: fixed;
         #user_list{

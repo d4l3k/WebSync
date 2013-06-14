@@ -2,7 +2,7 @@
 define("/assets/spreadsheet.js",['websync'], function(websync) { var self = this;
     console.log("Spreadsheet loaded");
     $(".content").hide().addClass("content-spreadsheet").fadeIn();
-    $(".content").append($('<div id="spreadsheetWell"><table><tbody id="tableInner"></tbody></table></div>'));
+    $(".content").append($('<div id="spreadsheetWell" class="content_container"><table><tbody id="tableInner"></tbody></table></div>'));
     if(!WebSyncData.body){
         WebSyncData.body = [];
     }
@@ -20,12 +20,13 @@ define("/assets/spreadsheet.js",['websync'], function(websync) { var self = this
                 $("<td></td>").appendTo(row);
             }
         }
-        WebSync.toJSON();
+    }
+    else {
+        WebSync.fromJSON();
     }
     if(WebSyncAuth.view_op=='edit'){
         //$(".slide").attr("contenteditable",true);
     }
-	$(".content").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
-    WebSync.fromJSON();
+	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
     return self;
 });

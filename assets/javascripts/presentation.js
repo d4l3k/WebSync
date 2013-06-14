@@ -1,7 +1,7 @@
 // WebSync: Page layout handler
 define("/assets/presentation.js",['websync'], function(websync) { var self = this;
     $(".content").hide().addClass("content-presentation").fadeIn();
-    $(".content").append($('<div id="slides"></div>'));
+    $(".content").append($('<div id="slides" class="content_container"></div>'));
     $('body').append($('<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn" type="button">Add Slide</button> <button id="remSlide" class="btn btn-danger" type="button">Delete Slide</button><div id="slideView" class="slideWell"></div></div>'));
     $('#presentation-nav').css({left: -252}).animate({left:-1},200);
     $('.content_well').animate({left: 251},200)
@@ -47,7 +47,7 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = thi
             $("<div class='slidePreview "+($(slide).hasClass("active") ? "active" : "") +"'>Slide Number "+(index+1)+"</div>").appendTo($("#slideView")).data({index:index});
         });
     };
-	$("#slides").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
+	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
     WebSync.fromJSON();
     return self;
 });

@@ -88,21 +88,22 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.cursorUpdate();
 		},1);
     };
-    $(".content > div:first-child").delegate("table","click.Tables",function(e){
+    $(".content").delegate("table","click.Tables",function(e){
         if(!self.selectedElem || self.selectedElem.contentEditable!="true"){
             $('a:contains("Table")').click();
         }
         e.stopPropagation();
     });
-    $(".content > div:first-child").delegate("td","mouseenter.Tables",function(e){
+    $(".content").delegate("td","mouseenter.Tables",function(e){
         if(self.selectionActive&&self.primaryTable()===self.primaryTable(this)){
             self.selectionEnd = this;
             self.updateSelectedArea();
         }
     });
-    $(".content > div:first-child").delegate("td","mouseleave.Tables",function(e){
+    $(".content").delegate("td","mouseleave.Tables",function(e){
     });
-    $(".content > div:first-child").delegate("td","mousedown.Tables",function(e){
+    $(".content").delegate("td","mousedown.Tables",function(e){
+        console.log(e);
         if(this!=self.selectedElem){
             self.cursorSelect(this);
         }
@@ -111,11 +112,11 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         self.updateSelectedArea();
         e.preventDefault();
     });
-    $(".content > div:first-child").delegate("td","mouseup.Tables",function(e){
+    $(".content").delegate("td","mouseup.Tables",function(e){
         self.selectionActive=false;
     });
     self.selectionActive = false;
-    $(".content > div:first-child").bind("click.Tables",function(e){
+    $(".content").bind("click.Tables",function(e){
         //console.log(e);
         self.clearSelect();
     });

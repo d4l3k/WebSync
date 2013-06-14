@@ -155,7 +155,6 @@ cursor {
     bottom: 0;
     top: 83px;
     display: inline-block;
-    height: 100%;
     overflow: auto;
 }
 .content_well > div {
@@ -167,15 +166,30 @@ cursor {
         height: 6in;
         width: 8in;
         margin: 0.1in auto;
+        padding: 20px;
         border: 1px solid #aaa;
         border-radius: 4px;
         background-color: white;
         font-size: 24px;
         line-height: 1.15;
         display:none;
+        -user-modify: read-write;
+        -moz-user-modify: read-write;
+        -webkit-user-modify: read-write;
+        word-wrap: break-word;
+        overflow-wrap: break-work;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
         &.active {
             display:block;
         }
+    }
+}
+.content-spreadsheet {
+    #spreadsheetWell {
+        background-color: white;
     }
 }
 .content-page {
@@ -208,13 +222,35 @@ cursor {
         display:none;
     }
     .content_well {
+        top: 0px;
         background-image: none;
         background-color: black !important;
+    }
+    #presentation-nav {
+        top: 0px;
+        border-color: #222;
+        background-color: #111;
+        #addSlide {
+            display: none;
+        }
+        #slideView {
+            top: 5px;
+            background-color: black;
+            border-color: #222;
+            color: white;
+            .slidePreview {
+                &.active {
+                    border-color: cyan;
+                    font-weight: bold;
+                }
+                background-color: white;
+            }
+        }
     }
     .content {
         border: none;
     }
-    .page {
+    .page, .slide {
         border: none;
         -user-modify: read-only  !important;
         -moz-user-modify: read-only !important;

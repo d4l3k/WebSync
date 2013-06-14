@@ -493,9 +493,6 @@ define('websync',{
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
 	checkDiff: function(){
-        if(!WebSyncData.body){
-            WebSyncData.body = {};
-        }
         if(!WebSync.oldData){
             WebSync.oldDataString = JSON.stringify(WebSyncData);
             WebSync.oldData = JSON.parse(WebSync.oldDataString);
@@ -560,17 +557,6 @@ define('websync',{
 		WebSync.applier.toggleSelection();
 		$(".tmp").css(css).removeClass("tmp");
 	},
-    // Function: void WebSync.register(string PluginName, function Plugin);
-	// Registers a plugin with the WebSync core. Plugin.enable() will be called afterwards. Plugin.disable() will be used to disable the plugin.
-    register: function(pluginname, plugin){
-		plugin = new plugin();
-		console.log("Loading plugin:",pluginname);
-		WebSync.plugins[pluginname]=plugin;
-		WebSync.plugins[pluginname].enable();
-	},
-    // Variable: object WebSync.plugins;
-    // List of all the plugins loaded in the format of {myawesomeplugin: object Plugin, ...}.
-	plugins: {},
     // Function: void WebSync.alert(string Message);
     // Displays an alert message in the lower right hand corner of the window.
 	alert: function(msg){

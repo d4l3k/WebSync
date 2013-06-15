@@ -25,6 +25,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			}
 			html+="</tr>";
 			$(html).insertBefore( self.selectedElem.parentElement);
+            self.posCache={};
 			self.cursorMove(0,-1);
 		}
 	});
@@ -37,12 +38,14 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			}
 			html+="</tr>";
 			$(html).insertAfter( self.selectedElem.parentElement);
+            self.posCache={};
 			self.cursorMove(0,1);
 		}
 	});
 	$('.Table [title="Delete Row"]').bind("click.Tables",function(e){
 		if(self.selected){
 			self.selectedElem.parentElement.remove();
+            self.posCache={};
 		}
 		self.clearSelect();
 	});
@@ -54,6 +57,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 				$("<td></td>").insertBefore(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
 			}
 			self.cursorMove(-1,0);
+            self.posCache={};
 		}
 	});
 	$('.Table [title="Insert Column Right"]').bind("click.Tables",function(e){
@@ -63,6 +67,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			for(var i=0;i<size[1];i++){
 				$("<td></td>").insertAfter(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
 			}
+            self.posCache={};
 			self.cursorMove(1,0);
 		}
 	});
@@ -74,6 +79,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			for(var i=0;i<size[1];i++){
 				parentElem.children[i].children[pos[0]].remove();
 			}
+            self.posCache={};
 			self.clearSelect();
 		}
 	});
@@ -106,6 +112,9 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         console.log(e);
         if(this!=self.selectedElem){
             self.cursorSelect(this);
+            self.selectedElem.contentEditable=true;
+			self.setEndOfContenteditable(self.selectedElem);
+            self.selectedElem.contentEditable="inherit";
         }
         self.selectionActive=true;
         self.selectionEnd = null;
@@ -120,7 +129,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         //console.log(e);
         self.clearSelect();
     });
-    $(".content_well").delegate("td","contextmenu.Tables",function(e){
+    $(".content").delegate("td","contextmenu.Tables",function(e){
         if(this!=self.selectedElem){
             self.cursorSelect(this);
         }
@@ -129,12 +138,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             //$(this).contextmenu();
         }
     });
-    $(".content_well").delegate("td","dblclick.Tables",function(e){
+    $(".content").delegate("td","dblclick.Tables",function(e){
 		if(self.selectedElem.contentEditable!="true"){
 			self.selectedEditable(true);
 		}
     });
-    $(".content_well").delegate(".Table.axis#x th", "click.Tables", function(e){
+    $(".content").delegate(".Table.axis#x th", "click.Tables", function(e){
         var pos = self.selectedPos(this);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(pos[0],0));
@@ -143,7 +152,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
         self.updateSelectedArea();
     });
-    $(".content_well").delegate(".Table.axis#y th", "click.Tables", function(e){
+    $(".content").delegate(".Table.axis#y th", "click.Tables", function(e){
         var pos = self.selectedPos(this);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(0,pos[1]));
@@ -157,7 +166,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             console.log($(e.originalEvent.clipboardData.getData('text/html')));
         }
     });
-    $(".content_well").bind("keydown.Tables",function(e){
+    $(".content").bind("keydown.Tables",function(e){
         console.log(e);
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
@@ -240,7 +249,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             var nodes = '<table class="Table axis" id="x"><thead><tr>';
             for(var i=0;i<size[0];i++){
                 var elem = self.posToElem(i,0);
-                nodes+='<th style="width: '+($(elem).width()+1)+'px">'+self.columnLabel(i)+'</th>';
+                var bounding = elem.getBoundingClientRect();
+                nodes+='<th style="width: '+(bounding.width-1).toFixed(0)+'px">'+self.columnLabel(i)+'</th>';
             }
             nodes+='</tr></thead></table><table class="Table axis" id="y"><thead>';
             for(var i=0;i<size[1];i++){
@@ -265,15 +275,17 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 	}
 	self.cursorUpdate = function(){
 		var pos = $(self.selectedElem).position();
-        pos.top += 1;
-        pos.left += 1;
+        pos.top += 2;
+        pos.left += 2;
 		//$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();
-        $("#table_cursor").css({left:pos.left,top:pos.top}).height($(self.selectedElem).height()).width($(self.selectedElem).width()+1).get(0).scrollIntoViewIfNeeded();
+        $("#table_cursor").css({left:pos.left,top:pos.top}).height($(self.selectedElem).height()-2).width($(self.selectedElem).width()-1).get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
         var table = $(self.primaryTable());
-        var offset = table.offset()
-        $(".Table.axis#x").offset({left:offset.left,top:offset.top-17}).width(table.width()+2);
-        $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
+        var offset = table.offset();
+        if(!($(".Table.axis#x").get(0).style.left)){
+            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17}).width(table.width()+2);
+            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
+        }
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){
@@ -388,16 +400,23 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     self.posToElem = function(x, y){
         return self.selectedElem.parentElement.parentElement.children[y].children[x];
     }
+    self.posCache = {};
 	self.selectedPos = function(targetElem){
         var child = (targetElem||self.selectedElem);
-		var column = 0;
-		while( (child = child.previousSibling) != null )
-			column++;
-		child = (targetElem||self.selectedElem).parentElement
-		var row = 0
-		while( (child = child.previousSibling) != null )
-			row++;
-		return [column,row];
+        if(self.posCache[child]){
+            return self.posCache[child];
+        }
+        else {
+            var column = 0;
+            while( (child = child.previousSibling) != null )
+                column++;
+            child = (targetElem||self.selectedElem).parentElement
+            var row = 0
+            while( (child = child.previousSibling) != null )
+                row++;
+            self.posCache[child]=[column,row];
+            return [column,row];
+        }
 	}
 	self.tableSize = function(){
 		return [self.selectedElem.parentElement.children.length,self.selectedElem.parentElement.parentElement.children.length]

@@ -189,7 +189,22 @@ cursor {
 }
 .content-spreadsheet {
     #spreadsheetWell {
-        background-color: white;
+        margin-top: 16px;
+        margin-left: 38px;
+        table {
+            background-color: white;
+        }
+    }
+    #top_corner {
+        width: 38px;
+        height: 16px;
+        border: 1px solid #aaa;
+        background-color: #eee;
+        z-index: 903;
+        position: fixed;
+    }
+    .axis {
+        position:fixed;
     }
 }
 .content-page {
@@ -326,8 +341,6 @@ a#name {
     }
     th {
         cursor: pointer;
-        padding-left: 1px;
-        padding-right: 1px;
         min-width: 0.25in;
         height: 16px;
     }
@@ -488,6 +501,7 @@ a#name {
     color: black;
     background-color: #eee;
     display: none;
+    z-index: 901;
     th.active {
         background-color: #666;
         color: white;

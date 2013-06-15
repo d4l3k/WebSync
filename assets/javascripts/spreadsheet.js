@@ -1,8 +1,9 @@
 // WebSync: Page layout handler
-define("/assets/spreadsheet.js",['websync'], function(websync) { var self = this;
+define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websync, tables) { var self = this;
     console.log("Spreadsheet loaded");
     $(".content").hide().addClass("content-spreadsheet").fadeIn();
     $(".content").append($('<div id="spreadsheetWell" class="content_container"><table><tbody id="tableInner"></tbody></table></div>'));
+    $(".content").append($('<div id="top_corner"></div>'));
     if(!WebSyncData.body){
         WebSyncData.body = [];
     }
@@ -28,5 +29,13 @@ define("/assets/spreadsheet.js",['websync'], function(websync) { var self = this
         //$(".slide").attr("contenteditable",true);
     }
 	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
+    $(".content_well").scroll(function(e){
+        $(".axis#y").offset({left: -1});
+        $(".axis#x").offset({top: $('.content_well').offset().top-1});
+        $("#top_corner").offset({left: -1, top: $('.content_well').offset().top-1});
+    });
+    $(".content_well").scroll();
+    $(".navbar-fixed-top").css({"border-bottom": "1px solid #aaa"})
+    $("#spreadsheetWell tr:first-child td:first-child").trigger("mousedown").trigger("mouseup");
     return self;
 });

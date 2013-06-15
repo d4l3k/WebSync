@@ -1,5 +1,14 @@
-Web-Sync by Outer Earth Interactive
+WebSync by Outer Earth Interactive
 Tristan Rice (C) 2013
 
-Required Packages:
-wkhtmltopdf
+Setup:
+For now, there needs to be a PostgreSQL and Redis server running on the machine. Once those are running, you should be able to run a development server by running:
+rackup
+and
+node web-sockets.js
+
+The production environment is currently setup for use with https://websyn.ca
+
+License:
+WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) license. If you want to use it for commercial purposes, please contact me (Tristan Rice) and we can work out an alternative license.
+https://creativecommons.org/licenses/by-nc-sa/3.0/

@@ -160,8 +160,13 @@ cursor {
 .content_well > div {
     @include ex(transform-origin, top center);
 }
-.content-presentation {
+.layout-presentation {
     //box-shadow: 0 0 8px #aaa;
+    #slides {
+        @include ex(transform-origin, top center);
+        display: table;
+        margin: 0 auto;
+    }
     .slide {
         height: 6in;
         width: 8in;
@@ -184,6 +189,17 @@ cursor {
         -ms-hyphens: auto;
         &.active {
             display:block;
+        }
+    }
+    .content_well {
+        left: 251px;
+    }
+    &.view {
+        .content_well {
+            left: 0;
+        }
+        #presentation-nav {
+            display: none;
         }
     }
 }
@@ -261,6 +277,9 @@ cursor {
                 background-color: white;
             }
         }
+    }
+    #chat {
+        display: none;
     }
     .content {
         border: none;

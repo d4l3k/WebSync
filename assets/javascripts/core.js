@@ -234,9 +234,10 @@ define('websync',{
         $(".settings-popup").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
-        $('#zoom_level').change(function(){
-			var zoom = parseInt($('#zoom_level').val())/100.0
-			$(".content_well").children().animate({"transform":"scale("+zoom+")"});
+        $('#zoom_level').slider()
+         .on('slide', function(e){
+			var zoom = $('#zoom_level').data("slider").getValue()/100.0
+			$(".content_well").children().css({"transform":"scale("+zoom+")"});
         });
         $('body').mousemove(function(e){
             if(WebSync.viewMode=='Zen'){
@@ -255,7 +256,8 @@ define('websync',{
             WebSync.viewMode = mode;
             if(mode=='Zen'){
                 $("body").addClass("zen").resize();
-                $("#zoom_level").val("120%").change();
+                $("#zoom_level").data("slider").setValue(120);
+                $("#zoom_level").trigger("slide");
                 $(".menu").animate({top:-85},200);
             }
             else if(mode=='Presentation') {
@@ -265,7 +267,8 @@ define('websync',{
             }
             else {
                 $("body").removeClass("zen").resize();
-                $("#zoom_level").val("100%").change();
+                $("#zoom_level").data("slider").setValue(100);
+                $("#zoom_level").trigger("slide");
                 $(".menu").animate({top: 0},200);
             }
         });

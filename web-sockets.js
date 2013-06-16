@@ -146,7 +146,7 @@ wss.on('connection', function(ws) {
                     redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                 } else if(data.type=='client_event'){
                     redis.publish('doc:'+doc_id,JSON.stringify({type:'client_bounce',client:client_id, data:JSON.stringify({type:'client_event',event:data.event, from:client_id, data:data.data})}));
-                } else if(data.type='assets') {
+                } else if(data.type=='assets') {
                     if(data.action=='list'){
                         postgres.query("SELECT * FROM assets ORDER BY name")
                         .on('row',function(row){

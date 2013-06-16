@@ -124,6 +124,9 @@ cursor {
             text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
         }
     }
+    .popover-content {
+        overflow-y: auto;
+    }
 }
 .settings-popup .arrow {
     /*left: 914px !important;*/

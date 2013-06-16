@@ -157,6 +157,13 @@ wss.on('connection', function(ws) {
                     } else if(data.action=='delete'){
                         postgres.query("DELETE FROM asset_documents WHERE document_id = $1 AND asset_id = $2",[doc_id,data.id]);
                     }
+                } else if(data.type=='diffs') {
+                    if(data.action=='list'){
+                        postgres.query("SELECT time, patch, user_email FROM changes WHERE document_id=$1 ORDER BY time DESC",[doc_id])
+                        .on('row',function(row){
+                            ws.send(JSON.stringify({type:'diff_list',time:row.time,patch:row.patch,user_email:row.user_email}));
+                        });
+                    }
                 }
             }
         });

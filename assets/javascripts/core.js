@@ -180,6 +180,15 @@ define('websync',{
                 $($(children.get(4)).children().get(0)).bootstrapSwitch();
                 $("#assets tbody").append(row);
             }
+            else if(data.type=='diff_list'){
+                var row = $("<tr><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' "+(($("script[src='"+data.url+"']").length>0)? "checked" : "")+"/></div></td></tr>");
+                var children = row.children();
+                children.get(0).innerText = data.time;
+                children.get(1).innerText = data.patch;
+                children.get(2).innerText = data.user_email;
+                $($(children.get(4)).children().get(0)).bootstrapSwitch();
+                $("#diffs tbody").append(row);
+            }
 		},
 		onerror:function(e){
 			console.log(e);
@@ -354,6 +363,10 @@ define('websync',{
                 require(url).disable();
                 requirejs.undef(url);
             }
+        });
+        $("a[href='#diffs']").click(function(){
+            $("#diffs tbody").html("");
+            WebSync.connection.sendJSON({type:'diffs',action:'list'});
         });
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write

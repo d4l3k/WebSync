@@ -1,4 +1,5 @@
 git pull
 bundle
-rake assets:precompile
+npm install
+rake assets:precompile &
 thin restart -C thin.yaml

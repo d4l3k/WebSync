@@ -181,7 +181,7 @@ define('websync',{
                 $("#assets tbody").append(row);
             }
             else if(data.type=='diff_list'){
-                var row = $("<tr><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' "+(($("script[src='"+data.url+"']").length>0)? "checked" : "")+"/></div></td></tr>");
+                var row = $("<tr><td></td><td></td><td></td><td ><button class='btn btn-warning'>Revert To</button></td></tr>");
                 var children = row.children();
                 children.get(0).innerText = data.time;
                 children.get(1).innerText = data.patch;
@@ -240,7 +240,7 @@ define('websync',{
                 },100);
             }
 		});
-        $(".settings-popup").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
+        $(".settings-popup #config").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').slider()
@@ -293,6 +293,21 @@ define('websync',{
         $('.settings-popup .close').click(function(){
 			$($("#settingsBtn").get(0).parentElement).toggleClass("active");
             $(".settings-popup").toggle();
+        });
+        $(".settings-popup #diffs").delegate('button','click',function(){
+            console.log(this);
+            var patches = [];
+            var c_div = this.parentElement.parentElement;
+            while((c_div=c_div.previousSibling)!=null){
+                patches.push(c_div.children[1].innerText);
+            }
+            console.log(patches);
+            var data = _.clone(WebSyncData);
+            for(var i=(patches.length-1);i>=0;i--){
+                data = jsondiffpatch.unpatch(data,JSON.parse(patches[i]));
+            }
+            WebSyncData = data;
+            WebSync.fromJSON();
         });
         this.worker = new Worker("/assets/edit-worker.js");
         this.worker.onmessage = function(e) {

@@ -92,6 +92,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     self.observer = function(){
         setTimeout(function(){
 			self.cursorUpdate();
+            self.headerUpdate();
 		},1);
     };
     $(".content").delegate("table","click.Tables",function(e){
@@ -263,6 +264,23 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
 		self.cursorUpdate();
 	}
+    self.headerUpdate = function(){
+        var size = self.tableSize();
+        var x_nodes = $(".axis#x th");
+        for(var i=0;i<size[0];i++){
+            var elem = self.posToElem(i,0);
+            var bounding = elem.getBoundingClientRect();
+            x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+self.columnLabel(i);
+        }
+        var y_nodes = $(".axis#y th");
+        for(var i=0;i<size[1];i++){
+            var elem = self.posToElem(0,i);
+            y_nodes.eq(i).css({height: ($(elem).height()+1)});//+'px">'+(i+1);
+        }
+        var table = $(self.primaryTable());
+        $(".Table.axis#x").width(table.width()+2);
+        $(".Table.axis#y").height(table.height());
+    };
 	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
 		var pos = self.selectedPos();

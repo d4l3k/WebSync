@@ -73,6 +73,10 @@ define("edit",['websync'],function(websync){ var self = this;
         console.log(size);
         WebSync.applyCssToSelection({'font-size':size});
     });
+    $("#picture").click(function(){
+        var url = prompt("Image URL");
+        document.execCommand("insertImage", false, url);
+    });
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     this.disable = function(){

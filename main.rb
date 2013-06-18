@@ -321,10 +321,12 @@ class WebSync < Sinatra::Base
     #end
 
     get '/' do
-        #$redis.cache("index",300) do
-            @javascripts = []
+        @javascripts = []
+        if logged_in?
+            erb :file_list
+        else
             erb :index
-        #end
+        end
     end
     get '/documentation' do
         erb :documentation

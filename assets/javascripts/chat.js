@@ -10,7 +10,7 @@ define(['websync'],function(edit,websink){ var self = {};
 	// Unbind Example: $("*").unbind(".Tables");
     self.open = false;
     $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well"></div><div class="chat_input input-append"><input class="span2" id="appendedInputButton" type="text"><button id="msg_btn" class="btn" type="button">Send</button></div></div>'));
-    $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><img src="/chat.png"></img> <span id="user_count" class="badge">1</span></a></li>'));
+    $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><i class="icon-comment icon-large"></i> <span id="user_count" class="badge">1</span></a></li>'));
     $("#chat").offset({left:window.innerWidth+1});
     $("#chat img").tooltip();
     $(document).bind('client_load.Chat',function(e,data){

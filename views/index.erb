@@ -1,6 +1,211 @@
+<style>
+
+    /* GLOBAL STYLES
+    -------------------------------------------------- */
+    /* Padding below the footer and lighter body text */
+
+    body {
+      padding-bottom: 40px;
+      color: #5a5a5a;
+    }
+
+
+
+    /* CUSTOMIZE THE NAVBAR
+    -------------------------------------------------- */
+
+
+
+
+    /* CUSTOMIZE THE CAROUSEL
+    -------------------------------------------------- */
+
+    /* Carousel base class */
+    .carousel {
+      margin-bottom: 60px;
+    }
+
+    .carousel .container {
+      position: relative;
+      z-index: 9;
+    }
+
+    .carousel-control {
+      height: 80px;
+      margin-top: 0;
+      font-size: 120px;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      background-color: transparent;
+      border: 0;
+      z-index: 10;
+    }
+
+    .carousel .item {
+      height: 500px;
+    }
+    .carousel img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      height: 500px;
+    }
+
+    .carousel-caption {
+      background-color: transparent;
+      position: static;
+      max-width: 550px;
+      padding: 0 20px;
+      margin-top: 200px;
+    }
+    .carousel-caption h1,
+    .carousel-caption .lead {
+      margin: 0;
+      line-height: 1.25;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+    .carousel-caption .btn {
+      margin-top: 10px;
+    }
+
+
+
+    /* MARKETING CONTENT
+    -------------------------------------------------- */
+
+    /* Center align the text within the three columns below the carousel */
+    .marketing .span4 {
+      text-align: center;
+    }
+    .marketing h2 {
+      font-weight: normal;
+    }
+    .marketing .span4 p {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+
+    /* Featurettes
+    ------------------------- */
+
+    .featurette-divider {
+      margin: 80px 0; /* Space out the Bootstrap <hr> more */
+    }
+    .featurette {
+      padding-top: 120px; /* Vertically center images part 1: add padding above and below text. */
+      overflow: hidden; /* Vertically center images part 2: clear their floats. */
+    }
+    .featurette-image {
+      margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
+      border-radius: 4px;
+    }
+
+    /* Give some space on the sides of the floated elements so text doesn't run right into it. */
+    .featurette-image.pull-left {
+      margin-right: 40px;
+    }
+    .featurette-image.pull-right {
+      margin-left: 40px;
+    }
+
+    /* Thin out the marketing headings */
+    .featurette-heading {
+      font-size: 50px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+
+
+    /* RESPONSIVE CSS
+    -------------------------------------------------- */
+
+    @media (max-width: 979px) {
+
+      .container.navbar-wrapper {
+        margin-bottom: 0;
+        width: auto;
+      }
+      .navbar-inner {
+        border-radius: 0;
+        margin: -20px 0;
+      }
+
+      .carousel .item {
+        height: 500px;
+      }
+      .carousel img {
+        width: auto;
+        height: 500px;
+      }
+
+      .featurette {
+        height: auto;
+        padding: 0;
+      }
+      .featurette-image.pull-left,
+      .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+      }
+    }
+
+
+    @media (max-width: 767px) {
+
+      .navbar-inner {
+        margin: -20px;
+      }
+
+      .carousel {
+        margin-left: -20px;
+        margin-right: -20px;
+      }
+      .carousel .container {
+
+      }
+      .carousel .item {
+        height: 300px;
+      }
+      .carousel img {
+        height: 300px;
+      }
+      .carousel-caption {
+        width: 65%;
+        padding: 0 70px;
+        margin-top: 100px;
+      }
+      .carousel-caption h1 {
+        font-size: 30px;
+      }
+      .carousel-caption .lead,
+      .carousel-caption .btn {
+        font-size: 18px;
+      }
+
+      .marketing .span4 + .span4 {
+        margin-top: 40px;
+      }
+
+      .featurette-heading {
+        font-size: 30px;
+      }
+      .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+    }
+    </style>
+
 <div class="container">
     <div class="row-fluid">
-        <div class="span10">
+        <div class="span12">
             <div class="hero-unit">
                 <h1>Welcome to WebSync</h1>
                 <p>
@@ -16,64 +221,11 @@
                             <% end %>
                         </ul>
                     </div>
-                    or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="/documentation" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Documentation</a>
+                    or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Code</a>
                 </p>
             </div>
-            <div class="ad link">
-                <script type="text/javascript"><!--
-                google_ad_client = "ca-pub-6781356745519353";
-                /* WebSync Link Ad */
-                google_ad_slot = "7740799799";
-                google_ad_width = 728;
-                google_ad_height = 15;
-                //-->
-                </script>
-                <script type="text/javascript"
-                src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-                </script>
-            </div>
-            <table class="table table-bordered table-hover table-click">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Owner</th>
-                        <th>Last Modified</th>
-                        <th>Created</th>
-                        <th>Public</th>
-                        <th>Actions</th>
-                </thead>
-                <tbody>
-                    <% Document.all.each do |doc| %>
-                        <%
-                            color = 'error'
-                            if doc.user==current_user
-                                color = 'success'
-                            elsif doc.public
-                                color = 'info'
-                            end
-                        %>
-                        <tr class="<%= color %>">
-                            <td><%= doc.id %></td>
-                            <td><%= doc.name %></td>
-                            <td><%= doc.user.email %></td>
-                            <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
-                            <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
-                            <td><%= doc.public ? 'Yes' : 'No' %></td>
-                            <% if doc.user=current_user %>
-                                <td>
-                                    <a href="/<%= doc.id %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
-                                </td>
-                            <% end %>
-                        </tr>
-                    <% end %>
-                </tbody>
-            </table>
-            <p>
-                <i>Works with Chrome, Firefox, Opera, and other modern browsers.</i>
-            </p>
         </div>
-        <div class="span2">
+        <div class="span2" style="display: none">
             <script type="text/javascript"><!--
             google_ad_client = "ca-pub-6781356745519353";
             /* WebSync Index */
@@ -89,16 +241,43 @@
             </script>
         </div>
     </div>
-</div>
-<script type="text/javascript">
-window.onload = function(){
-    $(".info td, .success td").click(function(){
-        var id = $(this).parent().children().first().text();
-        c = this;
-        location.pathname="/"+id+"/edit";
-        console.log("blah: ",id);
-    });
-}
-</script>
+    <div class="row-fluid">
+    <div class="span12 marketing">
+        <hr class="featurette-divider">
+        <div class="featurette">
+            <img class="featurette-image pull-right" src="/img/code.png">
+            <h2 class="featurette-heading">WebSync is completely open source. <span class="muted">Do what you want.</span></h2>
+                <p class="lead">
+                    WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. This means you can take the source code and tweak it however you like.
+                </p>
+        </div>
+        <hr class="featurette-divider">
+        <div class="featurette">
+            <img class="featurette-image pull-left" src="/img/lock.png">
+            <h2 class="featurette-heading">We fight for the users. <span class="muted">Your privacy is important.</span></h2>
+                <p class="lead">
+                    Outer Earth Interactive will not sell your data to advertisers or respond to illegal requests from the government. In addition, all traffic to websyn.ca is encrypted preventing unwanted surveillance.
+                </p>
+        </div>
+        <hr class="featurette-divider">
+        <div class="featurette">
+            <img class="featurette-image pull-right" src="/img/servers.png">
+            <h2 class="featurette-heading">You can run WebSync yourself. <span class="muted">Keep your data private.</span></h2>
+                <p class="lead">
+                    Open source code means that you can run WebSync on your own servers. You can feel save knowing only you have access to your files.
+                </p>
+        </div>
+        <hr class="featurette-divider">
+
+            <p>
+                <i>Works with Chrome, Firefox, Opera, and other modern browsers.</i>
+            </p>
+            <p>
+                <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a> <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">WebSync</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://tristanrice.name" property="cc:attributionName" rel="cc:attributionURL">Tristan Rice</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
+            </p>
+    </div>
+    </div>
+
+    </div>
 </div>
 

@@ -543,6 +543,13 @@ a#name {
         width: 40px;
     }
 }
+.Resize.handle {
+    border: 1px solid black;
+    background-color: white;
+    height: 5px;
+    width: 5px;
+    position: absolute;
+}
 
 .badge-pulse {
     @include ex(animation-duration, 1s);

@@ -168,7 +168,6 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
     });
     $(".content").bind("keydown.Tables",function(e){
-        console.log(e);
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;

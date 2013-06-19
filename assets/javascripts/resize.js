@@ -1,5 +1,5 @@
 define(['websync'],function(){ var self = {};
-    $(".content").delegate("img, table", "click.Resize", function(){
+    $(".content_container").delegate("img, table:not('.content_container > table')", "click.Resize", function(e){
         if(WebSyncAuth.view_op=="edit"){
             self.resizeOn(this);
             e.stopPropagation();

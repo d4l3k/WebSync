@@ -1,6 +1,50 @@
 define(['websync'],function(){ var self = {};
     $(".content").delegate("img", "click.Resize", function(){
         self.resizeOn(this);
+        e.stopPropagation();
+    });
+    $(".content").bind("click.Resize", function(){
+        self.resizeOff();
+    });
+    $(".content").delegate(".Resize.handle", "click.Resize", function(e){
+        e.stopPropagation();
+    });
+    $(".content").delegate(".Resize.handle.bottom", "mousedown.Resize", function(e){
+        console.log(e);
+        self.drag = true;
+        self.origY = e.pageY;
+        self.origHeight = $(self.active).height();
+        e.preventDefault();
+    });
+    $(".content").delegate(".Resize.handle.right", "mousedown.Resize", function(e){
+        console.log(e);
+        self.drag = true;
+        self.origX = e.pageX;
+        self.origWidth = $(self.active).width();
+        e.preventDefault();
+    });
+    $(".content").bind("mousemove.Resize", function(e){
+        if(self.drag){
+            if(self.origY){
+                $(self.active).height(e.pageY-self.origY + self.origHeight);
+            }
+            if(self.origX){
+                $(self.active).width(e.pageX-self.origX + self.origWidth);
+            }
+            self.updateHandles();
+            e.preventDefault();
+        }
+    });
+    $(".content").bind( "mouseup.Resize", function(e){
+        if(self.drag){
+            console.log(e);
+            e.preventDefault();
+            self.origX = null;
+            self.origY = null;
+            self.origWidth = null;
+            self.origHeight = null;
+            self.drag = false;
+        }
     });
     self.resizeOn = function(elem){
         console.log(elem);
@@ -27,6 +71,11 @@ define(['websync'],function(){ var self = {};
         $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").css({left: offset.left+$(self.active).width()/2});
     }
     self.resizeOff = function(){
+        self.drag = false;
+        self.origX = null;
+        self.origY = null;
+        self.origWidth = null;
+        self.origHeight = null;
         $(".Resize.handle").remove();
         self.active = null;
     }

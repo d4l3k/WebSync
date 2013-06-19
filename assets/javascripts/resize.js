@@ -1,5 +1,5 @@
 define(['websync'],function(){ var self = {};
-    $(".content").delegate("img", "click.Resize", function(){
+    $(".content").delegate("img, table", "click.Resize", function(){
         self.resizeOn(this);
         e.stopPropagation();
     });

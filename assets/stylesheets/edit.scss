@@ -550,6 +550,7 @@ a#name {
     width: 6px;
     position: absolute;
     margin: -4px;
+    z-index: 910;
     &.top.left {
         cursor: nw-resize;
     }

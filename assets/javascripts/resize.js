@@ -1,7 +1,9 @@
 define(['websync'],function(){ var self = {};
     $(".content").delegate("img, table", "click.Resize", function(){
-        self.resizeOn(this);
-        e.stopPropagation();
+        if(WebSyncAuth.view_op=="edit"){
+            self.resizeOn(this);
+            e.stopPropagation();
+        }
     });
     $(".content").bind("click.Resize", function(){
         self.resizeOff();
@@ -23,7 +25,7 @@ define(['websync'],function(){ var self = {};
         self.origWidth = $(self.active).width();
         e.preventDefault();
     });
-    $(".content").bind("mousemove.Resize", function(e){
+    $(document).bind("mousemove.Resize", function(e){
         if(self.drag){
             if(self.origY){
                 $(self.active).height(e.pageY-self.origY + self.origHeight);
@@ -35,7 +37,7 @@ define(['websync'],function(){ var self = {};
             e.preventDefault();
         }
     });
-    $(".content").bind( "mouseup.Resize", function(e){
+    $(document).bind( "mouseup.Resize", function(e){
         if(self.drag){
             console.log(e);
             e.preventDefault();

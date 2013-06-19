@@ -544,6 +544,10 @@ a#name {
     }
 }
 .Resize.handle {
+    display: none;
+}
+.edit .Resize.handle {
+    display: initial;
     border: 1px solid black;
     background-color: white;
     height: 6px;

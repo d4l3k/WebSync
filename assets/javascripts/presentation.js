@@ -84,7 +84,7 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = thi
         var width_scale = well_rect.width/(content_rect.width()+60);
         var height_scale = well_rect.height/(content_rect.height()+65);
         var zoom = (width_scale>height_scale)*height_scale + (width_scale<=height_scale)*width_scale;
-        $("#slides").css({"transform":"scale("+zoom.toFixed(3)+")"});
+        $(".content_well").children().css({"transform":"scale("+zoom.toFixed(3)+")"});
     });
     WebSync.fromJSON();
     $(window).resize();

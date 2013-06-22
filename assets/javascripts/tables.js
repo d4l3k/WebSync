@@ -89,11 +89,18 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.clearSelect();
 		}
 	});
+    self.lastSize = "";
     self.observer = function(){
-        setTimeout(function(){
-			self.cursorUpdate();
-            self.headerUpdate();
-		},1);
+        var bounding_data = JSON.stringify(self.selectedElem.getBoundingClientRect());
+        if(bounding_data!=self.lastSize){
+            setTimeout(function(){
+                self.cursorUpdate();
+            },1);
+            setTimeout(function(){
+                self.headerUpdate();
+            },2);
+            self.lasttSize=bounding_data;
+        }
     };
     $(".content").delegate("table","click.Tables",function(e){
         if(!self.selectedElem || self.selectedElem.contentEditable!="true"){
@@ -113,6 +120,14 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         var position = $(this).offset();
         $('.Table.axis th.resize').removeClass('resize');
         if(Math.abs(e.pageX-position.left)<5 || Math.abs(e.pageX-(position.left+$(this).width()))<5){
+            $(this).addClass("resize");
+        }
+    });
+    $(".content").delegate(".Table.axis#y th", "mousemove.Tables", function(e){
+        var position = $(this).offset();
+        console.log(e.pageY, position.top);
+        $('.Table.axis th.resize').removeClass('resize');
+        if(Math.abs(e.pageY-position.top)<5 || Math.abs(e.pageY-(position.top+$(this).height()))<5){
             $(this).addClass("resize");
         }
     });
@@ -157,10 +172,19 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         self.origX = e.pageX;
         self.origWidth = $(this).width();
     });
+    $(".content").delegate(".Table.axis#y th.resize", "mousedown.Tables", function(e){
+        self.drag = true;
+        self.active = this;
+        self.origY = e.pageY;
+        self.origHeight = $(this).height();
+    });
     $(document).bind('mousemove.Tables', function(e){
         if(self.drag){
             if(self.origX){
                 $(self.active).width(e.pageX-self.origX+self.origWidth);
+            }
+            if(self.origY){
+                $(self.active).height(e.pageY-self.origY+self.origHeight);
             }
         }
     });
@@ -184,7 +208,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
         self.updateSelectedArea();
     });
-    $(".content").delegate(".Table.axis#y th", "click.Tables", function(e){
+    $(".content").delegate(".Table.axis#y th:not('resize')", "click.Tables", function(e){
         var pos = self.selectedPos(this);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(0,pos[1]));
@@ -300,12 +324,15 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         for(var i=0;i<size[0];i++){
             var elem = self.posToElem(i,0);
             var bounding = elem.getBoundingClientRect();
-            x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+self.columnLabel(i);
+            x_nodes[i].style.width = (bounding.width-1)+"px";
+            //x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+self.columnLabel(i);
         }
         var y_nodes = $(".axis#y th");
         for(var i=0;i<size[1];i++){
             var elem = self.posToElem(0,i);
-            y_nodes.eq(i).css({height: ($(elem).height()+1)});//+'px">'+(i+1);
+            var bounding = elem.getBoundingClientRect();
+            y_nodes[i].style.height = (bounding.height-1)+"px";
+            //y_nodes.eq(i).css({height: (bounding.height-1)});//+'px">'+(i+1);
         }
         var table = $(self.primaryTable());
         $(".Table.axis#x").width(table.width()+2);
@@ -331,8 +358,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         var table = $(self.primaryTable());
         var offset = table.offset();
         if(!($(".Table.axis#x").get(0).style.left)){
-            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17}).width(table.width()+2);
-            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
+            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17});//.width(table.width()+2);
+            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
         }
 	}
 	self.selectedEditable = function(edit){

@@ -8,10 +8,27 @@ define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websy
         WebSyncData.body = [];
     }
     WebSync.toJSON = function() {
-		WebSyncData.body = DOMToJSON($("#tableInner").get(0).childNodes);
+        var json_set = [];
+        var rows = $("#tableInner").get(0).childNodes;
+        _.each(rows, function(row,index){
+            json_set[index]=[];
+            _.each(row.childNodes,function(cell, index2){
+                json_set[index][index2]=DOMToJSON(cell.childNodes);
+            });
+        })
+        WebSyncData.body = json_set;
+		//WebSyncData.body = DOMToJSON($("#tableInner").get(0).childNodes);
     }
     WebSync.fromJSON = function() {
-        $("#tableInner").get(0).innerHTML=JSONToDOM(WebSyncData.body);
+        var html_set = "";
+        _.each(WebSyncData.body, function(row){
+            html_set += "<tr>"
+            _.each(row,function(cell){
+                html_set+="<td>"+JSONToDOM(cell)+"</td>";
+            });
+            html_set+="</tr>";
+        });
+        $("#tableInner").get(0).innerHTML=html_set;//=JSONToDOM(WebSyncData.body);
     }
     if(_.isEmpty(WebSyncData.body)){
         console.log("Appending!!!");

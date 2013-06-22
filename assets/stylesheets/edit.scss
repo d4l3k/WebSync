@@ -356,7 +356,7 @@ a#name {
 .content {
     position: relative;
 	table {
-		width: 100%;
+		//width: 100%;
 	}
     table, th, td {
         border: 1px solid #888;
@@ -381,6 +381,9 @@ a#name {
     cursor: pointer;
     &#x th.resize {
         cursor: col-resize;
+    }
+    &#y th.resize {
+        cursor: row-resize;
     }
 }
 .ribbon {

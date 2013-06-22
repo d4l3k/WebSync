@@ -630,14 +630,14 @@ function NODEtoJSON(obj){
         jso.textContent = obj.textContent;
     }
     if(obj.attributes){
-        $.each(obj.attributes,function(k,v){
+        _.each(obj.attributes,function(v,k){
             // TODO: Add blacklist of classnames & attributes for DOM serialization.
             if(v.name!="contenteditable"){
                 jso[v.name]=v.value;
             }
         });
     }
-    $.each(obj.childNodes,function(index,child){
+    _.each(obj.childNodes,function(child,index){
         jso.childNodes.push(NODEtoJSON(child));
     });
     if(_.isEmpty(jso.childNodes)){
@@ -647,7 +647,7 @@ function NODEtoJSON(obj){
 }
 function DOMToJSON(obj){
     var jso = [];
-    $.each(obj,function(index, elem){
+    _.each(obj,function(elem, index){
         elem.normalize();
         jso.push(NODEtoJSON(elem));
     });
@@ -659,7 +659,7 @@ function NODEtoDOM(obj){
         return obj.textContent;
     }
     html+="<"+obj.name;
-    $.each(obj,function(k,v){
+    _.each(obj,function(v,k){
         if(k!="name"&&k!="textContent"&&k!="childNodes"){
             html+=" "+k+"="+JSON.stringify(v);
         }
@@ -667,7 +667,7 @@ function NODEtoDOM(obj){
 
     if(obj.childNodes){
         html+=">";
-        $.each(obj.childNodes,function(index, elem){
+        _.each(obj.childNodes,function(elem,index){
             html+= NODEtoDOM(elem);
         });
         html+="</"+obj.name+">";
@@ -679,7 +679,7 @@ function NODEtoDOM(obj){
 }
 function JSONToDOM(obj){
     var html = "";
-    $.each(obj,function(index,elem){
+    _.each(obj,function(elem,index){
         html += NODEtoDOM(elem);
     });
     return html;

@@ -109,6 +109,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
     $(".content").delegate("td","mouseleave.Tables",function(e){
     });
+    $(".content").delegate(".Table.axis#x th", "mousemove.Tables", function(e){
+        var position = $(this).offset();
+        $('.Table.axis th.resize').removeClass('resize');
+        if(Math.abs(e.pageX-position.left)<5 || Math.abs(e.pageX-(position.left+$(this).width()))<5){
+            $(this).addClass("resize");
+        }
+    });
     $(".content").delegate("td","mousedown.Tables",function(e){
         console.log(e);
         if(this!=self.selectedElem){
@@ -144,7 +151,31 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedEditable(true);
 		}
     });
-    $(".content").delegate(".Table.axis#x th", "click.Tables", function(e){
+    $(".content").delegate(".Table.axis#x th.resize", "mousedown.Tables", function(e){
+        self.drag = true;
+        self.active = this;
+        self.origX = e.pageX;
+        self.origWidth = $(this).width();
+    });
+    $(document).bind('mousemove.Tables', function(e){
+        if(self.drag){
+            if(self.origX){
+                $(self.active).width(e.pageX-self.origX+self.origWidth);
+            }
+        }
+    });
+    $(document).bind( "mouseup.Resize", function(e){
+        if(self.drag){
+            console.log(e);
+            e.preventDefault();
+            self.origX = null;
+            self.origY = null;
+            self.origWidth = null;
+            self.origHeight = null;
+            self.drag = false;
+        }
+    });
+    $(".content").delegate(".Table.axis#x th:not('resize')", "click.Tables", function(e){
         var pos = self.selectedPos(this);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(pos[0],0));

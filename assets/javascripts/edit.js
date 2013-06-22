@@ -74,9 +74,36 @@ define("edit",['websync'],function(websync){ var self = this;
         WebSync.applyCssToSelection({'font-size':size});
     });
     $("#picture").click(function(){
+        /*
+        //TODO: Keep position.
+        bootbox.prompt("Enter image URL", function(result) {
+            if (result === null) {
+            } else {
+                document.execCommand("insertImage", false, url);
+            }
+        });*/
         var url = prompt("Image URL");
         document.execCommand("insertImage", false, url);
     });
+    $("#video").click(function(){
+        var url = prompt("Video URL (Youtube)");
+        if(url.indexOf("youtu")!=-1){
+            var youtube_id = self.youtube_parser(url);
+            console.log("Youtube id", youtube_id);
+            var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/'+youtube_id+'?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
+            document.execCommand("insertHTML", false, html);
+        }
+    });
+    // Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
+    self.youtube_parser = function(url){
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match&&match[2].length==11){
+            return match[2];
+        }else{
+            alert("Invalid URL");
+        }
+    }
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     this.disable = function(){
@@ -122,4 +149,6 @@ define("edit",['websync'],function(websync){ var self = this;
     $('#font').html(font_list.join("\n"));
     WebSync.updateRibbon();
 });
+
+
 

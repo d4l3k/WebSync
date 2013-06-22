@@ -373,9 +373,14 @@ a#name {
         cursor: text;
     }
     th {
-        cursor: pointer;
         min-width: 0.25in;
         height: 16px;
+    }
+}
+.Table.axis {
+    cursor: pointer;
+    &#x th.resize {
+        cursor: col-resize;
     }
 }
 .ribbon {

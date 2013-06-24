@@ -1,9 +1,27 @@
 WebSync by Outer Earth Interactive
 Tristan Rice (C) 2013
 
-License:
-WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) license. If you want to use it for commercial purposes, please contact me (Tristan Rice) and we can work out an alternative license.
-https://creativecommons.org/licenses/by-nc-sa/3.0/
+Features:
+* Persistent JSON object synced between clients
+* Document, Spreadsheet, and Presentation editing and viewing.
+* Tables
+* Resizable Images & Tables
+* User support
+    - Icons and display names via Gravatar.
+* Multi-user editing
+* In document chat between users
+* Revert changes to edited documents
+* Document sharing
+* Open source
+
+TODO:
+Grepping through the source code is the best way to find things that need to be done, but here's a list of a few major things.
+* Revert change previews
+* Anonymous Users
+* Better document sharing & permissions
+* Zooming with regards to tables and resizing.
+* Easier first-time deployment with automatic script group creation.
+* Absolutely positioned images & tables
 
 Dependencies:
 For now, there needs to be an unsecured PostgreSQL and Redis server running on the machine. However, it should be fairly easy to change the login details in main.rb & web-sockets.js.
@@ -18,4 +36,10 @@ node web-sockets.js
 
 This launches the main site on port 4567 and the web socket server on 4568.
 
+Once the site is running you need to go into the admin panel and configure the script groups.
+
 The production environment is currently setup for use with https://websyn.ca
+
+License:
+WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) license. If you want to use it for commercial purposes, please contact me (Tristan Rice) and we can work out an alternative license.
+https://creativecommons.org/licenses/by-nc-sa/3.0/

@@ -26,15 +26,17 @@ Grepping through the source code is the best way to find things that need to be 
 * Redesign website to be a little more unique.
 
 Dependencies:
-For now, there needs to be an unsecured PostgreSQL and Redis server running on the machine. However, it should be fairly easy to change the login details in main.rb & web-sockets.js.
-This also requires ruby, rubygems, nodejs, and npm.
+WebSync requires ruby, rubygems, nodejs, and npm.
+WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities. Redis may be replaced with ZeroMQ in the future.
 
-You can install the ruby dependencies by running the command "bundler" and the nodejs dependencies by running "npm install".
+You can install the Ruby dependencies by running the command "bundle" and the Node.JS dependencies by running "npm install".
+
+Some things can be configured via config.json but a majority still require source changes.
 
 Launching:
 Once the dependencies are installed and running, you should be able to run a development server by running:
 rackup
-node web-sockets.js
+./backend.js
 
 This launches the main site on port 4567 and the web socket server on 4568.
 

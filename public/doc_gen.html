@@ -61,7 +61,7 @@ define(['websync'],function(edit,websink){ var self = {};
 	// Unbind Example: $("*").unbind(".Tables");
     self.open = false;
     $('body').append($('&#60;div id="chat" class="sidebar"&#62&#60;div id="user_list"&#62&#60;/div&#62&#60;div id="chat_well"&#62&#60;/div&#62&#60;div class="chat_input input-append"&#62&#60;input class="span2" id="appendedInputButton" type="text"&#62&#60;button id="msg_btn" class="btn" type="button"&#62Send&#60;/button&#62&#60;/div&#62&#60;/div&#62'));
-    $('#settings').prepend($('&#60;li&#62&#60;a id="chat_btn" title="Chat"&#62&#60;img src="/chat.png"&#62&#60;/img&#62 &#60;span id="user_count" class="badge"&#621&#60;/span&#62&#60;/a&#62&#60;/li&#62'));
+    $('#settings').prepend($('&#60;li&#62&#60;a id="chat_btn" title="Chat"&#62&#60;i class="icon-comment icon-large"&#62&#60;/i&#62 &#60;span id="user_count" class="badge"&#621&#60;/span&#62&#60;/a&#62&#60;/li&#62'));
     $("#chat").offset({left:window.innerWidth+1});
     $("#chat img").tooltip();
     $(document).bind('client_load.Chat',function(e,data){
@@ -217,133 +217,133 @@ define(['websync'],function(edit,websink){ var self = {};
                 <div class='well'>
                 <b>void WebSync.config_set(string key, object value, string space);</b>
                 <br>
-                <i>Type: Function, Line: 194</i>
+                <i>Type: Function, Line: 203</i>
                 <br>
                 <span>Sends a request to the server to set config[key] to value. Space can be "user" or "document".</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.config_get(string key, string space);</b>
                 <br>
-                <i>Type: Function, Line: 202</i>
+                <i>Type: Function, Line: 211</i>
                 <br>
                 <span>Sends a request to the server for the key value. Space can be "user" or "document".</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.initialize();</b>
                 <br>
-                <i>Type: Function, Line: 214</i>
+                <i>Type: Function, Line: 223</i>
                 <br>
                 <span>This is where the core of WebSync initializes.</span>
                 </div>
                 <div class='well'>
                 <b>string WebSync.viewMode;</b>
                 <br>
-                <i>Type: Variable, Line: 364</i>
+                <i>Type: Variable, Line: 393</i>
                 <br>
                 <span>This is the current visual mode. This can be either 'zen' or 'normal'</span>
                 </div>
                 <div class='well'>
                 <b>boolean WebSync.menuVisible;</b>
                 <br>
-                <i>Type: Variable, Line: 367</i>
+                <i>Type: Variable, Line: 396</i>
                 <br>
                 <span>This tells you if the menu ribbon is visible or not. In zen mode it can disappear.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.updateRibbon();</b>
                 <br>
-                <i>Type: Function, Line: 446</i>
+                <i>Type: Function, Line: 475</i>
                 <br>
                 <span>This updates the ribbon buttons based on the content in the ribbon bar. <span class="todo">TODO:</span> Use registration system & persist menu between updates.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.loadScripts();</b>
                 <br>
-                <i>Type: Function, Line: 469</i>
+                <i>Type: Function, Line: 498</i>
                 <br>
                 <span>Checks server for plugin scripts to load.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.showHTML();</b>
                 <br>
-                <i>Type: Function, Line: 474</i>
+                <i>Type: Function, Line: 503</i>
                 <br>
                 <span>Converts visible text to HTML. <span class="todo">TODO:</span> Delete/figure something out.</span>
                 </div>
                 <div class='well'>
                 <b>string WebSync.getHTML();</b>
                 <br>
-                <i>Type: Function, Line: 479</i>
+                <i>Type: Function, Line: 508</i>
                 <br>
                 <span>This will return sanitized document HTML. <span class="todo">TODO:</span> This should be migrated into the page handler.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.resize();</b>
                 <br>
-                <i>Type: Function, Line: 488</i>
+                <i>Type: Function, Line: 517</i>
                 <br>
                 <span>Event handler for when the window resizes. This is an <span class="internal">internal</span> method.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.checkDiff();</b>
                 <br>
-                <i>Type: Function, Line: 496</i>
+                <i>Type: Function, Line: 526</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.insertAtCursor(jQuery node);</b>
                 <br>
-                <i>Type: Function, Line: 520</i>
+                <i>Type: Function, Line: 550</i>
                 <br>
                 <span>Inserts a DOM element at selection cursor. This is probably going to be deprecated.</span>
                 </div>
                 <div class='well'>
                 <b>object WebSync.getCss();</b>
                 <br>
-                <i>Type: Function, Line: 536</i>
+                <i>Type: Function, Line: 566</i>
                 <br>
                 <span>Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.applyCssToSelection(object css);</b>
                 <br>
-                <i>Type: Function, Line: 557</i>
+                <i>Type: Function, Line: 587</i>
                 <br>
                 <span>Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.alert(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 563</i>
+                <i>Type: Function, Line: 593</i>
                 <br>
                 <span>Displays an alert message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.error(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 568</i>
+                <i>Type: Function, Line: 598</i>
                 <br>
                 <span>Displays an error message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.success(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 573</i>
+                <i>Type: Function, Line: 603</i>
                 <br>
                 <span>Displays a success message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.info(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 578</i>
+                <i>Type: Function, Line: 608</i>
                 <br>
                 <span>Displays an info message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.alert_msg(string Message, string Classes);</b>
                 <br>
-                <i>Type: Function, Line: 583</i>
+                <i>Type: Function, Line: 613</i>
                 <br>
                 <span>Displays an message in the lower right hand corner of the window with css classes.</span>
                 </div>
@@ -530,6 +530,15 @@ define('websync',{
                 $($(children.get(4)).children().get(0)).bootstrapSwitch();
                 $("#assets tbody").append(row);
             }
+            else if(data.type=='diff_list'){
+                var row = $("&#60;tr&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;td &#62&#60;button class='btn btn-warning'&#62Revert To&#60;/button&#62&#60;/td&#62&#60;/tr&#62");
+                var children = row.children();
+                children.get(0).innerText = data.time;
+                children.get(1).innerText = data.patch;
+                children.get(2).innerText = data.user_email;
+                $($(children.get(4)).children().get(0)).bootstrapSwitch();
+                $("#diffs tbody").append(row);
+            }
 		},
 		onerror:function(e){
 			console.log(e);
@@ -581,7 +590,7 @@ define('websync',{
                 },100);
             }
 		});
-        $(".settings-popup").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
+        $(".settings-popup #config").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').slider()
@@ -612,6 +621,7 @@ define('websync',{
             }
             else if(mode=='Presentation') {
                 $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
+                WebSyncAuth.view_op = "view";
                 window.history.pushState("","WebSync - Presentation Mode","view");
                 $(".menu").animate({top: -85},200);
             }
@@ -634,6 +644,21 @@ define('websync',{
         $('.settings-popup .close').click(function(){
 			$($("#settingsBtn").get(0).parentElement).toggleClass("active");
             $(".settings-popup").toggle();
+        });
+        $(".settings-popup #diffs").delegate('button','click',function(){
+            console.log(this);
+            var patches = [];
+            var c_div = this.parentElement.parentElement;
+            while((c_div=c_div.previousSibling)!=null){
+                patches.push(c_div.children[1].innerText);
+            }
+            console.log(patches);
+            var data = _.clone(WebSyncData);
+            for(var i=(patches.length-1);i&#62=0;i--){
+                data = jsondiffpatch.unpatch(data,JSON.parse(patches[i]));
+            }
+            WebSyncData = data;
+            WebSync.fromJSON();
         });
         this.worker = new Worker("/assets/edit-worker.js");
         this.worker.onmessage = function(e) {
@@ -704,6 +729,10 @@ define('websync',{
                 require(url).disable();
                 requirejs.undef(url);
             }
+        });
+        $("a[href='#diffs']").click(function(){
+            $("#diffs tbody").html("");
+            WebSync.connection.sendJSON({type:'diffs',action:'list'});
         });
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
@@ -840,8 +869,9 @@ define('websync',{
     resize: function(){
         //$(".content_well").height(window.innerHeight-$(".content_well").position().top);
         var width = window.innerWidth-260;
-        $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width})
-        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15})
+        $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width});
+        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15});
+        $(".settings-popup .popover-content").css({maxHeight:window.innerHeight-$(".settings-popup").offset().top-100});
     },
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
@@ -951,14 +981,14 @@ function NODEtoJSON(obj){
         jso.textContent = obj.textContent;
     }
     if(obj.attributes){
-        $.each(obj.attributes,function(k,v){
+        _.each(obj.attributes,function(v,k){
             // TODO: Add blacklist of classnames & attributes for DOM serialization.
             if(v.name!="contenteditable"){
                 jso[v.name]=v.value;
             }
         });
     }
-    $.each(obj.childNodes,function(index,child){
+    _.each(obj.childNodes,function(child,index){
         jso.childNodes.push(NODEtoJSON(child));
     });
     if(_.isEmpty(jso.childNodes)){
@@ -968,7 +998,7 @@ function NODEtoJSON(obj){
 }
 function DOMToJSON(obj){
     var jso = [];
-    $.each(obj,function(index, elem){
+    _.each(obj,function(elem, index){
         elem.normalize();
         jso.push(NODEtoJSON(elem));
     });
@@ -980,7 +1010,7 @@ function NODEtoDOM(obj){
         return obj.textContent;
     }
     html+="&#60;"+obj.name;
-    $.each(obj,function(k,v){
+    _.each(obj,function(v,k){
         if(k!="name"&&k!="textContent"&&k!="childNodes"){
             html+=" "+k+"="+JSON.stringify(v);
         }
@@ -988,7 +1018,7 @@ function NODEtoDOM(obj){
 
     if(obj.childNodes){
         html+="&#62";
-        $.each(obj.childNodes,function(index, elem){
+        _.each(obj.childNodes,function(elem,index){
             html+= NODEtoDOM(elem);
         });
         html+="&#60;/"+obj.name+"&#62";
@@ -1000,7 +1030,7 @@ function NODEtoDOM(obj){
 }
 function JSONToDOM(obj){
     var html = "";
-    $.each(obj,function(index,elem){
+    _.each(obj,function(elem,index){
         html += NODEtoDOM(elem);
     });
     return html;
@@ -1194,14 +1224,14 @@ if (!Element.prototype.scrollIntoViewIfNeeded) {
                 <div class='well'>
                 <b>void [plugin=TextEdit].disable();</b>
                 <br>
-                <i>Type: Function, Line: 76</i>
+                <i>Type: Function, Line: 142</i>
                 <br>
                 <span>Disables the TextEdit plugin.</span>
                 </div>
                 <div class='well'>
                 <b>void [plugin=TextEdit].selectHandler();</b>
                 <br>
-                <i>Type: Function, Line: 84</i>
+                <i>Type: Function, Line: 150</i>
                 <br>
                 <span>Handling function for displaying accurate information about text in ribbon.</span>
                 </div>
@@ -1224,12 +1254,47 @@ define("edit",['websync'],function(websync){ var self = this;
             &#60;/select&#62 \
             &#60;select id="font_size" title="Font Size" class="ribbon_button"&#62 \
                 &#60;option&#628pt&#60;/option&#62 \
+                &#60;option&#629pt&#60;/option&#62 \
                 &#60;option&#6210pt&#60;/option&#62 \
                 &#60;option&#6211pt&#60;/option&#62 \
                 &#60;option&#6212pt&#60;/option&#62 \
+                &#60;option&#6213pt&#60;/option&#62 \
                 &#60;option&#6214pt&#60;/option&#62 \
+                &#60;option&#6215pt&#60;/option&#62 \
+                &#60;option&#6216pt&#60;/option&#62 \
+                &#60;option&#6217pt&#60;/option&#62 \
+                &#60;option&#6218pt&#60;/option&#62 \
+                &#60;option&#6219pt&#60;/option&#62 \
+                &#60;option&#6220pt&#60;/option&#62 \
+                &#60;option&#6221pt&#60;/option&#62 \
+                &#60;option&#6222pt&#60;/option&#62 \
+                &#60;option&#6223pt&#60;/option&#62 \
                 &#60;option&#6224pt&#60;/option&#62 \
+                &#60;option&#6225pt&#60;/option&#62 \
+                &#60;option&#6226pt&#60;/option&#62 \
+                &#60;option&#6227pt&#60;/option&#62 \
+                &#60;option&#6228pt&#60;/option&#62 \
+                &#60;option&#6229pt&#60;/option&#62 \
+                &#60;option&#6230pt&#60;/option&#62 \
+                &#60;option&#6231pt&#60;/option&#62 \
+                &#60;option&#6232pt&#60;/option&#62 \
+                &#60;option&#6233pt&#60;/option&#62 \
+                &#60;option&#6234pt&#60;/option&#62 \
+                &#60;option&#6235pt&#60;/option&#62 \
                 &#60;option&#6236pt&#60;/option&#62 \
+                &#60;option&#6237pt&#60;/option&#62 \
+                &#60;option&#6238pt&#60;/option&#62 \
+                &#60;option&#6239pt&#60;/option&#62 \
+                &#60;option&#6240pt&#60;/option&#62 \
+                &#60;option&#6241pt&#60;/option&#62 \
+                &#60;option&#6242pt&#60;/option&#62 \
+                &#60;option&#6243pt&#60;/option&#62 \
+                &#60;option&#6244pt&#60;/option&#62 \
+                &#60;option&#6245pt&#60;/option&#62 \
+                &#60;option&#6246pt&#60;/option&#62 \
+                &#60;option&#6247pt&#60;/option&#62 \
+                &#60;option&#6248pt&#60;/option&#62 \
+                &#60;option&#6272pt&#60;/option&#62 \
             &#60;/select&#62 \
             &#60;div class="btn-group"&#62 \
                 &#60;button id="justifyleft" title="Justify Left" class="btn"&#62&#60;i class="icon-align-left"&#62&#60;/i&#62&#60;/button&#62 \
@@ -1281,6 +1346,37 @@ define("edit",['websync'],function(websync){ var self = this;
         console.log(size);
         WebSync.applyCssToSelection({'font-size':size});
     });
+    $("#picture").click(function(){
+        /*
+        //TODO: Keep position.
+        bootbox.prompt("Enter image URL", function(result) {
+            if (result === null) {
+            } else {
+                document.execCommand("insertImage", false, url);
+            }
+        });*/
+        var url = prompt("Image URL");
+        document.execCommand("insertImage", false, url);
+    });
+    $("#video").click(function(){
+        var url = prompt("Video URL (Youtube)");
+        if(url.indexOf("youtu")!=-1){
+            var youtube_id = self.youtube_parser(url);
+            console.log("Youtube id", youtube_id);
+            var html = '&#60;iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/'+youtube_id+'?origin=http://websyn.ca" height=480 width=640 frameborder="0"/&#62'
+            document.execCommand("insertHTML", false, html);
+        }
+    });
+    // Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
+    self.youtube_parser = function(url){
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match&&match[2].length==11){
+            return match[2];
+        }else{
+            alert("Invalid URL");
+        }
+    }
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     this.disable = function(){
@@ -1484,7 +1580,7 @@ minimator = function(x,y,z) {
                 <div class='well'>
                 <b>void [plugin=edit].disable();</b>
                 <br>
-                <i>Type: Function, Line: 225</i>
+                <i>Type: Function, Line: 280</i>
                 <br>
                 <span>Disables the plugin. This has to be set for possible plugin unloading.</span>
                 </div>
@@ -1580,10 +1676,18 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.clearSelect();
 		}
 	});
+    self.lastSize = "";
     self.observer = function(){
-        setTimeout(function(){
-			self.cursorUpdate();
-		},1);
+        var bounding_data = JSON.stringify(self.selectedElem.getBoundingClientRect());
+        if(bounding_data!=self.lastSize){
+            setTimeout(function(){
+                self.cursorUpdate();
+            },1);
+            setTimeout(function(){
+                self.headerUpdate();
+            },2);
+            self.lasttSize=bounding_data;
+        }
     };
     $(".content").delegate("table","click.Tables",function(e){
         if(!self.selectedElem || self.selectedElem.contentEditable!="true"){
@@ -1598,6 +1702,21 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
     });
     $(".content").delegate("td","mouseleave.Tables",function(e){
+    });
+    $(".content").delegate(".Table.axis#x th", "mousemove.Tables", function(e){
+        var position = $(this).offset();
+        $('.Table.axis th.resize').removeClass('resize');
+        if(Math.abs(e.pageX-position.left)&#60;5 || Math.abs(e.pageX-(position.left+$(this).width()))&#60;5){
+            $(this).addClass("resize");
+        }
+    });
+    $(".content").delegate(".Table.axis#y th", "mousemove.Tables", function(e){
+        var position = $(this).offset();
+        console.log(e.pageY, position.top);
+        $('.Table.axis th.resize').removeClass('resize');
+        if(Math.abs(e.pageY-position.top)&#60;5 || Math.abs(e.pageY-(position.top+$(this).height()))&#60;5){
+            $(this).addClass("resize");
+        }
     });
     $(".content").delegate("td","mousedown.Tables",function(e){
         console.log(e);
@@ -1634,7 +1753,40 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedEditable(true);
 		}
     });
-    $(".content").delegate(".Table.axis#x th", "click.Tables", function(e){
+    $(".content").delegate(".Table.axis#x th.resize", "mousedown.Tables", function(e){
+        self.drag = true;
+        self.active = this;
+        self.origX = e.pageX;
+        self.origWidth = $(this).width();
+    });
+    $(".content").delegate(".Table.axis#y th.resize", "mousedown.Tables", function(e){
+        self.drag = true;
+        self.active = this;
+        self.origY = e.pageY;
+        self.origHeight = $(this).height();
+    });
+    $(document).bind('mousemove.Tables', function(e){
+        if(self.drag){
+            if(self.origX){
+                $(self.active).width(e.pageX-self.origX+self.origWidth);
+            }
+            if(self.origY){
+                $(self.active).height(e.pageY-self.origY+self.origHeight);
+            }
+        }
+    });
+    $(document).bind( "mouseup.Resize", function(e){
+        if(self.drag){
+            console.log(e);
+            e.preventDefault();
+            self.origX = null;
+            self.origY = null;
+            self.origWidth = null;
+            self.origHeight = null;
+            self.drag = false;
+        }
+    });
+    $(".content").delegate(".Table.axis#x th:not('resize')", "click.Tables", function(e){
         var pos = self.selectedPos(this);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(pos[0],0));
@@ -1643,7 +1795,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
         self.updateSelectedArea();
     });
-    $(".content").delegate(".Table.axis#y th", "click.Tables", function(e){
+    $(".content").delegate(".Table.axis#y th:not('resize')", "click.Tables", function(e){
         var pos = self.selectedPos(this);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(0,pos[1]));
@@ -1658,7 +1810,6 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
     });
     $(".content").bind("keydown.Tables",function(e){
-        console.log(e);
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
@@ -1754,6 +1905,26 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         }
 		self.cursorUpdate();
 	}
+    self.headerUpdate = function(){
+        var size = self.tableSize();
+        var x_nodes = $(".axis#x th");
+        for(var i=0;i&#60;size[0];i++){
+            var elem = self.posToElem(i,0);
+            var bounding = elem.getBoundingClientRect();
+            x_nodes[i].style.width = (bounding.width-1)+"px";
+            //x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+self.columnLabel(i);
+        }
+        var y_nodes = $(".axis#y th");
+        for(var i=0;i&#60;size[1];i++){
+            var elem = self.posToElem(0,i);
+            var bounding = elem.getBoundingClientRect();
+            y_nodes[i].style.height = (bounding.height-1)+"px";
+            //y_nodes.eq(i).css({height: (bounding.height-1)});//+'px"&#62'+(i+1);
+        }
+        var table = $(self.primaryTable());
+        $(".Table.axis#x").width(table.width()+2);
+        $(".Table.axis#y").height(table.height());
+    };
 	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
 		var pos = self.selectedPos();
@@ -1774,8 +1945,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         var table = $(self.primaryTable());
         var offset = table.offset();
         if(!($(".Table.axis#x").get(0).style.left)){
-            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17}).width(table.width()+2);
-            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
+            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17});//.width(table.width()+2);
+            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
         }
 	}
 	self.selectedEditable = function(edit){
@@ -2000,6 +2171,16 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             &#60;/script&#62
             &#60;%= javascript_tag 'bundle-edit' %&#62
         &#60;% end %&#62
+        &#60;script&#62
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-41779193-1', 'websyn.ca');
+          ga('send', 'pageview');
+
+        &#60;/script&#62
 	&#60;/head&#62
 	&#60;body class="&#60;%= params[:op] %&#62"&#62
         &#60;% if !(defined?(@no_menu)&&@no_menu) %&#62

@@ -1,3 +1,7 @@
+#!/usr/bin/node
+
+var config = {};
+var fs = require('fs');
 var jsondiffpatch = require('jsondiffpatch');
 // load google diff_match_patch library for text diff/patch
 jsondiffpatch.config.diff_match_patch = require('./diff_match_patch_uncompressed.js');
@@ -7,16 +11,16 @@ redis = redisLib.createClient();
 var pg = require('pg');
 md5 = require('MD5');
 
+
+fs.readFile('./config.json', function(err, buffer){
+    config = JSON.parse(buffer.toString());
+    postgres = new pg.Client("tcp://"+config.postgres);
+    postgres.connect();
 dm = new function DataMapper(){
 
 }
-postgres = new pg.Client("tcp://postgres:@localhost/websync");
-postgres.connect();
-var config = {
-    port: 4568
-};
 var WebSocketServer = require('ws').Server
-  , wss = new WebSocketServer({port: config.port});
+  , wss = new WebSocketServer({port: config.websocket.port});
 wss.on('connection', function(ws) {
     console.log("Connection: ",ws.upgradeReq.url);
     var url = ws.upgradeReq.url;
@@ -170,4 +174,5 @@ wss.on('connection', function(ws) {
     }
 });
 console.log('WebSync WebSocket server is ready to receive connections.');
-console.log('Listening on: 0.0.0.0:'+config.port);
+console.log('Listening on: 0.0.0.0:'+config.websocket.port);
+});

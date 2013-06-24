@@ -22,6 +22,8 @@ Grepping through the source code is the best way to find things that need to be 
 * Zooming with regards to tables and resizing.
 * Easier first-time deployment with automatic script group creation.
 * Absolutely positioned images & tables
+* Better documentation
+* Redesign website to be a little more unique.
 
 Dependencies:
 For now, there needs to be an unsecured PostgreSQL and Redis server running on the machine. However, it should be fairly easy to change the login details in main.rb & web-sockets.js.

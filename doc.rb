@@ -24,8 +24,8 @@ end
 #puts raw_doc.to_s
 #puts functions.to_s
 
-puts "Outputting to: #{Dir.pwd}/doc_gen.html"
-File.open('doc_gen.html','w') do |file|
+puts "Outputting to: #{Dir.pwd}/public/doc_gen.html"
+File.open('public/doc_gen.html','w') do |file|
     file.puts Erubis::Eruby.new(DATA.read).result(binding())
 end
 

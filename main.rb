@@ -5,8 +5,9 @@ require 'digest/md5'
 Bundler.require(:default)
 require 'sinatra/sprockets-helpers'
 require 'sinatra/asset_pipeline'
+require 'sass'
 
-
+$config = MultiJson.load(File.open('./config.json').read)
 # Monkey patched Redis for easy caching.
 class Redis
   def cache(key, expire=nil)
@@ -22,7 +23,7 @@ class Redis
 end
 # Ease of use connection to the redis server.
 $redis = Redis.new :driver=>:hiredis
-DataMapper.setup(:default, 'postgres://postgres:@localhost/websync')
+DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 #$adapter = DataMapper.setup(:default, :adapter=>'riak', :namespace=>'WebSync')
 #class DataMapper::Adapters::RiakAdapter
 #    attr_accessor :riak
@@ -31,11 +32,11 @@ DataMapper.setup(:default, 'postgres://postgres:@localhost/websync')
 # Redis has issues with datamapper associations especially Many-to-many.
 #$adapter = DataMapper.setup(:default, {:adapter => "redis"});
 #$redis = $adapter.redis
-data = "window = {};"+File.read("./assets/javascripts/diff_match_patch.js") + File.read("./assets/javascripts/jsondiffpatch.min.js")
-$jsondiffpatch = ExecJS.compile data
+#data = "window = {};"+File.read("./assets/javascripts/diff_match_patch.js") + File.read("./assets/javascripts/jsondiffpatch.min.js")
+#$jsondiffpatch = ExecJS.compile data
 
 Sinatra::Sprockets = Sprockets
-
+=begin
 module BJSONDiffPatch
     def diff object1, object2
         return $jsondiffpatch.eval "jsondiffpatch.diff(#{MultiJson.dump(object1)},#{MultiJson.dump(object2)})"
@@ -47,6 +48,7 @@ end
 class JsonDiffPatch
     extend BJSONDiffPatch
 end
+=end
 def json_to_html_node obj
     html = "";
     if obj['name']=="#text"
@@ -259,9 +261,9 @@ class WebSync < Sinatra::Base
         set :assets_precompile_no_digest, %w(*.js)
     end
     configure do
-        use Rack::Session::Cookie, :expire_after => 60*60*24*7
+        use Rack::Session::Cookie, :expire_after => 60*60*24*7, :secret => $config['session_secret']
         enable :sessions
-        set :session_secret, "Web-Sync sdkjfskadfh1h3248c99sj2j4j2343"
+        set :session_secret, $config['session_secret']
         set :server, 'thin'
         set :sockets, []
         set :template_engine, :erb
@@ -518,7 +520,7 @@ class WebSync < Sinatra::Base
         if doc.nil?
             redirect 'notfound'
         end
-        if !request.websocket?
+        #if !request.websocket?
             login_required
             if (!doc.public)&&doc.user!=current_user
                 redirect '/'
@@ -540,6 +542,7 @@ class WebSync < Sinatra::Base
             else
                 redirect '/'
             end
+=begin
         # Websocket edit
         else
             #TODO: Authentication for websockets
@@ -672,6 +675,7 @@ class WebSync < Sinatra::Base
                 end
             end
         end
+=end
     end
 
 =begin

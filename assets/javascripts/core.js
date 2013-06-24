@@ -522,6 +522,7 @@ define('websync',{
         $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width});
         $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15});
         $(".settings-popup .popover-content").css({maxHeight:window.innerHeight-$(".settings-popup").offset().top-100});
+        WebSync.updateRibbon();
     },
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.

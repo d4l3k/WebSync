@@ -30,8 +30,9 @@ Grepping through the source code is the best way to find things that need to be 
 ----
 
 Dependencies:
-WebSync requires ruby, rubygems, nodejs, and npm.
-WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities. Redis may be replaced with ZeroMQ in the future.
+* WebSync requires ruby, rubygems, nodejs, and npm.
+* WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities. Redis may be replaced with ZeroMQ in the future.
+* Libre Office & unoconv is required for file upload & export.
 
 You can install the Ruby dependencies by running "bundle" and the Node.JS dependencies by running "npm install".
 

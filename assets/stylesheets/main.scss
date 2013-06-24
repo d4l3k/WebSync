@@ -4,6 +4,16 @@
 	outline: none;
 	border: none;
 }
+@media (max-width: 979px) {
+    .menu .navbar {
+        ul li>a {
+            margin-top: -5px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin-bottom: -5px;
+        }
+    }
+}
 .hero-special {
     display: inline-block;
     text-align: left;

@@ -34,8 +34,11 @@ body,html {
             padding-bottom: 10px;
         }
     }
-    div.content_well {
+    div.content_well, div.sidebar {
         top: 93px;
+    }
+    div.navbar-fixed-top .navbar-inner, div.navbar-fixed-bottom .navbar-inner {
+        padding: 5px 0;
     }
 }
 .menu {

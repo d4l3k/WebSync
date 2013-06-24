@@ -11,9 +11,9 @@
 
 
 
-    /* CUSTOMIZE THE NAVBAR
-    -------------------------------------------------- */
-
+    .container {
+        margin-top: 0px !important;
+    }
 
 
 
@@ -22,7 +22,7 @@
 
     /* Carousel base class */
     .carousel {
-      margin-bottom: 60px;
+        margin-bottom: 0;
     }
 
     .carousel .container {
@@ -54,7 +54,7 @@
     .carousel-caption {
       background-color: transparent;
       position: static;
-      max-width: 550px;
+      max-width: 650px;
       padding: 0 20px;
       margin-top: 200px;
     }
@@ -64,6 +64,11 @@
       line-height: 1.25;
       color: #fff;
       text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+    .carousel-caption .or {
+        display: initial;
+        position: relative;
+        top: 5px;
     }
     .carousel-caption .btn {
       margin-top: 10px;
@@ -199,19 +204,51 @@
         font-size: 18px;
         line-height: 1.5;
       }
-
     }
-    </style>
+    /* Social proof buttons from GitHub & Twitter */
+.bs-docs-social {
+  padding: 15px 0;
+  text-align: center;
+  background-color: #f5f5f5;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 60px;
+}
 
-<div class="container">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="hero-unit">
+/* Quick links on Home */
+.bs-docs-social-buttons {
+  margin-left: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.bs-docs-social-buttons li {
+  display: inline-block;
+  padding: 5px 8px;
+  line-height: 1;
+  *display: inline;
+  *zoom: 1;
+}
+    </style>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div id="myCarousel" class="carousel slide">
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="/img/banner.png" alt="">
+          <div class="container">
+            <div class="carousel-caption">
                 <h1>Welcome to WebSync</h1>
-                <p>
+                <p class="lead">
                     Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
                 </p>
-                <p>
                     <div class="btn-group">
                         <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown"><i class="icon-file-alt"></i> Create a Document
  <span class="caret"></span></button>
@@ -220,41 +257,48 @@
                                 <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
                             <% end %>
                         </ul>
-                    </div>
-                    or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Code</a>
-                </p>
+                    </div><p class="lead or"> or </p><a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a><p class="lead or"> or </p><a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Code</a>
             </div>
+          </div>
         </div>
-        <div class="span2" style="display: none">
-            <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-6781356745519353";
-            /* WebSync Index */
-            //google_ad_slot = "7880400590";
-            //google_ad_slot = "9357133790";
-            google_ad_slot = "1833866998";
-            google_ad_width = 160; //(window.innerWidth-960)/2;
-            google_ad_height = 600;
-            //-->
-            </script>
-            <script type="text/javascript"
-            src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-            </script>
-        </div>
-    </div>
+      </div>
+</div>
+<div class="bs-docs-social">
+  <div class="container">
+    <ul class="bs-docs-social-buttons">
+      <li>
+        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+      </li>
+      <li>
+        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="102px" height="20px"></iframe>
+      </li>
+      <li>
+        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=follow&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+      </li>
+      <li>
+        <div class="g-plusone" data-size="medium" data-href="https://websyn.ca"></div>
+      </li>
+      <li>
+        <div class="fb-like" data-href="https://websyn.ca" data-layout="button_count" data-width="450" data-show-faces="true" data-font="arial"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="container">
     <div class="row-fluid">
+
     <div class="span12 marketing">
-        <hr class="featurette-divider">
         <div class="featurette">
             <img class="featurette-image pull-right" src="/img/code.png">
-            <h2 class="featurette-heading">WebSync is completely open source. <span class="muted">Do what you want.</span></h2>
+            <h2 class="featurette-heading">Do what you want. <span class="muted">WebSync is completely open source.</span></h2>
                 <p class="lead">
-                    WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. This means you can take the source code and tweak it however you like.
+                    WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. This means you can take the source code and use it however you like.
                 </p>
         </div>
         <hr class="featurette-divider">
         <div class="featurette">
             <img class="featurette-image pull-left" src="/img/lock.png">
-            <h2 class="featurette-heading">We fight for the users. <span class="muted">Your privacy is important.</span></h2>
+            <h2 class="featurette-heading">Your privacy is important. <span class="muted">We fight for the users.</span></h2>
                 <p class="lead">
                     Outer Earth Interactive will not sell your data to advertisers or respond to illegal requests from the government. In addition, all traffic to websyn.ca is encrypted preventing unwanted surveillance.
                 </p>
@@ -262,7 +306,7 @@
         <hr class="featurette-divider">
         <div class="featurette">
             <img class="featurette-image pull-right" src="/img/servers.png">
-            <h2 class="featurette-heading">You can run WebSync yourself. <span class="muted">Keep your data private.</span></h2>
+            <h2 class="featurette-heading">Keep your data private. <span class="muted">You can run WebSync yourself.</span></h2>
                 <p class="lead">
                     Open source code means that you can run WebSync on your own servers. You can feel save knowing only you have access to your files.
                 </p>
@@ -281,3 +325,10 @@
     </div>
 </div>
 
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>

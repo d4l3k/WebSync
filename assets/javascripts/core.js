@@ -271,6 +271,7 @@ define('websync',{
             }
             else if(mode=='Presentation') {
                 $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
+                WebSyncAuth.view_op = "view";
                 window.history.pushState("","WebSync - Presentation Mode","view");
                 $(".menu").animate({top: -85},200);
             }

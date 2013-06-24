@@ -16,12 +16,47 @@ define("edit",['websync'],function(websync){ var self = this;
             </select> \
             <select id="font_size" title="Font Size" class="ribbon_button"> \
                 <option>8pt</option> \
+                <option>9pt</option> \
                 <option>10pt</option> \
                 <option>11pt</option> \
                 <option>12pt</option> \
+                <option>13pt</option> \
                 <option>14pt</option> \
+                <option>15pt</option> \
+                <option>16pt</option> \
+                <option>17pt</option> \
+                <option>18pt</option> \
+                <option>19pt</option> \
+                <option>20pt</option> \
+                <option>21pt</option> \
+                <option>22pt</option> \
+                <option>23pt</option> \
                 <option>24pt</option> \
+                <option>25pt</option> \
+                <option>26pt</option> \
+                <option>27pt</option> \
+                <option>28pt</option> \
+                <option>29pt</option> \
+                <option>30pt</option> \
+                <option>31pt</option> \
+                <option>32pt</option> \
+                <option>33pt</option> \
+                <option>34pt</option> \
+                <option>35pt</option> \
                 <option>36pt</option> \
+                <option>37pt</option> \
+                <option>38pt</option> \
+                <option>39pt</option> \
+                <option>40pt</option> \
+                <option>41pt</option> \
+                <option>42pt</option> \
+                <option>43pt</option> \
+                <option>44pt</option> \
+                <option>45pt</option> \
+                <option>46pt</option> \
+                <option>47pt</option> \
+                <option>48pt</option> \
+                <option>72pt</option> \
             </select> \
             <div class="btn-group"> \
                 <button id="justifyleft" title="Justify Left" class="btn"><i class="icon-align-left"></i></button> \

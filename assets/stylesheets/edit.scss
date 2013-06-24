@@ -170,6 +170,7 @@ cursor {
     top: 83px;
     display: inline-block;
     overflow: auto;
+    text-align: center;
 }
 .content_well > div {
     @include ex(transform-origin, top center);
@@ -355,6 +356,8 @@ a#name {
 }
 .content {
     position: relative;
+    text-align: initial;
+    display: inline-block;
 	table {
 		//width: 100%;
 	}

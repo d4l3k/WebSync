@@ -21,6 +21,23 @@ body,html {
     height: 100%;
     color: black;
 }
+@media (max-width: 979px) {
+    .menu .navbar {
+        ul li>a {
+            margin-top: -5px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin-bottom: -5px;
+        }
+        #ribbon_button_active {
+            margin-top: -5px;
+            padding-bottom: 10px;
+        }
+    }
+    div.content_well {
+        top: 93px;
+    }
+}
 .menu {
     width: 100%;
     .dropdown-menu {
@@ -351,15 +368,12 @@ a#name {
 #font_size {
 	width: auto !important;
 }
-.content table {
-    @include ex(user-modify, read-only);
-}
 .content {
     position: relative;
     text-align: initial;
     display: inline-block;
 	table {
-		//width: 100%;
+        @include ex(user-modify, read-only);
 	}
     table, th, td {
         border: 1px solid #888;
@@ -401,6 +415,9 @@ a#name {
 	}
     .btn+.btn-group {
         margin-left: 5px !important;
+    }
+    .container {
+        padding: 0 5px;
     }
 }
 #table_cursor {

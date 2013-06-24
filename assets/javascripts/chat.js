@@ -11,7 +11,7 @@ define(['websync'],function(edit,websink){ var self = {};
     self.open = false;
     $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well"></div><div class="chat_input input-append"><input class="span2" id="appendedInputButton" type="text"><button id="msg_btn" class="btn" type="button">Send</button></div></div>'));
     $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><i class="icon-comment icon-large"></i> <span id="user_count" class="badge">1</span></a></li>'));
-    $("#chat").offset({left:window.innerWidth+1});
+    $("#chat").css({right:-252});
     $("#chat img").tooltip();
     $(document).bind('client_load.Chat',function(e,data){
         console.log("Client_load",data);
@@ -88,11 +88,12 @@ define(['websync'],function(edit,websink){ var self = {};
         self.resize();
         $("#chat_btn").parent().toggleClass("active");
         if(self.open){
-            $("#chat").animate({left:window.innerWidth+1},200);
+            $("#chat").animate({right:-252},200);
             $(".content_well").animate({right: 0},200);
             self.open=false;
         } else {
-            //$("#chat").animate({left:window.innerWidth-251},200);
+            $("#chat").animate({right:-1},200);
+            $('.content_well').animate({right:251},200);
             $("#user_count").removeClass("badge-pulse");
             self.open = true;
             self.resize();
@@ -100,10 +101,6 @@ define(['websync'],function(edit,websink){ var self = {};
     }
     $("#chat_btn").bind("click.Chat",self.toggle);
     self.resize = function(e){
-        if(self.open){
-            $("#chat").animate({left:window.innerWidth-251},200);
-            $('.content_well').animate({right:251},200);
-        }
         $("#chat").height(window.innerHeight-$(".content_well").position().top)
     }
     self.resize();

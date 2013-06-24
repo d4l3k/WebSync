@@ -182,9 +182,15 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         if(self.drag){
             if(self.origX){
                 $(self.active).width(e.pageX-self.origX+self.origWidth);
+                var pos = self.selectedPos(self.active);
+                console.log(pos);
+                $(self.posToElem(pos[0],0)).width(e.pageX-self.origX+self.origWidth);
             }
             if(self.origY){
                 $(self.active).height(e.pageY-self.origY+self.origHeight);
+                var pos = self.selectedPos(self.active);
+                console.log(pos);
+                $(self.posToElem(0,pos[1]).parentElement).height(e.pageY-self.origY+self.origHeight);
             }
         }
     });

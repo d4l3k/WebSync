@@ -2,6 +2,7 @@
     "postgres": "postgres:@localhost/websync",
     "session_secret": "WebSync is awesome! This should be secret and unique to your server cluster.",
     "websocket": {
-        "port": 4568
+        "port": 4568,
+        "url": "websocket.websyn.ca"
     }
 }

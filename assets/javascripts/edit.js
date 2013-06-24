@@ -5,7 +5,7 @@ define("edit",['websync'],function(websync){ var self = this;
 	// Unbind Example: $("*").unbind(".Tables");
     // Function: void [plugin=TextEdit].enable();
     // Enables the TextEdit plugin.
-    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"];
+    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript'];
     // Add ribbon text
     $(".ribbon").append('<div id="Text" class="container"> \
             <button id="bold" title="Bold" class="btn"><i class="icon-bold"></i></button> \
@@ -66,6 +66,8 @@ define("edit",['websync'],function(websync){ var self = this;
             </div> \
             <button id="insertunorderedlist" title="Unordered List" class="btn"><i class="icon-list-ul"></i></button> \
             <button id="insertorderedlist" title="Ordered List" class="btn"><i class="icon-list-ol"></i></button> \
+            <button id="superscript" title="Superscript" class="btn"><i class="icon-superscript"></i></button> \
+            <button id="subscript" title="Subscript" class="btn"><i class="icon-subscript"></i></button> \
             <button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button> \
             <input id="fontColor" type="color"></input> \
             <input id="hilightColor" type="color" value="#FFFFFF"></input> \
@@ -147,6 +149,17 @@ define("edit",['websync'],function(websync){ var self = this;
             alert("Invalid URL");
         }
     }
+    self.rgb_to_hex = function(rgb){
+        if(rgb.indexOf('rgba')!=-1){
+            //return '#000000';
+        }
+        var parts = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(1|0|0?\.d+))?\)$/);
+        for (var i = 1; i <= 3; ++i) {
+            parts[i] = parseInt(parts[i]).toString(16);
+            if (parts[i].length == 1) parts[i] = '0' + parts[i];
+        }
+        return '#'+parts.slice(1,4).join('').toUpperCase();
+    }
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     this.disable = function(){
@@ -159,8 +172,8 @@ define("edit",['websync'],function(websync){ var self = this;
     // Handling function for displaying accurate information about text in ribbon.
     this.selectHandler = function(){
 		var style = WebSync.getCss();
-		$("#fontColor")[0].value = style.color;
-        $("#hilightColor")[0].value = style.backgroundColor;
+		$("#fontColor")[0].value = rgb_to_hex(style.color);
+        $("#hilightColor")[0].value = rgb_to_hex(style.backgroundColor);
         $('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
 
 		self.text_buttons.forEach(function(elem){

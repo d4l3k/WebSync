@@ -67,6 +67,8 @@ define("edit",['websync'],function(websync){ var self = this;
             <button id="insertunorderedlist" title="Unordered List" class="btn"><i class="icon-list-ul"></i></button> \
             <button id="insertorderedlist" title="Ordered List" class="btn"><i class="icon-list-ol"></i></button> \
             <button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button> \
+            <input id="fontColor" type="color"></input> \
+            <input id="hilightColor" type="color" value="#FFFFFF"></input> \
         </div>');
     this.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
@@ -74,6 +76,12 @@ define("edit",['websync'],function(websync){ var self = this;
             //$(this).toggleClass("active");
             $(document).trigger('selectionchange');
         });
+    });
+    $("#fontColor").change(function(e){
+        document.execCommand('foreColor', false, this.value);
+    });
+    $("#hilightColor").change(function(e){
+        document.execCommand('hiliteColor', false, this.value);
     });
     // Reflects text in menu at top
     $(document).bind('selectionchange.TextEdit',function(){
@@ -151,7 +159,9 @@ define("edit",['websync'],function(websync){ var self = this;
     // Handling function for displaying accurate information about text in ribbon.
     this.selectHandler = function(){
 		var style = WebSync.getCss();
-		$('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
+		$("#fontColor")[0].value = style.color;
+        $("#hilightColor")[0].value = style.backgroundColor;
+        $('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
 
 		self.text_buttons.forEach(function(elem){
 			var button = $('button#'+elem)

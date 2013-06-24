@@ -47,6 +47,11 @@ body,html {
         max-height: 250px;
         overflow-y: auto;
     }
+    .ribbon input[type=color] {
+        margin: 0;
+        margin-top: 5px;
+        width: 20px;
+    }
     #ribbon_button_active {
         height: 40px;
         position: absolute;

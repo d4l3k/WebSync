@@ -5,7 +5,7 @@ define("edit",['websync'],function(websync){ var self = this;
 	// Unbind Example: $("*").unbind(".Tables");
     // Function: void [plugin=TextEdit].enable();
     // Enables the TextEdit plugin.
-    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript'];
+    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript','insertHorizontalRule'];
     // Add ribbon text
     $(".ribbon").append('<div id="Text" class="container"> \
             <button id="bold" title="Bold" class="btn"><i class="icon-bold"></i></button> \
@@ -68,9 +68,10 @@ define("edit",['websync'],function(websync){ var self = this;
             <button id="insertorderedlist" title="Ordered List" class="btn"><i class="icon-list-ol"></i></button> \
             <button id="superscript" title="Superscript" class="btn"><i class="icon-superscript"></i></button> \
             <button id="subscript" title="Subscript" class="btn"><i class="icon-subscript"></i></button> \
-            <button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button> \
             <input id="fontColor" type="color"></input> \
             <input id="hilightColor" type="color" value="#FFFFFF"></input> \
+            <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn">&mdash;</button> \
+            <button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button> \
         </div>');
     this.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){

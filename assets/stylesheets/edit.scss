@@ -401,6 +401,10 @@ a#name {
         min-width: 0.25in;
         height: 16px;
     }
+    hr {
+        border-bottom: 1px solid #eee;
+        border-top: 1px solid black;
+    }
 }
 .Table.axis {
     cursor: pointer;

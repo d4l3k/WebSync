@@ -12,6 +12,7 @@ define("edit",['websync'],function(websync){ var self = this;
             <button id="italic" title="Italic" class="btn"><i class="icon-italic"></i></button> \
             <button id="strikethrough" title="Strikethrough" class="btn"><i class="icon-strikethrough"></i></button> \
             <button id="underline" title="Underline" class="btn"><i class="icon-underline"></i></button> \
+            <button id="createLink" title="Subscript" class="btn"><i class="icon-link"></i></button> \
             <select id="font" title="Font" class="ribbon_button"> \
             </select> \
             <select id="font_size" title="Font Size" class="ribbon_button"> \
@@ -130,6 +131,10 @@ define("edit",['websync'],function(websync){ var self = this;
         });*/
         var url = prompt("Image URL");
         document.execCommand("insertImage", false, url);
+    });
+    $("#createLink").click(function(){
+        var url = prompt("Hyperlink URL");
+        document.execCommand("createLink", false, url);
     });
     $("#video").click(function(){
         var url = prompt("Video URL (Youtube)");

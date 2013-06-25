@@ -94,7 +94,7 @@ body,html {
     background-image: -o-linear-gradient(top,#fff,#e6e6e6);
     background-image: linear-gradient(to bottom,#fff,#e6e6e6);
 }*/
-.content div, .content li{
+.content * {
     line-height: 1.15em;
 }
 .content li p {
@@ -430,6 +430,9 @@ a#name {
     }
     .container {
         padding: 0 5px;
+        white-space: nowrap;
+        overflow-x:auto;
+        overflow-y: hidden;
     }
 }
 #table_cursor {

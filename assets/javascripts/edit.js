@@ -12,7 +12,7 @@ define("edit",['websync'],function(websync){ var self = this;
             <button id="italic" title="Italic" class="btn"><i class="icon-italic"></i></button> \
             <button id="strikethrough" title="Strikethrough" class="btn"><i class="icon-strikethrough"></i></button> \
             <button id="underline" title="Underline" class="btn"><i class="icon-underline"></i></button> \
-            <button id="createLink" title="Subscript" class="btn"><i class="icon-link"></i></button> \
+            <button id="createLink" title="Hyperlink" class="btn"><i class="icon-link"></i></button> \
             <select id="font" title="Font" class="ribbon_button"> \
             </select> \
             <select id="font_size" title="Font Size" class="ribbon_button"> \
@@ -69,8 +69,8 @@ define("edit",['websync'],function(websync){ var self = this;
             <button id="insertorderedlist" title="Ordered List" class="btn"><i class="icon-list-ol"></i></button> \
             <button id="superscript" title="Superscript" class="btn"><i class="icon-superscript"></i></button> \
             <button id="subscript" title="Subscript" class="btn"><i class="icon-subscript"></i></button> \
-            <input id="fontColor" type="color"></input> \
-            <input id="hilightColor" type="color" value="#FFFFFF"></input> \
+            <input id="fontColor" title="Font Color" type="color"></input> \
+            <input id="hilightColor" title="Text Background Color" type="color" value="#FFFFFF"></input> \
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button> \
         </div>');

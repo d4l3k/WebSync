@@ -180,18 +180,22 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
     $(document).bind('mousemove.Tables', function(e){
         if(self.drag){
+        var table = $(self.primaryTable());
             if(self.origX){
                 $(self.active).width(e.pageX-self.origX+self.origWidth);
                 var pos = self.selectedPos(self.active);
                 console.log(pos);
                 $(self.posToElem(pos[0],0)).width(e.pageX-self.origX+self.origWidth);
+                $(".Table.axis#x").width(table.width()+2);
             }
             if(self.origY){
                 $(self.active).height(e.pageY-self.origY+self.origHeight);
                 var pos = self.selectedPos(self.active);
                 console.log(pos);
                 $(self.posToElem(0,pos[1]).parentElement).height(e.pageY-self.origY+self.origHeight);
+                $(".Table.axis#y").height(table.height());
             }
+            self.cursorUpdate();
         }
     });
     $(document).bind( "mouseup.Resize", function(e){

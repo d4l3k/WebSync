@@ -94,10 +94,9 @@ define("edit",['websync'],function(websync){ var self = this;
         }
     });
     $(".content_well").bind("keydown.TextEdit","li",function(e){
-        //console.log(e);
         if(e.keyCode==9){
             //console.log(this);
-            var selection = document.getSelection();
+            /*var selection = document.getSelection();
             if(selection.type!="None" && !_.isNull(selection.baseNode)){
                 var list_index = selection.baseNode;
                 while(list_index.tagName!="LI"){
@@ -109,7 +108,13 @@ define("edit",['websync'],function(websync){ var self = this;
                 }
                 $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
                 e.preventDefault();
+            }*/
+            if(e.shiftKey){
+                document.execCommand('outdent');
+            } else {
+                document.execCommand('indent');
             }
+            e.preventDefault();
         }
     });
     $('#font').bind("change.TextEdit",function(){

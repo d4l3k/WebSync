@@ -1,5 +1,5 @@
 define(['websync'],function(){ var self = {};
-    $(".content_container").delegate("img, iframe)", "click.Resize", function(e){
+    $(".content_container").delegate("img, iframe", "click.Resize", function(e){
         if(WebSyncAuth.view_op=="edit"){
             self.resizeOn(this);
             e.stopPropagation();

@@ -463,8 +463,7 @@ class WebSync < Sinatra::Base
                 :last_edit_time => Time.now,
                 :user => current_user
             )
-            doc.assets << Asset.get(1)
-            doc.assets << Asset.get(2)
+            doc.assets = AssetGroup.get(1).assets
             doc.save
             redirect "/#{doc.id}/edit"
         else

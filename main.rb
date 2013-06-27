@@ -162,6 +162,7 @@ class User
     property :email, String, :key=>true
     property :password, BCryptHash
     property :group, String, :default=>'user'
+    property :anonymous, Boolean, :default=> false
     has n, :documents
     has n, :changes
     property :config, Json, :default=>{}

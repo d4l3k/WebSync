@@ -407,7 +407,8 @@ a#name {
     td {
         padding-left: 1px;
         padding-right: 1px;
-        width: 0.25in;
+        width: 0.3in;
+        min-width: 0.25in;
         height: 16px;
         cursor: text;
     }

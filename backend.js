@@ -138,11 +138,16 @@ wss.on('connection', function(ws) {
                     postgres.query("SELECT body FROM documents WHERE id = $1", [doc_id])
                     .on("row", function(row){
                         var body = JSON.parse(row.body);
-                        var n_body = jsondiffpatch.patch(body,data.patch);
-                        postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1",[doc_id,JSON.stringify(n_body), new Date()]);
-                        postgres.query("INSERT INTO changes (time, patch, document_id, user_email) VALUES ($3, $2, $1, $4)",[doc_id,data.patch,new Date(),user_email]);
-                        // TODO: Update last modified!
-                        redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
+                        try {
+                            var n_body = jsondiffpatch.patch(body,data.patch);
+                            postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1",[doc_id,JSON.stringify(n_body), new Date()]);
+                            postgres.query("INSERT INTO changes (time, patch, document_id, user_email) VALUES ($3, $2, $1, $4)",[doc_id,data.patch,new Date(),user_email]);
+                            // TODO: Update last modified!
+                            redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
+                        } catch (e) {
+                            console.log("[data_patch] Error:",e);
+                            ws.send(JSON.stringify({type:'error',msg:'Bad patch'}));
+                        }
                     });
                 } else if(data.type=='name_update'){
                     postgres.query("UPDATE documents SET name=$2,last_edit_time=$3 WHERE id = $1",[doc_id,data.name, new Date()]);

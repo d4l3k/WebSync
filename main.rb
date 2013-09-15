@@ -22,7 +22,7 @@ class Redis
   end
 end
 # Ease of use connection to the redis server.
-$redis = Redis.new :driver=>:hiredis
+$redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 #$adapter = DataMapper.setup(:default, :adapter=>'riak', :namespace=>'WebSync')
 #class DataMapper::Adapters::RiakAdapter

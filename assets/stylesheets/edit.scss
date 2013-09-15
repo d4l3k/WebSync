@@ -614,6 +614,16 @@ a#name {
     position: absolute;
     margin: -4px;
     z-index: 910;
+    &.top.left.dragable {
+        height: 14px;
+        width: 14px;
+        margin: -7px;
+        line-height: 14px;
+        cursor: move;
+        i {
+            line-height: 14px;
+        }
+    }
     &.top.left {
         cursor: nw-resize;
     }

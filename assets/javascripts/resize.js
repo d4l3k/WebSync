@@ -11,6 +11,13 @@ define(['websync'],function(){ var self = {};
     $(".content").delegate(".Resize.handle", "click.Resize", function(e){
         e.stopPropagation();
     });
+    $(".content").delegate(".Resize.handle.dragable", "mousedown.Resize", function(e){
+        console.log(e);
+        self.drag = true;
+        self.origMove = $(e.currentTarget).position();
+        self.origMouse = {left: e.pageX, top: e.pageY};
+        e.preventDefault();
+    });
     $(".content").delegate(".Resize.handle.bottom", "mousedown.Resize", function(e){
         console.log(e);
         self.drag = true;
@@ -33,6 +40,12 @@ define(['websync'],function(){ var self = {};
             if(self.origX){
                 $(self.active).outerWidth(e.pageX-self.origX + self.origWidth);
             }
+            if(self.origMove){
+                var x_offset = e.pageX - self.origMouse.left;
+                var y_offset = e.pageY - self.origMouse.top;
+                var new_position = {left: self.origMove.left + x_offset, top: self.origMove.top + y_offset}
+                $(self.active).css(new_position);
+            }
             self.updateHandles();
             e.preventDefault();
         }
@@ -43,6 +56,8 @@ define(['websync'],function(){ var self = {};
             e.preventDefault();
             self.origX = null;
             self.origY = null;
+            self.origMove = null;
+            self.origMouse = null;
             self.origWidth = null;
             self.origHeight = null;
             self.drag = false;
@@ -53,7 +68,7 @@ define(['websync'],function(){ var self = {};
         self.resizeOff();
         self.active = elem;
         // Add handle DIVs
-        $(".content").append('<div class="Resize handle top left"></div>');
+        $(".content").append('<div class="Resize handle top left dragable">'+($(elem).css("position")=="absolute"? "<i class='icon-move'></i>" : "" )+ '</div>');
         $(".content").append('<div class="Resize handle top middle"></div>');
         $(".content").append('<div class="Resize handle top right"></div>');
         $(".content").append('<div class="Resize handle right middle"></div>');

@@ -660,7 +660,8 @@ a#name {
             border-bottom: 1px solid #aaa;
         }
         section {
-            min-height: 32px;
+            min-height: 16px;
+            padding: 8px;
             min-width: 250px;
             position: absolute;
             display: inline-block;

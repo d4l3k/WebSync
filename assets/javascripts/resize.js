@@ -15,23 +15,23 @@ define(['websync'],function(){ var self = {};
         console.log(e);
         self.drag = true;
         self.origY = e.pageY;
-        self.origHeight = $(self.active).height();
+        self.origHeight = $(self.active).outerHeight();
         e.preventDefault();
     });
     $(".content").delegate(".Resize.handle.right", "mousedown.Resize", function(e){
         console.log(e);
         self.drag = true;
         self.origX = e.pageX;
-        self.origWidth = $(self.active).width();
+        self.origWidth = $(self.active).outerWidth();
         e.preventDefault();
     });
     $(document).bind("mousemove.Resize", function(e){
         if(self.drag){
             if(self.origY){
-                $(self.active).height(e.pageY-self.origY + self.origHeight);
+                $(self.active).outerHeight(e.pageY-self.origY + self.origHeight);
             }
             if(self.origX){
-                $(self.active).width(e.pageX-self.origX + self.origWidth);
+                $(self.active).outerWidth(e.pageX-self.origX + self.origWidth);
             }
             self.updateHandles();
             e.preventDefault();
@@ -67,10 +67,10 @@ define(['websync'],function(){ var self = {};
         var offset = $(self.active).position();
         $(".Resize.handle.top").css({top: offset.top});
         $(".Resize.handle.left").css({left: offset.left});
-        $(".Resize.handle.right").css({left: offset.left+$(self.active).width()});
-        $(".Resize.handle.bottom").css({top: offset.top+$(self.active).height()});
-        $(".Resize.handle.right.middle, .Resize.handle.left.middle").css({top: offset.top+$(self.active).height()/2});
-        $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").css({left: offset.left+$(self.active).width()/2});
+        $(".Resize.handle.right").css({left: offset.left+$(self.active).outerWidth()});
+        $(".Resize.handle.bottom").css({top: offset.top+$(self.active).outerHeight()});
+        $(".Resize.handle.right.middle, .Resize.handle.left.middle").css({top: offset.top+$(self.active).outerHeight()/2});
+        $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").css({left: offset.left+$(self.active).outerWidth()/2});
     }
     self.resizeOff = function(){
         self.drag = false;

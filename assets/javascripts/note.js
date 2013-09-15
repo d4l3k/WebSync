@@ -83,7 +83,7 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
         var note = $("<section></section")
         $(page).append(note);
         note.attr("contenteditable",true).focus();
-        note.css({left:e.offsetX-16,top:e.offsetY-note.height()/2});
+        note.css({left:e.offsetX-16,top:e.offsetY-note.outerHeight()/2});
     });
     $("#notesView").on("click",".section",function(e){
         var section = e.currentTarget.dataset.index;

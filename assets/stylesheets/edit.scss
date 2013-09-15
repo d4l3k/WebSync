@@ -664,7 +664,7 @@ a#name {
         section {
             min-height: 16px;
             padding: 8px;
-            min-width: 250px;
+            width: 250px;
             position: absolute;
             display: inline-block;
             &[contenteditable=true] {
@@ -675,9 +675,10 @@ a#name {
 }
 #note-nav {
     left: 0px;
-    padding: 8px;
+    & > * {
+        margin: 8px;
+    }
     #notesView {
-        margin-top: 8px;
         padding: 8px 0;
         a {
             cursor: pointer;

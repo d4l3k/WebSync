@@ -37,3 +37,10 @@ module AssetPipeline
 end
 require './main'
 AssetPipeline::Task.define! WebSync
+
+task :admin_add, :email do |task, args|
+    User.get(args[:email]).update(group:"admin")
+end
+task :admin_remove, :email do |task, args|
+    User.get(args[:email]).update(group:"user")
+end

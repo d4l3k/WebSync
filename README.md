@@ -17,7 +17,7 @@ Features:
 ----
 
 TODO:
-Grepping through the source code is the best way to find things that need to be done, but here's a list of a few major things.
+I'm in the process of switching over to [Waffle.IO](https://waffle.io/d4l3k/WebSync). However, grepping through the source code is a good way to find things that need to be done, but here's a list of a few major things.
 * Revert change previews
 * Anonymous Users
 * Better document sharing & permissions
@@ -46,6 +46,15 @@ rackup
 ./backend.js
 
 This launches the main site on port 4567 and the web socket server on 4568.
+
+To add an admin type:
+```
+rake "admin_add[sample@sample.com]"
+```
+and to remove:
+```
+rake "admin_remove[sample@sample.com]"
+```
 
 Once the site is running you need to go into the admin panel and configure the script groups.
 

@@ -71,4 +71,4 @@ License
 ----
 Copyright (c) 2013 Tristan Rice
 
-ThePumaPress website is licensed under the [MIT License](http://opensource.org/licenses/MIT).
+WebSync is licensed under the [MIT License](http://opensource.org/licenses/MIT).

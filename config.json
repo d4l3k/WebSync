@@ -4,5 +4,73 @@
     "websocket": {
         "port": 4568,
         "url": "websocket.websyn.ca"
+    },
+    "redis": {
+        "host":null,
+        "port":null
+    },
+    "default_assets": [
+        {
+            "name": "Tables",
+            "description": "Enables table editting.",
+            "url": "/assets/tables.js"
+        }
+        ,{
+            "name": "Chat",
+            "description": "Enables chat between editors.",
+            "url": "/assets/chat.js"
+        }
+        ,{
+            "name": "Page Layout",
+            "description": "Standard document layout.",
+            "url": "/assets/page.js"
+        }
+        ,{
+            "name": "Presentation Layout",
+            "description": "Standard presentation layout.",
+            "url": "/assets/presentation.js"
+        }
+        ,{
+            "name": "Spreadsheet Layout",
+            "description": "Standard presentation layout.",
+            "url": "/assets/spreadsheet.js"
+        }
+        ,{
+            "name": "Resize",
+            "description": "Enables object resizing with handles.",
+            "url": "/assets/resize.js"
+        }
+    ],
+    "default_asset_groups": [
+        {
+            "name" : "Document",
+            "description" : "Format similar to Microsoft Word or LibreOffice Writer.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Page Layout",
+                "Resize"
+            ]
+        }
+        ,{
+            "name" : "Presentation",
+            "description" : "Format similar to Microsoft PowerPoint or LibreOffice Impress.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Presentation Layout",
+                "Resize"
+            ]
+        }
+        ,{
+            "name" : "Spreadsheet",
+            "description" : "Format similar to Microsoft Excel or LibreOffice Calc.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Spreadsheet Layout",
+                "Resize"
+            ]
+        }
     }
 }

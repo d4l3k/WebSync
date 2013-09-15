@@ -7,7 +7,6 @@ var jsondiffpatch = require('jsondiffpatch');
 jsondiffpatch.config.diff_match_patch = require('./diff_match_patch_uncompressed.js');
 Base62 = require('base62');
 redisLib = require('redis');
-redis = redisLib.createClient();
 var pg = require('pg');
 md5 = require('MD5');
 
@@ -16,9 +15,7 @@ fs.readFile('./config.json', function(err, buffer){
     config = JSON.parse(buffer.toString());
     postgres = new pg.Client("tcp://"+config.postgres);
     postgres.connect();
-dm = new function DataMapper(){
-
-}
+redis = redisLib.createClient(config.redis.port,config.redis.host);
 var WebSocketServer = require('ws').Server
   , wss = new WebSocketServer({port: config.websocket.port});
 wss.on('connection', function(ws) {
@@ -43,7 +40,7 @@ wss.on('connection', function(ws) {
                         console.log('Client['+data.id+'] Authed!');
                         authenticated = true;
                         // TODO: Implement socket verification.
-                        redis_sock = redisLib.createClient();
+                        redis_sock = redisLib.createClient(config.redis.port,config.redis.host);
                         redis_sock.on('message',function(channel, msg){
                             console.log('DocMsg['+channel+'] '+msg);
                             var mdata = JSON.parse(msg);

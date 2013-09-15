@@ -142,14 +142,14 @@ class AssetGroup
     include DataMapper::Resource
     property :id, Serial
     property :name, String
-    property :description, String
+    property :description, Text
     has n, :assets, :through => Resource
 end
 class Asset
     include DataMapper::Resource
     property :id, Serial
     property :name, String
-    property :description, String
+    property :description, Text
     property :url, String
     property :type, Discriminator
     has n, :documents, :through => Resource
@@ -275,8 +275,28 @@ class WebSync < Sinatra::Base
     end
     $dmp = DiffMatchPatch.new
 
-    Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
-    Javascript.first_or_create(:name=>'Chat',:description=>'Talk with other users!',:url=>'/assets/chat.js')
+    #Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
+    #Javascript.first_or_create(:name=>'Chat',:description=>'Talk with other users!',:url=>'/assets/chat.js')
+    if Asset.count == 0
+        puts "[DATABASE] Creating default assets."
+        $config["default_assets"].each do |asset|
+            a = Javascript.create(name:asset["name"],description:asset["description"],url:asset["url"])
+            puts " :: Creating: #{asset["name"]}, Success: #{a.save}"
+        end
+    end
+    if AssetGroup.count == 0
+        puts "[DATABASE] Creating default asset groups."
+        $config["default_asset_groups"].each do |group|
+            g = AssetGroup.create(name:group["name"],description:group["description"])
+            group["assets"].each do |asset|
+                a = Asset.first(name:asset)
+                if not a.nil?
+                    g.assets << a
+                end
+            end
+            puts " :: Creating: #{g.name}, Success: #{g.save}"
+        end
+    end
     get '/login' do
         if !logged_in?
             erb :login

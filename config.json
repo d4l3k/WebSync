@@ -36,6 +36,11 @@
             "url": "/assets/spreadsheet.js"
         }
         ,{
+            "name": "Note Layout",
+            "description": "Standard note-taking layout.",
+            "url": "/assets/note.js"
+        }
+        ,{
             "name": "Resize",
             "description": "Enables object resizing with handles.",
             "url": "/assets/resize.js"
@@ -69,6 +74,16 @@
                 "Tables",
                 "Chat",
                 "Spreadsheet Layout",
+                "Resize"
+            ]
+        }
+        ,{
+            "name" : "Notebook",
+            "description" : "Format similar to Microsoft OneNote.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Note Layout",
                 "Resize"
             ]
         }

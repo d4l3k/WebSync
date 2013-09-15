@@ -637,7 +637,42 @@ a#name {
         cursor: se-resize;
     }
 }
+.content-note {
+    height: 100%;
+    left: 252px;
+    right: 0px;
+    position: absolute;
+    #note-well, .note-page, .note-section {
+        width: 100%;
+        height: 100%;
+    }
+    .note-page {
+        position: relative;
+        .note-title {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            min-height: 32pt;
+            line-height: 32pt;
+            min-width: 250px;
+            font-size: 24pt;
 
+            border-bottom: 1px solid #aaa;
+        }
+        section {
+            min-height: 32px;
+            min-width: 250px;
+            position: absolute;
+            display: inline-block;
+            &[contenteditable=true] {
+                outline: 1px dashed #aaa;
+            }
+        }
+    }
+}
+#note-nav {
+    left: 0px;
+}
 .badge-pulse {
     @include ex(animation-duration, 1s);
     @include ex(animation-name, badge-glow);

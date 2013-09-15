@@ -683,6 +683,9 @@ a#name {
         }
     }
 }
+.open {
+    z-index: 10;
+}
 #note-nav {
     left: 0px;
     & > * {

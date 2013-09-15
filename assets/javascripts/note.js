@@ -2,6 +2,7 @@
 define("/assets/note.js",['websync'], function(websync) { var self = this;
     console.log("Notes loaded");
     $(".content").hide().addClass("content-note").fadeIn();
+    $("body").append('<div id="context-menu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#">Rename</a></li><li><a tabindex="-1" href="#">Delete</a></li></ul></div>');
     $(".content").append($('<div id="note-well" class="content_container"></div>'));
     $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn" type="button">Add Section</button><button id="addPage" class="btn" type="button">Add Page</button><div id="notesView" class="well"></div></div>'));    
     self.updateNav = function(){
@@ -20,6 +21,47 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
         });
         html+= "</ul>";
         var nav = $("#notesView").html(html);
+        var selectedElem = null;
+        $("#notesView a").contextmenu({
+            target: "#context-menu",
+            before: function(e, element){
+                console.log(e,element);
+                if($(element).hasClass("page")){
+                    $("#context-menu li:contains('Rename')").hide();
+                } else {
+                    $("#context-menu li:contains('Rename')").show();
+                }
+                selectedElem = element[0];
+                return true;
+            },
+            onItem: function(e, element){
+                var op = element[0].innerText;
+                var target = null;
+                if($(selectedElem).hasClass("page")){
+                    var page = $(selectedElem).data().index;
+                    var section = $(selectedElem).parent().parent().parent().children().first().data().index;
+                    target = $(".note-section").eq(section).children().eq(page);
+                } else if($(selectedElem).hasClass("section")){
+                    var section = $(selectedElem).data().index;
+                    target = $(".note-section").eq(section);
+                }
+                if(op == "Delete"){
+                    target.remove();
+                    self.updateNav();
+                } else if(op == "Rename"){
+                    var finish_rename =  function(e){
+                        // Enter or Escape
+                        if(!e.keyCode || e.keyCode == 13 || e.keyCode == 27){
+                            e.preventDefault();
+                            $(selectedElem).unbind("blur.Note").unbind("keydown.Note");
+                            target[0].dataset.name = $(selectedElem).text();
+                            self.updateNav();
+                        }
+                    }
+                    $(selectedElem).attr("contenteditable",true).focus().bind("blur.Note", finish_rename).bind("keydown", finish_rename);
+                }
+            }
+        });
     }
     self.deselectNoteBubble = function(){
         // TODO: Remove empty bubbles;

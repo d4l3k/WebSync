@@ -64,11 +64,10 @@ define(['websync'],function(){ var self = {};
         }
     });
     self.resizeOn = function(elem){
-        console.log(elem);
         self.resizeOff();
         self.active = elem;
         // Add handle DIVs
-        $(".content").append('<div class="Resize handle top left dragable">'+($(elem).css("position")=="absolute"? "<i class='icon-move'></i>" : "" )+ '</div>');
+        $(".content").append('<div class="Resize handle top left'+($(elem).css("position")=="absolute"? " dragable\"><i class='icon-move'></i>" : "\">" )+ '</div>');
         $(".content").append('<div class="Resize handle top middle"></div>');
         $(".content").append('<div class="Resize handle top right"></div>');
         $(".content").append('<div class="Resize handle right middle"></div>');

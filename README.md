@@ -1,7 +1,9 @@
-WebSync by Outer Earth Interactive
-Tristan Rice (C) 2013
+WebSync by Outer Earth Interactive [![Stories in Ready](https://badge.waffle.io/d4l3k/WebSync.png?label=ready)](https://waffle.io/d4l3k/WebSync)  
+============
+WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive.
 
-Features:
+Features
+----
 * Persistent JSON object synced between clients
 * Document, Spreadsheet, and Presentation editing and viewing.
 * Tables
@@ -14,9 +16,8 @@ Features:
 * Document sharing
 * Open source
 
+TODO
 ----
-
-TODO:
 I'm in the process of switching over to [Waffle.IO](https://waffle.io/d4l3k/WebSync). However, grepping through the source code is a good way to find things that need to be done, but here's a list of a few major things.
 * Revert change previews
 * Anonymous Users
@@ -27,9 +28,8 @@ I'm in the process of switching over to [Waffle.IO](https://waffle.io/d4l3k/WebS
 * Better documentation
 * Redesign website to be a little more unique.
 
+Dependencies
 ----
-
-Dependencies:
 * WebSync requires ruby, rubygems, nodejs, and npm.
 * WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities. Redis may be replaced with ZeroMQ in the future.
 * Libre Office & unoconv is required for file upload & export.
@@ -38,12 +38,13 @@ You can install the Ruby dependencies by running "bundle" and the Node.JS depend
 
 Some things can be configured in "config.json" but a majority still require source changes.
 
+Launching
 ----
-
-Launching:
 Once the dependencies are installed and running, you should be able to run a development server by running:
+```
 rackup
 ./backend.js
+```
 
 This launches the main site on port 4567 and the web socket server on 4568.
 
@@ -60,12 +61,14 @@ Once the site is running you need to go into the admin panel and configure the s
 
 The production environment is currently setup for use with https://websyn.ca
 
+Documentation
 ----
 
 Some incomplete javascript documentation is available by running "./doc.rb" and viewing the file "public/doc_gen.html". This is also available at http://<WebSync URL>/documentation
 
-----
 
-License:
-WebSync is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) license. If you want to use it for commercial purposes, please contact me (Tristan Rice) and we can work out an alternative license.
-https://creativecommons.org/licenses/by-nc-sa/3.0/
+License
+----
+Copyright (c) 2013 Tristan Rice
+
+ThePumaPress website is licensed under the [MIT License](http://opensource.org/licenses/MIT).

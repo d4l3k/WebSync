@@ -1,3 +1,5 @@
+$blue: #08c;
+
 @mixin ex($key, $val) {
     -moz-#{$key}: $val;
     -o-#{$key}: $val;
@@ -673,6 +675,23 @@ a#name {
 }
 #note-nav {
     left: 0px;
+    padding: 8px;
+    #notesView {
+        margin-top: 8px;
+        padding: 8px 0;
+        a {
+            cursor: pointer;
+        }
+        ul {
+            ul {
+                margin-left: -15px;
+                margin-right: -15px;
+                a {
+                    padding-left: 30px;
+                }
+            }
+        }
+    }
 }
 .badge-pulse {
     @include ex(animation-duration, 1s);

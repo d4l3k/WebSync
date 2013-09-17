@@ -434,14 +434,14 @@ class WebSync < Sinatra::Base
     end
     get '/new/:group' do
         login_required
+        group = AssetGroup.get(params[:group])
         doc = Document.create(
-            :name => "Unnamed #{params[:group]}",
+            :name => "Unnamed #{group.name}",
             :body => {body:[]},
             :created => Time.now,
             :last_edit_time => Time.now,
             :user => current_user
         )
-        group = AssetGroup.get(params[:group])
         doc.assets = group.assets
         doc.save
         redirect "/#{doc.id}/edit"

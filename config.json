@@ -45,6 +45,11 @@
             "description": "Enables object resizing with handles.",
             "url": "/assets/resize.js"
         }
+        ,{
+            "name": "MathJax",
+            "description": "Enables equation editing.",
+            "url": "/assets/mathjax.js"
+        }
     ],
     "default_asset_groups": [
         {
@@ -54,6 +59,7 @@
                 "Tables",
                 "Chat",
                 "Page Layout",
+                "MathJax",
                 "Resize"
             ]
         }
@@ -64,6 +70,7 @@
                 "Tables",
                 "Chat",
                 "Presentation Layout",
+                "MathJax",
                 "Resize"
             ]
         }
@@ -74,6 +81,7 @@
                 "Tables",
                 "Chat",
                 "Spreadsheet Layout",
+                "MathJax",
                 "Resize"
             ]
         }
@@ -84,6 +92,7 @@
                 "Tables",
                 "Chat",
                 "Note Layout",
+                "MathJax",
                 "Resize"
             ]
         }

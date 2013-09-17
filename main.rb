@@ -435,7 +435,7 @@ class WebSync < Sinatra::Base
     get '/new/:group' do
         login_required
         doc = Document.create(
-            :name => 'Unnamed Document',
+            :name => "Unnamed #{params[:group]}",
             :body => {body:[]},
             :created => Time.now,
             :last_edit_time => Time.now,

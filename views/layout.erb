@@ -26,7 +26,7 @@
             WebSyncData = <%= MultiJson.dump(@doc.body) %>;
 
             // Set document title.
-            document.title = <%= @doc.name.inspect %> + " - WebSync";
+            document.title = <%= @doc.name.inspect + " - WebSync" %>;
             </script>
             <%= javascript_tag 'bundle-edit' %>
         <% end %>

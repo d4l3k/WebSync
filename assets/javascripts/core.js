@@ -628,6 +628,16 @@ function NODEtoJSON(obj){
         name: obj.nodeName,
         childNodes:[]
     }
+    var search_children = true;
+    if(_.size(obj.dataset)>0){
+        jso.dataset = {}
+        _.each(obj.dataset,function(v,k){
+            jso.dataset[k]=v;
+        });
+        if(jso.dataset.search_children=="false"){
+            search_children = false;
+        }
+    }
     if(obj.nodeName=="#text"){
         jso.textContent = obj.textContent;
     }
@@ -639,9 +649,11 @@ function NODEtoJSON(obj){
             }
         });
     }
-    _.each(obj.childNodes,function(child,index){
-        jso.childNodes.push(NODEtoJSON(child));
-    });
+    if(search_children){
+        _.each(obj.childNodes,function(child,index){
+            jso.childNodes.push(NODEtoJSON(child));
+        });
+    }
     if(_.isEmpty(jso.childNodes)){
         delete jso.childNodes;
     }
@@ -662,11 +674,15 @@ function NODEtoDOM(obj){
     }
     html+="<"+obj.name;
     _.each(obj,function(v,k){
-        if(k!="name"&&k!="textContent"&&k!="childNodes"){
+        if(k!="name"&&k!="textContent"&&k!="childNodes"&&k!="dataset"){
             html+=" "+k+"="+JSON.stringify(v);
         }
     });
-
+    if(obj.dataset){
+        _.each(obj.dataset,function(v,k){
+            html+=" data-"+k+"=\'"+v+"\"";
+        });
+    }
     if(obj.childNodes){
         html+=">";
         _.each(obj.childNodes,function(elem,index){

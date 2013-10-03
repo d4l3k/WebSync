@@ -1,4 +1,15 @@
 define(['websync'],function(){ var self = {};
+    $("#Text").append('<button id="floatElement" title="Toggle Float" class="btn"><i class="icon-move"></i></button>');
+    $("#floatElement").click(function(){
+        if(self.active){
+            $(self.active).toggleClass("float");
+            var tmp = self.active;
+            tmp.style.top = null;
+            tmp.style.left = null;
+            self.resizeOff();
+            self.resizeOn(tmp);
+        }
+    });
     $(".content_container").delegate("img, iframe, table, .note-page section", "click.Resize", function(e){
         if(WebSyncAuth.view_op=="edit"){
             self.resizeOn(this);
@@ -76,6 +87,7 @@ define(['websync'],function(){ var self = {};
         $(".content").append('<div class="Resize handle bottom left"></div>');
         $(".content").append('<div class="Resize handle left middle"></div>');
         self.updateHandles();
+        self.active.addEventListener("DOMSubtreeModified",self.observer);
     };
     self.updateHandles = function(){
         var offset = $(self.active).position();
@@ -86,6 +98,15 @@ define(['websync'],function(){ var self = {};
         $(".Resize.handle.right.middle, .Resize.handle.left.middle").css({top: offset.top+$(self.active).outerHeight()/2});
         $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").css({left: offset.left+$(self.active).outerWidth()/2});
     }
+    self.observer = function(){
+        var bounding_data = JSON.stringify(self.active.getBoundingClientRect());
+        if(bounding_data!=self.lastSize){
+            setTimeout(function(){
+                self.updateHandles();
+            },1);
+            self.lasttSize=bounding_data;
+        }
+    };    
     self.resizeOff = function(){
         self.drag = false;
         self.origX = null;
@@ -93,6 +114,9 @@ define(['websync'],function(){ var self = {};
         self.origWidth = null;
         self.origHeight = null;
         $(".Resize.handle").remove();
+        if(self.active){
+            self.active.removeEventListener("DOMSubtreeModified",self.observer);
+        }
         self.active = null;
     }
     self.disable = function(){

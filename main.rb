@@ -459,7 +459,7 @@ class WebSync < Sinatra::Base
         filetype = params[:file][:type]
         content = nil
         # TODO: Split upload/download into its own external server. Right now Unoconv is blocking. Also issues may arise if multiple copies of LibreOffice are running on the same server. Should probably use a single server instance of LibreOffice
-        `unoconv -f html #{tempfile.path}`
+        system("unoconv","-f","html",tempfile.path)
         exit_status = $?.to_i
         if exit_status == 0
             content = File.read(tempfile.path+".html")
@@ -504,7 +504,7 @@ class WebSync < Sinatra::Base
         file = Tempfile.new('websync-export')
         file.write( json_to_html( doc.body['body'] ) )
         file.close
-        `unoconv -f #{params[:format]} #{file.path}`
+        system("unoconv","-f", params[:format], file.path)
         if $?.to_i==0
             export_file = file.path+"."+params[:format]
             response.headers['content_type'] = `file --mime -b export_file`.split(';')[0]

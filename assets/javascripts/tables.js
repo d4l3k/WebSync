@@ -142,7 +142,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         self.selectionActive=true;
         self.selectionEnd = null;
         self.updateSelectedArea();
-        e.preventDefault();
+        //e.preventDefault();
+    });
+    $(".content").bind("mousemove.Tables",function(e){
+        if(self.selectionActive && self.selectedElem.contentEditable!="true"){
+            e.preventDefault();
+        }
     });
     $(".content").delegate("td","mouseup.Tables",function(e){
         self.selectionActive=false;
@@ -198,7 +203,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             self.cursorUpdate();
         }
     });
-    $(document).bind( "mouseup.Resize", function(e){
+    $(document).bind( "mouseup.Tables", function(e){
         if(self.drag){
             console.log(e);
             e.preventDefault();
@@ -232,7 +237,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             console.log($(e.originalEvent.clipboardData.getData('text/html')));
         }
     });
-    $(".content").bind("keydown.Tables",function(e){
+    self.keypressHandler = function(e){
+        console.log("KEYPRESS", e)
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
@@ -262,7 +268,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     self.cursorMove(0,-1);
                     e.preventDefault();
                 }else if(e.keyCode==40&&!editting){
-                    // Down arrow
+                    // Down a1rrow
                     self.cursorMove(0,1);
                     e.preventDefault();
                 } else {
@@ -283,7 +289,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 }
             }
         }
-    });
+    }
 
     WebSync.updateRibbon();
     $("#ribbon_buttons a:contains('Table')").parent().hide();
@@ -327,6 +333,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             $(".Table.axis").fadeIn(200);
         }
 		self.cursorUpdate();
+        self.enterLeaveBinds();
 	}
     self.headerUpdate = function(){
         var size = self.tableSize();
@@ -359,18 +366,18 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		}
 	}
 	self.cursorUpdate = function(){
-		var pos = $(self.selectedElem).position();
+		var pos = $(self.selectedElem).offset();
         pos.top += 2;
         pos.left += 2;
 		//$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();
-        $("#table_cursor").css({left:pos.left,top:pos.top}).height($(self.selectedElem).height()-2).width($(self.selectedElem).width()-1).get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
         var table = $(self.primaryTable());
-        var offset = table.offset();
-        if(!($(".Table.axis#x").get(0).style.left)){
+        $("#table_cursor").offset({left:pos.left,top:pos.top}).height($(self.selectedElem).height()-2).width($(self.selectedElem).width()-1).get(0).scrollIntoViewIfNeeded();
+        setTimeout(function(){
+            var offset = table.offset();
             $(".Table.axis#x").offset({left:offset.left,top:offset.top-17});//.width(table.width()+2);
             $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
-        }
+        },1)
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){
@@ -399,8 +406,45 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 $(".Table.axis#x").remove();
                 $(".Table.axis#y").remove();
             });
+            self.enterLeaveBinds();
 		}
 	}
+    self.table = null;
+    self.enterLeaveBinds = function(){
+        if(self.selected){
+            var primary = self.primaryTable();
+            if(primary != self.table){
+                if(self.table){
+                    self.leaveTable(self.table);
+                }
+                self.table = primary;
+                self.enterTable(self.table);
+            }
+        } else {
+            if(self.table){
+                self.leaveTable(self.table);
+                self.table = null;
+            }
+        }
+    }
+    self.enterTable = function(table){
+        console.log("Entering");
+        $(table).bind("keypress.TablesTemp", self.keypressHandler);
+        $(".table_clip").bind("keypress.TablesTemp", self.keypressHandler);
+        $(table).on("resize.TablesTemp", function(e){
+            self.cursorUpdate();
+            self.headerUpdate();
+        });
+    }
+    self.leaveTable = function(table){
+        console.log("Leaving");
+		$(table).unbind(".TablesTemp");
+		$(table).undelegate(".TablesTemp");
+		$(table).off(".TablesTemp");
+		$(".table_clip").unbind(".TablesTemp");
+		$(".table_clip").undelegate(".TablesTemp");
+		$(".table_clip").off(".TablesTemp");
+    }
     self.updateSelectedArea = function(){
         $(".Table.axis th").removeClass("active");
         if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){

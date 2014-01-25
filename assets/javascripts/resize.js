@@ -2,7 +2,7 @@ define(['websync'],function(){ var self = {};
     $("#Text").append('<button id="floatElement" title="Toggle Float" class="btn"><i class="icon-move"></i></button>');
     $("#floatElement").click(function(){
         if(self.active){
-            $(self.active).toggleClass("float");
+            $(self.active).toggleClass("float").trigger("resize");
             var tmp = self.active;
             tmp.style.top = null;
             tmp.style.left = null;
@@ -57,6 +57,7 @@ define(['websync'],function(){ var self = {};
                 var new_position = {left: self.origMove.left + x_offset, top: self.origMove.top + y_offset}
                 $(self.active).css(new_position);
             }
+            $(self.active).trigger("resize");
             self.updateHandles();
             e.preventDefault();
         }

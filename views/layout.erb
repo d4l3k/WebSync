@@ -97,9 +97,10 @@
     <% end %>
     <script type="text/javascript">
         var tooltipHandle = function(){
-            $('[data-toggle="tooltip"], nav [title]').tooltip({placement: 'bottom'});
+            $('[data-toggle="tooltip"], nav [title]').tooltip({placement: 'bottom', container:'body'});
         }
-        tooltipHandle();
-        setTimeout(tooltipHandle, 3000);
+        for(var i=0;i<6;i++){
+            setTimeout(tooltipHandle, i*500 +1);
+        }
     </script>
 </html>

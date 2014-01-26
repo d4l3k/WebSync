@@ -243,7 +243,7 @@ cursor {
         }
     }
     .content_well {
-        left: 251px;
+        left: 240px;
     }
     &.view {
         .content_well {
@@ -513,7 +513,7 @@ a#name {
         padding: 5px;
         .slideWell {
             position: absolute;
-            top: 40px;
+            top: 45px;
             left: 5px;
             right: 5px;
             bottom: 5px;
@@ -528,11 +528,24 @@ a#name {
                 border-radius: 4px;
                 height: 1.5in;
                 margin: 5px;
-                padding: 5px;
                 cursor: pointer;
                 &.active {
                     border: 2px solid black;
                     margin: 4px;
+                }
+                overflow: hidden;
+                .slide {
+                    transform-origin: top left;
+                    transform: scale(0.3) !important;
+                    -webkit-transform: scale(0.3) !important;
+                    -webkit-transform-origin: top left;
+                    padding: 0;
+                    margin: 0;
+                    border: none;
+                    display: block !important;
+                    -user-modify: initial;
+                    -moz-user-modify: initial;
+                    -webkit-user-modify: initial;
                 }
             }
         }

@@ -88,7 +88,7 @@ define("edit",['websync'],function(websync){ var self = this;
         document.execCommand('hiliteColor', false, this.value);
     });
     // Reflects text in menu at top
-    $(document).bind('selectionchange.TextEdit',function(){
+    $(".content_well").bind('selectionchange.TextEdit',function(){
         if(!self._selectTimeout){
             self._selectTimeout = setTimeout(self.selectHandler,200);
         }

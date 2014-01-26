@@ -1,22 +1,22 @@
 <div class="container">
-    <div class="row-fluid">
-        <div class="span10">
-            <div class="hero-unit">
+    <div class="row">
+        <div class="col-md-10">
+            <div class="jumbotron">
                 <h1>Welcome to WebSyn.ca</h1>
                 <p>
                     Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
                 </p>
                 <p>
+                
                     <div class="btn-group">
-                        <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown"><i class="icon-file-alt"></i> Create a Document
+                        <button class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> Create a Document
  <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <% AssetGroup.each do |ass| %>
                                 <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
                             <% end %>
                         </ul>
-                    </div>
-                    or <a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a> or <a href="/documentation" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Documentation</a>
+                    </div> or <a href="/upload" class='btn btn-lg btn-default'><i class="fa fa-cloud-upload"></i> Upload a File</a> or <a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-lg'><i class="fa fa-eye"></i> View the Code</a>
                 </p>
             </div>
             <div class="ad link">

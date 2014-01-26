@@ -43,31 +43,50 @@
 	</head>
 	<body class="<%= params[:op] %>">
         <% if !(defined?(@no_menu)&&@no_menu) %>
-<div class="menu">
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container-fluid">
-				<a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom">WebSyn.ca</a>
-                <ul class="nav">
-                    <li class="text hidden-phone">is a document editing tool similar to Google Drive or Microsoft Skydrive. </li>
-                </ul>
-                <ul id="settings" class="nav pull-right ribbon-opt">
-                    <li>
-                        <a href="/upload" title="Upload"><i class="icon-large icon-cloud-upload"></i></a>
-                    </li>
-                    <% if admin? %>
-                        <li>
-                            <a href="/admin" title="Admin Control Panel"><i class="icon-cog icon-large"></i></a>
-                        </li>
-                    <% end %>
-                    <li>
-                        <%= render_login_button %>
-                    </li>
-                </ul>
-            </div>
-        </div>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">WebSyn.ca</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <p class="navbar-text">is a document editing tool similar to Google Drive or Microsoft Skydrive.</p>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="/upload" title="Upload"><i class="fa fa-lg fa-cloud-upload"></i></a>
+            </li>
+            <% if admin? %>
+                <li>
+                    <a href="/admin" title="Admin Control Panel"><i class="fa fa-cog fa-lg"></i></a>
+                </li>
+            <% end %>
+            <li>
+                <%= render_login_button %>
+            </li>
+        </ul>
     </div>
-</div>
+  </div><!-- /.navbar-collapse -->
+</nav>
+<!--	<header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+        <div class="container">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom">WebSyn.ca</a>
+            </div>
+            <ul class="nav">
+                <li class="text hidden-phone">is a document editing tool similar to Google Drive or Microsoft Skydrive. </li>
+            </ul>
+            <ul id="settings" class="nav pull-right ribbon-opt">
+            </ul>
+        </div>
+    </header> -->
         <% end %>
 		<%= yield %>
 	</body>

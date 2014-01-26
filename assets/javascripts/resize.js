@@ -1,5 +1,5 @@
 define(['websync'],function(){ var self = {};
-    $("#Text").append('<button id="floatElement" title="Toggle Float" class="btn"><i class="icon-move"></i></button>');
+    $("#Text").append('<button id="floatElement" title="Toggle Float" class="btn btn-default"><i class="fa fa-arrows"></i></button>');
     $("#floatElement").click(function(){
         if(self.active){
             $(self.active).toggleClass("float").trigger("resize");
@@ -79,7 +79,7 @@ define(['websync'],function(){ var self = {};
         self.resizeOff();
         self.active = elem;
         // Add handle DIVs
-        $(".content").append('<div class="Resize handle top left'+($(elem).css("position")=="absolute"? " dragable\"><i class='icon-move'></i>" : "\">" )+ '</div>');
+        $(".content").append('<div class="Resize handle top left'+($(elem).css("position")=="absolute"? " dragable\"><i class='fa fa-arrows'></i>" : "\">" )+ '</div>');
         $(".content").append('<div class="Resize handle top middle"></div>');
         $(".content").append('<div class="Resize handle top right"></div>');
         $(".content").append('<div class="Resize handle right middle"></div>');

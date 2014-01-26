@@ -102,7 +102,7 @@
 		<div class="ribbon">
 			<div id="File" class="container">
                 <div class="btn-group">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> Download <span class="caret"></span></button>
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> Download <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="download/docx">Microsoft Word (.docx)</a></li>
                         <li><a href="download/pdf">PDF (.pdf)</a></li>
@@ -111,22 +111,22 @@
                         <li><a href="download/txt">Raw Text (.txt)</a></li>
                     </ul>
                 </div>
-                <a href="json" class="btn"><i class="fa fa-eye-open"></i> JSON</a>
+                <a href="json" class="btn btn-default"><i class="fa fa-eye"></i> JSON</a>
                 <input type="text" id="zoom_level" title="Zoom" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100">
-                <select id="view_mode" title="View Mode" class="ribbon_button">
+                <select id="view_mode" class="form-control" title="View Mode" class="ribbon_button">
 					<option>Normal</option>
 					<option>Zen</option>
                     <option>Presentation</option>
 				</select>
-                <select id="public_mode" title="Publicly Accessable" class="ribbon_button">
+                <select id="public_mode" class="form-control" title="Publicly Accessable" class="ribbon_button">
 					<option>Public</option>
 					<option>Private</option>
 				</select>
-                <a href="delete" class="btn btn-danger"><i class="fa fa-trash "></i> Delete</a>
+                <a href="delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
 			</div>
 			<div id="Insert" class="container">
-				<button id="picture" title="Picture" class="btn"><i class="fa fa-picture"></i></button>
-				<button id="video" title="Video" class="btn"><i class="fa fa-youtube-play"></i></button>
+				<button id="picture" title="Picture" class="btn btn-default"><i class="fa fa-picture-o"></i></button>
+				<button id="video" title="Video" class="btn btn-default"><i class="fa fa-youtube-play"></i></button>
 			</div>
 	</nav>
 <div class="content_well">

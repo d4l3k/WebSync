@@ -208,7 +208,7 @@ cursor {
     left: 0;
     right: 0;
     bottom: 0;
-    top: 83px;
+    top: 95px;
     display: inline-block;
     overflow: auto;
     text-align: center;
@@ -393,6 +393,20 @@ a#name {
 #font_size {
 	width: auto !important;
 }
+.ribbon {
+    .form-control {
+        display: inline-block;
+        width: 150px;
+    }
+    .btn {
+        margin-top: 5px;
+    }
+    input[type="color"] {
+        padding: 2px 4px !important;
+        margin-top: 5px;
+        width: 38px;
+    }
+}
 .content {
     position: relative;
     text-align: initial;
@@ -425,6 +439,9 @@ a#name {
 }
 .Table.axis {
     cursor: pointer;
+    th {
+        text-align: center;
+    }
     &#x th.resize {
         cursor: col-resize;
     }
@@ -463,7 +480,7 @@ a#name {
 	background: none !important;
 	left: -1000px;
 	top: 0px;
-    z-index: 900;
+    z-index: 902;
 }
 #table_selection {
     position: absolute;
@@ -491,7 +508,7 @@ a#name {
     position:absolute;
     right: 0;
     bottom: 0;
-    top: 83px;
+    top: 95px;
     background-color: #eee;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
@@ -613,15 +630,15 @@ a#name {
     display: initial;
     border: 1px solid black;
     background-color: white;
-    height: 6px;
-    width: 6px;
+    height: 7px;
+    width: 7px;
     position: absolute;
     margin: -4px;
     z-index: 910;
     &.top.left.dragable {
-        height: 14px;
-        width: 14px;
-        margin: -7px;
+        height: 16px;
+        width: 16px;
+        margin: -8px;
         line-height: 14px;
         cursor: move;
         i {

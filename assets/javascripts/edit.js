@@ -8,14 +8,14 @@ define("edit",['websync'],function(websync){ var self = this;
     self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript','insertHorizontalRule'];
     // Add ribbon text
     $(".ribbon").append('<div id="Text" class="container"> \
-            <button id="bold" title="Bold" class="btn"><i class="icon-bold"></i></button> \
-            <button id="italic" title="Italic" class="btn"><i class="icon-italic"></i></button> \
-            <button id="strikethrough" title="Strikethrough" class="btn"><i class="icon-strikethrough"></i></button> \
-            <button id="underline" title="Underline" class="btn"><i class="icon-underline"></i></button> \
-            <button id="createLink" title="Hyperlink" class="btn"><i class="icon-link"></i></button> \
-            <select id="font" title="Font" class="ribbon_button"> \
+            <button id="bold" title="Bold" class="btn btn-default"><i class="fa fa-bold"></i></button> \
+            <button id="italic" title="Italic" class="btn btn-default"><i class="fa fa-italic"></i></button> \
+            <button id="strikethrough" title="Strikethrough" class="btn btn-default"><i class="fa fa-strikethrough"></i></button> \
+            <button id="underline" title="Underline" class="btn btn-default"><i class="fa fa-underline"></i></button> \
+            <button id="createLink" title="Hyperlink" class="btn btn-default"><i class="fa fa-link"></i></button> \
+            <select id="font" title="Font" class="form-control ribbon_button"> \
             </select> \
-            <select id="font_size" title="Font Size" class="ribbon_button"> \
+            <select id="font_size" title="Font Size" class="form-control ribbon_button"> \
                 <option>8pt</option> \
                 <option>9pt</option> \
                 <option>10pt</option> \
@@ -60,19 +60,19 @@ define("edit",['websync'],function(websync){ var self = this;
                 <option>72pt</option> \
             </select> \
             <div class="btn-group"> \
-                <button id="justifyleft" title="Justify Left" class="btn"><i class="icon-align-left"></i></button> \
-                <button id="justifycenter" title="Justify Center" class="btn"><i class="icon-align-center"></i></button> \
-                <button id="justifyright" title="Justify Right" class="btn"><i class="icon-align-right"></i></button> \
-                <button id="justifyfull" title="Justify Full" class="btn"><i class="icon-align-justify"></i></button> \
+                <button id="justifyleft" title="Justify Left" class="btn btn-default"><i class="fa fa-align-left"></i></button> \
+                <button id="justifycenter" title="Justify Center" class="btn btn-default"><i class="fa fa-align-center"></i></button> \
+                <button id="justifyright" title="Justify Right" class="btn btn-default"><i class="fa fa-align-right"></i></button> \
+                <button id="justifyfull" title="Justify Full" class="btn btn-default"><i class="fa fa-align-justify"></i></button> \
             </div> \
-            <button id="insertunorderedlist" title="Unordered List" class="btn"><i class="icon-list-ul"></i></button> \
-            <button id="insertorderedlist" title="Ordered List" class="btn"><i class="icon-list-ol"></i></button> \
-            <button id="superscript" title="Superscript" class="btn"><i class="icon-superscript"></i></button> \
-            <button id="subscript" title="Subscript" class="btn"><i class="icon-subscript"></i></button> \
-            <input id="fontColor" title="Font Color" type="color"></input> \
-            <input id="hilightColor" title="Text Background Color" type="color" value="#FFFFFF"></input> \
-            <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn">&mdash;</button> \
-            <button id="removeFormat" title="Clear Formatting" class="btn"><i class="icon-remove"></i></button> \
+            <button id="insertunorderedlist" title="Unordered List" class="btn btn-default"><i class="fa fa-list-ul"></i></button> \
+            <button id="insertorderedlist" title="Ordered List" class="btn btn-default"><i class="fa fa-list-ol"></i></button> \
+            <button id="superscript" title="Superscript" class="btn btn-default"><i class="fa fa-superscript"></i></button> \
+            <button id="subscript" title="Subscript" class="btn btn-default"><i class="fa fa-subscript"></i></button> \
+            <input id="fontColor" title="Font Color" class="form-control" type="color"></input> \
+            <input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"></input> \
+            <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
+            <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
     this.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){

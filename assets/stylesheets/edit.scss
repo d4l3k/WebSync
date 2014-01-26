@@ -22,26 +22,8 @@ body,html {
     width: 100%;
     height: 100%;
     color: black;
-}
-@media (max-width: 979px) {
-    .menu .navbar {
-        ul li>a {
-            margin-top: -5px;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            margin-bottom: -5px;
-        }
-        #ribbon_button_active {
-            margin-top: -5px;
-            padding-bottom: 10px;
-        }
-    }
-    div.content_well, div.sidebar {
-        top: 93px;
-    }
-    div.navbar-fixed-top .navbar-inner, div.navbar-fixed-bottom .navbar-inner {
-        padding: 5px 0;
-    }
+    top: 0;
+    left: 0;
 }
 .menu .btn-group {
     position: initial;
@@ -141,10 +123,10 @@ cursor {
     position: absolute;
     display: none;
     top: 40px;
-    left: 0;
+    left: 50px;
+    right: 50px;
     margin: 0 auto;
     max-width: none;
-    width: 940px;
     ul.tab-nav {
         float:none;
         margin-top: -8px;
@@ -208,10 +190,23 @@ cursor {
     left: 0;
     right: 0;
     bottom: 0;
-    top: 83px;
+    top: 94px;
     display: inline-block;
     overflow: auto;
     text-align: center;
+    .return_edit {
+        position: fixed;
+        float: right;
+        margin: 10px 5px;
+        a {
+            cursor: pointer;
+            &:hover {
+                color: white;
+            }
+            margin: 5px;
+            color: #999999;
+        }
+    }
 }
 .content_well > div {
     @include ex(transform-origin, top center);
@@ -281,7 +276,7 @@ cursor {
 }
 .content-page {
 	min-height: 9in;
-	width: 6.5in;
+	width: 8.5in;
 	padding: 1in;
     margin: 0.1in auto;
 	border: 1px solid #aaa;
@@ -368,6 +363,7 @@ a#name {
 	max-width: 3in;
 	max-height: 25px;
 	white-space: nowrap;
+    display: inline-table;
     &:focus {
         max-width: 6in;
         //background-color: #777;
@@ -391,6 +387,20 @@ a#name {
 }
 #font_size {
 	width: auto !important;
+}
+.ribbon {
+    .form-control {
+        display: inline-block;
+        width: 150px;
+    }
+    .btn {
+        margin-top: 5px;
+    }
+    input[type="color"] {
+        padding: 2px 4px !important;
+        margin-top: 5px;
+        width: 38px;
+    }
 }
 .content {
     position: relative;
@@ -424,6 +434,9 @@ a#name {
 }
 .Table.axis {
     cursor: pointer;
+    th {
+        text-align: center;
+    }
     &#x th.resize {
         cursor: col-resize;
     }
@@ -444,11 +457,10 @@ a#name {
     .btn+.btn-group {
         margin-left: 5px !important;
     }
+    overflow-y: visible;
     .container {
         padding: 0 5px;
         white-space: nowrap;
-        overflow-x:auto;
-        overflow-y: hidden;
     }
 }
 #table_cursor {
@@ -462,7 +474,7 @@ a#name {
 	background: none !important;
 	left: -1000px;
 	top: 0px;
-    z-index: 900;
+    z-index: 902;
 }
 #table_selection {
     position: absolute;
@@ -490,7 +502,7 @@ a#name {
     position:absolute;
     right: 0;
     bottom: 0;
-    top: 83px;
+    top: 95px;
     background-color: #eee;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
@@ -553,7 +565,7 @@ a#name {
             font-size: 10pt;
             right: 0px;
             border-radius: 4px;
-            bottom: 35px;
+            bottom: 39px;
             top: 45px;
             width: 238px;
             overflow-y: auto;
@@ -573,7 +585,7 @@ a#name {
                 border-bottom: 1px solid #ccc;
                 line-height: 10pt;
                 word-wrap: break-word;
-                min-height: 26px;
+                min-height: 35px;
             }
         }
         .chat_input {
@@ -583,11 +595,11 @@ a#name {
             * {
                 font-size: 10pt;
             }
-            input {
-                width: 171px;
-            }
         }
     }
+}
+.edit .return_edit {
+    display: none;
 }
 .Table.axis {
     position: absolute;
@@ -612,15 +624,15 @@ a#name {
     display: initial;
     border: 1px solid black;
     background-color: white;
-    height: 6px;
-    width: 6px;
+    height: 7px;
+    width: 7px;
     position: absolute;
     margin: -4px;
     z-index: 910;
     &.top.left.dragable {
-        height: 14px;
-        width: 14px;
-        margin: -7px;
+        height: 16px;
+        width: 16px;
+        margin: -8px;
         line-height: 14px;
         cursor: move;
         i {

@@ -46,7 +46,7 @@
 	width: 100%;
 	background-color: white;
 	padding-bottom: 5px;
-	height: 36px !important;
+	height: 44px !important;
 }
 body > .container, body > .container-fluid {
     margin-top: 70px;
@@ -73,20 +73,19 @@ body > .container, body > .container-fluid {
     }
 }
 .ribbon-opt li.active a, .ribbon-opt li.active a:hover  {
-	background-color: rgba(255,255,255,0.45) !important;
+	//background-color: rgba(255,255,255,0.45) !important;
 	//background-color: #777 !important;
-	font-weight: bold;
+	//font-weight: bold;
 }
 .ribbon-opt li {
 	cursor: pointer;
     a:hover {
-        background-color: rgba(255,255,255,0.3) !important;
+        //background-color: rgba(255,255,255,0.3) !important;
     }
 
 }
-.ribbon .container {
-	display: none;
-    height: 36px !important;
+.navbar-brand {
+    color: white !important;
 }
 #alert_well {
 	position: fixed;

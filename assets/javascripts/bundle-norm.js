@@ -1,2 +1,2 @@
 //=require require-jquery
-//=require bootstrap
+//=require bootstrap.js

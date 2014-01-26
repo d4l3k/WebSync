@@ -54,9 +54,10 @@
     .carousel-caption {
       background-color: transparent;
       position: static;
-      max-width: 650px;
+      max-width: 670px;
       padding: 0 20px;
       margin-top: 200px;
+      text-align: left;
     }
     .carousel-caption h1,
     .carousel-caption .lead {
@@ -234,6 +235,12 @@
   *display: inline;
   *zoom: 1;
 }
+.carousel-inner {
+    background-image: url("/img/banner.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
     </style>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
@@ -247,7 +254,6 @@
 <div id="myCarousel" class="carousel slide">
       <div class="carousel-inner">
         <div class="item active">
-          <img src="/img/banner.png" alt="">
           <div class="container">
             <div class="carousel-caption">
                 <h1>Welcome to WebSyn.ca</h1>
@@ -255,14 +261,14 @@
                     Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
                 </p>
                     <div class="btn-group">
-                        <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown"><i class="icon-file-alt"></i> Create a Document
+                        <button class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> Create a Document
  <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <% AssetGroup.each do |ass| %>
                                 <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
                             <% end %>
                         </ul>
-                    </div><p class="lead or"> or </p><a href="/upload" class='btn btn-large'><i class="icon-cloud-upload"></i> Upload a File</a><p class="lead or"> or </p><a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-large'><i class="icon-eye-open"></i> View the Code</a>
+                    </div><p class="lead or"> or </p><a href="/upload" class='btn btn-lg btn-default'><i class="fa fa-cloud-upload"></i> Upload a File</a><p class="lead or"> or </p><a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-lg'><i class="fa fa-eye"></i> View the Code</a>
             </div>
           </div>
         </div>
@@ -272,13 +278,13 @@
   <div class="container">
     <ul class="bs-docs-social-buttons">
       <li>
-        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+        <iframe class="github-btn" src="/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
       </li>
       <li>
-        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="102px" height="20px"></iframe>
+        <iframe class="github-btn" src="/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="102px" height="20px"></iframe>
       </li>
       <li>
-        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=follow&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+        <iframe class="github-btn" src="/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=follow&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
       </li>
       <li>
         <div class="g-plusone" data-size="medium" data-href="https://websyn.ca"></div>

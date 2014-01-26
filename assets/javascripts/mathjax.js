@@ -1,6 +1,6 @@
 define(['websync'],function(){ var self = {};
     $("body").append('<script type="text/javascript" class="Equations" src="/assets/mathquill.min.js"></script><link rel="stylesheet" type="text/css" href="/mathquill.css">');
-    $("#Insert").append($("<button id='insert_equation' class='btn Equations' title='Insert Equation'><i class='icon-btc'></i></button>"));// ÷
+    $("#Insert").append($("<button id='insert_equation' class='btn btn-default Equations' title='Insert Equation'>Equation</button>"));// ÷
     $("#insert_equation").click(function(e){
         var elem = $('<span class="Equations Equation-Editable" contenteditable="false"></span>')[0]
         rangy.getSelection().getAllRanges()[0].surroundContents(elem);

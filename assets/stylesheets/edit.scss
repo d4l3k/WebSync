@@ -689,7 +689,7 @@ a#name {
     .note-page {
         position: relative;
         .note-title {
-            position: absolute;
+            position: relative;
             left: 20px;
             top: 20px;
             min-height: 32pt;
@@ -697,7 +697,9 @@ a#name {
             min-width: 250px;
             font-size: 24pt;
 
-            border-bottom: 1px solid #aaa;
+            border-left: none;
+            border-bottom: 1px solid #666;
+            background-color: transparent;
         }
         section {
             min-height: 16px;
@@ -705,8 +707,33 @@ a#name {
             width: 250px;
             position: absolute;
             display: inline-block;
+            background-color: #f5f5f5;
+            border-left: 3px solid #666;
             &[contenteditable=true] {
                 outline: 1px dashed #aaa;
+            }
+        }
+    }
+}
+ul.nav.nav-list {
+    line-height: 10px;
+    a {
+        color: #333333;
+    }
+    li {
+        &.active2 > a, .active > a {
+            &:hover {
+                background-color: transparent !important;
+            }
+            border-right: 1px solid #333333;
+            font-weight: bold;
+        }
+        ul.nav.nav-list {
+            margin-left: -5px;
+            border: none;
+            font-weight: normal;
+            li {
+                margin-left: 20px;
             }
         }
     }
@@ -726,8 +753,8 @@ a#name {
         }
         ul {
             ul {
-                margin-left: -15px;
-                margin-right: -15px;
+                margin-left: -20px;
+                margin-right: 0px;
                 a {
                     padding-left: 30px;
                 }

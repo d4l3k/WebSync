@@ -424,7 +424,7 @@ define('websync',{
             if(!dontPush)
                 window.history.pushState("","WebSync - Presentation Mode","view");
             $("nav").animate({top: -95},200);
-            $(".content_well").animate({top: 0}, 200);
+            $(".content_well, .sidebar").animate({top: 0}, 200);
             fullScreenApi.requestFullScreen(document.body);
         }
         else {
@@ -435,7 +435,7 @@ define('websync',{
             $("#zoom_level").data("slider").setValue(100);
             $("#zoom_level").trigger("slide");
             $("nav").animate({top: 0},200);
-            $(".content_well").animate({top: 94}, 200);
+            $(".content_well, .sidebar").animate({top: 94}, 200);
         }
     },
 	setupWebRTC: function(){

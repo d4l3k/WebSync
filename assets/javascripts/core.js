@@ -265,9 +265,15 @@ define('websync',{
             WebSync.urlChange();
         });
         $('#view_mode').change(WebSync.updateViewMode);
-        $(".return_edit").click(function(){
+        $(".return").click(function(){
             $('#view_mode').val("Normal");
             WebSync.updateViewMode();
+        });
+        $(".fullscreen").click(function(){
+            if(fullScreenApi.isFullScreen())
+                fullScreenApi.cancelFullScreen();
+            else
+                fullScreenApi.requestFullScreen(document.body);
         });
         require(['edit']);
 		this.updateRibbon();
@@ -398,6 +404,7 @@ define('websync',{
     updateViewMode: function(e, dontPush){
         var mode = $('#view_mode').val();
         WebSync.viewMode = mode;
+        fullScreenApi.cancelFullScreen();
         if(mode=='Zen'){
             $("body").removeClass("presentation").addClass("zen").resize();
             WebSyncAuth.view_op = "edit";
@@ -416,6 +423,7 @@ define('websync',{
                 window.history.pushState("","WebSync - Presentation Mode","view");
             $("nav").animate({top: -95},200);
             $(".content_well").animate({top: 0}, 200);
+            fullScreenApi.requestFullScreen(document.body);
         }
         else {
             $("body").removeClass("zen").removeClass("view").addClass("edit").resize();

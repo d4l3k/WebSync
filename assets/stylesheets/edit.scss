@@ -281,7 +281,7 @@ cursor {
 }
 .content-page {
 	min-height: 9in;
-	width: 6.5in;
+	width: 8.5in;
 	padding: 1in;
     margin: 0.1in auto;
 	border: 1px solid #aaa;
@@ -368,6 +368,7 @@ a#name {
 	max-width: 3in;
 	max-height: 25px;
 	white-space: nowrap;
+    display: inline-table;
     &:focus {
         max-width: 6in;
         //background-color: #777;

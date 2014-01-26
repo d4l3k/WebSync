@@ -7,20 +7,27 @@
         display: block !important;
     }
 </style>
-<div class="menu">
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container-fluid">
-				<a class="brand hidden-phone" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom">WebSync</a>
-				<ul class="nav">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+        
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">WebSyn.ca</a>
+      </div>
+      <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
 					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
 				</ul>
-				<ul id="ribbon_buttons" class="nav ribbon-opt">
+				<ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
 				</ul>
                 <div id="ribbon_button_active"></div>
-				<ul id="settings" class="nav pull-right ribbon-opt">
+				<ul id="settings" class="nav navbar-nav pull-right ribbon-opt">
 					<li class>
-                        <a id="settingsBtn" title="Settings"><i class="icon-cog icon-large"></i></a>
+                        <a id="settingsBtn" title="Settings"><i class="fa fa-cog fa-lg"></i></a>
                     </li>
 					<li class>
                         <%= render_login_button %>
@@ -32,7 +39,7 @@
                         <li><a href="#assets" data-toggle="tab">Assets</a></li>
                         <li><a href="#diffs" data-toggle="tab">Changes</a></li>
                     </ul>
-                <a class="close pull-right"><i class="icon-remove"></i></a></h3><div class="popover-content">
+                <a class="close pull-right"><i class="fa fa-remove"></i></a></h3><div class="popover-content">
                     <div class="tab-content">
                         <div class="tab-pane" id="assets">
                             <table class="table table-bordered">
@@ -95,7 +102,7 @@
 		<div class="ribbon">
 			<div id="File" class="container">
                 <div class="btn-group">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-cloud-download"></i> Download <span class="caret"></span></button>
+                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> Download <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="download/docx">Microsoft Word (.docx)</a></li>
                         <li><a href="download/pdf">PDF (.pdf)</a></li>
@@ -104,7 +111,7 @@
                         <li><a href="download/txt">Raw Text (.txt)</a></li>
                     </ul>
                 </div>
-                <a href="json" class="btn"><i class="icon-eye-open"></i> JSON</a>
+                <a href="json" class="btn"><i class="fa fa-eye-open"></i> JSON</a>
                 <input type="text" id="zoom_level" title="Zoom" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100">
                 <select id="view_mode" title="View Mode" class="ribbon_button">
 					<option>Normal</option>
@@ -115,15 +122,13 @@
 					<option>Public</option>
 					<option>Private</option>
 				</select>
-                <a href="delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
+                <a href="delete" class="btn btn-danger"><i class="fa fa-trash "></i> Delete</a>
 			</div>
 			<div id="Insert" class="container">
-				<button id="picture" title="Picture" class="btn"><i class="icon-picture"></i></button>
-				<button id="video" title="Video" class="btn"><i class="icon-youtube-play"></i></button>
+				<button id="picture" title="Picture" class="btn"><i class="fa fa-picture"></i></button>
+				<button id="video" title="Video" class="btn"><i class="fa fa-youtube-play"></i></button>
 			</div>
-		</div>
-	</div>
-</div>
+	</nav>
 <div class="content_well">
 	<div class="content">
 	</div>

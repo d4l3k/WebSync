@@ -73,14 +73,14 @@ body > .container, body > .container-fluid {
     }
 }
 .ribbon-opt li.active a, .ribbon-opt li.active a:hover  {
-	background-color: rgba(255,255,255,0.45) !important;
+	//background-color: rgba(255,255,255,0.45) !important;
 	//background-color: #777 !important;
-	font-weight: bold;
+	//font-weight: bold;
 }
 .ribbon-opt li {
 	cursor: pointer;
     a:hover {
-        background-color: rgba(255,255,255,0.3) !important;
+        //background-color: rgba(255,255,255,0.3) !important;
     }
 
 }

@@ -15,7 +15,7 @@ self.onmessage = function(e) {
             self.postMessage({'cmd':'diffed','patch': jsondiffpatch.diff(data.oldHtml,data.newHtml)});
             break;
         case 'apply_patch':
-            self.postMessage({'cmd':'patched','json':jsondiffpatch.patch(data.html,data.patch)});
+            self.postMessage({'cmd':'patched','json':jsondiffpatch.patch(data.html,data.patch),"patch":data.patch});
             break;
     }
 }

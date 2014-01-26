@@ -388,7 +388,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedElem.contentEditable=true;
 			$("#table_cursor").css({borderStyle: 'dashed', outlineStyle: 'dashed'});
 			$('#ribbon_buttons a:contains("Text")').click();
-			self.setEndOfContenteditable(self.selectedElem);
+			//self.setEndOfContenteditable(self.selectedElem);
 		}
 	}
     self.clearSelect = function(){
@@ -429,8 +429,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     }
     self.enterTable = function(table){
         console.log("Entering");
-        $(table).bind("keypress.TablesTemp", self.keypressHandler);
-        $(".table_clip").bind("keypress.TablesTemp", self.keypressHandler);
+        $(table).children().on("keydown.TablesTemp", self.keypressHandler);
+        $(".table_clip").bind("keydown.TablesTemp", self.keypressHandler);
         $(table).on("resize.TablesTemp", function(e){
             self.cursorUpdate();
             self.headerUpdate();

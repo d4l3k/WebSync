@@ -306,6 +306,8 @@ define('websync',{
             var data = _.clone(WebSyncData);
             for(var i=(patches.length-1);i>=0;i--){
                 data = jsondiffpatch.unpatch(data,JSON.parse(patches[i]));
+                WebSyncData = data;
+                WebSync.fromJSON(patches[i]);
             }
             WebSyncData = data;
             WebSync.fromJSON();
@@ -325,7 +327,7 @@ define('websync',{
                 WebSync.oldData = JSON.parse(JSON.stringify(data.json));
                 WebSyncData = data.json;
                 if(WebSync.fromJSON){
-                    WebSync.fromJSON();
+                    WebSync.fromJSON(data.patch);
                 }
                 sel = WebSync.tmp.range;
                 if(sel.active){
@@ -620,7 +622,60 @@ define('websync',{
 			div.alert('close');
 		},10000);
 		return div;
-	}
+	},
+    applyPatchToDOM: function(element, patch){
+        if(_.isArray(patch)){
+            console.log("ARRAY", element,patch);
+            _.each(patch, function(elem,index,list){
+                var div = null;
+                if(elem.name=="#text"){
+                    div = document.createTextNode(elem.textContent);
+                } else {
+                    div = document.createElement(elem.name);
+                }
+                element.appendChild(div);
+                WebSync.applyPatchToDOM(div,elem);
+            });
+        } else {
+            if(patch["_t"]=="a"){
+                _.each(patch,function(val, key){
+                    if(key!="_a"){
+                        var n_element = element.childNodes[parseInt(key)];
+                        if(_.isArray(val)) {
+                            _.each(val,function(elem,index,list){
+                                var div = document.createElement(elem.name);
+                                $(element).append(div);
+                                WebSync.applyPatchToDOM(div,elem);
+                            });
+                        } else if(n_element){
+                            WebSync.applyPatchToDOM(n_element,val);
+                        } 
+                    }
+                });
+            } else {
+                if(patch.childNodes){
+                    WebSync.applyPatchToDOM(element,patch.childNodes);
+                }
+                if(patch.textContent){
+                    if(_.isArray(patch.textContent)){
+                        element.textContent = patch.textContent[1];
+                    } else {
+                        element.textContent = patch.textContent;
+                    }
+                }
+                _.each(patch,function(v,k){
+                    if(k!="name"&&k!="textContent"&&k!="childNodes"&&k!="dataset"){
+                        $(element).attr(k,v);
+                    }
+                });
+                if(patch.dataset){
+                    _.each(patch.dataset,function(v,k){
+                        $(element).attr("data-"+k,v);
+                    });
+                }
+            }
+        }
+    }
 });
 dmp = new diff_match_patch();
 function NODEtoJSON(obj){

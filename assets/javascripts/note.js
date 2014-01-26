@@ -65,7 +65,6 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
         });
     }
     self.deselectNoteBubble = function(){
-        // TODO: Remove empty bubbles;
         $("#note-well .note-page section").attr("contenteditable",null).filter(":not('.note-title')").each(function(index, section){
             if(section.innerText.trim()==""){
                 $(section).remove();
@@ -89,8 +88,14 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
     WebSync.toJSON = function() {
         WebSyncData.body = DOMToJSON($("#note-well").get(0).childNodes);
     }
-    WebSync.fromJSON = function() {
-        $(".content #note-well").get(0).innerHTML=JSONToDOM(WebSyncData.body);
+    WebSync.fromJSON = function(patch) {
+        console.log("FROM JSON: ",patch);
+        if(!patch){
+            // Fallback method.
+            $(".content #note-well").get(0).innerHTML=JSONToDOM(WebSyncData.body);
+        } else {
+            WebSync.applyPatchToDOM($(".content #note-well").get(0),patch.body);
+        }
         self.updateNav();
     }
     if(_.isEmpty(WebSyncData.body)){

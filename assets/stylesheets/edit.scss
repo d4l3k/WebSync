@@ -263,8 +263,8 @@ cursor {
         }
     }
     #top_corner {
-        width: 38px;
-        height: 16px;
+        width: 40px;
+        height: 18px;
         border: 1px solid #aaa;
         background-color: #eee;
         z-index: 903;
@@ -436,6 +436,7 @@ a#name {
     cursor: pointer;
     th {
         text-align: center;
+        font-size: 13px;
     }
     &#x th.resize {
         cursor: col-resize;

@@ -46,12 +46,13 @@ define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websy
         //$(".slide").attr("contenteditable",true);
     }
 	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
-    $(".content_well").scroll(function(e){
+    self.updateHeaders = function(e){
         $(".axis#y").offset({left: -1});
-        $(".axis#x").offset({top: $('.content_well').offset().top-1});
+        $(".axis#x").offset({top: $('.content_well').offset().top});
         $("#top_corner").offset({left: -1, top: $('.content_well').offset().top-1});
-    });
-    $(".content_well").scroll();
+    }
+    self.updateHeaders();
+    $(".content_well").scroll(self.updateHeaders);
     $(".navbar-fixed-top").css({"border-bottom": "1px solid #aaa"})
     $("#spreadsheetWell tr:first-child td:first-child").trigger("mousedown").trigger("mouseup");
     return self;

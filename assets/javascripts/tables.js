@@ -341,19 +341,19 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         for(var i=0;i<size[0];i++){
             var elem = self.posToElem(i,0);
             var bounding = elem.getBoundingClientRect();
-            x_nodes[i].style.width = (bounding.width-1)+"px";
+            x_nodes[i].style.width = (bounding.width)+"px";
             //x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+self.columnLabel(i);
         }
         var y_nodes = $(".axis#y th");
         for(var i=0;i<size[1];i++){
             var elem = self.posToElem(0,i);
             var bounding = elem.getBoundingClientRect();
-            y_nodes[i].style.height = (bounding.height-1)+"px";
+            y_nodes[i].style.height = (bounding.height)+"px";
             //y_nodes.eq(i).css({height: (bounding.height-1)});//+'px">'+(i+1);
         }
         var table = $(self.primaryTable());
-        $(".Table.axis#x").width(table.width()+2);
-        $(".Table.axis#y").height(table.height());
+        //$(".Table.axis#x").width(table.width()+2);
+        //$(".Table.axis#y").height(table.height());
     };
 	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
@@ -365,7 +365,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.cursorSelect(new_td);
 		}
 	}
-	self.cursorUpdate = function(){
+	self.cursorUpdate = function(pos){
 		var pos = $(self.selectedElem).offset();
         pos.top += 2;
         pos.left += 2;
@@ -373,11 +373,13 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         self.updateSelectedArea();
         var table = $(self.primaryTable());
         $("#table_cursor").offset({left:pos.left,top:pos.top}).height($(self.selectedElem).height()-2).width($(self.selectedElem).width()-1).get(0).scrollIntoViewIfNeeded();
-        setTimeout(function(){
-            var offset = table.offset();
-            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17});//.width(table.width()+2);
-            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
-        },1)
+        if(table.css("position")=="absolute"||pos){
+            setTimeout(function(){
+                var offset = table.offset();
+                $(".Table.axis#x").offset({left:offset.left,top:offset.top-16});//.width(table.width()+2);
+                $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
+            },1);
+        }
 	}
 	self.selectedEditable = function(edit){
 		if(!edit){

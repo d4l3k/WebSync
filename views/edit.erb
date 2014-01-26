@@ -16,11 +16,11 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">WebSyn.ca</a>
+        <a class="navbar-brand" href="/" title="Produced by Outer Earth Interactive" data-toggle="tooltip">WebSyn.ca</a>
       </div>
       <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-					<li class="active"><a id="name" contenteditable="true"><%= @doc.name %></a></li>
+					<li class="active"><a id="name" contenteditable="true" data-toggle="tooltip" title="Edit Name"><%= @doc.name %></a></li>
 				</ul>
 				<ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
 				</ul>
@@ -111,8 +111,8 @@
                         <li><a href="download/txt">Raw Text (.txt)</a></li>
                     </ul>
                 </div>
-                <a href="json" class="btn btn-default"><i class="fa fa-eye"></i> JSON</a>
-                <input type="text" id="zoom_level" title="Zoom" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100">
+                <a href="json" class="btn btn-default" title="View JSON" data-toggle="tooltip"><i class="fa fa-eye"></i> JSON</a>
+                <span title="Zoom" data-toggle="tooltip" ><input type="text" id="zoom_level" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100"></span>
                 <select id="view_mode" class="form-control" title="View Mode" class="ribbon_button">
 					<option>Normal</option>
 					<option>Zen</option>

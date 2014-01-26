@@ -241,7 +241,7 @@ define('websync',{
             }
 		});
         $(".settings-popup #config").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
-		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
+		$("nav, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').slider()
          .on('slide', function(e){
@@ -251,36 +251,23 @@ define('websync',{
         $('body').mousemove(function(e){
             if(WebSync.viewMode=='Zen'){
                 if(e.pageY<85&&!WebSync.menuVisible){
-                    $(".menu").animate({top: 0},200);
+                    $("nav").animate({top: 0},200);
                     WebSync.menuVisible = true;
                 }
                 else if(e.pageY>85&&WebSync.menuVisible) {
-                    $(".menu").animate({top: -85},200);
+                    $("nav").animate({top: -95},200);
                     WebSync.menuVisible = false;
                 }
             }
         });
-        $('#view_mode').change(function(){
-            var mode = $('#view_mode').val();
-            WebSync.viewMode = mode;
-            if(mode=='Zen'){
-                $("body").addClass("zen").resize();
-                $("#zoom_level").data("slider").setValue(120);
-                $("#zoom_level").trigger("slide");
-                $(".menu").animate({top:-85},200);
-            }
-            else if(mode=='Presentation') {
-                $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
-                WebSyncAuth.view_op = "view";
-                window.history.pushState("","WebSync - Presentation Mode","view");
-                $(".menu").animate({top: -85},200);
-            }
-            else {
-                $("body").removeClass("zen").resize();
-                $("#zoom_level").data("slider").setValue(100);
-                $("#zoom_level").trigger("slide");
-                $(".menu").animate({top: 0},200);
-            }
+        WebSync.urlChange();
+        $(window).bind("popstate",function(e){
+            WebSync.urlChange();
+        });
+        $('#view_mode').change(WebSync.updateViewMode);
+        $(".return_edit").click(function(){
+            $('#view_mode').val("Normal");
+            WebSync.updateViewMode();
         });
         require(['edit']);
 		this.updateRibbon();
@@ -398,6 +385,49 @@ define('websync',{
     menuVisible: true,
     // WARNING: Experimental & Unsupported in many browsers!
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
+    urlChange: function(){
+        var current = window.location.pathname.split("/")[2]
+        if(current == "zen")
+            $("#view_mode").val("Zen")
+        if(current == "view")
+            $("#view_mode").val("Presentation")
+        else
+            $("#view_mode").val("Normal")
+        WebSync.updateViewMode(null, true);
+    },
+    updateViewMode: function(e, dontPush){
+        var mode = $('#view_mode').val();
+        WebSync.viewMode = mode;
+        if(mode=='Zen'){
+            $("body").removeClass("presentation").addClass("zen").resize();
+            WebSyncAuth.view_op = "edit";
+            if(!dontPush)
+                window.history.pushState("","WebSync - Zen Mode","zen");
+            $("body").addClass("zen").resize();
+            $("#zoom_level").data("slider").setValue(120);
+            $("#zoom_level").trigger("slide");
+            $("nav").animate({top:-95},200);
+            $(".content_well").animate({top: 0}, 200);
+        }
+        else if(mode=='Presentation') {
+            $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
+            WebSyncAuth.view_op = "view";
+            if(!dontPush)
+                window.history.pushState("","WebSync - Presentation Mode","view");
+            $("nav").animate({top: -95},200);
+            $(".content_well").animate({top: 0}, 200);
+        }
+        else {
+            $("body").removeClass("zen").removeClass("view").addClass("edit").resize();
+            WebSyncAuth.view_op = "edit";
+            if(!dontPush)
+                window.history.pushState("","WebSync - Edit Mode","edit");
+            $("#zoom_level").data("slider").setValue(100);
+            $("#zoom_level").trigger("slide");
+            $("nav").animate({top: 0},200);
+            $(".content_well").animate({top: 94}, 200);
+        }
+    },
 	setupWebRTC: function(){
 		if(WebSync.createPeerConnection()){
 		    WebSync.createDataChannel();
@@ -518,9 +548,7 @@ define('websync',{
     // Event handler for when the window resizes. This is an internal method.
     resize: function(){
         //$(".content_well").height(window.innerHeight-$(".content_well").position().top);
-        var width = window.innerWidth-260;
-        $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width});
-        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15});
+        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+13});
         $(".settings-popup .popover-content").css({maxHeight:window.innerHeight-$(".settings-popup").offset().top-100});
         WebSync.updateRibbon();
     },

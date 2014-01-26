@@ -39,7 +39,7 @@
                         <li><a href="#assets" data-toggle="tab">Assets</a></li>
                         <li><a href="#diffs" data-toggle="tab">Changes</a></li>
                     </ul>
-                <a class="close pull-right"><i class="fa fa-remove"></i></a></h3><div class="popover-content">
+                <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
                     <div class="tab-content">
                         <div class="tab-pane" id="assets">
                             <table class="table table-bordered">
@@ -80,11 +80,11 @@
                                 <tbody>
                                     <tr>
                                         <td>Use spaces instead of tabs</td>
-                                        <td><select>
+                                        <td><select class="form-control">
                                             <option>True</option>
                                             <option>False</option>
                                         </select></td>
-                                        <td><div class='input-append'><select>
+                                        <td><div class='input-append'><select class="form-control">
                                             <option>Use Global</option>
                                             <option>True</option>
                                             <option>False</option>
@@ -103,7 +103,7 @@
 			<div id="File" class="container">
                 <div class="btn-group">
                     <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> Download <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" role="menu">
                         <li><a href="download/docx">Microsoft Word (.docx)</a></li>
                         <li><a href="download/pdf">PDF (.pdf)</a></li>
                         <li><a href="download/html">HTML (.html)</a></li>
@@ -130,6 +130,9 @@
 			</div>
 	</nav>
 <div class="content_well">
+    <div class="return_edit" data-toggle="tooltip" title="Return to Editing">
+        <i class="fa fa-arrows-alt fa-2x"></i>
+    </div>
 	<div class="content">
 	</div>
 </div>

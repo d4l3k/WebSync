@@ -23,26 +23,6 @@ body,html {
     height: 100%;
     color: black;
 }
-@media (max-width: 979px) {
-    .menu .navbar {
-        ul li>a {
-            margin-top: -5px;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            margin-bottom: -5px;
-        }
-        #ribbon_button_active {
-            margin-top: -5px;
-            padding-bottom: 10px;
-        }
-    }
-    div.content_well, div.sidebar {
-        top: 93px;
-    }
-    div.navbar-fixed-top .navbar-inner, div.navbar-fixed-bottom .navbar-inner {
-        padding: 5px 0;
-    }
-}
 .menu .btn-group {
     position: initial;
 }
@@ -141,10 +121,10 @@ cursor {
     position: absolute;
     display: none;
     top: 40px;
-    left: 0;
+    left: 50px;
+    right: 50px;
     margin: 0 auto;
     max-width: none;
-    width: 940px;
     ul.tab-nav {
         float:none;
         margin-top: -8px;
@@ -208,10 +188,19 @@ cursor {
     left: 0;
     right: 0;
     bottom: 0;
-    top: 95px;
+    top: 94px;
     display: inline-block;
     overflow: auto;
     text-align: center;
+    .return_edit {
+        position: fixed;
+        float: right;
+        color: #999999;
+        margin: 10px;
+        &:hover {
+            color: white;
+        }
+    }
 }
 .content_well > div {
     @include ex(transform-origin, top center);
@@ -462,11 +451,10 @@ a#name {
     .btn+.btn-group {
         margin-left: 5px !important;
     }
+    overflow-y: visible;
     .container {
         padding: 0 5px;
         white-space: nowrap;
-        overflow-x:auto;
-        overflow-y: hidden;
     }
 }
 #table_cursor {
@@ -603,6 +591,9 @@ a#name {
             }
         }
     }
+}
+.edit .return_edit {
+    display: none;
 }
 .Table.axis {
     position: absolute;

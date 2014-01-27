@@ -32,7 +32,7 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
     WebSync.fromJSON = function() {
         $(".content_well #slides").get(0).innerHTML=JSONToDOM(WebSyncData.body);
         // TODO: Get rid of the cause of this patch.
-        $(".slide").appendTo($("#slides"));
+        //$(".slide").appendTo($("#slides"));
         self.updateMenu();
         setTimeout(self.updateScale,200);
     }
@@ -45,8 +45,7 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
     self.updateMenu = function(){
         $("#slideView").html("");
         $(".slide").each(function(index, slide){
-            console.log(slide);
-            $("<div class='slidePreview "+($(slide).hasClass("active") ? "active" : "") +"'><span class='slide'>"+$(slide).html()+"</span></div>").appendTo($("#slideView")).data({index:index});
+            $("<div class='slidePreview "+($(slide).hasClass("active") ? "active" : "") +"'><span class='slide'>"+$(slide).html()+"</span></div>").attr("style",$(slide).attr("style")).appendTo($("#slideView")).data({index:index});
         });
     };
     self.renderElem = function(elem, attach){
@@ -82,27 +81,25 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
             if(e.keyCode==39||e.keyCode==32||e.keyCode==40){
                 // Move forward a slide
                 var cur_slide = $(".slidePreview.active").data().index;
-                $(".slide.active").removeClass('active');
-                $(".slidePreview.active").removeClass('active');
                 var next_slide = cur_slide+1;
-                var slide_num = $(".slide").length;
-                if(next_slide>=slide_num){
-                    next_slide = slide_num -1;
+                var slide_num = $("#slides .slide").length;
+                if(next_slide<slide_num){
+                    $(".slide.active").removeClass('active');
+                    $(".slidePreview.active").removeClass('active');
+                    $($("#slides .slide").get(next_slide)).addClass("active");
+                    $($(".slidePreview").get(next_slide)).addClass("active");
                 }
-                $($(".slide").get(next_slide)).addClass("active");
-                $($(".slidePreview").get(next_slide)).addClass("active");
                 e.preventDefault();
             } else if(e.keyCode==37||e.keyCode==38){
                 // Move back a slide
                 var cur_slide = $(".slidePreview.active").data().index;
-                $(".slide.active").removeClass('active');
-                $(".slidePreview.active").removeClass('active');
                 var next_slide = cur_slide-1;
-                if(next_slide<=0){
-                    next_slide = 0;
+                if(next_slide>=0){
+                    $(".slide.active").removeClass('active');
+                    $(".slidePreview.active").removeClass('active');
+                    $($("#slides .slide").get(next_slide)).addClass("active");
+                    $($(".slidePreview").get(next_slide)).addClass("active");
                 }
-                $($(".slide").get(next_slide)).addClass("active");
-                $($(".slidePreview").get(next_slide)).addClass("active");
                 e.preventDefault();
             }
         }

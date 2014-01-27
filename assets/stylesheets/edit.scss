@@ -195,8 +195,9 @@ cursor {
     overflow: auto;
     text-align: center;
     .return_edit {
+        z-index: 800;
         position: fixed;
-        float: right;
+        bottom: 0;
         margin: 10px 5px;
         a {
             cursor: pointer;

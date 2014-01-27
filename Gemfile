@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '1.9.3'
+ruby '2.0.0'
 gem 'json'
 gem 'data_mapper'
 #gem 'dm-riak-adapter', '~> 0.1.0', :git=>'https://github.com/d4l3k/dm-riak-adapter.git'

@@ -62,12 +62,6 @@ body > .container, body > .container-fluid {
     }
 }
 .table-click {
-    .info, .success {
-        cursor: pointer;
-    }
-    .error {
-        cursor: default;
-    }
     a.btn {
         margin: -8px -4px;
     }
@@ -112,4 +106,214 @@ body > .container, body > .container-fluid {
             display: none;
         }
     }
+}
+
+
+    /* GLOBAL STYLES
+    -------------------------------------------------- */
+    /* Padding below the footer and lighter body text */
+
+
+    /* CUSTOMIZE THE CAROUSEL
+    -------------------------------------------------- */
+
+    /* Carousel base class */
+    .carousel {
+        margin-bottom: 15px;
+    }
+
+    .carousel .container {
+      position: relative;
+      z-index: 9;
+    }
+    .dropdown-menu {
+        text-shadow: none;
+    }
+    .carousel-control {
+      height: 80px;
+      margin-top: 0;
+      font-size: 120px;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      background-color: transparent;
+      border: 0;
+      z-index: 10;
+    }
+
+    .carousel .item {
+    }
+    .carousel-caption {
+      background-color: transparent;
+      position: static;
+      margin-top: 200px;
+      text-align: left;
+    }
+    .carousel-caption h1,
+    .carousel-caption .lead {
+      margin: 0;
+      line-height: 1.25;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+    .carousel-caption .or {
+        display: inline;
+        position: relative;
+        top: 5px;
+    }
+    .carousel-caption .btn {
+      margin-top: 10px;
+    }
+
+
+
+    /* MARKETING CONTENT
+    -------------------------------------------------- */
+
+    /* Center align the text within the three columns below the carousel */
+    .marketing .span4 {
+      text-align: center;
+    }
+    .marketing h2 {
+      font-weight: normal;
+    }
+    .marketing .span4 p {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+
+    /* Featurettes
+    ------------------------- */
+
+    .featurette-divider {
+      margin: 80px 0; /* Space out the Bootstrap <hr> more */
+    }
+    .featurette {
+      padding-top: 120px; /* Vertically center images part 1: add padding above and below text. */
+      overflow: hidden; /* Vertically center images part 2: clear their floats. */
+    }
+    .featurette-image {
+      margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
+      border-radius: 4px;
+    }
+
+    /* Give some space on the sides of the floated elements so text doesn't run right into it. */
+    .featurette-image.pull-left {
+      margin-right: 40px;
+    }
+    .featurette-image.pull-right {
+      margin-left: 40px;
+    }
+
+    /* Thin out the marketing headings */
+    .featurette-heading {
+      font-size: 50px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .bs-docs-social-buttons {
+      margin-left: 0;
+      margin-bottom: 0;
+      padding-left: 0;
+      list-style: none;
+      text-align: center;
+      margin-top: 130px;
+      margin-bottom: 10px;
+    }
+    .bs-docs-social-buttons li {
+      display: inline-block;
+      padding: 5px 8px;
+      line-height: 1;
+      *display: inline;
+      *zoom: 1;
+    }
+
+
+
+    /* RESPONSIVE CSS
+    -------------------------------------------------- */
+
+    @media (max-width: 979px) {
+
+      .container.navbar-wrapper {
+        margin-bottom: 0;
+        width: auto;
+      }
+      .carousel-caption {
+        margin-top: 70px;
+      }
+      .navbar-fixed-top {
+        margin-bottom: 0px;
+        }
+      .navbar-inner {
+        border-radius: 0;
+      }
+
+      .carousel .item {
+      }
+
+      .featurette {
+        height: auto;
+        padding: 0;
+      }
+      .featurette-image.pull-left,
+      .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+      }
+      .bs-docs-social-buttons {
+        margin-top: 0px;
+      }
+      .bs-docs-social-buttons li {
+        padding: 0;
+      }
+    }
+
+
+    @media (max-width: 767px) {
+
+      .navbar-inner {
+      }
+
+      .carousel-caption {
+        margin-top: 50px;
+      }
+      .carousel-caption .or {
+          display: none;
+      }
+      .carousel-caption .btn-group {
+          width: 100%;
+      }
+      .carousel-caption .btn {
+          display: block;
+          width: 100%;
+      }
+      .carousel-caption h1 {
+        font-size: 30px;
+      }
+      .carousel-caption .lead,
+      .carousel-caption .btn {
+        font-size: 18px;
+      }
+
+      .marketing .span4 + .span4 {
+        margin-top: 40px;
+      }
+
+      .featurette-heading {
+        font-size: 30px;
+      }
+      .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+      }
+    }
+/* Quick links on Home */
+.carousel-inner {
+    background-image: url("/img/banner.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
 }

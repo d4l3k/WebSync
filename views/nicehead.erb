@@ -1,0 +1,59 @@
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div id="myCarousel" class="carousel slide">
+      <div class="carousel-inner">
+        <div class="item active">
+          <div class="container">
+            <div class="carousel-caption">
+                <h1>Welcome to WebSyn.ca</h1>
+                <p class="lead">
+                    An open source self hostable document editing tool.<br>
+                    Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
+                </p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> Create a Document
+ <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <% AssetGroup.each do |ass| %>
+                                <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
+                            <% end %>
+                        </ul>
+                    </div><p class="lead or"> or </p><a href="/upload" class='btn btn-lg btn-default'><i class="fa fa-cloud-upload"></i> Upload a File</a><p class="lead or"> or </p><a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-lg'><i class="fa fa-eye"></i> View the Code</a>
+            </div>
+            <ul class="bs-docs-social-buttons">
+              <li>
+                <iframe class="github-btn" src="/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+              </li>
+              <li>
+                <iframe class="github-btn" src="/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="102px" height="20px"></iframe>
+              </li>
+              <li>
+                <iframe class="github-btn" src="/github-btn.html?user=d4l3k&amp;repo=WebSync&amp;type=follow&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+              </li>
+              <li>
+                <div class="g-plusone" data-size="medium" data-href="https://websyn.ca"></div>
+              </li>
+              <li>
+                <div class="fb-like" data-href="https://websyn.ca" data-layout="button_count" data-width="450" data-show-faces="true" data-font="arial"></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>

@@ -1,24 +1,7 @@
+<%= erb :nicehead %>
 <div class="container">
     <div class="row">
         <div class="col-md-10">
-            <div class="jumbotron">
-                <h1>Welcome to WebSyn.ca</h1>
-                <p>
-                    Produced by <a href="http://outerearth.net">Outer Earth Interactive</a>.
-                </p>
-                <p>
-                
-                    <div class="btn-group">
-                        <button class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> Create a Document
- <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <% AssetGroup.each do |ass| %>
-                                <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
-                            <% end %>
-                        </ul>
-                    </div> or <a href="/upload" class='btn btn-lg btn-default'><i class="fa fa-cloud-upload"></i> Upload a File</a> or <a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-lg'><i class="fa fa-eye"></i> View the Code</a>
-                </p>
-            </div>
             <div class="ad link">
                 <script type="text/javascript"><!--
                 google_ad_client = "ca-pub-6781356745519353";
@@ -35,12 +18,9 @@
             <table class="table table-bordered table-hover table-click">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Name</th>
                         <th>Owner</th>
                         <th>Last Modified</th>
-                        <th>Created</th>
-                        <th>Public</th>
                         <th style="width: 1px">Actions</th>
                 </thead>
                 <tbody>
@@ -54,13 +34,10 @@
                             end
                         %>
                         <tr class="<%= color %>">
-                            <td><%= doc.id %></td>
-                            <td><%= doc.name %></td>
-                            <td><%= doc.user.email %></td>
+                            <td><a href="/<%= doc.id %>/edit"><%= doc.name %></a></td>
+                            <td><%= doc.user==current_user ? "You" : doc.user.email %></td>
                             <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
-                            <td><%= doc.created.strftime("%m/%d/%Y at %I:%M%p")%></td>
-                            <td><%= doc.public ? 'Yes' : 'No' %></td>
-                            <% if doc.user=current_user %>
+                            <% if doc.user==current_user %>
                                 <td>
                                     <a href="/<%= doc.id %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
                                 </td>
@@ -90,15 +67,5 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-window.onload = function(){
-    $(".info td, .success td").click(function(){
-        var id = $(this).parent().children().first().text();
-        c = this;
-        location.pathname="/"+id+"/edit";
-        console.log("blah: ",id);
-    });
-}
-</script>
 </div>
 

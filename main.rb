@@ -444,7 +444,7 @@ class WebSync < Sinatra::Base
         )
         doc.assets = group.assets
         doc.save
-        redirect "/#{doc.id}/edit"
+        redirect "/#{doc.id.encode62}/edit"
     end
     get '/upload' do
         login_required

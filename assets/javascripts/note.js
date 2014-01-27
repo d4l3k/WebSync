@@ -90,12 +90,12 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
     }
     WebSync.fromJSON = function(patch) {
         console.log("FROM JSON: ",patch);
-        if(!patch){
+        //if(!patch){
             // Fallback method.
             $(".content #note-well").get(0).innerHTML=JSONToDOM(WebSyncData.body);
-        } else {
-            WebSync.applyPatchToDOM($(".content #note-well").get(0),patch.body);
-        }
+        //} else {
+        //    WebSync.applyPatchToDOM($(".content #note-well").get(0),patch.body);
+        //}
         self.updateNav();
     }
     if(_.isEmpty(WebSyncData.body)){

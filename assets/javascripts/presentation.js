@@ -22,9 +22,6 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
     if(!WebSyncData.body){
         WebSyncData.body = [];
     }
-    if(WebSyncAuth.view_op=='edit'){
-        $(".slide").attr("contenteditable",true);
-    }
     WebSync.toJSON = function() {
 		WebSyncData.body = DOMToJSON($("#slides").get(0).childNodes);
         setTimeout(self.updateMenu,50);
@@ -34,6 +31,9 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
         // TODO: Get rid of the cause of this patch.
         //$(".slide").appendTo($("#slides"));
         self.updateMenu();
+        if(WebSyncAuth.view_op=='edit'){
+            $("#slides .slide").attr("contenteditable",true);
+        }
         setTimeout(self.updateScale,200);
     }
     $("#presentation-nav #slideView").delegate(".slidePreview","click",function(){

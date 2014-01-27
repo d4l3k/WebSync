@@ -41,12 +41,14 @@ define('websync',{
 			$(".navbar-inner").removeClass("no-connection");
             $(document).trigger("connection");
 			$("#connection_msg").remove();
-			if(WebSync.webSocketFirstTime){
-				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-			} else {
-				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-				WebSync.success("<strong>Success!</strong> Connection restablished.");
-			}
+			setTimeout(function(){
+                if(WebSync.webSocketFirstTime){
+                    WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
+                } else {
+                    WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
+                    WebSync.success("<strong>Success!</strong> Connection restablished.");
+                }
+            }, 100);
 		},
 
 		onclose: function(e){
@@ -234,7 +236,7 @@ define('websync',{
             WebSync.connection.sendJSON({type: "name_update", name: name});
 		});
 		$("#name").focus(function(){
-			if(this.innerText=="Unnamed Document"){
+			if(this.innerText.indexOf("Unnamed")==0){
                 setTimeout(function(){
                     document.execCommand('selectAll');
                 },100);

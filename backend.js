@@ -23,12 +23,16 @@ wss.on('connection', function(ws) {
     var url = ws.upgradeReq.url;
     var base = url.split('?')[0];
     var parts = base.split('/');
+    ws.sendJSON = function(json){
+        this.send(JSON.stringify(json));
+    }
     console.log(parts)
     if(parts[2]=='edit'||parts[2]=='view'){
         var doc_id = Base62.decode(parts[1]);
         console.log('Connection! (Document: '+doc_id+')');
         var authenticated = false;
         var redis_sock, client_id, user_email;
+        ws.sendJSON({type:'connected'});
         ws.on('message', function(message) {
             var data = JSON.parse(message);
             console.log('JSON: '+message);

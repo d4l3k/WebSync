@@ -151,8 +151,10 @@ wss.on('connection', function(ws) {
                         }
                     });
                 } else if(data.type=='name_update'){
-                    postgres.query("UPDATE documents SET name=$2,last_edit_time=$3 WHERE id = $1",[doc_id,data.name, new Date()]);
-                    // TODO: Update last modified
+                    console.log("Update",doc_id,data.name);
+                    postgres.query("UPDATE documents SET name=$2,last_edit_time=$3 WHERE id = $1",[doc_id,data.name, new Date()], function(err){
+                        if(err) throw err;
+                    });
                     redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                 } else if(data.type=='client_event'){
                     redis.publish('doc:'+doc_id,JSON.stringify({type:'client_bounce',client:client_id, data:JSON.stringify({type:'client_event',event:data.event, from:client_id, data:data.data})}));

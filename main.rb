@@ -496,7 +496,7 @@ class WebSync < Sinatra::Base
             redirect '/'
         end
         login_required
-        doc_id = params[:doc]
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if (!doc.public)&&doc.user!=current_user
             redirect '/'
@@ -517,7 +517,7 @@ class WebSync < Sinatra::Base
     end
     get '/:doc/json' do
         login_required
-        doc_id = params[:doc]
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if (!doc.public)&&doc.user!=current_user
             redirect '/'
@@ -527,7 +527,7 @@ class WebSync < Sinatra::Base
     end
     get '/:doc/delete' do
         login_required
-        doc_id = params[:doc]
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if doc.user==current_user
             doc.destroy!
@@ -535,7 +535,7 @@ class WebSync < Sinatra::Base
         redirect '/'
     end
     get '/:doc/:op' do
-        doc_id = params[:doc]
+        doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if doc.nil?
             redirect 'notfound'

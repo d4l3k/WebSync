@@ -34,12 +34,12 @@
                             end
                         %>
                         <tr class="<%= color %>">
-                            <td><a href="/<%= doc.id %>/edit"><%= doc.name %></a></td>
+                            <td><a href="/<%= doc.id.encode62 %>/edit"><%= doc.name %></a></td>
                             <td><%= doc.user==current_user ? "You" : doc.user.email %></td>
                             <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
                             <% if doc.user==current_user %>
                                 <td>
-                                    <a href="/<%= doc.id %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
+                                    <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
                                 </td>
                             <% end %>
                         </tr>

@@ -94,8 +94,51 @@ define('websync',{
                 // Patch the HTML.
                 //WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
                 //WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-                WebSync.worker.postMessage({cmd:'apply_patch',html:WebSyncData,patch:data.patch});
+                //WebSync.worker.postMessage({cmd:'apply_patch',html:WebSyncData,patch:data.patch});
                 $(document).trigger("data_patch",{patch: data.patch});
+                WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
+                var patches = jsonpatch.generate(WebSync.patchObserver);
+                jsonpatch.unobserve(WebSyncData, WebSync.patchObserver);
+                if(patches.length > 0){
+                    WebSync.connection.sendJSON({type: "data_patch", patch: patches});
+                }
+                jsonpatch.apply(WebSyncData, data.patch);
+                WebSync.patchObserver = jsonpatch.observe(WebSyncData);
+                if(WebSync.fromJSON){
+                    WebSync.fromJSON(data.patch);
+                }
+                sel = WebSync.tmp.range;
+                if(sel.active){
+                    // Find all #text nodes.
+                    var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
+                        return this.nodeType == 3;
+                    });
+                    var startText = sel.startText, startOffset = sel.startOffset, endText = sel.endText, endOffset = sel.endOffset;
+                    var startNode = {};
+                    var endNode = {};
+                    console.log(text_nodes);
+                    var startNodeDist = 99999;
+                    var endNodeDist = 99999;
+                    // Locate the start & end #text nodes based on a Levenstein string distance.
+                    text_nodes.each(function(index, node){
+                        var dist = levenshteinenator(node.nodeValue,startText);
+                        if(dist<startNodeDist){
+                            startNode = node;
+                            startNodeDist = dist;
+                        }
+                        dist = levenshteinenator(node.nodeValue,endText);
+                        if(dist<endNodeDist){
+                            endNode = node;
+                            endNodeDist = dist;
+                        }
+                    });
+                    // Update the text range.
+                    var range = document.createRange();
+                    range.setStart(startNode,startOffset);
+                    range.setEnd(endNode,endOffset);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                }
             }
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
@@ -390,6 +433,7 @@ define('websync',{
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         this.resize();
         $(window).resize(this.resize);
+        WebSync.patchObserver = jsonpatch.observe(WebSyncData);
         //this.setupWebRTC();
 	},
     // Variable: string WebSync.viewMode;
@@ -588,16 +632,24 @@ define('websync',{
         var stringWebSync = JSON.stringify(WebSyncData);
 		if(stringWebSync!=WebSync.oldDataString){
             // Send it to the worker thread for processing.
-            var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
-            WebSync.worker.postMessage(msg);
-            WebSync.oldData = JSON.parse(stringWebSync);
-            WebSync.oldDataString = stringWebSync;
+            //var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
+            //var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
+            //WebSync.worker.postMessage(msg);
+            //WebSync.oldData = JSON.parse(stringWebSync);
+            //WebSync.oldDataString = stringWebSync;
             /*var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
             if(patch){
                 WebSync.connection.sendJSON({type: "data_patch", patch: patch});
 			    WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
             }*/
 		}
+        var patches = jsonpatch.generate(WebSync.patchObserver);
+        if(patches.length > 0){
+            console.log("Diffing")
+            WebSync.connection.sendJSON({type: "data_patch", patch: patches});
+            WebSync.oldDataString = stringWebSync;
+            WebSync.oldData = JSON.parse(stringWebSync);
+        }
 	},
     // Function: void WebSync.insertAtCursor(jQuery node);
     // Inserts a DOM element at selection cursor. This is probably going to be deprecated.

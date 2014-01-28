@@ -3,9 +3,6 @@
 var config = {};
 var fs = require('fs');
 var jsonpatch = require('fast-json-patch')
-var jsondiffpatch = require('jsondiffpatch');
-// load google diff_match_patch library for text diff/patch
-jsondiffpatch.config.diff_match_patch = require('./diff_match_patch_uncompressed.js');
 Base62 = require('base62');
 redisLib = require('redis');
 var pg = require('pg');
@@ -143,7 +140,6 @@ wss.on('connection', function(ws) {
                         var body = JSON.parse(row.body);
                         try {
                             jsonpatch.apply(body, data.patch);
-                            //var n_body = jsondiffpatch.patch(body,data.patch);
                             postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1",[doc_id,JSON.stringify(body), new Date()]);
                             postgres.query("INSERT INTO changes (time, patch, document_id, user_email) VALUES ($3, $2, $1, $4)",[doc_id,data.patch,new Date(),user_email]);
                             // TODO: Update last modified!

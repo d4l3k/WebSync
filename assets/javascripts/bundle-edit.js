@@ -13,7 +13,6 @@
 //= require webrtc-adapter.js
 //= require diff_match_patch.js
 //= require jsondiffpatch.js
-//= require jsondiffpatch.html.js
 //= require json-patch-duplex.js
 //= require core.js
 //= require edit.js

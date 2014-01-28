@@ -71,9 +71,6 @@ define('websync',{
 				require(data.js);
 			}
             else if(data.type=='data_patch'){
-                // Make sure there aren't any outstanding changes that need to be sent before patching document.
-                // TODO: Make this work with webworkers
-                WebSync.checkDiff();
                 // Get start selection.
 				var sel = getSelection();
                 var range, startText,startOffset,endText,endOffset;
@@ -91,17 +88,10 @@ define('websync',{
                     endText: endText,
                     endOffset: endOffset
                 }
-                // Patch the HTML.
-                //WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
-                //WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-                //WebSync.worker.postMessage({cmd:'apply_patch',html:WebSyncData,patch:data.patch});
                 $(document).trigger("data_patch",{patch: data.patch});
-                WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-                var patches = jsonpatch.generate(WebSync.patchObserver);
+                // Make sure there aren't any outstanding changes that need to be sent before patching document.
+                WebSync.checkDiff();
                 jsonpatch.unobserve(WebSyncData, WebSync.patchObserver);
-                if(patches.length > 0){
-                    WebSync.connection.sendJSON({type: "data_patch", patch: patches});
-                }
                 jsonpatch.apply(WebSyncData, data.patch);
                 WebSync.patchObserver = jsonpatch.observe(WebSyncData);
                 if(WebSync.fromJSON){
@@ -340,7 +330,8 @@ define('websync',{
         });
         $(".settings-popup #diffs").delegate('button','click',function(){
             console.log(this);
-            var patches = [];
+            WebSync.info("<strong>TODO</strong> Implement rollbacks.");
+            /*var patches = [];
             var c_div = this.parentElement.parentElement;
             while((c_div=c_div.previousSibling)!=null){
                 patches.push(c_div.children[1].innerText);
@@ -353,63 +344,8 @@ define('websync',{
                 WebSync.fromJSON(patches[i]);
             }
             WebSyncData = data;
-            WebSync.fromJSON();
+            WebSync.fromJSON();*/
         });
-        this.worker = new Worker("/assets/edit-worker.js");
-        this.worker.onmessage = function(e) {
-            var data = e.data;
-            console.log(data);
-            if(data.cmd=='diffed'){
-                if(data.patch){
-                    setTimeout(function(){
-                        WebSync.connection.sendJSON({type: "data_patch", patch: data.patch});
-                    },10);
-                }
-            }
-            else if(data.cmd=='patched'){
-                WebSync.oldData = JSON.parse(JSON.stringify(data.json));
-                WebSyncData = data.json;
-                if(WebSync.fromJSON){
-                    WebSync.fromJSON(data.patch);
-                }
-                sel = WebSync.tmp.range;
-                if(sel.active){
-                    // Find all #text nodes.
-                    var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
-                        return this.nodeType == 3;
-                    });
-                    var startText = sel.startText, startOffset = sel.startOffset, endText = sel.endText, endOffset = sel.endOffset;
-                    var startNode = {};
-                    var endNode = {};
-                    console.log(text_nodes);
-                    var startNodeDist = 99999;
-                    var endNodeDist = 99999;
-                    // Locate the start & end #text nodes based on a Levenstein string distance.
-                    text_nodes.each(function(index, node){
-                        var dist = levenshteinenator(node.nodeValue,startText);
-                        if(dist<startNodeDist){
-                            startNode = node;
-                            startNodeDist = dist;
-                        }
-                        dist = levenshteinenator(node.nodeValue,endText);
-                        if(dist<endNodeDist){
-                            endNode = node;
-                            endNodeDist = dist;
-                        }
-                    });
-                    // Update the text range.
-                    var range = document.createRange();
-                    range.setStart(startNode,startOffset);
-                    range.setEnd(endNode,endOffset);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
-                // Prevent checkDiff() from sending updates for patches.
-            }
-            else if(data.cmd=='log'){
-                console.log(data.msg);
-            }
-        }
         $("a[href='#assets']").click(function(){
             $("#assets tbody").html("");
             WebSync.connection.sendJSON({type:'assets',action:'list'});
@@ -622,33 +558,22 @@ define('websync',{
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
 	checkDiff: function(){
-        if(!WebSync.oldData){
-            WebSync.oldDataString = JSON.stringify(WebSyncData);
-            WebSync.oldData = JSON.parse(WebSync.oldDataString);
-        }
+        //if(!WebSync.oldData){
+        //    WebSync.oldDataString = JSON.stringify(WebSyncData);
+        //    WebSync.oldData = JSON.parse(WebSync.oldDataString);
+        //}
         if(WebSync.toJSON){
             WebSync.toJSON();
         }
-        var stringWebSync = JSON.stringify(WebSyncData);
-		if(stringWebSync!=WebSync.oldDataString){
-            // Send it to the worker thread for processing.
-            //var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
-            //var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
-            //WebSync.worker.postMessage(msg);
-            //WebSync.oldData = JSON.parse(stringWebSync);
-            //WebSync.oldDataString = stringWebSync;
-            /*var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
-            if(patch){
-                WebSync.connection.sendJSON({type: "data_patch", patch: patch});
-			    WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-            }*/
-		}
+        //var stringWebSync = JSON.stringify(WebSyncData);
+		//if(stringWebSync!=WebSync.oldDataString){
+		//}
         var patches = jsonpatch.generate(WebSync.patchObserver);
         if(patches.length > 0){
             console.log("Diffing")
             WebSync.connection.sendJSON({type: "data_patch", patch: patches});
-            WebSync.oldDataString = stringWebSync;
-            WebSync.oldData = JSON.parse(stringWebSync);
+            //WebSync.oldDataString = stringWebSync;
+            //WebSync.oldData = JSON.parse(stringWebSync);
         }
 	},
     // Function: void WebSync.insertAtCursor(jQuery node);

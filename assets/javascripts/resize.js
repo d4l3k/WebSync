@@ -46,10 +46,10 @@ define(['websync'],function(){ var self = {};
     $(document).bind("mousemove.Resize", function(e){
         if(self.drag){
             if(self.origY){
-                $(self.active).outerHeight(e.pageY-self.origY + self.origHeight);
+                $(self.active).outerHeight((e.pageY-self.origY)/WebSync.zoom + self.origHeight);
             }
             if(self.origX){
-                $(self.active).outerWidth(e.pageX-self.origX + self.origWidth);
+                $(self.active).outerWidth((e.pageX-self.origX)/WebSync.zoom + self.origWidth);
             }
             if(self.origMove){
                 var x_offset = e.pageX - self.origMouse.left;
@@ -91,14 +91,17 @@ define(['websync'],function(){ var self = {};
         self.active.addEventListener("DOMSubtreeModified",self.observer);
     };
     self.updateHandles = function(){
-        var offset = $(self.active).position();
-        $(".Resize.handle.top").css({top: offset.top});
-        $(".Resize.handle.left").css({left: offset.left});
-        $(".Resize.handle.right").css({left: offset.left+$(self.active).outerWidth()});
-        $(".Resize.handle.bottom").css({top: offset.top+$(self.active).outerHeight()});
-        $(".Resize.handle.right.middle, .Resize.handle.left.middle").css({top: offset.top+$(self.active).outerHeight()/2});
-        $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").css({left: offset.left+$(self.active).outerWidth()/2});
+        if(!self.active) return;
+        var offset = $(self.active).offset();
+        $(".Resize.handle.top").offset({top: offset.top-4});
+        $(".Resize.handle.left").offset({left: offset.left-4});
+        $(".Resize.handle.right").offset({left: offset.left+$(self.active).outerWidth()*WebSync.zoom-3});
+        $(".Resize.handle.bottom").offset({top: offset.top+$(self.active).outerHeight()*WebSync.zoom-3});
+        $(".Resize.handle.right.middle, .Resize.handle.left.middle").offset({top: offset.top+$(self.active).outerHeight()*WebSync.zoom/2-4});
+        $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").offset({left: offset.left+$(self.active).outerWidth()*WebSync.zoom/2-4});
     }
+    $(document).on("zoom.Resize",self.updateHandles);
+    $(document).on("resize.Resize",self.updateHandles);
     self.observer = function(){
         var bounding_data = JSON.stringify(self.active.getBoundingClientRect());
         if(bounding_data!=self.lastSize){

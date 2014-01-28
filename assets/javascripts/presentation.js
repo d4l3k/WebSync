@@ -106,11 +106,11 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
     });
     self.updateScale = function(){
         var well_rect = $(".content_well").get(0).getBoundingClientRect();
-        var content_rect = $(".slide.active");
+        var content_rect = $(".content_container .slide.active");
         var width_scale = well_rect.width/(content_rect.width()+60);
         var height_scale = well_rect.height/(content_rect.height()+65);
         var zoom = (width_scale>height_scale)*height_scale + (width_scale<=height_scale)*width_scale;
-        $(".content").css({"transform":"scale("+zoom.toFixed(3)+")"});
+        WebSync.setZoom(zoom);
     }
     $(window).bind("resize",self.updateScale);
     WebSync.fromJSON();

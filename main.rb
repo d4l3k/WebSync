@@ -113,7 +113,7 @@ end
 class Document
     include DataMapper::Resource
     property :id, Serial
-    property :name, String
+    property :name, Text
     #property :body, Text
     property :body, Json, :default=>{}, :lazy=>true
     property :created, DateTime

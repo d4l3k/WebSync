@@ -372,7 +372,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 		//$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
         var table = $(self.primaryTable());
-        $("#table_cursor").offset({left:pos.left,top:pos.top}).height($(self.selectedElem).height()-2).width($(self.selectedElem).width()-1).get(0).scrollIntoViewIfNeeded();
+        $("#table_cursor").offset({left:pos.left,top:pos.top}).height($(self.selectedElem).height()*WebSync.zoom-2).width($(self.selectedElem).width()*WebSync.zoom-1).get(0).scrollIntoViewIfNeeded();
         if(table.css("position")=="absolute"||pos){
             setTimeout(function(){
                 var offset = table.offset();
@@ -433,11 +433,17 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         console.log("Entering");
         $(table).children().on("keydown.TablesTemp", self.keypressHandler);
         $(".table_clip").bind("keydown.TablesTemp", self.keypressHandler);
-        $(table).on("resize.TablesTemp", function(e){
+        $(".content_container").delegate("resize.Tables", "table", function(e){
             self.cursorUpdate();
             self.headerUpdate();
         });
     }
+    $(document).on("zoom",function(){
+        if(self.selected){
+            self.cursorUpdate();
+            self.headerUpdate();
+        }
+    });
     self.leaveTable = function(table){
         console.log("Leaving");
 		$(table).unbind(".TablesTemp");

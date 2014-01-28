@@ -231,10 +231,12 @@ define('websync',{
         });
 		$("#name").blur(function(){
 			var name = $(this).text();
-			$(this).html(name);
             document.title = name+" - WebSync";
             WebSync.connection.sendJSON({type: "name_update", name: name});
 		});
+        $("#name").keydown(function(e){
+            e.stopPropagation();
+        });
 		$("#name").focus(function(){
 			if(this.innerText.indexOf("Unnamed")==0){
                 setTimeout(function(){
@@ -247,8 +249,8 @@ define('websync',{
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').slider()
          .on('slide', function(e){
-			var zoom = $('#zoom_level').data("slider").getValue()/100.0
-			$(".content_well").children().css({"transform":"scale("+zoom+")"});
+			WebSync.setZoom($('#zoom_level').data("slider").getValue()/100.0)
+            
         });
         $('body').mousemove(function(e){
             if(WebSync.viewMode=='Zen'){
@@ -395,6 +397,12 @@ define('websync',{
     menuVisible: true,
     // WARNING: Experimental & Unsupported in many browsers!
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
+    setZoom: function(zoom){
+        WebSync.zoom = zoom;
+        $('#zoom_level').data("slider").setValue(zoom*100)
+        $(".content_container").css({"transform":"scale("+zoom+")"});
+        $(document).trigger("zoom");
+    },
     urlChange: function(){
         var current = window.location.pathname.split("/")[2]
         if(current == "zen")

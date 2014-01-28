@@ -129,7 +129,7 @@ cursor {
     max-width: none;
     ul.tab-nav {
         float:none;
-        margin-top: -8px;
+        margin-top: -9px;
         margin-bottom: -12px;
         margin-left: 8px;
         display: inline-block;
@@ -362,11 +362,12 @@ a#name {
 	overflow: hidden;
 	text-overflow:ellipsis;
 	max-width: 3in;
-	max-height: 25px;
+	height: 50px;
+    margin-bottom: -5px;
 	white-space: nowrap;
-    display: inline-table;
+    display: inline-block;
     &:focus {
-        max-width: 6in;
+        max-width: initial;
         //background-color: #777;
         text-overflow: clip;
         background-color: rgba(255,255,255,0.45) !important;
@@ -688,6 +689,13 @@ a#name {
         width: 100%;
         height: 100%;
     }
+    .content_container {
+        transform-origin: top left;
+        -moz-transform-origin: top left;
+        -webkit-transform-origin: top left;
+        -o-transform-origin: top left;
+        -ms-transform-origin: top left;
+    }
     .note-page {
         position: relative;
         .note-title {
@@ -746,7 +754,10 @@ ul.nav.nav-list {
 #note-nav {
     left: 0px;
     & > * {
-        margin: 8px;
+        margin: 5px 5px 0;
+    }
+    button + button {
+        margin-left: 0px;
     }
     #notesView {
         padding: 8px 0;

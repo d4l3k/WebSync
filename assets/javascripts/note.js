@@ -5,7 +5,7 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
     $(".content_well").attr("style","background-color: white !important; background-image:none;");
     $("body").append('<div id="context-menu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#">Rename</a></li><li><a tabindex="-1" href="#">Delete</a></li></ul></div>');
     $(".content").append($('<div id="note-well" class="content_container"></div>'));
-    $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn btn-default" type="button">Add Section</button><button id="addPage" class="btn btn-default" type="button">Add Page</button><div id="notesView" class="well"></div></div>'));    
+    $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn btn-default" type="button">Add Section</button><button id="addPage" class="btn btn-default" type="button">Add Page</button><div id="notesView" class="panel panel-default"></div></div>'));    
     self.updateNav = function(){
         var html = "<ul class='nav nav-list'>";
         var active_section = $(".note-section:visible")[0];

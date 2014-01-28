@@ -54,7 +54,7 @@ wss.on('connection', function(ws) {
                                 }
                             }
                         });
-                        redis_sock.subscribe('doc:'+parts[1]);
+                        redis_sock.subscribe('doc:'+doc_id);
                         ws.on('close',function(ws) {
                             redis_sock.quit();
                             redis.get('doc:'+doc_id+':users',function(err,reply){

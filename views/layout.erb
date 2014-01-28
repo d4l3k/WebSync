@@ -98,6 +98,7 @@
     <script type="text/javascript">
         var tooltipHandle = function(){
             $('[data-toggle="tooltip"], nav [title]').tooltip({placement: 'bottom', container:'body'});
+            $('[data-toggle="tooltip-top"]').tooltip({placement: 'top', container:'body'});
         }
         for(var i=0;i<6;i++){
             setTimeout(tooltipHandle, i*500 +1);

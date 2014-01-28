@@ -1,68 +1,23 @@
-<%= stylesheet_tag 'bootstrap-fileupload' %>
-<style>
-html {
-    overflow: auto !important;
-}
-.icon-massive {
-    font-size: 12em;
-    margin-left: 0 !important;
-}
-form {
-    margin-top: 30px;
-}
-.form-horizontal .controls {
-    margin-left: 100px !important;
-}
-.form-horizontal .control-label {
-    width: 80px !important;
-}
-.form-horizontal .control-group {
-    height: 31px !important;
-}
-</style>
 <div class="container">
-    <div class="row-fluid">
-        <div class="span10">
-            <div class="hero-unit">
-            <i class="icon-cloud-upload icon-massive pull-right"></i>
-            <span>
-            <h1>Upload a File</h1>
-            <p>Supports most document formats that Libre Office can read.<br>Depending on the file type you may get mixed results. </p>
-            <form class="form-horizontal" action='upload' enctype="multipart/form-data" method='post'>
-              <div class="control-group">
-                <label class="control-label" for="email">File</label>
-                <div class="controls">
-            <div class="fileupload fileupload-new" data-provides="fileupload">
-              <div class="input-append">
-                <div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div><span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span><input name='file' type="file" /></span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
-              </div>
-            </div>
-                </div>
-              </div>
-              <div class="control-group">
-                <div class="controls">
-                  <button type="submit" class="btn btn-primary">Upload</button>
-                </div>
-              </div>
-            </form>
-            </span>
-            </div>
-        </div>
-        <div class="span2">
-            <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-6781356745519353";
-            /* WebSync Index */
-            //google_ad_slot = "7880400590";
-            //google_ad_slot = "9357133790";
-            google_ad_slot = "1833866998";
-            google_ad_width = 160; //(window.innerWidth-960)/2;
-            google_ad_height = 600;
-            //-->
-            </script>
-            <script type="text/javascript"
-            src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-            </script>
+    
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Upload a File</h3>
     </div>
+    <div class="panel-body">
+        Supports most document formats that LibreOffice can read. Depending on the type of file you may get mixed results.
+        <form class="form-horizontal" action='upload' enctype="multipart/form-data" method='post'>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="file">File</label>
+            <div class="fileupload fileupload-new col-sm-10" data-provides="fileupload">
+                <input name='file' type="file" />
+            </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-<%= javascript_tag 'bootstrap-fileupload' %>

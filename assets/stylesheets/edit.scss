@@ -352,8 +352,8 @@ cursor {
 ::selection {
 	background-color: #b3d4fc;
 }
-.no-connection {
-	background-image: -webkit-gradient(linear,0 0,0 100%,from(#f33),to(#c11)) !important;
+nav.no-connection {
+    background-color: #800;
 }
 a#name {
 	//background-color: #555;

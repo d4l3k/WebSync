@@ -486,7 +486,7 @@ class WebSync < Sinatra::Base
             )
             doc.assets = AssetGroup.get(1).assets
             doc.save
-            redirect "/#{doc.id}/edit"
+            redirect "/#{doc.id.encode62}/edit"
         else
             redirect "/"
         end

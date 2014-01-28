@@ -38,7 +38,7 @@ define('websync',{
 		onopen: function(e){
 			console.log(e);
 			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
-			$(".navbar-inner").removeClass("no-connection");
+			$("nav").removeClass("no-connection");
             $(document).trigger("connection");
 			$("#connection_msg").remove();
 			setTimeout(function(){
@@ -55,7 +55,7 @@ define('websync',{
 			console.log(e);
 			if(WebSync.diffInterval){
 				clearInterval(WebSync.diffInterval);
-				$(".navbar-inner").addClass("no-connection");
+				$("nav").addClass("no-connection");
 				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg";
 				WebSync.diffInterval=null;
                 $(document).trigger("noconnection");
@@ -642,12 +642,12 @@ define('websync',{
     // Function: void WebSync.alert(string Message);
     // Displays an alert message in the lower right hand corner of the window.
 	alert: function(msg){
-		return WebSync.alert_msg(msg,"");
+		return WebSync.alert_msg(msg,"alert-warning");
 	},
     // Function: void WebSync.error(string Message);
     // Displays an error message in the lower right hand corner of the window.
 	error: function(msg){
-		return WebSync.alert_msg(msg,"alert-error");
+		return WebSync.alert_msg(msg,"alert-danger");
 	},
     // Function: void WebSync.success(string Message);
     // Displays a success message in the lower right hand corner of the window.

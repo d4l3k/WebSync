@@ -1,6 +1,6 @@
 window = {};
 importScripts('/assets/diff_match_patch.js');
-importScripts('/assets/jsondiffpatch.min.js');
+importScripts('/assets/jsondiffpatch.js');
 
 dmp = new diff_match_patch();
 

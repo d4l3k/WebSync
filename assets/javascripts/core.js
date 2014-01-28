@@ -114,6 +114,9 @@ define('websync',{
                     }
                 }
             }
+            else if(data.type=="error"){
+                WebSync.error(data.reason);
+            }
             else if(data.type=='info'){
 				WebSync.webSocketFirstTime = false;
 				WebSync.loadScripts();

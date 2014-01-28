@@ -12,6 +12,8 @@
 //= require jquery.transform2d.js
 //= require webrtc-adapter.js
 //= require diff_match_patch.js
-//= require jsondiffpatch.min.js
+//= require jsondiffpatch.js
+//= require jsondiffpatch.html.js
+//= require json-patch-duplex.js
 //= require core.js
 //= require edit.js

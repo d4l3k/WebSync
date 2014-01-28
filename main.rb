@@ -553,7 +553,7 @@ class WebSync < Sinatra::Base
                 @client_id = $redis.incr("clientid")
                 @client_key = SecureRandom.uuid
                 $redis.set "websocket:id:#{@client_id}",current_user.email
-                $redis.set "websocket:key:#{@client_id}", @client_key
+                $redis.set "websocket:key:#{@client_id}", @client_key+":#{doc_id}"
                 $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
                 $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
                 @no_menu = true

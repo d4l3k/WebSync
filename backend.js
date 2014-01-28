@@ -40,7 +40,7 @@ wss.on('connection', function(ws) {
                 client_id = data.id;
                 redis.get('websocket:key:'+data.id, function(err, reply){
                     //console.log(["Keys!", reply,data.key]);
-                    if(reply==data.key){
+                    if(reply==data.key+":"+doc_id){
                         console.log('Client['+data.id+'] Authed!');
                         authenticated = true;
                         // TODO: Implement socket verification.
@@ -85,6 +85,7 @@ wss.on('connection', function(ws) {
                     }
                     else {
                         console.log("INVALID KEY!!! CLOSING!!! WTF BOOM!!!");
+                        ws.sendJSON({type:"error", reason:"Invalid Session. Please refresh the page."});
                         ws.close();
                     }
                 });

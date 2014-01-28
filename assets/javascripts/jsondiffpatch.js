@@ -4,22 +4,29 @@
 *   https://github.com/benjamine/JsonDiffPatch
 *   by Benjamin Eidelman - beneidel@gmail.com
 */
-jsondiffpatch = {};
-jdp = {};
+jsondiffpatch = jdp = {};
 (function(){
 "use strict";
 
-    jdp = {};
-    if (typeof jsondiffpatch != 'undefined'){
-        jdp = jsondiffpatch;
-    }
-    jsondiffpatch = jdp;
-    jdp.version = '0.0.7';
+    jdp.version = '0.0.11';
     jdp.config = {
         textDiffMinLength: 60,
         detectArrayMove: true,
         includeValueOnArrayMove: false
     };
+
+    var arrayIndexOf = typeof Array.prototype.indexOf === 'function' ?
+        function(array, item) {
+            return array.indexOf(item);
+        } : function(array, item) {
+            var length = array.length;
+            for (var i = 0; i < length; i++) {
+                if (array[i] === item) {
+                    return i;
+                }
+            }
+            return -1;
+        };
 
     var sequenceDiffer = {
 
@@ -126,7 +133,7 @@ jdp = {};
 
             var removedItems = [];
             for (index = commonHead; index < len1 - commonTail; index++) {
-                if (lcs.indices1.indexOf(index - commonHead) < 0) {
+                if (arrayIndexOf(lcs.indices1, index - commonHead) < 0) {
                     // removed
                     diff['_'+index] = [array1[index], 0, 0];
                     removedItems.push(index);
@@ -134,7 +141,7 @@ jdp = {};
             }
             var removedItemsLength = removedItems.length;
             for (index = commonHead; index < len2 - commonTail; index++) {
-                var indexOnArray2 = lcs.indices2.indexOf(index - commonHead);
+                var indexOnArray2 = arrayIndexOf(lcs.indices2, index - commonHead);
                 if (indexOnArray2 < 0) {
                     // added, try to match with a removed item and register as position move
                     var isMove = false;
@@ -317,6 +324,7 @@ jdp = {};
             var len1 = array1.length;
             var len2 = array2.length;
             var x, y;
+
             // initialize empty matrix of len1+1 x len2+1
             var matrix = [len1 + 1];
             for (x = 0; x < len1 + 1; x++) {
@@ -376,22 +384,24 @@ jdp = {};
         }
         return value;
     };
-    
+
     var diff_match_patch_autoconfig = function(){
         var dmp;
-        
+
         if (jdp.config.diff_match_patch) {
             dmp = new jdp.config.diff_match_patch.diff_match_patch();
         }
         if (typeof diff_match_patch != 'undefined') {
             if (typeof diff_match_patch == 'function') {
+                /* jshint newcap: false */
                 dmp = new diff_match_patch();
+                /* jshint newcap: true */
             }
             else if (typeof diff_match_patch == 'object' && typeof diff_match_patch.diff_match_patch == 'function') {
                 dmp = new diff_match_patch.diff_match_patch();
             }
         }
-        
+
         if (dmp) {
             jdp.config.textDiff = function(txt1, txt2){
                 return dmp.patch_toText(dmp.patch_make(txt1, txt2));
@@ -426,8 +436,11 @@ jdp = {};
     };
 
     var objectDiff = function(o, n){
+
         var odiff, pdiff, prop, addPropDiff;
+
         addPropDiff = function(name){
+
             pdiff = diff(o[name], n[name]);
             if (typeof pdiff != 'undefined') {
                 if (typeof odiff == 'undefined') {
@@ -436,6 +449,7 @@ jdp = {};
                 odiff[name] = pdiff;
             }
         };
+
         for (prop in n) {
             if (n.hasOwnProperty(prop)) {
                 addPropDiff(prop);
@@ -450,8 +464,10 @@ jdp = {};
         }
         return odiff;
     };
+
     var diff = jdp.diff = function(o, n){
         var ntype, otype, nnull, onull, d;
+
         if (o === n) {
             return;
         }
@@ -476,7 +492,7 @@ jdp = {};
                 }
             }
         }
-        
+
         if (nnull || onull || ntype == 'undefined' || ntype != otype ||
         ntype == 'number' ||
         otype == 'number' ||
@@ -528,16 +544,16 @@ jdp = {};
             }
         }
     };
-    
+
     var objectGet = function(obj, key){
         if (isArray(obj)) {
             return obj[parseInt(key, 10)];
         }
         return obj[key];
     };
-    
+
     jdp.getByKey = objectGet;
-    
+
     var objectSet = function(obj, key, value){
         if (isArray(obj) && obj._key) {
             var getKey = obj._key;
@@ -741,11 +757,11 @@ jdp = {};
         }
         return d;
     };
-    
+
     var patch = jdp.patch = function(o, pname, d, path) {
-    
+
         var p, nvalue, subpath = '', target;
-        
+
         if (typeof pname != 'string') {
             path = d;
             d = pname;
@@ -756,7 +772,7 @@ jdp = {};
                 pname = null;
             }
         }
-        
+
         if (path) {
             subpath += path;
         }
@@ -764,7 +780,7 @@ jdp = {};
         if (pname !== null) {
             subpath += pname;
         }
-        
+
         if (typeof d == 'object') {
             if (isArray(d)) {
                 // changed value
@@ -847,30 +863,31 @@ jdp = {};
                 }
             }
         }
-        
+
         return o;
     };
 
     var unpatch = jdp.unpatch = function(o, pname, d, path){
-        
+
         if (typeof pname != 'string') {
             return patch(o, reverse(pname), d);
         }
 
         return patch(o, pname, reverse(d), path);
     };
-    
+
     if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
         // CommonJS, eg: node.js
         module.exports = jdp;
     } else {
-        // browser global
-        window.jsondiffpatch = jdp;
+        // browser or worker global
+        if (typeof window !== 'undefined') {
+            window.jsondiffpatch = jdp;
+        } else {
+            jsondiffpatch = jdp;
+        }
     }
 
 })();
-jdp.config.objectHash = function(obj) { obj.id || JSON.stringify(obj); };
-if(!jdp.config.diff_match_patch){
-    jdp.config.diff_match_patch = {};
-}
-jdp.config.diff_match_patch.diff_match_patch = diff_match_patch;
+
+jsondiffpatch.config.objectHash = function(obj) { return JSON.stringify(obj); };

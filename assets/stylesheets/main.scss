@@ -41,6 +41,12 @@
         }
     }
 }
+@media (max-width: 767px) {
+    .error_background > div > div > div {
+        width: 100%;
+        padding: 10px;
+    }
+}
 .hero-special {
     display: inline-block;
     text-align: left;

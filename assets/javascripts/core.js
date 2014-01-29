@@ -219,13 +219,16 @@ define('websync',{
                 $("#assets tbody").append(row);
             }
             else if(data.type=='diff_list'){
-                var row = $("<tr><td></td><td></td><td></td><td ><button class='btn btn-warning'>Revert To</button></td></tr>");
-                var children = row.children();
-                children.get(0).innerText = data.time;
-                children.get(1).innerText = data.patch;
-                children.get(2).innerText = data.user_email;
-                $($(children.get(4)).children().get(0)).bootstrapSwitch();
-                $("#diffs tbody").append(row);
+                WebSync.patches = data.patches;
+                _.each(WebSync.patches, function(patch){
+                    var row = $("<tr><td></td><td></td><td></td><td ><button class='btn btn-warning'>Revert To</button></td></tr>");
+                    var children = row.children();
+                    children.get(0).innerText = patch.time;
+                    children.get(1).innerText = patch.patch;
+                    children.get(2).innerText = patch.user_email;
+                    $($(children.get(4)).children().get(0)).bootstrapSwitch();
+                    $("#diffs tbody").prepend(row);
+                });
             }
 		},
 		onerror:function(e){

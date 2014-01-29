@@ -108,6 +108,7 @@ class Change
     property :id, Serial
     property :time, DateTime
     property :patch, Json
+    property :parent, Integer
     belongs_to :user
     belongs_to :document
 end

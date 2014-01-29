@@ -570,7 +570,8 @@ define('websync',{
 		//}
         var patches = jsonpatch.generate(WebSync.patchObserver);
         if(patches.length > 0){
-            console.log("Diffing")
+            console.log("Diffing", patches)
+            $(document).trigger("diffed");
             WebSync.connection.sendJSON({type: "data_patch", patch: patches});
             //WebSync.oldDataString = stringWebSync;
             //WebSync.oldData = JSON.parse(stringWebSync);
@@ -725,7 +726,7 @@ function NODEtoJSON(obj){
     if(obj.attributes){
         _.each(obj.attributes,function(v,k){
             // TODO: Add blacklist of classnames & attributes for DOM serialization.
-            if(v.name!="contenteditable"){
+            if(v.name!="contenteditable" && v.name.indexOf("data-")!=0 ){
                 jso[v.name]=v.value;
             }
         });
@@ -754,14 +755,19 @@ function NODEtoDOM(obj){
         return obj.textContent;
     }
     html+="<"+obj.name;
+    var data_vars = []
     _.each(obj,function(v,k){
         if(k!="name"&&k!="textContent"&&k!="childNodes"&&k!="dataset"){
+            if(k.indexOf("data-")==0){
+                data_vars.push(k)
+            }
             html+=" "+k+"="+JSON.stringify(v);
         }
     });
     if(obj.dataset){
         _.each(obj.dataset,function(v,k){
-            html+=" data-"+k+"=\'"+v+"\"";
+            if(data_vars.indexOf("data-"+k)==-1)
+                html+=" data-"+k+"=\""+v+"\"";
         });
     }
     if(obj.childNodes){

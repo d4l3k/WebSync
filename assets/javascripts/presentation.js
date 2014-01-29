@@ -30,7 +30,6 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
         $(".content_well #slides").get(0).innerHTML=JSONToDOM(WebSyncData.body);
         // TODO: Get rid of the cause of this patch.
         //$(".slide").appendTo($("#slides"));
-        self.updateMenu();
         if(WebSyncAuth.view_op=='edit'){
             $("#slides .slide").attr("contenteditable",true);
         }
@@ -42,6 +41,7 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
         $(this).addClass("active");
         $($(".slide").get($(this).data().index)).addClass("active");
     });
+    $(document).on("diffed.Presentation", self.updateMenu);
     self.updateMenu = function(){
         $("#slideView").html("");
         $(".slide").each(function(index, slide){

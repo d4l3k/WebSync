@@ -1,9 +1,11 @@
 $col: #2bf;
 
 /* Make clicks pass-through */
+body {
+    -webkit-backface-visibility: hidden;
+}
 #nprogress {
   pointer-events: none;
-  -webkit-backface-visibility: hidden;
 }
 .edit #nprogress {
     .bar{

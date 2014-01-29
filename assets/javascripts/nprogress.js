@@ -196,7 +196,6 @@
 
   NProgress.render = function(fromStart) {
     if (NProgress.isRendered()) return $("#nprogress");
-    $('body').addClass('nprogress-busy');
 
     var $el = $("<div id='nprogress'>")
       .html(Settings.template);
@@ -221,10 +220,7 @@
    */
 
   NProgress.remove = function() {
-    setTimeout(function(){
-        $('#nprogress').hide().remove();
-        $('body').removeClass('nprogress-busy');
-    },1000);
+    $('#nprogress').remove();
   };
 
   /**

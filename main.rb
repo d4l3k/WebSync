@@ -154,6 +154,24 @@ class WebSync < Sinatra::Base
                return '<a href="/login" title="Sign In"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> Sign In</span></a>'
             end
         end
+        def is_cached
+            tag = "url:#{request.url}"
+            page = $redis.get(tag)
+            if page and !logged_in?
+              etag Digest::SHA1.hexdigest(page)
+              ttl = $redis.ttl(tag)
+              response.header['redis-ttl'] = ttl.to_s
+              response.header['redis'] = 'HIT'
+              return page
+            end
+        end
+        def set_cache(page)
+            etag Digest::SHA1.hexdigest(page)
+            tag = "url:#{request.url}"
+            response.header['redis'] = 'MISS'
+            $redis.setex(tag, 3600, page) if !logged_in?
+            return page
+        end
     end
 
     configure :development do
@@ -211,7 +229,17 @@ class WebSync < Sinatra::Base
     end
     get '/login' do
         if !logged_in?
-            erb :login
+            # Cache the page if there is no URL redirect after login.
+            if request.query_string == ""
+                html = is_cached
+                if html
+                    return html
+                end
+                html = erb :login
+                set_cache html
+            else
+                erb :login
+            end
         else
             redirect '/'
         end
@@ -269,7 +297,12 @@ class WebSync < Sinatra::Base
         if logged_in?
             erb :file_list
         else
-            erb :index
+            html = is_cached
+            if html
+                return html
+            end
+            html = erb :index
+            set_cache html
         end
     end
     get '/documentation' do
@@ -492,6 +525,6 @@ class WebSync < Sinatra::Base
         $redis.set "websocket:key:#{client_id}", client_key+":#{doc_id}"
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
-        erb :edit, locals:{doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key}
+        erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key}
     end
 end

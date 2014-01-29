@@ -4,8 +4,6 @@
 		<link rel="shortcut icon" href="/favicon.ico?v=3" />
         <title>WebSyn.ca</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<%= stylesheet_tag 'default' %>
-        <%= javascript_tag 'bundle-norm' %>
         <% if defined?(edit)&&edit %>
             <script type="text/javascript">
             // Variable: object WebSyncAuth;
@@ -28,7 +26,6 @@
             // Set document title.
             document.title = "<%= doc.name %> - WebSync";
             </script>
-            <%= javascript_tag 'bundle-edit' %>
         <% end %>
         <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -90,6 +87,9 @@
         <% end %>
 		<%= yield %>
 	</body>
+    <%= stylesheet_tag 'default' %>
+    <%= javascript_tag 'bundle-norm' %>
+    <%= (defined?(edit)&&edit) ? javascript_tag('bundle-edit') : "" %>
     <% if !defined?(@javascripts).nil? %>
         <% @javascripts.each do |script| %>
             <script type="text/javascript" src="<%= script %>"></script>

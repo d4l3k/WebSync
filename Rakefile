@@ -50,8 +50,8 @@ task :admin_remove, :email do |task, args|
 end
 
 task :deploy do
-    `rake assets:clean`
-    `rake assets:precompile`
-    `thin restart -C thin.yaml`
-    `pm2 reload all`
+    system "rake assets:clean"
+    system "rake assets:precompile"
+    system "thin restart -C thin.yaml"
+    system "pm2 reload all"
 end

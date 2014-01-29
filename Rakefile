@@ -1,7 +1,9 @@
 require 'bundler'
 ENV['RACK_ENV']='production'
 require 'sass'
-Bundler.require(:default,:development,:production)
+require './main'
+AssetPipeline::Task.define! WebSync
+Bundler.require(development,:production)
 require 'rake'
 require 'rake/tasklib'
 require 'rake/sprocketstask'
@@ -39,8 +41,6 @@ module AssetPipeline
       end
     end
 end
-require './main'
-AssetPipeline::Task.define! WebSync
 
 task :admin_add, :email do |task, args|
     User.get(args[:email]).update(group:"admin")

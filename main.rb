@@ -1,11 +1,11 @@
 # It was the night before Christmas and all through the house, not a creature was coding: UTF-8, not even with a mouse.
 require 'bundler'
+Bundler.require(:default)
 require 'tempfile'
 require 'digest/md5'
-Bundler.require(:default)
+require 'sass'
 require 'sinatra/sprockets-helpers'
 require 'sinatra/asset_pipeline'
-require 'sass'
 
 $config = MultiJson.load(File.open('./config.json').read)
 # Monkey patched Redis for easy caching.
@@ -261,8 +261,8 @@ class WebSync < Sinatra::Base
         Bundler.require(:production)
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
-        set :assets_precompile, %w(*.css *.scss bundle-norm.js bundle-edit.js *.png *.favico *.jpg *.svg *.eot *.ttf *.woff)
-        set :assets_precompile_no_digest, %w(*.js)
+        set :assets_precompile, %w(default.css edit.scss bundle-norm.js bundle-edit.js) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
+        set :assets_precompile_no_digest, %w(no_digest/*.js)
     end
     configure do
         use Rack::Session::Cookie, :expire_after => 60*60*24*7, :secret => $config['session_secret']

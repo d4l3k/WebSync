@@ -30,13 +30,17 @@ I'm in the process of switching over to [Waffle.IO](https://waffle.io/d4l3k/WebS
 
 Dependencies
 ----
-* WebSync requires ruby, rubygems, nodejs, and npm.
-* WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities. Redis may be replaced with ZeroMQ in the future.
-* Libre Office & unoconv is required for file upload & export.
+* WebSync requires Ruby, and Node.JS
+* WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities.
+* Libre Office, unoconv and poppler is required for file upload & download.
 
-You can install the Ruby dependencies by running "bundle" and the Node.JS dependencies by running "npm install".
+[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync works with Ruby 2.0.0 and should work with 1.9.3. At this time 2.1.0 doesn't work due to a Rice compilation error.
 
-Some things can be configured in "config.json" but a majority still require source changes.
+The Ruby dependencies need Bundler and you can install it by running `gem install bundler` and then `bundle` inside the WebSync directory to download the dependencies.
+
+To install the Node.JS dependencies, just run `npm install`.
+
+Some things (like databases) can be configured in "config.json" but a majority still require source changes.
 
 Launching
 ----
@@ -57,9 +61,37 @@ and to remove:
 rake "admin_remove[sample@sample.com]"
 ```
 
-Once the site is running you need to go into the admin panel and configure the script groups.
+Once the site is running you need to go into the admin panel and configure the script groups. Most of these are preconfigured from `config.json`
 
-The production environment is currently setup for use with https://websyn.ca
+Production
+----
+
+The production environment is currently setup for use with https://websyn.ca but should be fairly straight forward to setup with anything else.
+
+In production, WebSync loads static asset files. These need to be compiled by running:
+```
+rake assets:precompile
+```
+To clean them up:
+```
+rake assets:clean
+```
+
+The configuration for the front end is located in `thin.yaml` and by default launches 4 workers on ports 3000-3003. NOTE: There is no built in load balancer for the front end. You should use something like haproxy or nginx to balance between the worker threads.
+
+You can launch the front end by running:
+```
+thin start -C thin.yaml
+```
+
+For the backend, it's recommended you install [pm2](https://github.com/Unitech/pm2) (`npm install -g pm2`) and run the command:
+```
+pm2 start backend.js -i 4
+```
+which launches four worker threads that all listen on port 4568.
+
+If you want to avoid pm2, you can just run `./backend.js` or `node backend.js` to get a single worker on port 4568.
+
 
 Documentation
 ----

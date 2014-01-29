@@ -337,7 +337,6 @@ define('websync',{
         });
         $(".settings-popup #diffs").delegate('button','click',function(){
             console.log(this);
-            WebSync.info("<strong>TODO</strong> Implement rollbacks.");
             var patches = [];
             var c_div = this.parentElement.parentElement;
             while((c_div=c_div.nextSibling)!=null){
@@ -359,15 +358,6 @@ define('websync',{
                 WebSync.fromJSON();
             }
             WebSync.checkDiff();
-            /*console.log(patches);
-            var data = _.clone(WebSyncData);
-            for(var i=(patches.length-1);i>=0;i--){
-                data = jsondiffpatch.unpatch(data,JSON.parse(patches[i]));
-                WebSyncData = data;
-                WebSync.fromJSON(patches[i]);
-            }
-            WebSyncData = data;
-            WebSync.fromJSON();*/
         });
         $("a[href='#assets']").click(function(){
             $("#assets tbody").html("");

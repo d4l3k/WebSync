@@ -238,7 +238,8 @@ class WebSync < Sinatra::Base
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
         set :assets_precompile, %w(default.css edit.scss bundle-norm.js bundle-edit.js) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
-        set :assets_precompile_no_digest, %w(*.js)
+        no_digest = Dir.glob(File.join(root, 'assets', 'no_digest', "*.js")).map{|f| f.split("/").last}
+        set :assets_precompile_no_digest, no_digest
     end
     configure do
         use Rack::Session::Cookie, :expire_after => 60*60*24*7, :secret => $config['session_secret']
@@ -252,8 +253,7 @@ class WebSync < Sinatra::Base
         register Sinatra::AssetPipeline
         sprockets.append_path File.join(root, 'assets', 'stylesheets')
         sprockets.append_path File.join(root, 'assets', 'javascripts')
-        sprockets.append_path File.join(root, 'assets', 'images')
-        sprockets.append_path File.join(root, 'assets', 'javascripts', 'no_digest')
+        sprockets.append_path File.join(root, 'assets', 'no_digest')
     end
     $dmp = DiffMatchPatch.new
 

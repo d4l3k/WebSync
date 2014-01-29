@@ -1,10 +1,9 @@
 # It was the night before Christmas and all through the house, not a creature was coding: UTF-8, not even with a mouse.
 require 'bundler'
+require 'sass'
 Bundler.require(:default)
 require 'tempfile'
 require 'digest/md5'
-require 'sass'
-require 'sinatra/sprockets-helpers'
 require 'sinatra/asset_pipeline'
 
 $config = MultiJson.load(File.open('./config.json').read)
@@ -25,7 +24,6 @@ end
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 # Seems to be a bug in Sinatra/Sprockets.
-Sinatra::Sprockets = Sprockets
 def json_to_html_node obj
     html = "";
     if obj['name']=="#text"
@@ -170,7 +168,7 @@ class WebSync < Sinatra::Base
         end
         def admin_required
             if not admin?
-                redirect "/"
+                redirect "/login?#{env["REQUEST_PATH"]}"
             end
         end
         def admin?

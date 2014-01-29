@@ -48,3 +48,10 @@ end
 task :admin_remove, :email do |task, args|
     User.get(args[:email]).update(group:"user")
 end
+
+task :deploy do
+    `rake assets:clean`
+    `rake assets:precompile`
+    `thin restart -C thin.yaml`
+    `pm2 reload all`
+end

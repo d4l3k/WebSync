@@ -18,9 +18,11 @@ describe "WebSync Frontend" do
   it "should successfully redirect the upload page to login" do
     get '/upload' 
     assert last_response.redirect?
+    post '/upload' 
+    assert last_response.redirect?
   end
   it "should successfully redirect the admin page to login" do
-    get '/upload' 
+    get '/admin' 
     assert last_response.redirect?
   end
   it "should successfully load the documentation" do

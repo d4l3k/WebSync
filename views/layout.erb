@@ -6,27 +6,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<%= stylesheet_tag 'default' %>
         <%= javascript_tag 'bundle-norm' %>
-        <% if defined?(@edit)&&@edit %>
+        <% if defined?(edit)&&edit %>
             <script type="text/javascript">
             // Variable: object WebSyncAuth;
             // This is an internal object used for authenticating the websocket connection.
             WebSyncAuth = {
                 // Variable: int WebSyncAuth.id;
                 // This is the websocket connection id. Each connection has a unique id.
-                id:"<%= @client_id %>",
+                id:"<%= client_id %>",
                 // Variable: int WebSyncAuth.key;
                 // This is a randomly generated string used as an API key.
-                key:"<%= @client_key %>",
+                key:"<%= client_key %>",
                 view_op: "<%= params[:op] %>",
                 websocket_port: <%= $config['websocket']['port'] %>,
                 websocket_url: "<%= $config['websocket']['url'] %>"
             }
             // Variable: object WebSyncData;
             // This contains the data for the document. This is automatically synced with the server.
-            WebSyncData = <%= MultiJson.dump(@doc.body) %>;
+            WebSyncData = <%= MultiJson.dump(doc.body) %>;
 
             // Set document title.
-            document.title = "<%= @doc.name %> - WebSync";
+            document.title = "<%= doc.name %> - WebSync";
             </script>
             <%= javascript_tag 'bundle-edit' %>
         <% end %>
@@ -41,8 +41,8 @@
 
         </script>
 	</head>
-	<body class="<%= params[:op] %>">
-        <% if !(defined?(@no_menu)&&@no_menu) %>
+	<body class="<%= params[:op]=="view" ? "view" : "edit" %>">
+        <% if !(defined?(no_menu)&&no_menu) %>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">

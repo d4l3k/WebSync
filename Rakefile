@@ -1,5 +1,6 @@
 require 'bundler'
 ENV['RACK_ENV']='production'
+require 'sass'
 Bundler.require(:default,:development,:production)
 require 'rake'
 require 'rake/tasklib'

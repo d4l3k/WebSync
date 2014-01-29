@@ -4,7 +4,6 @@ require 'sass'
 Bundler.require(:default)
 require 'tempfile'
 require 'digest/md5'
-require 'sinatra/asset_pipeline'
 
 $config = MultiJson.load(File.open('./config.json').read)
 # Monkey patched Redis for easy caching.
@@ -230,6 +229,7 @@ class WebSync < Sinatra::Base
         Bundler.require(:development)
         set :assets_debug, true
         use PryRescue::Rack
+        # Bypass a bug. Works correctly in production.
     end
 
     configure :production do
@@ -245,11 +245,16 @@ class WebSync < Sinatra::Base
         set :session_secret, $config['session_secret']
         set :server, 'thin'
         set :sockets, []
+        disable :show_exceptions
+        disable :raise_errors
         set :template_engine, :erb
         register Sinatra::AssetPipeline
         sprockets.append_path File.join(root, 'assets', 'stylesheets')
         sprockets.append_path File.join(root, 'assets', 'javascripts')
         sprockets.append_path File.join(root, 'assets', 'images')
+    end
+    configure :development do
+        sprockets.append_path File.join(root, 'assets', 'javascripts', 'no_digest')
     end
     $dmp = DiffMatchPatch.new
 
@@ -310,7 +315,16 @@ class WebSync < Sinatra::Base
         redirect '/login'
     end
     not_found do
-        erb :not_found
+        erb :error, locals:{error: "404", reason: "Page or document not found."}
+    end
+    error 403 do
+        erb :error, locals:{error: "403", reason: "Access denied."}
+    end
+    error 400 do
+        erb :error, locals:{error: "400", reason: "Invalid request."}
+    end
+    error 500 do
+        erb :error, locals:{error: "500", reason: "The server failed to handle your request."}
     end
     #get '/assets/*.css' do
     #    content_type 'text/css'
@@ -372,12 +386,14 @@ class WebSync < Sinatra::Base
         erb :admin_asset_groups_edit
     end
     get '/admin/asset_groups/:asset_group/:asset/add' do
+        admin_required
         ass = AssetGroup.get(params[:asset_group])
         ass.assets << Asset.get(params[:asset])
         ass.save
         redirect "/admin/asset_groups/#{params[:asset_group]}/edit"
     end
     get '/admin/asset_groups/:asset_group/:asset/remove' do
+        admin_required
         ass = AssetGroup.get(params[:asset_group])
         ass.assets.each do |a|
             if a.id==params[:asset].to_i
@@ -413,6 +429,9 @@ class WebSync < Sinatra::Base
     get '/new/:group' do
         login_required
         group = AssetGroup.get(params[:group])
+        if group.nil?
+            halt 400
+        end
         doc = Document.create(
             :name => "Unnamed #{group.name}",
             :body => {body:[]},
@@ -429,6 +448,7 @@ class WebSync < Sinatra::Base
         erb :upload
     end
     post '/upload' do
+        login_required
         if params[:file]==nil
             redirect "/upload"
         end
@@ -471,13 +491,17 @@ class WebSync < Sinatra::Base
     end
     get '/:doc/download/:format' do
         if !%w(bib doc docx doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
-            redirect '/'
+            halt 400
         end
         login_required
         doc_id = params[:doc].decode62
         doc = Document.get doc_id
+        if doc.nil?
+            halt 404
+        end
         if (!doc.public)&&doc.user!=current_user
-            redirect '/'
+            status 403
+            halt 404
         end
         file = Tempfile.new('websync-export')
         file.write( json_to_html( doc.body['body'] ) )
@@ -489,7 +513,7 @@ class WebSync < Sinatra::Base
             attachment(doc.name+'.'+params[:format])
             response.write(File.read(export_file))
         else
-            redirect '/'
+            halt 500
         end
         file.unlink
     end
@@ -497,8 +521,11 @@ class WebSync < Sinatra::Base
         login_required
         doc_id = params[:doc].decode62
         doc = Document.get doc_id
+        if doc.nil?
+            halt 404
+        end
         if (!doc.public)&&doc.user!=current_user
-            redirect '/'
+            halt 403
         end
         content_type 'application/json'
         MultiJson.dump(doc.body)
@@ -507,8 +534,13 @@ class WebSync < Sinatra::Base
         login_required
         doc_id = params[:doc].decode62
         doc = Document.get doc_id
+        if doc.nil?
+            halt 404
+        end
         if doc.user==current_user
             doc.destroy!
+        else
+            halt 403
         end
         redirect '/'
     end
@@ -516,237 +548,21 @@ class WebSync < Sinatra::Base
         doc_id = params[:doc].decode62
         doc = Document.get doc_id
         if doc.nil?
-            redirect 'notfound'
+            halt 404
         end
-        #if !request.websocket?
-            login_required
-            if (!doc.public)&&doc.user!=current_user
-                redirect '/'
-            end
-            @javascripts = [
-                #'/assets/bundle-edit.js'
-            ]
-            @doc = doc
-            if !@doc.nil?
-                @client_id = $redis.incr("clientid")
-                @client_key = SecureRandom.uuid
-                $redis.set "websocket:id:#{@client_id}",current_user.email
-                $redis.set "websocket:key:#{@client_id}", @client_key+":#{doc_id}"
-                $redis.expire "websocket:id:#{@client_id}", 60*60*24*7
-                $redis.expire "websocket:key:#{@client_id}", 60*60*24*7
-                @no_menu = true
-                @edit = true
-                erb :edit
-            else
-                redirect '/'
-            end
-=begin
-        # Websocket edit
-        else
-            #TODO: Authentication for websockets
-            redis_sock = EM::Hiredis.connect.pubsub
-            redis_sock.subscribe("doc:#{doc_id}")
-            authenticated = false
-            user = nil
-            client_id = nil
-            request.websocket do |ws|
-                websock = ws
-                ws.onopen do
-                    warn "websocket open"
-                end
-                ws.onmessage do |msg|
-                    data = MultiJson.load(msg.force_encoding("UTF-8"));
-                    puts "JSON: #{msg}"
-                    if data['type']=='auth'
-                        if $redis.get("websocket:key:#{data['id']}") == data['key']
-                            # Extend key expiry time
-                            email = $redis.get "websocket:id:#{data['id']}"
-                            user = User.get(email)
-                            if (!doc.public)&&doc.user!=user
-                                redis_sock.close_connection
-                                ws.close_connection
-                                return
-                            end
-                            authenticated = true
-                            client_id = data['id']
-                            $redis.expire "websocket:id:#{client_id}", 60*60*24*7
-                            $redis.expire "websocket:key:#{client_id}", 60*60*24*7
-                            user_prop = "doc:#{doc_id}:users"
-                            user_raw = $redis.get(user_prop)
-                            if !user_raw.nil?
-                                users = MultiJson.load(user_raw)
-                            else
-                                users = {}
-                            end
-                            user_id = Digest::MD5.hexdigest(email.strip.downcase)
-                            users[client_id]={id:user_id,email:email.strip}
-                            $redis.set user_prop,MultiJson.dump(users)
-                            $redis.publish "doc:#{doc_id}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})})
-                            ws.send MultiJson.dump({type:'info',user_id:user_id,users:users})
-                            puts "[Websocket Client Authed] ID: #{client_id}, Email: #{email}"
-                        else
-                            ws.close_connection
-                        end
-                    end
-                    if authenticated
-                        # Patch data
-                        if data['type']=='data_patch'&&data.has_key?('patch')
-                            doc = Document.get doc_id
-                            doc.body = JsonDiffPatch.patch(doc.body,data['patch'])
-                            doc.last_edit_time = Time.now
-                            if !doc.save
-                                puts("Save errors: #{doc.errors.inspect}")
-                            end
-                            $redis.publish "doc:#{doc_id}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
-                        # Sets the name
-                        elsif data['type']=="name_update"
-                            doc.name = data["name"]
-                            doc.last_edit_time = Time.now
-                            if !doc.save
-                                puts("Save errors: #{doc.errors.inspect}")
-                            end
-                            $redis.publish "doc:#{doc_id}", MultiJson.dump({type:"client_bounce",client:client_id,data:msg})
-                        # Loads scripts
-                        elsif data['type']=="load_scripts"
-                            msg = {type:'scripts', js:[],css:[]}
-                            doc.assets.each do |asset|
-                                arr = :js;
-                                if asset.type=="javascript"
-                                    arr = :js
-                                elsif asset.type=="stylesheet"
-                                    arr = :css
-                                end
-                                msg[arr].push asset.url
-                            end
-                            ws.send MultiJson.dump msg
-                        elsif data['type']=='connection'
-                        elsif data['type']=='config'
-                            if data['action']=='set'
-                                if data['property']=='public'
-                                    doc.public = data['value']
-                                    doc.save
-                                else
-                                    if data['space']=='user'
-                                            user.config_set data['property'],data['value']
-                                            user.save
-                                    elsif data['space']=='document'
-                                            doc.config_set data['property'],data['value']
-                                            doc.save
-                                    end
-                                end
-                            elsif data['action']=='get'
-                                if data['property']=='public'
-                                    ws.send MultiJson.dump({type: 'config',action: 'get', property:'public', value: doc.public})
-                                else
-                                    if data['space']=='user'
-                                            ws.send MultiJson.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: user.config[data['property']],id:data['id']})
-                                    elsif data['space']=='document'
-                                            ws.send MultiJson.dump({type: 'config', action: data['action'], space: data['space'], property: data['property'], value: doc.config[data['property']],id:data['id']})
-                                    end
-                                end
-                            end
-                        elsif data['type']=='client_event'
-                            $redis.publish "doc:#{doc_id}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"client_event",event:data['event'],from:client_id,data:data['data']})})
-                        end
-                    end
-                end
-                ws.onclose do
-                    warn("websocket closed")
-                    redis_sock.close_connection
-                    if authenticated
-                        user_prop = "doc:#{doc_id}:users"
-                        users = MultiJson.load($redis.get(user_prop))
-                        users.delete client_id
-                        $redis.set user_prop,MultiJson.dump(users)
-                        $redis.publish "doc:#{doc_id}", MultiJson.dump({type:"client_bounce",client:client_id,data:MultiJson.dump({type:"exit_user",id:client_id})})
-                    end
-                    ws.close_connection
-                end
-                redis_sock.on(:message) do |channel, message|
-                    #puts "[#{client_id}]#{channel}: #{message}"
-                    data = MultiJson.load(message)
-                    if data['client']!=client_id
-                        if data['type']=="client_bounce"
-                            ws.send data['data']
-                        end
-                    end
-                end
-            end
+        login_required
+        if (!doc.public)&&doc.user!=current_user
+            halt 403
         end
-=end
+        @javascripts = [
+            #'/assets/bundle-edit.js'
+        ]
+        client_id = $redis.incr("clientid")
+        client_key = SecureRandom.uuid
+        $redis.set "websocket:id:#{client_id}",current_user.email
+        $redis.set "websocket:key:#{client_id}", client_key+":#{doc_id}"
+        $redis.expire "websocket:id:#{client_id}", 60*60*24*7
+        $redis.expire "websocket:key:#{client_id}", 60*60*24*7
+        erb :edit, locals:{doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key}
     end
-
-=begin
-# This might be completely useless since it seems like you only have to structure for diff.
-# Create a diff after replacing all HTML tags with unicode characters.
-def diff_htmlToChars_ text1, text2
-    lineArray = []  # e.g. lineArray[4] == 'Hello\n'
-    lineHash = {}   # e.g. lineHash['Hello\n'] == 4
-
-    # '\x00' is a valid character, but various debuggers don't like it.
-    # So we'll insert a junk entry to avoid generating a null character.
-    lineArray[0] = ''
-
-    #/**
-    #* Split a text into an array of strings.  Reduce the texts to a string of
-    #* hashes where each Unicode character represents one line.
-    #* Modifies linearray and linehash through being a closure.
-    #* @param {string} text String to encode.
-    #* @return {string} Encoded string.
-    #* @private
-    #*/
-    def diff_linesToCharsMunge_ text, lineArray, lineHash
-        chars = ""+text
-        #// Walk the text, pulling out a substring for each line.
-        #// text.split('\n') would would temporarily double our memory footprint.
-        #// Modifying text would create many large strings to garbage collect.
-        lineStart = 0
-        lineEnd = 0
-        #// Keeping our own length variable is faster than looking it up.
-        lineArrayLength = lineArray.length;
-        while lineEnd <(text.length - 1)
-            prevLineEnd = lineEnd
-            if prevLineEnd==nil
-                prevLineEnd=0
-            end
-            lineStart = text.index('<',lineEnd)
-            if lineStart.nil?
-                lineEnd=nil
-                break
-            else
-                lineEnd = text.index('>', lineStart)
-            end
-            if lineEnd.nil?
-                lineEnd = text.length - 1
-            end
-            line = text[lineStart..lineEnd]
-            lineStart = lineEnd + 1
-
-            if lineHash.has_key? line
-                chars.gsub!(line,[lineHash[line]].pack("U"))
-            else
-                chars.gsub!(line,[lineArrayLength].pack("U"))
-                lineHash[line] = lineArrayLength
-                lineArray[lineArrayLength] = line
-                lineArrayLength +=1
-            end
-        end
-        return chars;
-    end
-
-    chars1 = diff_linesToCharsMunge_(text1, lineArray,lineHash)
-    chars2 = diff_linesToCharsMunge_(text2,lineArray,lineHash)
-    return {chars1: chars1, chars2: chars2, lineArray: lineArray}
-end
-def diff_charsToHTML_ diffs, lineArray
-  (0..(diffs.length-1)).each do |x|
-    chars = diffs[x][1];
-    text = ""+chars
-    (0..(lineArray-1)).each do |y|
-      text.gsub!([y].pack("U"),lineArray[y])
-    end
-    diffs[x][1] = text;
-  end
-end
-=end
 end

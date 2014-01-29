@@ -14,7 +14,7 @@
         }
     }
 }
-.error_background {
+.centered_alert {
     position: fixed;
     top: 0;
     left: 0;
@@ -33,6 +33,11 @@
             width: 100%;
             text-align: center;
             background-color: rgba(0,0,0,0.5);
+            .fa-spin {
+                display: inline-block;
+                margin-left: -50px;
+                margin-right: 13px;
+            }
             & > div {
                 width: 500px;
                 display: inline-block;
@@ -42,7 +47,7 @@
     }
 }
 @media (max-width: 767px) {
-    .error_background > div > div > div {
+    .centered_alert > div > div > div {
         width: 100%;
         padding: 10px;
     }

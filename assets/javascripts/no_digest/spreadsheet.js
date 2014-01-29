@@ -55,5 +55,6 @@ define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websy
     $(".content_well").scroll(self.updateHeaders);
     $(".navbar-fixed-top").css({"border-bottom": "1px solid #aaa"})
     $("#spreadsheetWell tr:first-child td:first-child").trigger("mousedown").trigger("mouseup");
+    NProgress.done();
     return self;
 });

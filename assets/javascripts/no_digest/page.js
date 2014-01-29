@@ -16,5 +16,6 @@ define("/assets/page.js",['websync'], function(websync) { var self = this;
         $(".content .page").get(0).innerHTML=JSONToDOM(WebSyncData.body);
     }
 	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
+    NProgress.done();
     return self;
 });

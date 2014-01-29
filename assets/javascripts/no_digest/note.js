@@ -141,5 +141,6 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
         var page = e.currentTarget.dataset.index;
         self.switchToPage(section,page);
     });
+    NProgress.done();
     return self;
 });

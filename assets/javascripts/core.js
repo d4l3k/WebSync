@@ -41,6 +41,7 @@ define('websync',{
 			$("nav").removeClass("no-connection");
             $(document).trigger("connection");
 			$("#connection_msg").remove();
+            $("#fatal_error").fadeOut();
 			setTimeout(function(){
                 if(WebSync.webSocketFirstTime){
                     WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
@@ -59,7 +60,9 @@ define('websync',{
 				WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id="connection_msg";
 				WebSync.diffInterval=null;
                 $(document).trigger("noconnection");
-			}
+			} else {
+                $("#fatal_error").fadeIn();
+            }
 			setTimeout(WebSync.webSocketStart,2000);
 		},
 		onmessage: function(e){
@@ -264,6 +267,7 @@ define('websync',{
     // Function: void WebSync.initialize();
     // This is where the core of WebSync initializes.
 	initialize: function(){
+        NProgress.start();
 		this.webSocketStart();
         $("#public_mode").change(function(){
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
@@ -383,6 +387,9 @@ define('websync',{
         $("a[href='#diffs']").click(function(){
             $("#diffs tbody").html("");
             WebSync.connection.sendJSON({type:'diffs',action:'list'});
+        });
+        $(document).on("online", function(){
+            NProgress.done();
         });
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write

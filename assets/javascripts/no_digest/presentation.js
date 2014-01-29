@@ -115,5 +115,6 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
     $(window).bind("resize",self.updateScale);
     WebSync.fromJSON();
     $(window).resize();
+    NProgress.done();
     return self;
 });

@@ -749,11 +749,21 @@ function DOMToJSON(obj){
     });
     return jso;
 }
+function escapeHTML(html){
+    return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function alphaNumeric(text){
+    return texta.match(/[a-zA-Z0-9\-]+/g).join("");
+}
 function NODEtoDOM(obj){
     var html = "";
-    if(obj.name=="#text"){
-        return obj.textContent;
-    }
+    // Some basic cross site scripting attack prevention.
+    if(obj.name=="#text")
+        return escapeHTML(obj.textContent);
+    obj.name = alphaNumeric(obj.name);
+    // TODO: Potentially disallow iframes!
+    if(obj.name=="script")
+        return "";
     html+="<"+obj.name;
     var data_vars = []
     _.each(obj,function(v,k){
@@ -761,13 +771,13 @@ function NODEtoDOM(obj){
             if(k.indexOf("data-")==0){
                 data_vars.push(k)
             }
-            html+=" "+k+"="+JSON.stringify(v);
+            html+=" "+alphaNumeric(k)+"="+JSON.stringify(v);
         }
     });
     if(obj.dataset){
         _.each(obj.dataset,function(v,k){
             if(data_vars.indexOf("data-"+k)==-1)
-                html+=" data-"+k+"=\""+v+"\"";
+                html+=" data-"+alphaNumeric(k)+"="+JSON.stringify(v);
         });
     }
     if(obj.childNodes){

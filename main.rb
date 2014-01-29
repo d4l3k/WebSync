@@ -179,6 +179,9 @@ class WebSync < Sinatra::Base
     register Sinatra::Synchrony
     use Rack::Logger
     helpers do
+        def h(text)
+            Rack::Utils.escape_html(text)
+        end
         def logger
             request.logger
         end

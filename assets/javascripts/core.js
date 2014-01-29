@@ -331,12 +331,28 @@ define('websync',{
         $(".settings-popup #diffs").delegate('button','click',function(){
             console.log(this);
             WebSync.info("<strong>TODO</strong> Implement rollbacks.");
-            /*var patches = [];
+            var patches = [];
             var c_div = this.parentElement.parentElement;
-            while((c_div=c_div.previousSibling)!=null){
-                patches.push(c_div.children[1].innerText);
+            while((c_div=c_div.nextSibling)!=null){
+                var patch = c_div.children[1].innerText.replace(/^{/,"[").replace(/}$/,"]");
+                patches.push(JSON.parse(patch));
             }
-            console.log(patches);
+            var new_body = {body:[]};
+            for(var i=(patches.length)-1;i>=0;i--){
+                jsonpatch.apply(new_body,patches[i]);
+            }
+            _.each(WebSyncData,function(v,k){
+                delete WebSyncData[k];
+            });
+            _.each(new_body, function(v,k){
+                WebSyncData[k] = v;
+            });
+            WebSyncData = new_body;
+            if(WebSync.fromJSON){
+                WebSync.fromJSON();
+            }
+            WebSync.checkDiff();
+            /*console.log(patches);
             var data = _.clone(WebSyncData);
             for(var i=(patches.length-1);i>=0;i--){
                 data = jsondiffpatch.unpatch(data,JSON.parse(patches[i]));
@@ -753,7 +769,7 @@ function escapeHTML(html){
     return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 function alphaNumeric(text){
-    return texta.match(/[a-zA-Z0-9\-]+/g).join("");
+    return text.match(/[a-zA-Z0-9\-]+/g).join("");
 }
 function NODEtoDOM(obj){
     var html = "";
@@ -768,14 +784,18 @@ function NODEtoDOM(obj){
     var data_vars = []
     _.each(obj,function(v,k){
         if(k!="name"&&k!="textContent"&&k!="childNodes"&&k!="dataset"){
-            if(k.indexOf("data-")==0){
-                data_vars.push(k)
+            k = alphaNumeric(k.trim())
+            if(k.toLowerCase().indexOf("on")!=0){
+                if(k.toLowerCase().indexOf("data-")==0){
+                    data_vars.push(k)
+                }
+                html+=" "+k+"="+JSON.stringify(v);
             }
-            html+=" "+alphaNumeric(k)+"="+JSON.stringify(v);
         }
     });
     if(obj.dataset){
         _.each(obj.dataset,function(v,k){
+            k = alphaNumeric(k.trim());
             if(data_vars.indexOf("data-"+k)==-1)
                 html+=" data-"+alphaNumeric(k)+"="+JSON.stringify(v);
         });

@@ -18,8 +18,6 @@ class Redis
     end
   end
 end
-# Ease of use connection to the redis server.
-$redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 require './lib/models'
 def json_to_html_node obj
     html = "";
@@ -169,7 +167,7 @@ class WebSync < Sinatra::Base
         Bundler.require(:production)
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
-        set :assets_precompile, %w(default.css edit.scss bundle-norm.js bundle-edit.js) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
+        set :assets_precompile, %w(default.css edit.css edit.scss bundle-norm.js bundle-edit.js) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
         no_digest = Dir.glob(File.join(root, 'assets', 'no_digest', "*.js")).map{|f| f.split("/").last}
         set :assets_precompile_no_digest, no_digest
     end

@@ -24,31 +24,8 @@ end
 # Ease of use connection to the redis server.
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
-#$adapter = DataMapper.setup(:default, :adapter=>'riak', :namespace=>'WebSync')
-#class DataMapper::Adapters::RiakAdapter
-#    attr_accessor :riak
-#end
-#$riak = $adapter.riak
-# Redis has issues with datamapper associations especially Many-to-many.
-#$adapter = DataMapper.setup(:default, {:adapter => "redis"});
-#$redis = $adapter.redis
-#data = "window = {};"+File.read("./assets/javascripts/diff_match_patch.js") + File.read("./assets/javascripts/jsondiffpatch.min.js")
-#$jsondiffpatch = ExecJS.compile data
-
+# Seems to be a bug in Sinatra/Sprockets.
 Sinatra::Sprockets = Sprockets
-=begin
-module BJSONDiffPatch
-    def diff object1, object2
-        return $jsondiffpatch.eval "jsondiffpatch.diff(#{MultiJson.dump(object1)},#{MultiJson.dump(object2)})"
-    end
-    def patch object1, delta
-        return $jsondiffpatch.eval "jsondiffpatch.patch(#{MultiJson.dump(object1)},#{MultiJson.dump(delta)})"
-    end
-end
-class JsonDiffPatch
-    extend BJSONDiffPatch
-end
-=end
 def json_to_html_node obj
     html = "";
     if obj['name']=="#text"

@@ -4,16 +4,12 @@ RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get upgrade -y
 
-RUN apt-get install -y build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config wget python-software-properties python python-setuptools libpq5 libpq-dev nodejs unoconv libhiredis-dev poppler-utils libreoffice-core libreoffice-calc libreoffice-writer ruby2.0 ruby2.0-dev nginx
+RUN apt-get install -y build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config wget python-software-properties python python-setuptools libpq5 libpq-dev nodejs unoconv libhiredis-dev poppler-utils libreoffice-core libreoffice-calc libreoffice-writer libreoffice-impress nginx npm openjdk-7-jre-headless 
 
-# Java (not needed unless running puma)
-# RUN apt-get install -y openjdk-7-jre-headless
-
-# Node.JS manager
-RUN apt-get install -y npm
-RUN npm install -g pm2
-
-# Ruby dependencies
+# Install ruby
+RUN wget ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz -O ruby.tar.gz
+RUN tar xvf ruby.tar.gz
+RUN cd ruby-2.0.0-p353; ./configure; make install --enable-shared
 RUN gem update --system
 RUN gem install bundler rubygems-bundler
 

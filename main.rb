@@ -83,7 +83,7 @@ def html_to_json html
 end
 
 class WebSync < Sinatra::Base
-    register Sinatra::Synchrony
+    #register Sinatra::Synchrony
     use Rack::Logger
     helpers do
         def h(text)
@@ -407,9 +407,6 @@ class WebSync < Sinatra::Base
                 content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
             elsif filetype=='text/html'
                 content = File.read(tempfile.path)
-            elsif filename.split('.').pop=='docx'
-                    # This pretty much just reads plain text...
-                    content = Docx::Document.open(tempfile.path).to_html.force_encoding("UTF-8")
             else
                 logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
             end

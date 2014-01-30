@@ -1,0 +1,101 @@
+
+{
+    "postgres": "postgres:@10.1.2.152/websync",
+    "session_secret": "WebSync is awesome! This should be secret and unique to your server cluster.",
+    "websocket": {
+        "port": 4568,
+        "url": "websocket.websyn.ca"
+    },
+    "redis": {
+        "host":"10.1.2.152",
+        "port":null
+    },
+    "default_assets": [
+        {
+            "name": "Tables",
+            "description": "Enables table editting.",
+            "url": "/assets/tables.js"
+        }
+        ,{
+            "name": "Chat",
+            "description": "Enables chat between editors.",
+            "url": "/assets/chat.js"
+        }
+        ,{
+            "name": "Page Layout",
+            "description": "Standard document layout.",
+            "url": "/assets/page.js"
+        }
+        ,{
+            "name": "Presentation Layout",
+            "description": "Standard presentation layout.",
+            "url": "/assets/presentation.js"
+        }
+        ,{
+            "name": "Spreadsheet Layout",
+            "description": "Standard presentation layout.",
+            "url": "/assets/spreadsheet.js"
+        }
+        ,{
+            "name": "Note Layout",
+            "description": "Standard note-taking layout.",
+            "url": "/assets/note.js"
+        }
+        ,{
+            "name": "Resize",
+            "description": "Enables object resizing with handles.",
+            "url": "/assets/resize.js"
+        }
+        ,{
+            "name": "MathJax",
+            "description": "Enables equation editing.",
+            "url": "/assets/mathjax.js"
+        }
+    ],
+    "default_asset_groups": [
+        {
+            "name" : "Document",
+            "description" : "Format similar to Microsoft Word or LibreOffice Writer.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Page Layout",
+                "MathJax",
+                "Resize"
+            ]
+        }
+        ,{
+            "name" : "Presentation",
+            "description" : "Format similar to Microsoft PowerPoint or LibreOffice Impress.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Presentation Layout",
+                "MathJax",
+                "Resize"
+            ]
+        }
+        ,{
+            "name" : "Spreadsheet",
+            "description" : "Format similar to Microsoft Excel or LibreOffice Calc.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Spreadsheet Layout",
+                "MathJax",
+                "Resize"
+            ]
+        }
+        ,{
+            "name" : "Notebook",
+            "description" : "Format similar to Microsoft OneNote.",
+            "assets": [
+                "Tables",
+                "Chat",
+                "Note Layout",
+                "MathJax",
+                "Resize"
+            ]
+        }
+    ]
+}

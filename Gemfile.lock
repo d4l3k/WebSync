@@ -127,6 +127,8 @@ GEM
     pry-stack_explorer (0.4.9.1)
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
+    puma (2.7.1)
+      rack (>= 1.1, < 2.0)
     rack (1.5.2)
     rack-fiber_pool (0.9.3)
     rack-protection (1.5.2)
@@ -196,6 +198,7 @@ DEPENDENCIES
   pdftohtmlr
   pry-rescue
   pry-stack_explorer
+  puma
   racksh
   radix62
   redis

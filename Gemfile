@@ -22,13 +22,14 @@ gem 'nokogiri'
 gem 'multi_json'
 gem 'radix62'
 gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeline.git', :require=>'sinatra/asset_pipeline'
-gem 'thin'
 group :development do
+    gem 'thin'
 	gem 'racksh'
 	gem 'pry-rescue'
 	gem 'pry-stack_explorer'
 end
 group :production do
+    gem 'puma'
     gem 'yui-compressor'
     gem 'closure-compiler'
 end

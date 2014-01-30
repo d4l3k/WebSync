@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.0.0'
+ruby '2.1.0'
 gem 'rubysl', platform: :rbx
 gem 'racc', platform: :rbx
 gem 'json'
@@ -14,7 +14,6 @@ gem 'sinatra-synchrony'
 gem 'pdftohtmlr'
 gem 'em-hiredis'
 gem 'sinatra', :require=>'sinatra/base'
-gem 'eventmachine'
 gem 'nokogiri'
 gem 'multi_json'
 gem 'radix62'

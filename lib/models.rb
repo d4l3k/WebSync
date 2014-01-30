@@ -69,7 +69,6 @@ class AnonymousUser < User; end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 
-
 if Asset.count == 0
     puts "[DATABASE] Creating default assets."
     $config["default_assets"].each do |asset|

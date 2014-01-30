@@ -18,13 +18,15 @@ RUN gem install bundler rubygems-bundler
 ADD . /src
 
 # Download dependencies
-RUN cd /src; bundle install; npm install
+RUN cd /src; bundle install
+RUN cd /src; npm install
 
 # Load balancer configuration.
 RUN cp /src/config/nginx.conf /etc/nginx/
 
 # Precompile assets
-RUN cd /src; rake assets:clean; rake assets:precompile
+RUN cd /src; rake assets:clean
+RUN cd /src; rake assets:precompile
 
 RUN chown -R daemon /src
 RUN chmod 755 -R /src

@@ -11,5 +11,5 @@ service nginx start
 alias nodejs=node
 
 pm2 start bin/backend.js -i 4
-unicorn -c config/unicorn.rb -D
+unicorn -c config/unicorn.rb
 #thin start -C config/thin.yaml

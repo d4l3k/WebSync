@@ -33,7 +33,7 @@ RUN gem install bundler rubygems-bundler
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
-RUN mkdir /.pm2; chown -R daemon /.pm2; chmod 755 -R /.pm2
+RUN mkdir /.pm2; mkdir /.pm2/pids/; mkdir /.pm2/logs/; chown -R daemon /.pm2; chmod 755 -R /.pm2
 
 ADD . /src
 

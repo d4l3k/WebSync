@@ -24,12 +24,12 @@ RUN gem update --system
 RUN gem install bundler
 
 # Install RBX
-RUN wget -q http://releases.rubini.us/rubinius-2.2.3.tar.bz2
-RUN tar xvf rubinius-2.2.3.tar.bz2
-RUN cd rubinius-2.2.3; bundle install; ./configure --prefix=/opt/; rake install
-ENV PATH /opt/rubinius/2.2/bin:$PATH
-RUN gem update --system
-RUN gem install rubysl racc bundler rubygems-bundler
+#RUN wget -q http://releases.rubini.us/rubinius-2.2.3.tar.bz2
+#RUN tar xvf rubinius-2.2.3.tar.bz2
+#RUN cd rubinius-2.2.3; bundle install; ./configure --prefix=/opt/; rake install
+#ENV PATH /opt/rubinius/2.2/bin:$PATH
+#RUN gem update --system
+#RUN gem install rubysl racc bundler rubygems-bundler
 
 ADD . /src
 

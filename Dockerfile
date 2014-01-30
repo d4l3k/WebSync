@@ -12,18 +12,18 @@ RUN apt-get install -y build-essential openssl libreadline6 libreadline6-dev cur
 RUN apt-get install -y poppler-utils libreoffice-core libreoffice-calc libreoffice-writer
 
 # Install unoconv (can this be installed from apt-get?)
-RUN wget https://github.com/dagwieers/unoconv/archive/0.6.tar.gz
+RUN wget -q https://github.com/dagwieers/unoconv/archive/0.6.tar.gz
 RUN tar xvf 0.6.tar.gz
 RUN cd unoconv-0.6; make install
 
 # Install hiredis
 
-RUN wget https://github.com/redis/hiredis/archive/v0.11.0.tar.gz
+RUN wget -q https://github.com/redis/hiredis/archive/v0.11.0.tar.gz
 RUN tar xvf v0.11.0.tar.gz
 RUN cd hiredis-0.11.0; make install
 
 # Install ruby
-RUN wget ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz -O ruby.tar.gz
+RUN wget -q ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz -O ruby.tar.gz
 RUN tar xvf ruby.tar.gz
 RUN cd ruby-2.0.0-p353; ./configure; make install
 RUN gem update --system

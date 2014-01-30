@@ -1,4 +1,6 @@
 FROM ubuntu:13.10
+MAINTAINER Tristan Rice, rice@outerearth.net
+
 RUN apt-get update -y
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:chris-lea/node.js
@@ -24,7 +26,8 @@ RUN cp /src/config/nginx.conf /etc/nginx/
 # Precompile assets
 RUN cd /src; rake assets:clean; rake assets:precompile
 
-CMD /src/bin/start.sh
+ENTRYPOINT /src/bin/start.sh
+USER daemon
 
 EXPOSE 4567
 EXPOSE 4568

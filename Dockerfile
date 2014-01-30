@@ -26,7 +26,10 @@ RUN cp /src/config/nginx.conf /etc/nginx/
 # Precompile assets
 RUN cd /src; rake assets:clean; rake assets:precompile
 
-ENTRYPOINT /src/bin/start.sh
+RUN chown -R daemon /src
+RUN chmod 755 -R /src
+
+CMD ["/src/bin/start.sh"]
 USER daemon
 
 EXPOSE 4567

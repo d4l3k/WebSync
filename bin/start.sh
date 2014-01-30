@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SOURCE=$(dirname "${BASH_SOURCE[0]}")
 
 cd $SOURCE/..

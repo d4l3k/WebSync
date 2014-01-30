@@ -84,6 +84,7 @@ GEM
     interception (0.4)
     json (1.8.1)
     json_pure (1.8.1)
+    kgio (2.8.1)
     method_source (0.8.2)
     mini_portile (0.5.2)
     multi_json (1.8.4)
@@ -111,6 +112,7 @@ GEM
       rack (>= 1.0)
       rack-test (>= 0.5)
     radix62 (1.0.1)
+    raindrops (0.12.0)
     rake (10.1.1)
     redis (3.0.7)
     rubysl (2.0.15)
@@ -337,6 +339,10 @@ GEM
       eventmachine (>= 1.0.0)
       rack (>= 1.0.0)
     tilt (1.4.1)
+    unicorn (4.8.0)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
     uuidtools (2.1.4)
     yui-compressor (0.12.0)
 
@@ -365,4 +371,5 @@ DEPENDENCIES
   sinatra
   sinatra-asset-pipeline!
   thin
+  unicorn
   yui-compressor

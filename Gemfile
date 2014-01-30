@@ -23,6 +23,7 @@ group :development do
 	gem 'pry-stack_explorer'
 end
 group :production do
+    gem 'unicorn'
     gem 'yui-compressor'
     gem 'closure-compiler'
 end

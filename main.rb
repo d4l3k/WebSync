@@ -482,8 +482,12 @@ class WebSync < Sinatra::Base
         end
         redirect '/'
     end
-    get '/:doc/:op' do
-        doc_id = params[:doc].decode62
+    get // do
+        parts = request.path_info.split("/")
+        pass unless parts.length == 3
+        doc = parts[1]
+        op = parts[2]
+        doc_id = doc.decode62
         doc = Document.get doc_id
         if doc.nil?
             halt 404
@@ -501,6 +505,6 @@ class WebSync < Sinatra::Base
         $redis.set "websocket:key:#{client_id}", client_key+":#{doc_id}"
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
-        erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key}
+        erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op}
     end
 end

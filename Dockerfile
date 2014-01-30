@@ -21,7 +21,7 @@ RUN tar xvf ruby.tar.gz
 RUN cd ruby-2.0.0-p353; ./configure --enable-shared; make install -j4
 
 RUN gem update --system
-RUN gem install bundler
+RUN gem install bundler rubygems-bundler
 
 # Install RBX
 #RUN wget -q http://releases.rubini.us/rubinius-2.2.3.tar.bz2

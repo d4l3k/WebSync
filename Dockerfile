@@ -31,6 +31,8 @@ RUN gem install bundler rubygems-bundler
 #RUN gem update --system
 #RUN gem install rubysl racc bundler rubygems-bundler
 
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+
 ADD . /src
 
 # Download dependencies

@@ -10,7 +10,12 @@ RUN apt-get install -y build-essential openssl libreadline6 libreadline6-dev cur
 # RUN apt-get install -y openjdk-7-jre-headless
 
 # Node.JS manager
+RUN apt-get install -y npm
 RUN npm install -g pm2
+
+# Ruby dependencies
+RUN gem update --system
+RUN gem install bundler rubygems-bundler
 
 ADD . /src
 

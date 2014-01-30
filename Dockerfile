@@ -20,20 +20,17 @@ RUN npm install -g pm2
 ADD . /src
 
 # Download dependencies
-RUN cd /src; bundle install
-RUN cd /src; npm install
+RUN cd /src; bundle install; npm install -g
 
 # Load balancer configuration.
 RUN cp /src/config/nginx.conf /etc/nginx/
 
 # Precompile assets
-RUN cd /src; rake assets:clean
-RUN cd /src; rake assets:precompile
+RUN cd /src; rake assets:clean; rake assets:precompile
 
-RUN chown -R daemon /src
-RUN chmod 755 -R /src
+RUN chown -R daemon /src; chmod 755 -R /src
 
-CMD ["/src/bin/start.sh"]
+ENTRYPOINT ["/src/bin/start.sh"]
 USER daemon
 
 EXPOSE 4567 4568

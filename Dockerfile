@@ -15,6 +15,8 @@ RUN cd ruby-2.0.0-p353; ./configure --enable-shared; make install -j4
 RUN gem update --system
 RUN gem install bundler rubygems-bundler
 
+RUN npm install -g pm2
+
 ADD . /src
 
 # Download dependencies
@@ -34,5 +36,4 @@ RUN chmod 755 -R /src
 CMD ["/src/bin/start.sh"]
 USER daemon
 
-EXPOSE 4567
-EXPOSE 4568
+EXPOSE 4567 4568

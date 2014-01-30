@@ -18,7 +18,9 @@ class Redis
     end
   end
 end
-require './lib/models'
+if not ENV.key? "CONFIGMODE"
+    require './lib/models'
+end
 def json_to_html_node obj
     html = "";
     if obj['name']=="#text"
@@ -203,30 +205,7 @@ class WebSync < Sinatra::Base
         sprockets.append_path File.join(root, 'assets', 'javascripts')
         sprockets.append_path File.join(root, 'assets', 'no_digest')
     end
-    $dmp = DiffMatchPatch.new
 
-    #Javascript.first_or_create(:name=>'Tables',:description=>'Table editing support',:url=>'/assets/tables.js')
-    #Javascript.first_or_create(:name=>'Chat',:description=>'Talk with other users!',:url=>'/assets/chat.js')
-    if Asset.count == 0
-        puts "[DATABASE] Creating default assets."
-        $config["default_assets"].each do |asset|
-            a = Javascript.create(name:asset["name"],description:asset["description"],url:asset["url"])
-            puts " :: Creating: #{asset["name"]}, Success: #{a.save}"
-        end
-    end
-    if AssetGroup.count == 0
-        puts "[DATABASE] Creating default asset groups."
-        $config["default_asset_groups"].each do |group|
-            g = AssetGroup.create(name:group["name"],description:group["description"])
-            group["assets"].each do |asset|
-                a = Asset.first(name:asset)
-                if not a.nil?
-                    g.assets << a
-                end
-            end
-            puts " :: Creating: #{g.name}, Success: #{g.save}"
-        end
-    end
     get '/login' do
         if !logged_in?
             # Cache the page if there is no URL redirect after login.

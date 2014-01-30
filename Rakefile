@@ -39,19 +39,17 @@ module AssetPipeline
       end
     end
 end
+ENV["CONFIGMODE"] = "y"
 require './main'
 AssetPipeline::Task.define! WebSync
 
-task :admin_add, :email do |task, args|
-    User.get(args[:email]).update(group:"admin")
-end
-task :admin_remove, :email do |task, args|
-    User.get(args[:email]).update(group:"user")
-end
-
-task :deploy do
-    system "rake assets:clean"
-    system "rake assets:precompile"
-    system "thin restart -C thin.yaml"
-    system "pm2 reload all"
+namespace :admin do
+    task :add, :email do |task, args|
+        require './lib/models'
+        User.get(args[:email]).update(group:"admin")
+    end
+    task :remove, :email do |task, args|
+        require './lib/models'
+        User.get(args[:email]).update(group:"user")
+    end
 end

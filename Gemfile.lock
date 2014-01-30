@@ -39,8 +39,6 @@ GEM
     data_objects (0.10.13)
       addressable (~> 2.1)
     debug_inspector (0.0.2)
-    diff_match_patch_native (1.0.2)
-      rice (>= 1.4.2)
     dm-aggregates (1.2.0)
       dm-core (~> 1.2.0)
     dm-constraints (1.2.0)
@@ -141,7 +139,6 @@ GEM
     radix62 (1.0.1)
     rake (10.1.1)
     redis (3.0.7)
-    rice (1.5.3)
     rubyzip (0.9.9)
     sass (3.2.14)
     sinatra (1.4.4)
@@ -181,7 +178,6 @@ PLATFORMS
 DEPENDENCIES
   closure-compiler
   data_mapper
-  diff_match_patch_native
   dm-postgres-adapter
   dm-types
   docx

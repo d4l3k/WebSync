@@ -9,7 +9,7 @@ RUN apt-get install -y build-essential openssl libreadline6 libreadline6-dev cur
 # Install ruby
 RUN wget ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz -O ruby.tar.gz
 RUN tar xvf ruby.tar.gz
-RUN cd ruby-2.0.0-p353; ./configure; make install --enable-shared
+RUN cd ruby-2.0.0-p353; ./configure --enable-shared; make install -j4
 RUN gem update --system
 RUN gem install bundler rubygems-bundler
 

@@ -68,3 +68,25 @@ end
 class AnonymousUser < User; end
 DataMapper.finalize
 DataMapper.auto_upgrade!
+
+
+if Asset.count == 0
+    puts "[DATABASE] Creating default assets."
+    $config["default_assets"].each do |asset|
+        a = Javascript.create(name:asset["name"],description:asset["description"],url:asset["url"])
+        puts " :: Creating: #{asset["name"]}, Success: #{a.save}"
+    end
+end
+if AssetGroup.count == 0
+    puts "[DATABASE] Creating default asset groups."
+    $config["default_asset_groups"].each do |group|
+        g = AssetGroup.create(name:group["name"],description:group["description"])
+        group["assets"].each do |asset|
+            a = Asset.first(name:asset)
+            if not a.nil?
+                g.assets << a
+            end
+        end
+        puts " :: Creating: #{g.name}, Success: #{g.save}"
+    end
+end

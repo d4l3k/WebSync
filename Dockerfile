@@ -46,8 +46,9 @@ RUN cp /src/config/nginx.conf /etc/nginx/
 # Precompile assets
 RUN cd /src; rake assets:clean; rake assets:precompile
 
-RUN chown -R daemon /src; chmod 755 -R /src
+RUN chown -R daemon:daemon /src; chmod 755 -R /src; chmod 777 -R /home
 
+ENV HOME /home
 ENV PATH /src/bin:$PATH
 
 EXPOSE 4567 4568

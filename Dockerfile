@@ -40,7 +40,7 @@ ADD . /src
 # Load balancer configuration.
 RUN cp /src/config/nginx.conf /etc/nginx/
 
-RUN chown -R daemon /src; chmod 755 -R /src; chmod 777 -R /home
+RUN chown -R daemon /src; chmod 777 -R /src; chmod 777 -R /home
 
 #USER daemon
 

@@ -44,13 +44,14 @@ RUN cp /src/config/nginx.conf /etc/nginx/
 
 USER daemon
 
+ENV HOME /src
+
 # Download dependencies
 RUN cd /src; bundle install; npm install
 
 # Precompile assets
 RUN cd /src; rake assets:clean; rake assets:precompile
 
-ENV HOME /home
 ENV PATH /src/bin:$PATH
 
 EXPOSE 4567 4568

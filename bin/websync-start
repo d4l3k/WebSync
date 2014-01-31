@@ -7,6 +7,7 @@ cd $SOURCE/..
 echo Changed to directory: `pwd`
 
 mkdir tmp
+mkdir tmp/pids
 mkdir log
 
 service nginx start

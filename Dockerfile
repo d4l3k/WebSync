@@ -37,7 +37,7 @@ RUN mkdir /.pm2; mkdir /.pm2/pids/; mkdir /.pm2/logs/; chown -R daemon /.pm2; ch
 
 ADD . /src
 
-RUN chown -R daemon:daemon /src; chmod 755 -R /src; chmod 777 -R /home
+RUN chown -R daemon /src; chmod 755 -R /src; chmod 777 -R /home
 
 # Load balancer configuration.
 RUN cp /src/config/nginx.conf /etc/nginx/

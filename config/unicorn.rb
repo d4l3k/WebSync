@@ -9,7 +9,7 @@ timeout 30
 
 # Specify path to socket unicorn listens to, 
 # we will use this in our nginx.conf later
-listen 4569, :backlog => 64
+listen '0.0.0.0:4569', :backlog => 64
 
 # Create directories
 Dir.mkdir("tmp") unless Dir.exists? "tmp"

@@ -37,16 +37,18 @@ RUN mkdir /.pm2; mkdir /.pm2/pids/; mkdir /.pm2/logs/; chown -R daemon /.pm2; ch
 
 ADD . /src
 
-# Download dependencies
-RUN cd /src; bundle install; npm install -g
+RUN chown -R daemon:daemon /src; chmod 755 -R /src; chmod 777 -R /home
 
 # Load balancer configuration.
 RUN cp /src/config/nginx.conf /etc/nginx/
 
+USER daemon
+
+# Download dependencies
+RUN cd /src; bundle install; npm install
+
 # Precompile assets
 RUN cd /src; rake assets:clean; rake assets:precompile
-
-RUN chown -R daemon:daemon /src; chmod 755 -R /src; chmod 777 -R /home
 
 ENV HOME /home
 ENV PATH /src/bin:$PATH

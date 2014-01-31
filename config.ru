@@ -1,4 +1,3 @@
-#\ -p 4567
 require './main'
 =begin
 map '/assets' do

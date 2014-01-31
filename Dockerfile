@@ -48,7 +48,8 @@ RUN cd /src; rake assets:clean; rake assets:precompile
 
 RUN chown -R daemon /src; chmod 755 -R /src
 
-ENTRYPOINT ["/src/bin/start.sh"]
+ENV PATH /src/bin:$PATH
+
 USER daemon
 
 EXPOSE 4567 4568

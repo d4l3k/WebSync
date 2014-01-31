@@ -6,6 +6,9 @@ cd $SOURCE/..
 
 echo Changed to directory: `pwd`
 
+mkdir tmp
+mkdir log
+
 service nginx start
 
 alias nodejs=node

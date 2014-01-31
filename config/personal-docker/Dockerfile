@@ -5,7 +5,6 @@ ADD . /config
 
 RUN cp /config/config.json /src/config.json
 
-ENTRYPOINT ["/src/bin/start.sh"]
 USER daemon
 
 EXPOSE 4567 4568

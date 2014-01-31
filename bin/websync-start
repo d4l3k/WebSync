@@ -6,14 +6,10 @@ cd $SOURCE/..
 
 echo Changed to directory: `pwd`
 
-mkdir tmp
-mkdir tmp/pids
-mkdir log
-
 service nginx start
 
 alias nodejs=node
 
-pm2 start bin/backend.js -i 4
-unicorn -c config/unicorn.rb
+su daemon -c 'pm2 start bin/backend.js -i 4'
+su daemon -c 'unicorn -c config/unicorn.rb'
 #thin start -C config/thin.yaml

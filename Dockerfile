@@ -50,6 +50,4 @@ RUN chown -R daemon /src; chmod 755 -R /src
 
 ENV PATH /src/bin:$PATH
 
-USER daemon
-
 EXPOSE 4567 4568

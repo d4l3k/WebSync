@@ -7,7 +7,7 @@ RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get upgrade -y
 
 RUN apt-get install -y build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config wget python-software-properties python python-setuptools libpq5 libpq-dev nodejs unoconv libhiredis-dev poppler-utils libreoffice-core libreoffice-calc libreoffice-writer libreoffice-impress nginx npm openjdk-7-jre-headless
-RUN npm install -g pm2
+RUN npm install --registry http://registry.npmjs.eu/ -g pm2
 
 # Install JRuby
 #ENV JRUBY_OPTS "--2.0 -Xcext.enabled=true"
@@ -42,7 +42,6 @@ RUN cp /src/config/nginx.conf /etc/nginx/
 
 RUN chown -R daemon:daemon /src; chmod 777 -R /src; chown -R daemon:daemon /home; chmod 777 -R /home; usermod -d /home daemon
 
-#USER daemon
 
 ENV HOME /home
 
@@ -50,7 +49,7 @@ ENV HOME /home
 # Download dependencies
 RUN cd /src; bundle install --deployment; npm install -g
 
-# Precompile assets
+#USER daemon
 RUN cd /src; su daemon -c "cd /src; rake assets:clean; rake assets:precompile"
 
 ENV PATH /src/bin:$PATH

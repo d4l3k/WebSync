@@ -40,7 +40,7 @@ ADD . /src
 # Load balancer configuration.
 RUN cp /src/config/nginx.conf /etc/nginx/
 
-RUN chown -R daemon:daemon /src; chmod 777 -R /src; chown -R daemon:daemon /home; chmod 777 -R /home; 
+RUN chown -R daemon:daemon /src; chmod 777 -R /src; chown -R daemon:daemon /home; chmod 777 -R /home; usermod -d /home daemon
 
 #USER daemon
 
@@ -51,7 +51,7 @@ ENV HOME /home
 RUN cd /src; bundle install --deployment; npm install -g
 
 # Precompile assets
-RUN cd /src; su daemon -c "export HOME=/home; cd /src; rake assets:clean; rake assets:precompile"
+RUN cd /src; su daemon -c "cd /src; rake assets:clean; rake assets:precompile"
 
 ENV PATH /src/bin:$PATH
 

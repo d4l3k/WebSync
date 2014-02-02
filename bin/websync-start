@@ -11,5 +11,5 @@ service nginx start
 alias nodejs=node
 
 su daemon -c 'pm2 start bin/backend.js -i 4'
-su daemon -c 'vendor/bundle/ruby/2.0.0/bin/unicorn -c config/unicorn.rb'
+su daemon -c 'bundle exec unicorn -c config/unicorn.rb'
 #thin start -C config/thin.yaml

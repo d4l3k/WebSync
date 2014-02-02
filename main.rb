@@ -157,6 +157,9 @@ class WebSync < Sinatra::Base
             end
         end
         def is_cached
+            if ENV["RACK_ENV"]=="development"
+                return
+            end
             tag = "url:#{request.url}"
             page = $redis.get(tag)
             if page and !logged_in?

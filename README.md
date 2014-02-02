@@ -5,7 +5,7 @@ WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive
 Features
 ----
 * Persistent JSON object synced between clients
-* Document, Spreadsheet, and Presentation editing and viewing.
+* Notebook, Document, Spreadsheet, and Presentation editing and viewing.
 * Tables
 * Resizable Images & Tables
 * User support
@@ -101,6 +101,6 @@ Some incomplete javascript documentation is available by running "./doc.rb" and 
 
 License
 ----
-Copyright (c) 2013 Tristan Rice
+Copyright (c) 2014 Tristan Rice
 
 WebSync is licensed under the [MIT License](http://opensource.org/licenses/MIT).

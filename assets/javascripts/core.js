@@ -387,6 +387,8 @@ define('websync',{
         $(window).resize(this.resize);
         WebSync.patchObserver = jsonpatch.observe(WebSyncData);
         //this.setupWebRTC();
+        clearTimeout(window.initError);
+        window.initError = true;
 	},
     // Variable: object WebSync.domExceptions;
     // This is where registerDOMException stores it's internal data. You probably shouldn't modify this directly.

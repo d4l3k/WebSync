@@ -150,8 +150,8 @@
             <div class="carousel-caption">
                 <h1>That's an error, Harry!</h1>
                 <p class="lead">
-                    Error: <span id="error_message">Failed to connect to backend.</span> <br>
-                    If you aren't doing anything weird, please create a new issue on the GitHub page. <br>
+                    Error: <span id="error_message">Something failed to load.</span> <br>
+                    Check the console for more information. If you aren't doing anything weird, please create a new issue on the GitHub page. <br>
                     <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new">New Issue</a>
                     <a class="btn btn-primary" href="/">Return Home</a>
                 </p>
@@ -159,3 +159,12 @@
         </div>
     </div>
 </div>
+<script>
+// Dab of error handling code.
+window.addEventListener("load", function(){
+    if(window.initError) return;
+    window.initError = setTimeout(function(){
+        $("#fatal_error").fadeIn();
+    },100);
+}, false);
+</script>

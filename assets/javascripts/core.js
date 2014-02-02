@@ -61,7 +61,7 @@ define('websync',{
 				WebSync.diffInterval=null;
                 $(document).trigger("noconnection");
 			} else {
-                $("#fatal_error").fadeIn();
+                WebSync.fatalError("Failed to connect to backend.");
             }
 			setTimeout(WebSync.webSocketStart,2000);
 		},
@@ -388,6 +388,19 @@ define('websync',{
         WebSync.patchObserver = jsonpatch.observe(WebSyncData);
         //this.setupWebRTC();
 	},
+    // Variable: object WebSync.domExceptions;
+    // This is where registerDOMException stores it's internal data. You probably shouldn't modify this directly.
+    domExceptions: {},
+    // Function: void WebSync.registerDOMException(string Class, function Export, function Import);
+    // This registers outside functions to handle the serialization & parsing of certain classes. Used for modifyable content that can't be serialized directly to HTML. Ex: the equation plugin.
+    registerDOMException: function(watchClass, exportFunc, importFunc){
+        WebSync.domExceptions[watchClass] = {dump: exportFunc, load: importFunc};
+    },
+    // Function: void WebSync.unregisterDOMException(string Class);
+    // Stops monitoring certain classes.
+    unregisterDOMException: function(watchClass){
+        delete WebSync.domExceptions[watchClass];
+    },
     // Variable: string WebSync.viewMode;
     // This is the current visual mode. This can be either 'zen' or 'normal'
     viewMode: 'normal',
@@ -639,26 +652,26 @@ define('websync',{
     // Function: void WebSync.alert(string Message);
     // Displays an alert message in the lower right hand corner of the window.
 	alert: function(msg){
-		return WebSync.alert_msg(msg,"alert-warning");
+		return WebSync.alertMessage(msg,"alert-warning");
 	},
     // Function: void WebSync.error(string Message);
     // Displays an error message in the lower right hand corner of the window.
 	error: function(msg){
-		return WebSync.alert_msg(msg,"alert-danger");
+		return WebSync.alertMessage(msg,"alert-danger");
 	},
     // Function: void WebSync.success(string Message);
     // Displays a success message in the lower right hand corner of the window.
 	success: function(msg){
-		return WebSync.alert_msg(msg,"alert-success");
+		return WebSync.alertMessage(msg,"alert-success");
 	},
     // Function: void WebSync.info(string Message);
     // Displays an info message in the lower right hand corner of the window.
 	info: function(msg){
-		return WebSync.alert_msg(msg,"alert-info");
+		return WebSync.alertMessage(msg,"alert-info");
 	},
-    // Function: void WebSync.alert_msg(string Message, string Classes);
+    // Function: void WebSync.alertMessage(string Message, string Classes);
     // Displays an message in the lower right hand corner of the window with css classes.
-	alert_msg: function(msg,classes){
+	alertMessage: function(msg,classes){
 		var div = $('<div class="alert '+classes+'"><a class="close" data-dismiss="alert">&times;</a>'+msg+'</div>');
 		$('#alert_well').prepend(div);
 		setTimeout(function(){
@@ -666,6 +679,19 @@ define('websync',{
 		},10000);
 		return div;
 	},
+    // Function: void WebSync.fatalError(string Message);
+    // Displays a large error banner. Should only be displayed for unrecoverable or interface blocking errors.
+    fatalError: function(msg){
+        if(msg) $("#error_message").text(msg);
+        $("#fatal_error").fadeIn();
+    },
+    // Function void WebSync.fatalHide();
+    // Hides the fatal error banner.
+    fatalHide: function(){
+        $("#fatal_error").fadeOut();
+    },
+    // Function: void WebSync.applyPatchToDOM(element Parent, array Patches);
+    // Applies a patch directly to the DOM instead of completely rebuilding it for each patch. BROKEN. Parses old patch system. DO NOT USE.
     applyPatchToDOM: function(element, patch){
         if(_.isArray(patch)){
             console.log("ARRAY", element,patch);
@@ -720,11 +746,43 @@ define('websync',{
         }
     }
 });
+(function(){
+    var done = false;
+    // This is used to know when all modules are loaded. It uses a sketchy internal function subject to change.
+    requirejs.onResourceLoad = function(context, map, depArray){
+        if(done) return;
+        var context = requirejs.s.contexts._;
+        var loaded = 0;
+        var total = 0;
+        _.each(context.urlFetched,function(fetched, script){
+            if(fetched && context.defined[script]){
+                loaded += 1;
+            }
+            total += 1;
+        });
+        if(loaded == total && total > 0){
+            $(document).trigger("modules_loaded");
+            done = true;
+        }
+    }
+})();
 dmp = new diff_match_patch();
 function NODEtoJSON(obj){
     var jso = {
         name: obj.nodeName,
         childNodes:[]
+    }
+    var exempt = null;
+    _.each(obj.classList, function(cl){
+        if(WebSync.domExceptions[cl]){
+            exempt = cl;
+        }
+    });
+    if(exempt){
+        delete jso.childNodes;
+        jso.exempt = exempt;
+        jso.data = WebSync.domExceptions[exempt].dump(obj);
+        return jso;
     }
     var search_children = true;
     if(_.size(obj.dataset)>0){
@@ -780,6 +838,9 @@ function NODEtoDOM(obj){
     // TODO: Potentially disallow iframes!
     if(obj.name=="script")
         return "";
+    if(obj.exempt){
+        return WebSync.domExceptions[obj.exempt].load(obj.data);
+    }
     html+="<"+obj.name;
     var data_vars = []
     _.each(obj,function(v,k){

@@ -113,8 +113,10 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
         WebSync.setZoom(zoom);
     }
     $(window).bind("resize",self.updateScale);
-    WebSync.fromJSON();
-    $(window).resize();
-    NProgress.done();
+    $(document).on("modules_loaded", function(){
+        WebSync.fromJSON();
+        $(window).resize();
+        NProgress.done();
+    });
     return self;
 });

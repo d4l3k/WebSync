@@ -39,144 +39,6 @@
     <body>
         <h1>Web-Sync Client API</h1>
         <p>Many of these functions are for internal use only and are provided merely for completeness.</p>
-            <h3>File: assets/javascripts/chat.js</h3>
-            <hr>
-                <div class='well'>
-                <b>void [plugin=chat].disable();</b>
-                <br>
-                <i>Type: Function, Line: 111</i>
-                <br>
-                <span>Disables the plugin. This has to be set for possible plugin unloading.</span>
-                </div>
-            <h4><button class="btn btn-primary" onclick="$('#1').toggle(); false">View Source</a></h4>
-            <pre class="script prettyprint linenums" id="1">// WebSync: Chat Plugin
-// WebSync uses RequireJS for modules.
-// define( [pluginName], [requiredModules], definition);
-// pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
-define(['websync'],function(edit,websink){ var self = {};
-    // Save all variables and information to the self object.
-
-    // Plugins should use a jQuery namespace for ease of use.
-	// Bind Example: $(document).bind("click.Tables", clickHandler);
-	// Unbind Example: $("*").unbind(".Tables");
-    self.open = false;
-    $('body').append($('&#60;div id="chat" class="sidebar"&#62&#60;div id="user_list"&#62&#60;/div&#62&#60;div id="chat_well"&#62&#60;/div&#62&#60;div class="chat_input input-append"&#62&#60;input class="span2" id="appendedInputButton" type="text"&#62&#60;button id="msg_btn" class="btn" type="button"&#62Send&#60;/button&#62&#60;/div&#62&#60;/div&#62'));
-    $('#settings').prepend($('&#60;li&#62&#60;a id="chat_btn" title="Chat"&#62&#60;i class="icon-comment icon-large"&#62&#60;/i&#62 &#60;span id="user_count" class="badge"&#621&#60;/span&#62&#60;/a&#62&#60;/li&#62'));
-    $("#chat").offset({left:window.innerWidth+1});
-    $("#chat img").tooltip();
-    $(document).bind('client_load.Chat',function(e,data){
-        console.log("Client_load",data);
-        var client = data.client;
-        var client_dom = $("#client_"+client);
-        var user = WebSync.clients[client];
-        var user_info = WebSync.users[user.id];
-        if(client_dom.length&#620){
-            if(user_info.displayName){
-                client_dom.children().attr('data-original-title',_.escape(user_info.displayName));
-            }
-        } else {
-            self.addUser(client);
-        }
-        self.updateUserList();
-    });
-    $("#msg_btn").bind('click.Chat',function(e){
-        self.msg();
-    });
-    $(".chat_input input").bind('keypress.Chat',function(e){
-        if(e.which==13){
-            self.msg();
-        }
-    });
-    $(document).bind("client_event_chat_msg.Chat",function(e,data){
-        self.clientMsg(data.from,data.data);
-    });
-    self.msg = function(){
-        var msg = $(".chat_input input").val();
-        if(msg.length&#620){
-            WebSync.broadcastEvent('chat_msg',msg);
-            self.clientMsg(WebSyncAuth.id,msg);
-            $(".chat_input input").val("");
-        }
-    }
-    self.addUser = function(client){
-        var user = WebSync.clients[client];
-        var user_info = WebSync.users[user.id];
-        var display_name = user_info.displayName;
-        if(!display_name){
-            display_name = user.email;
-        }
-        display_name = _.escape(display_name);
-        $("#user_list").append('&#60;a target="_blank" id="client_'+client+'" href="https://secure.gravatar.com/'+user.id+'"&#62&#60;img data-toggle="tooltip" data-placement="bottom" title="'+display_name+'" src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d=http://i.imgur.com/xzn2nB0.png"&#62&#60;/img&#62&#60;/a&#62').children().last().children().tooltip();
-    }
-    $(document).bind('client_leave.Chat',function(e,data){
-        console.log("Client leaving",data);
-        $("#client_"+data.client).remove();
-        self.updateUserList();
-    });
-    $(document).bind('noconnection.Chat',function(){
-        $("#user_list").empty();
-        self.updateUserList();
-    });
-    self.updateUserList = function(){setTimeout(function(){
-        $("#user_count").text(_.size(WebSync.clients));
-        $("#chat_well").css({top: $("#user_list").height()-5});
-    },100);};
-    self.clientMsg = function(client, msg){
-        var user = WebSync.clients[client];
-        var user_info = WebSync.users[user.id];
-        var display_name = user_info.displayName;
-        if(!display_name){
-            display_name = user.email;
-        }
-        display_name = _.escape(display_name);
-        $("#chat_well").append('&#60;p&#62&#60;a target="_blank" href="https://secure.gravatar.com/'+user.id+'"&#62&#60;img src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d=http://i.imgur.com/xzn2nB0.png"&#62&#60;/img&#62&#60;span&#62'+display_name+':&#60;/span&#62&#60;/a&#62 '+_.escape(msg)+'&#60;/p&#62');
-        if(!self.open){
-            $("#user_count").addClass("badge-pulse");
-        }
-        $("#chat_well").animate({scrollTop:$("#chat_well").get(0).scrollHeight},200);
-    }
-    self.toggle = function(){
-        self.resize();
-        $("#chat_btn").parent().toggleClass("active");
-        if(self.open){
-            $("#chat").animate({left:window.innerWidth+1},200);
-            $(".content_well").animate({right: 0},200);
-            self.open=false;
-        } else {
-            //$("#chat").animate({left:window.innerWidth-251},200);
-            $("#user_count").removeClass("badge-pulse");
-            self.open = true;
-            self.resize();
-        }
-    }
-    $("#chat_btn").bind("click.Chat",self.toggle);
-    self.resize = function(e){
-        if(self.open){
-            $("#chat").animate({left:window.innerWidth-251},200);
-            $('.content_well').animate({right:251},200);
-        }
-        $("#chat").height(window.innerHeight-$(".content_well").position().top)
-    }
-    self.resize();
-    $(window).bind('resize.Chat',self.resize);
-	// Function: void [plugin=chat].disable();
-    // Disables the plugin. This has to be set for possible plugin unloading.
-	self.disable = function(){
-		$("#chat").remove();
-        $("#chat_btn").remove();
-        // Reset content_well width;
-        $('.content_well').get(0).style.width=null;
-		$("*").unbind(".Chat");
-		$("*").undelegate(".Chat");
-	}
-    $.each(WebSync.clients,function(k, v){
-        self.addUser(k);
-        self.updateUserList();
-    });
-
-    // Return self so other modules can hook into this one.
-    return self;
-});</pre>
             <h3>File: assets/javascripts/core.js</h3>
             <hr>
                 <div class='well'>
@@ -217,138 +79,166 @@ define(['websync'],function(edit,websink){ var self = {};
                 <div class='well'>
                 <b>void WebSync.config_set(string key, object value, string space);</b>
                 <br>
-                <i>Type: Function, Line: 203</i>
+                <i>Type: Function, Line: 247</i>
                 <br>
                 <span>Sends a request to the server to set config[key] to value. Space can be "user" or "document".</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.config_get(string key, string space);</b>
                 <br>
-                <i>Type: Function, Line: 211</i>
+                <i>Type: Function, Line: 255</i>
                 <br>
                 <span>Sends a request to the server for the key value. Space can be "user" or "document".</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.initialize();</b>
                 <br>
-                <i>Type: Function, Line: 223</i>
+                <i>Type: Function, Line: 267</i>
                 <br>
                 <span>This is where the core of WebSync initializes.</span>
                 </div>
                 <div class='well'>
+                <b>object WebSync.domExceptions;</b>
+                <br>
+                <i>Type: Variable, Line: 391</i>
+                <br>
+                <span>This is where registerDOMException stores it's <span class="internal">internal</span> data. You probably shouldn't modify this directly.</span>
+                </div>
+                <div class='well'>
+                <b>void WebSync.registerDOMException(string Class, function Export, function Import);</b>
+                <br>
+                <i>Type: Function, Line: 394</i>
+                <br>
+                <span>This registers outside functions to handle the serialization & parsing of certain classes. Used for modifyable content that can't be serialized directly to HTML. Ex: the equation plugin.</span>
+                </div>
+                <div class='well'>
+                <b>void WebSync.unregisterDOMException(string Class);</b>
+                <br>
+                <i>Type: Function, Line: 399</i>
+                <br>
+                <span>Stops monitoring certain classes.</span>
+                </div>
+                <div class='well'>
                 <b>string WebSync.viewMode;</b>
                 <br>
-                <i>Type: Variable, Line: 393</i>
+                <i>Type: Variable, Line: 404</i>
                 <br>
                 <span>This is the current visual mode. This can be either 'zen' or 'normal'</span>
                 </div>
                 <div class='well'>
                 <b>boolean WebSync.menuVisible;</b>
                 <br>
-                <i>Type: Variable, Line: 396</i>
+                <i>Type: Variable, Line: 407</i>
                 <br>
                 <span>This tells you if the menu ribbon is visible or not. In zen mode it can disappear.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.updateRibbon();</b>
                 <br>
-                <i>Type: Function, Line: 475</i>
+                <i>Type: Function, Line: 537</i>
                 <br>
                 <span>This updates the ribbon buttons based on the content in the ribbon bar. <span class="todo">TODO:</span> Use registration system & persist menu between updates.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.loadScripts();</b>
                 <br>
-                <i>Type: Function, Line: 498</i>
+                <i>Type: Function, Line: 560</i>
                 <br>
                 <span>Checks server for plugin scripts to load.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.showHTML();</b>
                 <br>
-                <i>Type: Function, Line: 503</i>
+                <i>Type: Function, Line: 565</i>
                 <br>
                 <span>Converts visible text to HTML. <span class="todo">TODO:</span> Delete/figure something out.</span>
                 </div>
                 <div class='well'>
                 <b>string WebSync.getHTML();</b>
                 <br>
-                <i>Type: Function, Line: 508</i>
+                <i>Type: Function, Line: 570</i>
                 <br>
                 <span>This will return sanitized document HTML. <span class="todo">TODO:</span> This should be migrated into the page handler.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.resize();</b>
                 <br>
-                <i>Type: Function, Line: 517</i>
+                <i>Type: Function, Line: 579</i>
                 <br>
                 <span>Event handler for when the window resizes. This is an <span class="internal">internal</span> method.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.checkDiff();</b>
                 <br>
-                <i>Type: Function, Line: 526</i>
+                <i>Type: Function, Line: 587</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.insertAtCursor(jQuery node);</b>
                 <br>
-                <i>Type: Function, Line: 550</i>
+                <i>Type: Function, Line: 609</i>
                 <br>
                 <span>Inserts a DOM element at selection cursor. This is probably going to be deprecated.</span>
                 </div>
                 <div class='well'>
                 <b>object WebSync.getCss();</b>
                 <br>
-                <i>Type: Function, Line: 566</i>
+                <i>Type: Function, Line: 625</i>
                 <br>
                 <span>Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.applyCssToSelection(object css);</b>
                 <br>
-                <i>Type: Function, Line: 587</i>
+                <i>Type: Function, Line: 646</i>
                 <br>
                 <span>Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.alert(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 593</i>
+                <i>Type: Function, Line: 652</i>
                 <br>
                 <span>Displays an alert message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.error(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 598</i>
+                <i>Type: Function, Line: 657</i>
                 <br>
                 <span>Displays an error message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.success(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 603</i>
+                <i>Type: Function, Line: 662</i>
                 <br>
                 <span>Displays a success message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.info(string Message);</b>
                 <br>
-                <i>Type: Function, Line: 608</i>
+                <i>Type: Function, Line: 667</i>
                 <br>
                 <span>Displays an info message in the lower right hand corner of the window.</span>
                 </div>
                 <div class='well'>
                 <b>void WebSync.alert_msg(string Message, string Classes);</b>
                 <br>
-                <i>Type: Function, Line: 613</i>
+                <i>Type: Function, Line: 672</i>
                 <br>
                 <span>Displays an message in the lower right hand corner of the window with css classes.</span>
                 </div>
-            <h4><button class="btn btn-primary" onclick="$('#2').toggle(); false">View Source</a></h4>
-            <pre class="script prettyprint linenums" id="2">/*
+                <div class='well'>
+                <b>void WebSync.applyPatchToDOM(element Parent, array Patches);</b>
+                <br>
+                <i>Type: Function, Line: 682</i>
+                <br>
+                <span>Applies a patch directly to the DOM instead of completely rebuilding it for each patch. BROKEN. Parses old patch system. DO NOT USE.</span>
+                </div>
+            <h4><button class="btn btn-primary" onclick="$('#1').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="1">/*
     WebSync: Core.js
     This is the core file that runs the WebSync editor.
 
@@ -371,10 +261,10 @@ define('websync',{
     // Creates the websocket for communication.
 	webSocketStart: function(){
         var protocol = 'ws';
-        var path = window.location.hostname + ':4568';
+        var path = window.location.hostname + ':'+WebSyncAuth.websocket_port;
         if(window.location.protocol=='https:'){
             protocol = 'wss';
-            path = 'websocket.websyn.ca';
+            path = WebSyncAuth.websocket_url;
         }
 		WebSync.connection = new WebSocket(protocol+"://"+path+window.location.pathname);
 		WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
@@ -388,26 +278,31 @@ define('websync',{
 		onopen: function(e){
 			console.log(e);
 			WebSync.diffInterval = setInterval(WebSync.checkDiff,1000);
-			$(".navbar-inner").removeClass("no-connection");
+			$("nav").removeClass("no-connection");
             $(document).trigger("connection");
 			$("#connection_msg").remove();
-			if(WebSync.webSocketFirstTime){
-				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-			} else {
-				WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
-				WebSync.success("&#60;strong&#62Success!&#60;/strong&#62 Connection restablished.");
-			}
+            $("#fatal_error").fadeOut();
+			setTimeout(function(){
+                if(WebSync.webSocketFirstTime){
+                    WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
+                } else {
+                    WebSync.connection.sendJSON({type:'auth',id:WebSyncAuth.id,key:WebSyncAuth.key});
+                    WebSync.success("&#60;strong&#62Success!&#60;/strong&#62 Connection restablished.");
+                }
+            }, 100);
 		},
 
 		onclose: function(e){
 			console.log(e);
 			if(WebSync.diffInterval){
 				clearInterval(WebSync.diffInterval);
-				$(".navbar-inner").addClass("no-connection");
+				$("nav").addClass("no-connection");
 				WebSync.error("&#60;strong&#62Connection Lost!&#60;/strong&#62 Server is currently unavailable.").get(0).id="connection_msg";
 				WebSync.diffInterval=null;
                 $(document).trigger("noconnection");
-			}
+			} else {
+                $("#fatal_error").fadeIn();
+            }
 			setTimeout(WebSync.webSocketStart,2000);
 		},
 		onmessage: function(e){
@@ -419,9 +314,6 @@ define('websync',{
 				require(data.js);
 			}
             else if(data.type=='data_patch'){
-                // Make sure there aren't any outstanding changes that need to be sent before patching document.
-                // TODO: Make this work with webworkers
-                WebSync.checkDiff();
                 // Get start selection.
 				var sel = getSelection();
                 var range, startText,startOffset,endText,endOffset;
@@ -439,11 +331,47 @@ define('websync',{
                     endText: endText,
                     endOffset: endOffset
                 }
-                // Patch the HTML.
-                //WebSyncData = jsondiffpatch.patch(WebSyncData,data.patch);
-                //WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-                WebSync.worker.postMessage({cmd:'apply_patch',html:WebSyncData,patch:data.patch});
                 $(document).trigger("data_patch",{patch: data.patch});
+                // Make sure there aren't any outstanding changes that need to be sent before patching document.
+                WebSync.checkDiff();
+                jsonpatch.unobserve(WebSyncData, WebSync.patchObserver);
+                jsonpatch.apply(WebSyncData, data.patch);
+                WebSync.patchObserver = jsonpatch.observe(WebSyncData);
+                if(WebSync.fromJSON){
+                    WebSync.fromJSON(data.patch);
+                }
+                sel = WebSync.tmp.range;
+                if(sel.active){
+                    // Find all #text nodes.
+                    var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
+                        return this.nodeType == 3;
+                    });
+                    var startText = sel.startText, startOffset = sel.startOffset, endText = sel.endText, endOffset = sel.endOffset;
+                    var startNode = {};
+                    var endNode = {};
+                    console.log(text_nodes);
+                    var startNodeDist = 99999;
+                    var endNodeDist = 99999;
+                    // Locate the start & end #text nodes based on a Levenstein string distance.
+                    text_nodes.each(function(index, node){
+                        var dist = levenshteinenator(node.nodeValue,startText);
+                        if(dist&#60;startNodeDist){
+                            startNode = node;
+                            startNodeDist = dist;
+                        }
+                        dist = levenshteinenator(node.nodeValue,endText);
+                        if(dist&#60;endNodeDist){
+                            endNode = node;
+                            endNodeDist = dist;
+                        }
+                    });
+                    // Update the text range.
+                    var range = document.createRange();
+                    range.setStart(startNode,startOffset);
+                    range.setEnd(endNode,endOffset);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                }
             }
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
@@ -461,6 +389,9 @@ define('websync',{
                         }
                     }
                 }
+            }
+            else if(data.type=="error"){
+                WebSync.error(data.reason);
             }
             else if(data.type=='info'){
 				WebSync.webSocketFirstTime = false;
@@ -531,13 +462,16 @@ define('websync',{
                 $("#assets tbody").append(row);
             }
             else if(data.type=='diff_list'){
-                var row = $("&#60;tr&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;td &#62&#60;button class='btn btn-warning'&#62Revert To&#60;/button&#62&#60;/td&#62&#60;/tr&#62");
-                var children = row.children();
-                children.get(0).innerText = data.time;
-                children.get(1).innerText = data.patch;
-                children.get(2).innerText = data.user_email;
-                $($(children.get(4)).children().get(0)).bootstrapSwitch();
-                $("#diffs tbody").append(row);
+                WebSync.patches = data.patches;
+                _.each(WebSync.patches, function(patch){
+                    var row = $("&#60;tr&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;td &#62&#60;button class='btn btn-warning'&#62Revert To&#60;/button&#62&#60;/td&#62&#60;/tr&#62");
+                    var children = row.children();
+                    children.get(0).innerText = patch.time;
+                    children.get(1).innerText = patch.patch;
+                    children.get(2).innerText = patch.user_email;
+                    $($(children.get(4)).children().get(0)).bootstrapSwitch();
+                    $("#diffs tbody").prepend(row);
+                });
             }
 		},
 		onerror:function(e){
@@ -573,64 +507,60 @@ define('websync',{
     // Function: void WebSync.initialize();
     // This is where the core of WebSync initializes.
 	initialize: function(){
+        NProgress.start();
 		this.webSocketStart();
         $("#public_mode").change(function(){
             WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
         });
 		$("#name").blur(function(){
 			var name = $(this).text();
-			$(this).html(name);
             document.title = name+" - WebSync";
             WebSync.connection.sendJSON({type: "name_update", name: name});
 		});
+        $("#name").keydown(function(e){
+            e.stopPropagation();
+        });
 		$("#name").focus(function(){
-			if(this.innerText=="Unnamed Document"){
+			if(this.innerText.indexOf("Unnamed")==0){
                 setTimeout(function(){
                     document.execCommand('selectAll');
                 },100);
             }
 		});
         $(".settings-popup #config").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
-		$(".menu, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
+		$("nav, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
 		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').slider()
          .on('slide', function(e){
-			var zoom = $('#zoom_level').data("slider").getValue()/100.0
-			$(".content_well").children().css({"transform":"scale("+zoom+")"});
+			WebSync.setZoom($('#zoom_level').data("slider").getValue()/100.0)
+            
         });
         $('body').mousemove(function(e){
             if(WebSync.viewMode=='Zen'){
                 if(e.pageY&#60;85&&!WebSync.menuVisible){
-                    $(".menu").animate({top: 0},200);
+                    $("nav").animate({top: 0},200);
                     WebSync.menuVisible = true;
                 }
                 else if(e.pageY&#6285&&WebSync.menuVisible) {
-                    $(".menu").animate({top: -85},200);
+                    $("nav").animate({top: -95},200);
                     WebSync.menuVisible = false;
                 }
             }
         });
-        $('#view_mode').change(function(){
-            var mode = $('#view_mode').val();
-            WebSync.viewMode = mode;
-            if(mode=='Zen'){
-                $("body").addClass("zen").resize();
-                $("#zoom_level").data("slider").setValue(120);
-                $("#zoom_level").trigger("slide");
-                $(".menu").animate({top:-85},200);
-            }
-            else if(mode=='Presentation') {
-                $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
-                WebSyncAuth.view_op = "view";
-                window.history.pushState("","WebSync - Presentation Mode","view");
-                $(".menu").animate({top: -85},200);
-            }
-            else {
-                $("body").removeClass("zen").resize();
-                $("#zoom_level").data("slider").setValue(100);
-                $("#zoom_level").trigger("slide");
-                $(".menu").animate({top: 0},200);
-            }
+        WebSync.urlChange();
+        $(window).bind("popstate",function(e){
+            WebSync.urlChange();
+        });
+        $('#view_mode').change(WebSync.updateViewMode);
+        $(".return").click(function(){
+            $('#view_mode').val("Normal");
+            WebSync.updateViewMode();
+        });
+        $(".fullscreen").click(function(){
+            if(fullScreenApi.isFullScreen())
+                fullScreenApi.cancelFullScreen();
+            else
+                fullScreenApi.requestFullScreen(document.body);
         });
         require(['edit']);
 		this.updateRibbon();
@@ -649,72 +579,26 @@ define('websync',{
             console.log(this);
             var patches = [];
             var c_div = this.parentElement.parentElement;
-            while((c_div=c_div.previousSibling)!=null){
-                patches.push(c_div.children[1].innerText);
+            while((c_div=c_div.nextSibling)!=null){
+                var patch = c_div.children[1].innerText.replace(/^{/,"[").replace(/}$/,"]");
+                patches.push(JSON.parse(patch));
             }
-            console.log(patches);
-            var data = _.clone(WebSyncData);
-            for(var i=(patches.length-1);i&#62=0;i--){
-                data = jsondiffpatch.unpatch(data,JSON.parse(patches[i]));
+            var new_body = {body:[]};
+            for(var i=(patches.length)-1;i&#62=0;i--){
+                jsonpatch.apply(new_body,patches[i]);
             }
-            WebSyncData = data;
-            WebSync.fromJSON();
+            _.each(WebSyncData,function(v,k){
+                delete WebSyncData[k];
+            });
+            _.each(new_body, function(v,k){
+                WebSyncData[k] = v;
+            });
+            WebSyncData = new_body;
+            if(WebSync.fromJSON){
+                WebSync.fromJSON();
+            }
+            WebSync.checkDiff();
         });
-        this.worker = new Worker("/assets/edit-worker.js");
-        this.worker.onmessage = function(e) {
-            var data = e.data;
-            console.log(data);
-            if(data.cmd=='diffed'){
-                if(data.patch){
-                    setTimeout(function(){
-                        WebSync.connection.sendJSON({type: "data_patch", patch: data.patch});
-                    },10);
-                }
-            }
-            else if(data.cmd=='patched'){
-                WebSync.oldData = JSON.parse(JSON.stringify(data.json));
-                WebSyncData = data.json;
-                if(WebSync.fromJSON){
-                    WebSync.fromJSON();
-                }
-                sel = WebSync.tmp.range;
-                if(sel.active){
-                    // Find all #text nodes.
-                    var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
-                        return this.nodeType == 3;
-                    });
-                    var startText = sel.startText, startOffset = sel.startOffset, endText = sel.endText, endOffset = sel.endOffset;
-                    var startNode = {};
-                    var endNode = {};
-                    console.log(text_nodes);
-                    var startNodeDist = 99999;
-                    var endNodeDist = 99999;
-                    // Locate the start & end #text nodes based on a Levenstein string distance.
-                    text_nodes.each(function(index, node){
-                        var dist = levenshteinenator(node.nodeValue,startText);
-                        if(dist&#60;startNodeDist){
-                            startNode = node;
-                            startNodeDist = dist;
-                        }
-                        dist = levenshteinenator(node.nodeValue,endText);
-                        if(dist&#60;endNodeDist){
-                            endNode = node;
-                            endNodeDist = dist;
-                        }
-                    });
-                    // Update the text range.
-                    var range = document.createRange();
-                    range.setStart(startNode,startOffset);
-                    range.setEnd(endNode,endOffset);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
-                // Prevent checkDiff() from sending updates for patches.
-            }
-            else if(data.cmd=='log'){
-                console.log(data.msg);
-            }
-        }
         $("a[href='#assets']").click(function(){
             $("#assets tbody").html("");
             WebSync.connection.sendJSON({type:'assets',action:'list'});
@@ -734,12 +618,29 @@ define('websync',{
             $("#diffs tbody").html("");
             WebSync.connection.sendJSON({type:'diffs',action:'list'});
         });
+        $(document).on("online", function(){
+            NProgress.done();
+        });
 		this.applier = rangy.createCssClassApplier("tmp");
 		// TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         this.resize();
         $(window).resize(this.resize);
+        WebSync.patchObserver = jsonpatch.observe(WebSyncData);
         //this.setupWebRTC();
 	},
+    // Variable: object WebSync.domExceptions;
+    // This is where registerDOMException stores it's internal data. You probably shouldn't modify this directly.
+    domExceptions: {},
+    // Function: void WebSync.registerDOMException(string Class, function Export, function Import);
+    // This registers outside functions to handle the serialization & parsing of certain classes. Used for modifyable content that can't be serialized directly to HTML. Ex: the equation plugin.
+    registerDOMException: function(watchClass, exportFunc, importFunc){
+        WebSync.domExceptions[watchClass] = {dump: exportFunc, load: importFunc};
+    },
+    // Function: void WebSync.unregisterDOMException(string Class);
+    // Stops monitoring certain classes.
+    unregisterDOMException: function(watchClass){
+        delete WebSync.domExceptions[watchClass];
+    },
     // Variable: string WebSync.viewMode;
     // This is the current visual mode. This can be either 'zen' or 'normal'
     viewMode: 'normal',
@@ -748,6 +649,57 @@ define('websync',{
     menuVisible: true,
     // WARNING: Experimental & Unsupported in many browsers!
 	// WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
+    setZoom: function(zoom){
+        WebSync.zoom = zoom;
+        $('#zoom_level').data("slider").setValue(zoom*100)
+        $(".content_container").css({"transform":"scale("+zoom+")"});
+        $(document).trigger("zoom");
+    },
+    urlChange: function(){
+        var current = window.location.pathname.split("/")[2]
+        if(current == "zen")
+            $("#view_mode").val("Zen")
+        if(current == "view")
+            $("#view_mode").val("Presentation")
+        else
+            $("#view_mode").val("Normal")
+        WebSync.updateViewMode(null, true);
+    },
+    updateViewMode: function(e, dontPush){
+        var mode = $('#view_mode').val();
+        WebSync.viewMode = mode;
+        fullScreenApi.cancelFullScreen();
+        if(mode=='Zen'){
+            $("body").removeClass("presentation").addClass("zen").resize();
+            WebSyncAuth.view_op = "edit";
+            if(!dontPush)
+                window.history.pushState("","WebSync - Zen Mode","zen");
+            $("body").addClass("zen").resize();
+            $("#zoom_level").data("slider").setValue(120);
+            $("#zoom_level").trigger("slide");
+            $("nav").animate({top:-95},200);
+            $(".content_well").animate({top: 0}, 200);
+        }
+        else if(mode=='Presentation') {
+            $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
+            WebSyncAuth.view_op = "view";
+            if(!dontPush)
+                window.history.pushState("","WebSync - Presentation Mode","view");
+            $("nav").animate({top: -95},200);
+            $(".content_well, .sidebar").animate({top: 0}, 200);
+            fullScreenApi.requestFullScreen(document.body);
+        }
+        else {
+            $("body").removeClass("zen").removeClass("view").addClass("edit").resize();
+            WebSyncAuth.view_op = "edit";
+            if(!dontPush)
+                window.history.pushState("","WebSync - Edit Mode","edit");
+            $("#zoom_level").data("slider").setValue(100);
+            $("#zoom_level").trigger("slide");
+            $("nav").animate({top: 0},200);
+            $(".content_well, .sidebar").animate({top: 94}, 200);
+        }
+    },
 	setupWebRTC: function(){
 		if(WebSync.createPeerConnection()){
 		    WebSync.createDataChannel();
@@ -868,34 +820,31 @@ define('websync',{
     // Event handler for when the window resizes. This is an internal method.
     resize: function(){
         //$(".content_well").height(window.innerHeight-$(".content_well").position().top);
-        var width = window.innerWidth-260;
-        $(".settings-popup").css({left:(window.innerWidth-(width+4))*0.5, width: width});
-        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+15});
+        $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+13});
         $(".settings-popup .popover-content").css({maxHeight:window.innerHeight-$(".settings-popup").offset().top-100});
+        WebSync.updateRibbon();
     },
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
 	checkDiff: function(){
-        if(!WebSync.oldData){
-            WebSync.oldDataString = JSON.stringify(WebSyncData);
-            WebSync.oldData = JSON.parse(WebSync.oldDataString);
-        }
+        //if(!WebSync.oldData){
+        //    WebSync.oldDataString = JSON.stringify(WebSyncData);
+        //    WebSync.oldData = JSON.parse(WebSync.oldDataString);
+        //}
         if(WebSync.toJSON){
             WebSync.toJSON();
         }
-        var stringWebSync = JSON.stringify(WebSyncData);
-		if(stringWebSync!=WebSync.oldDataString){
-            // Send it to the worker thread for processing.
-            var msg = {'cmd':'diff','oldHtml':WebSync.oldData,'newHtml':WebSyncData};
-            WebSync.worker.postMessage(msg);
-            WebSync.oldData = JSON.parse(stringWebSync);
-            WebSync.oldDataString = stringWebSync;
-            /*var patch = jsondiffpatch.diff(WebSync.oldData,WebSyncData);
-            if(patch){
-                WebSync.connection.sendJSON({type: "data_patch", patch: patch});
-			    WebSync.oldData = JSON.parse(JSON.stringify(WebSyncData));
-            }*/
-		}
+        //var stringWebSync = JSON.stringify(WebSyncData);
+		//if(stringWebSync!=WebSync.oldDataString){
+		//}
+        var patches = jsonpatch.generate(WebSync.patchObserver);
+        if(patches.length &#62 0){
+            console.log("Diffing", patches)
+            $(document).trigger("diffed");
+            WebSync.connection.sendJSON({type: "data_patch", patch: patches});
+            //WebSync.oldDataString = stringWebSync;
+            //WebSync.oldData = JSON.parse(stringWebSync);
+        }
 	},
     // Function: void WebSync.insertAtCursor(jQuery node);
     // Inserts a DOM element at selection cursor. This is probably going to be deprecated.
@@ -943,12 +892,12 @@ define('websync',{
     // Function: void WebSync.alert(string Message);
     // Displays an alert message in the lower right hand corner of the window.
 	alert: function(msg){
-		return WebSync.alert_msg(msg,"");
+		return WebSync.alert_msg(msg,"alert-warning");
 	},
     // Function: void WebSync.error(string Message);
     // Displays an error message in the lower right hand corner of the window.
 	error: function(msg){
-		return WebSync.alert_msg(msg,"alert-error");
+		return WebSync.alert_msg(msg,"alert-danger");
 	},
     // Function: void WebSync.success(string Message);
     // Displays a success message in the lower right hand corner of the window.
@@ -969,7 +918,62 @@ define('websync',{
 			div.alert('close');
 		},10000);
 		return div;
-	}
+	},
+    // Function: void WebSync.applyPatchToDOM(element Parent, array Patches);
+    // Applies a patch directly to the DOM instead of completely rebuilding it for each patch. BROKEN. Parses old patch system. DO NOT USE.
+    applyPatchToDOM: function(element, patch){
+        if(_.isArray(patch)){
+            console.log("ARRAY", element,patch);
+            _.each(patch, function(elem,index,list){
+                var div = null;
+                if(elem.name=="#text"){
+                    div = document.createTextNode(elem.textContent);
+                } else {
+                    div = document.createElement(elem.name);
+                }
+                element.appendChild(div);
+                WebSync.applyPatchToDOM(div,elem);
+            });
+        } else {
+            if(patch["_t"]=="a"){
+                _.each(patch,function(val, key){
+                    if(key!="_a"){
+                        var n_element = element.childNodes[parseInt(key)];
+                        if(_.isArray(val)) {
+                            _.each(val,function(elem,index,list){
+                                var div = document.createElement(elem.name);
+                                $(element).append(div);
+                                WebSync.applyPatchToDOM(div,elem);
+                            });
+                        } else if(n_element){
+                            WebSync.applyPatchToDOM(n_element,val);
+                        } 
+                    }
+                });
+            } else {
+                if(patch.childNodes){
+                    WebSync.applyPatchToDOM(element,patch.childNodes);
+                }
+                if(patch.textContent){
+                    if(_.isArray(patch.textContent)){
+                        element.textContent = patch.textContent[1];
+                    } else {
+                        element.textContent = patch.textContent;
+                    }
+                }
+                _.each(patch,function(v,k){
+                    if(k!="name"&&k!="textContent"&&k!="childNodes"&&k!="dataset"){
+                        $(element).attr(k,v);
+                    }
+                });
+                if(patch.dataset){
+                    _.each(patch.dataset,function(v,k){
+                        $(element).attr("data-"+k,v);
+                    });
+                }
+            }
+        }
+    }
 });
 dmp = new diff_match_patch();
 function NODEtoJSON(obj){
@@ -977,20 +981,32 @@ function NODEtoJSON(obj){
         name: obj.nodeName,
         childNodes:[]
     }
+    var search_children = true;
+    if(_.size(obj.dataset)&#620){
+        jso.dataset = {}
+        _.each(obj.dataset,function(v,k){
+            jso.dataset[k]=v;
+        });
+        if(jso.dataset.search_children=="false"){
+            search_children = false;
+        }
+    }
     if(obj.nodeName=="#text"){
         jso.textContent = obj.textContent;
     }
     if(obj.attributes){
         _.each(obj.attributes,function(v,k){
             // TODO: Add blacklist of classnames & attributes for DOM serialization.
-            if(v.name!="contenteditable"){
+            if(v.name!="contenteditable" && v.name.indexOf("data-")!=0 ){
                 jso[v.name]=v.value;
             }
         });
     }
-    _.each(obj.childNodes,function(child,index){
-        jso.childNodes.push(NODEtoJSON(child));
-    });
+    if(search_children){
+        _.each(obj.childNodes,function(child,index){
+            jso.childNodes.push(NODEtoJSON(child));
+        });
+    }
     if(_.isEmpty(jso.childNodes)){
         delete jso.childNodes;
     }
@@ -1004,18 +1020,41 @@ function DOMToJSON(obj){
     });
     return jso;
 }
+function escapeHTML(html){
+    return html.replace(/&/g, "&amp;").replace(/&#60;/g, "&lt;").replace(/&#62/g, "&gt;");
+}
+function alphaNumeric(text){
+    return text.match(/[a-zA-Z0-9\-]+/g).join("");
+}
 function NODEtoDOM(obj){
     var html = "";
-    if(obj.name=="#text"){
-        return obj.textContent;
-    }
+    // Some basic cross site scripting attack prevention.
+    if(obj.name=="#text")
+        return escapeHTML(obj.textContent);
+    obj.name = alphaNumeric(obj.name);
+    // TODO: Potentially disallow iframes!
+    if(obj.name=="script")
+        return "";
     html+="&#60;"+obj.name;
+    var data_vars = []
     _.each(obj,function(v,k){
-        if(k!="name"&&k!="textContent"&&k!="childNodes"){
-            html+=" "+k+"="+JSON.stringify(v);
+        if(k!="name"&&k!="textContent"&&k!="childNodes"&&k!="dataset"){
+            k = alphaNumeric(k.trim())
+            if(k.toLowerCase().indexOf("on")!=0){
+                if(k.toLowerCase().indexOf("data-")==0){
+                    data_vars.push(k)
+                }
+                html+=" "+k+"="+JSON.stringify(v);
+            }
         }
     });
-
+    if(obj.dataset){
+        _.each(obj.dataset,function(v,k){
+            k = alphaNumeric(k.trim());
+            if(data_vars.indexOf("data-"+k)==-1)
+                html+=" data-"+alphaNumeric(k)+"="+JSON.stringify(v);
+        });
+    }
     if(obj.childNodes){
         html+="&#62";
         _.each(obj.childNodes,function(elem,index){
@@ -1224,35 +1263,36 @@ if (!Element.prototype.scrollIntoViewIfNeeded) {
                 <div class='well'>
                 <b>void [plugin=TextEdit].disable();</b>
                 <br>
-                <i>Type: Function, Line: 142</i>
+                <i>Type: Function, Line: 174</i>
                 <br>
                 <span>Disables the TextEdit plugin.</span>
                 </div>
                 <div class='well'>
                 <b>void [plugin=TextEdit].selectHandler();</b>
                 <br>
-                <i>Type: Function, Line: 150</i>
+                <i>Type: Function, Line: 182</i>
                 <br>
                 <span>Handling function for displaying accurate information about text in ribbon.</span>
                 </div>
-            <h4><button class="btn btn-primary" onclick="$('#3').toggle(); false">View Source</a></h4>
-            <pre class="script prettyprint linenums" id="3">// WebSync: Text Editing Plugin
+            <h4><button class="btn btn-primary" onclick="$('#2').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="2">// WebSync: Text Editing Plugin
 define("edit",['websync'],function(websync){ var self = this;
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
     // Function: void [plugin=TextEdit].enable();
     // Enables the TextEdit plugin.
-    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist"];
+    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript','insertHorizontalRule'];
     // Add ribbon text
     $(".ribbon").append('&#60;div id="Text" class="container"&#62 \
-            &#60;button id="bold" title="Bold" class="btn"&#62&#60;i class="icon-bold"&#62&#60;/i&#62&#60;/button&#62 \
-            &#60;button id="italic" title="Italic" class="btn"&#62&#60;i class="icon-italic"&#62&#60;/i&#62&#60;/button&#62 \
-            &#60;button id="strikethrough" title="Strikethrough" class="btn"&#62&#60;i class="icon-strikethrough"&#62&#60;/i&#62&#60;/button&#62 \
-            &#60;button id="underline" title="Underline" class="btn"&#62&#60;i class="icon-underline"&#62&#60;/i&#62&#60;/button&#62 \
-            &#60;select id="font" title="Font" class="ribbon_button"&#62 \
+            &#60;button id="bold" title="Bold" class="btn btn-default"&#62&#60;i class="fa fa-bold"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="italic" title="Italic" class="btn btn-default"&#62&#60;i class="fa fa-italic"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="strikethrough" title="Strikethrough" class="btn btn-default"&#62&#60;i class="fa fa-strikethrough"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="underline" title="Underline" class="btn btn-default"&#62&#60;i class="fa fa-underline"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="createLink" title="Hyperlink" class="btn btn-default"&#62&#60;i class="fa fa-link"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;select id="font" title="Font" class="form-control ribbon_button"&#62 \
             &#60;/select&#62 \
-            &#60;select id="font_size" title="Font Size" class="ribbon_button"&#62 \
+            &#60;select id="font_size" title="Font Size" class="form-control ribbon_button"&#62 \
                 &#60;option&#628pt&#60;/option&#62 \
                 &#60;option&#629pt&#60;/option&#62 \
                 &#60;option&#6210pt&#60;/option&#62 \
@@ -1297,14 +1337,19 @@ define("edit",['websync'],function(websync){ var self = this;
                 &#60;option&#6272pt&#60;/option&#62 \
             &#60;/select&#62 \
             &#60;div class="btn-group"&#62 \
-                &#60;button id="justifyleft" title="Justify Left" class="btn"&#62&#60;i class="icon-align-left"&#62&#60;/i&#62&#60;/button&#62 \
-                &#60;button id="justifycenter" title="Justify Center" class="btn"&#62&#60;i class="icon-align-center"&#62&#60;/i&#62&#60;/button&#62 \
-                &#60;button id="justifyright" title="Justify Right" class="btn"&#62&#60;i class="icon-align-right"&#62&#60;/i&#62&#60;/button&#62 \
-                &#60;button id="justifyfull" title="Justify Full" class="btn"&#62&#60;i class="icon-align-justify"&#62&#60;/i&#62&#60;/button&#62 \
+                &#60;button id="justifyleft" title="Justify Left" class="btn btn-default"&#62&#60;i class="fa fa-align-left"&#62&#60;/i&#62&#60;/button&#62 \
+                &#60;button id="justifycenter" title="Justify Center" class="btn btn-default"&#62&#60;i class="fa fa-align-center"&#62&#60;/i&#62&#60;/button&#62 \
+                &#60;button id="justifyright" title="Justify Right" class="btn btn-default"&#62&#60;i class="fa fa-align-right"&#62&#60;/i&#62&#60;/button&#62 \
+                &#60;button id="justifyfull" title="Justify Full" class="btn btn-default"&#62&#60;i class="fa fa-align-justify"&#62&#60;/i&#62&#60;/button&#62 \
             &#60;/div&#62 \
-            &#60;button id="insertunorderedlist" title="Unordered List" class="btn"&#62&#60;i class="icon-list-ul"&#62&#60;/i&#62&#60;/button&#62 \
-            &#60;button id="insertorderedlist" title="Ordered List" class="btn"&#62&#60;i class="icon-list-ol"&#62&#60;/i&#62&#60;/button&#62 \
-            &#60;button id="removeFormat" title="Clear Formatting" class="btn"&#62&#60;i class="icon-remove"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="insertunorderedlist" title="Unordered List" class="btn btn-default"&#62&#60;i class="fa fa-list-ul"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="insertorderedlist" title="Ordered List" class="btn btn-default"&#62&#60;i class="fa fa-list-ol"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="superscript" title="Superscript" class="btn btn-default"&#62&#60;i class="fa fa-superscript"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;button id="subscript" title="Subscript" class="btn btn-default"&#62&#60;i class="fa fa-subscript"&#62&#60;/i&#62&#60;/button&#62 \
+            &#60;input id="fontColor" title="Font Color" class="form-control" type="color"&#62&#60;/input&#62 \
+            &#60;input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"&#62&#60;/input&#62 \
+            &#60;button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default"&#62&mdash;&#60;/button&#62 \
+            &#60;button id="removeFormat" title="Clear Formatting" class="btn btn-default"&#62&#60;i class="fa fa-times"&#62&#60;/i&#62&#60;/button&#62 \
         &#60;/div&#62');
     this.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
@@ -1313,17 +1358,22 @@ define("edit",['websync'],function(websync){ var self = this;
             $(document).trigger('selectionchange');
         });
     });
+    $("#fontColor").change(function(e){
+        document.execCommand('foreColor', false, this.value);
+    });
+    $("#hilightColor").change(function(e){
+        document.execCommand('hiliteColor', false, this.value);
+    });
     // Reflects text in menu at top
-    $(document).bind('selectionchange.TextEdit',function(){
+    $(".content_well").bind('selectionchange.TextEdit',function(){
         if(!self._selectTimeout){
             self._selectTimeout = setTimeout(self.selectHandler,200);
         }
     });
     $(".content_well").bind("keydown.TextEdit","li",function(e){
-        //console.log(e);
         if(e.keyCode==9){
             //console.log(this);
-            var selection = document.getSelection();
+            /*var selection = document.getSelection();
             if(selection.type!="None" && !_.isNull(selection.baseNode)){
                 var list_index = selection.baseNode;
                 while(list_index.tagName!="LI"){
@@ -1335,7 +1385,13 @@ define("edit",['websync'],function(websync){ var self = this;
                 }
                 $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
                 e.preventDefault();
+            }*/
+            if(e.shiftKey){
+                document.execCommand('outdent');
+            } else {
+                document.execCommand('indent');
             }
+            e.preventDefault();
         }
     });
     $('#font').bind("change.TextEdit",function(){
@@ -1358,6 +1414,10 @@ define("edit",['websync'],function(websync){ var self = this;
         var url = prompt("Image URL");
         document.execCommand("insertImage", false, url);
     });
+    $("#createLink").click(function(){
+        var url = prompt("Hyperlink URL");
+        document.execCommand("createLink", false, url);
+    });
     $("#video").click(function(){
         var url = prompt("Video URL (Youtube)");
         if(url.indexOf("youtu")!=-1){
@@ -1377,6 +1437,17 @@ define("edit",['websync'],function(websync){ var self = this;
             alert("Invalid URL");
         }
     }
+    self.rgb_to_hex = function(rgb){
+        if(rgb.indexOf('rgba')!=-1){
+            //return '#000000';
+        }
+        var parts = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(1|0|0?\.d+))?\)$/);
+        for (var i = 1; i &#60;= 3; ++i) {
+            parts[i] = parseInt(parts[i]).toString(16);
+            if (parts[i].length == 1) parts[i] = '0' + parts[i];
+        }
+        return '#'+parts.slice(1,4).join('').toUpperCase();
+    }
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     this.disable = function(){
@@ -1389,7 +1460,9 @@ define("edit",['websync'],function(websync){ var self = this;
     // Handling function for displaying accurate information about text in ribbon.
     this.selectHandler = function(){
 		var style = WebSync.getCss();
-		$('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
+		$("#fontColor")[0].value = rgb_to_hex(style.color);
+        $("#hilightColor")[0].value = rgb_to_hex(style.backgroundColor);
+        $('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
 
 		self.text_buttons.forEach(function(elem){
 			var button = $('button#'+elem)
@@ -1438,8 +1511,8 @@ define("edit",['websync'],function(websync){ var self = this;
                 <br>
                 <span>Returns whether or not a font exists.</span>
                 </div>
-            <h4><button class="btn btn-primary" onclick="$('#4').toggle(); false">View Source</a></h4>
-            <pre class="script prettyprint linenums" id="4">/**
+            <h4><button class="btn btn-primary" onclick="$('#3').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="3">/**
  * JavaScript code to detect available availability of a
  * particular font in a browser using JavaScript and CSS.
  *
@@ -1525,8 +1598,8 @@ var Detector = function() {
                 <br>
                 <span>This returns the smallest of the three values passed in.</span>
                 </div>
-            <h4><button class="btn btn-primary" onclick="$('#5').toggle(); false">View Source</a></h4>
-            <pre class="script prettyprint linenums" id="5">/*
+            <h4><button class="btn btn-primary" onclick="$('#4').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="4">/*
 
 Copyright (c) 2006. All Rights reserved.
 
@@ -1575,12 +1648,147 @@ minimator = function(x,y,z) {
 	if (y &#60; x && y &#60; z) return y;
 	return z;
 }</pre>
-            <h3>File: assets/javascripts/tables.js</h3>
+            <h3>File: assets/no_digest/chat.js</h3>
+            <hr>
+                <div class='well'>
+                <b>void [plugin=chat].disable();</b>
+                <br>
+                <i>Type: Function, Line: 108</i>
+                <br>
+                <span>Disables the plugin. This has to be set for possible plugin unloading.</span>
+                </div>
+            <h4><button class="btn btn-primary" onclick="$('#5').toggle(); false">View Source</a></h4>
+            <pre class="script prettyprint linenums" id="5">// WebSync: Chat Plugin
+// WebSync uses RequireJS for modules.
+// define( [pluginName], [requiredModules], definition);
+// pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
+define(['websync'],function(edit,websink){ var self = {};
+    // Save all variables and information to the self object.
+
+    // Plugins should use a jQuery namespace for ease of use.
+	// Bind Example: $(document).bind("click.Tables", clickHandler);
+	// Unbind Example: $("*").unbind(".Tables");
+    self.open = false;
+    $('body').append($('&#60;div id="chat" class="sidebar"&#62&#60;div id="user_list"&#62&#60;/div&#62&#60;div id="chat_well"&#62&#60;/div&#62&#60;div class="chat_input input-group"&#62&#60;input class="form-control" id="appendedInputButton" type="text" &#62&#60;span class="input-group-btn"&#62&#60;button id="msg_btn" class="btn btn-default" type="button"&#62Send&#60;/button&#62&#60;/span&#62&#60;/div&#62&#60;/div&#62'));
+    $('#settings').prepend($('&#60;li&#62&#60;a id="chat_btn" title="Chat"&#62&#60;i class="fa fa-comment fa-lg"&#62&#60;/i&#62 &#60;span id="user_count" class="badge"&#621&#60;/span&#62&#60;/a&#62&#60;/li&#62'));
+    $("#chat").css({right:-252});
+    $("#chat img").tooltip();
+    $(document).bind('client_load.Chat',function(e,data){
+        console.log("Client_load",data);
+        var client = data.client;
+        var client_dom = $("#client_"+client);
+        var user = WebSync.clients[client];
+        var user_info = WebSync.users[user.id];
+        if(client_dom.length&#620){
+            if(user_info.displayName){
+                client_dom.children().attr('data-original-title',_.escape(user_info.displayName));
+            }
+        } else {
+            self.addUser(client);
+        }
+        self.updateUserList();
+    });
+    $("#msg_btn").bind('click.Chat',function(e){
+        self.msg();
+    });
+    $(".chat_input input").bind('keypress.Chat',function(e){
+        if(e.which==13){
+            self.msg();
+        }
+    });
+    $(document).bind("client_event_chat_msg.Chat",function(e,data){
+        self.clientMsg(data.from,data.data);
+    });
+    self.msg = function(){
+        var msg = $(".chat_input input").val();
+        if(msg.length&#620){
+            WebSync.broadcastEvent('chat_msg',msg);
+            self.clientMsg(WebSyncAuth.id,msg);
+            $(".chat_input input").val("");
+        }
+    }
+    self.addUser = function(client){
+        var user = WebSync.clients[client];
+        var user_info = WebSync.users[user.id];
+        var display_name = user_info.displayName;
+        if(!display_name){
+            display_name = user.email;
+        }
+        display_name = _.escape(display_name);
+        $("#user_list").append('&#60;a target="_blank" id="client_'+client+'" href="https://secure.gravatar.com/'+user.id+'"&#62&#60;img data-toggle="tooltip" data-placement="bottom" title="'+display_name+'" src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d=http://i.imgur.com/xzn2nB0.png"&#62&#60;/img&#62&#60;/a&#62').children().last().children().tooltip();
+    }
+    $(document).bind('client_leave.Chat',function(e,data){
+        console.log("Client leaving",data);
+        $("#client_"+data.client).remove();
+        self.updateUserList();
+    });
+    $(document).bind('noconnection.Chat',function(){
+        $("#user_list").empty();
+        self.updateUserList();
+    });
+    self.updateUserList = function(){setTimeout(function(){
+        $("#user_count").text(_.size(WebSync.clients));
+        $("#chat_well").css({top: $("#user_list").height()-5});
+    },100);};
+    self.clientMsg = function(client, msg){
+        var user = WebSync.clients[client];
+        var user_info = WebSync.users[user.id];
+        var display_name = user_info.displayName;
+        if(!display_name){
+            display_name = user.email;
+        }
+        display_name = _.escape(display_name);
+        $("#chat_well").append('&#60;p&#62&#60;a target="_blank" href="https://secure.gravatar.com/'+user.id+'"&#62&#60;img src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d=http://i.imgur.com/xzn2nB0.png"&#62&#60;/img&#62&#60;span&#62'+display_name+':&#60;/span&#62&#60;/a&#62 '+_.escape(msg)+'&#60;/p&#62');
+        if(!self.open){
+            $("#user_count").addClass("badge-pulse");
+        }
+        $("#chat_well").animate({scrollTop:$("#chat_well").get(0).scrollHeight},200);
+    }
+    self.toggle = function(){
+        self.resize();
+        $("#chat_btn").parent().toggleClass("active");
+        if(self.open){
+            $("#chat").animate({right:-250},200);
+            $(".content_well").animate({right: 0},200);
+            self.open=false;
+        } else {
+            $("#chat").animate({right:0},200);
+            $('.content_well').animate({right:250},200);
+            $("#user_count").removeClass("badge-pulse");
+            self.open = true;
+            self.resize();
+        }
+    }
+    $("#chat_btn").bind("click.Chat",self.toggle);
+    self.resize = function(e){
+        $("#chat").height(window.innerHeight-$(".content_well").position().top)
+    }
+    self.resize();
+    $(window).bind('resize.Chat',self.resize);
+	// Function: void [plugin=chat].disable();
+    // Disables the plugin. This has to be set for possible plugin unloading.
+	self.disable = function(){
+		$("#chat").remove();
+        $("#chat_btn").remove();
+        // Reset content_well width;
+        $('.content_well').get(0).style.width=null;
+		$("*").unbind(".Chat");
+		$("*").undelegate(".Chat");
+	}
+    $.each(WebSync.clients,function(k, v){
+        self.addUser(k);
+        self.updateUserList();
+    });
+
+    // Return self so other modules can hook into this one.
+    return self;
+});</pre>
+            <h3>File: assets/no_digest/tables.js</h3>
             <hr>
                 <div class='well'>
                 <b>void [plugin=edit].disable();</b>
                 <br>
-                <i>Type: Function, Line: 280</i>
+                <i>Type: Function, Line: 296</i>
                 <br>
                 <span>Disables the plugin. This has to be set for possible plugin unloading.</span>
                 </div>
@@ -1595,9 +1803,9 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     // Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
-    $(".ribbon").append($('&#60;div id="Table" class="Table container"&#62&#60;button class="btn" title="Delete Table"&#62&#60;i class="icon-trash"&#62&#60;/i&#62 Table&#60;/button&#62&#60;div class="btn-group"&#62&#60;button class="btn" type="button" title="Insert Row Above"&#62&#60;i class="icon-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/span&#62&#60;button class="btn" type="button" title="Delete Row"&#62&#60;i class="icon-trash"&#62&#60;/i&#62 Row&#60;/button&#62&#60;button class="btn" type="button" title="Insert Row Below"&#62&#60;i class="icon-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/div&#62     &#60;div class="btn-group"&#62&#60;button class="btn" type="button" title="Insert Column Left"&#62&#60;i class="icon-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/span&#62&#60;button class="btn" type="button" title="Delete Column"&#62&#60;i class="icon-trash"&#62&#60;/i&#62 Column&#60;/button&#62&#60;button class="btn" type="button" title="Insert Column Right"&#62&#60;i class="icon-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/div&#62&#60;/div&#62'));
+    $(".ribbon").append($('&#60;div id="Table" class="Table container"&#62&#60;button class="btn btn-default" title="Delete Table"&#62&#60;i class="fa fa-trash-o"&#62&#60;/i&#62 Table&#60;/button&#62&#60;div class="btn-group"&#62&#60;button class="btn btn-default" type="button" title="Insert Row Above"&#62&#60;i class="fa fa-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/span&#62&#60;button class="btn btn-default" type="button" title="Delete Row"&#62&#60;i class="fa fa-trash"&#62&#60;/i&#62 Row&#60;/button&#62&#60;button class="btn btn-default" type="button" title="Insert Row Below"&#62&#60;i class="fa fa-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/div&#62     &#60;div class="btn-group"&#62&#60;button class="btn btn-default" type="button" title="Insert Column Left"&#62&#60;i class="fa fa-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/span&#62&#60;button class="btn btn-default" type="button" title="Delete Column"&#62&#60;i class="fa fa-trash"&#62&#60;/i&#62 Column&#60;/button&#62&#60;button class="btn btn-default" type="button" title="Insert Column Right"&#62&#60;i class="fa fa-plus"&#62&#60;/i&#62&#60;/button&#62&#60;/div&#62&#60;/div&#62'));
     $(".content").append($('&#60;div id="table_cursor" class="Table"&#62&#60;/div&#62&#60;div id="table_selection" class="Table"&#62&#60;/div&#62&#60;div id="table_clip" style="position:absolute; left:-1000px;top:-1000px;"&#62&#60;/div&#62'));
-    $("#Insert").append($('&#60;button id="table" title="Table" class="btn Table"&#62&#60;i class="icon-table"&#62&#60;/i&#62&#60;/button&#62'))
+    $("#Insert").append($('&#60;button id="table" title="Table" class="btn btn-default Table"&#62&#60;i class="fa fa-table"&#62&#60;/i&#62&#60;/button&#62'))
     $("#table").bind("click.Tables",function(e){
         console.log(e);
         var new_table = $("&#60;table&#62&#60;tbody&#62&#60;tr&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;/tr&#62&#60;tr&#62&#60;td&#62&#60;/td&#62&#60;td&#62&#60;/td&#62&#60;/tr&#62&#60;/tbody&#62&#60;/table&#62")
@@ -1729,7 +1937,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         self.selectionActive=true;
         self.selectionEnd = null;
         self.updateSelectedArea();
-        e.preventDefault();
+        //e.preventDefault();
+    });
+    $(".content").bind("mousemove.Tables",function(e){
+        if(self.selectionActive && self.selectedElem.contentEditable!="true"){
+            e.preventDefault();
+        }
     });
     $(".content").delegate("td","mouseup.Tables",function(e){
         self.selectionActive=false;
@@ -1767,15 +1980,25 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
     $(document).bind('mousemove.Tables', function(e){
         if(self.drag){
+        var table = $(self.primaryTable());
             if(self.origX){
                 $(self.active).width(e.pageX-self.origX+self.origWidth);
+                var pos = self.selectedPos(self.active);
+                console.log(pos);
+                $(self.posToElem(pos[0],0)).width(e.pageX-self.origX+self.origWidth);
+                $(".Table.axis#x").width(table.width()+2);
             }
             if(self.origY){
                 $(self.active).height(e.pageY-self.origY+self.origHeight);
+                var pos = self.selectedPos(self.active);
+                console.log(pos);
+                $(self.posToElem(0,pos[1]).parentElement).height(e.pageY-self.origY+self.origHeight);
+                $(".Table.axis#y").height(table.height());
             }
+            self.cursorUpdate();
         }
     });
-    $(document).bind( "mouseup.Resize", function(e){
+    $(document).bind( "mouseup.Tables", function(e){
         if(self.drag){
             console.log(e);
             e.preventDefault();
@@ -1809,7 +2032,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             console.log($(e.originalEvent.clipboardData.getData('text/html')));
         }
     });
-    $(".content").bind("keydown.Tables",function(e){
+    self.keypressHandler = function(e){
+        console.log("KEYPRESS", e)
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
@@ -1839,7 +2063,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     self.cursorMove(0,-1);
                     e.preventDefault();
                 }else if(e.keyCode==40&&!editting){
-                    // Down arrow
+                    // Down a1rrow
                     self.cursorMove(0,1);
                     e.preventDefault();
                 } else {
@@ -1860,7 +2084,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 }
             }
         }
-    });
+    }
 
     WebSync.updateRibbon();
     $("#ribbon_buttons a:contains('Table')").parent().hide();
@@ -1904,6 +2128,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             $(".Table.axis").fadeIn(200);
         }
 		self.cursorUpdate();
+        self.enterLeaveBinds();
 	}
     self.headerUpdate = function(){
         var size = self.tableSize();
@@ -1911,19 +2136,19 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         for(var i=0;i&#60;size[0];i++){
             var elem = self.posToElem(i,0);
             var bounding = elem.getBoundingClientRect();
-            x_nodes[i].style.width = (bounding.width-1)+"px";
+            x_nodes[i].style.width = (bounding.width)+"px";
             //x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+self.columnLabel(i);
         }
         var y_nodes = $(".axis#y th");
         for(var i=0;i&#60;size[1];i++){
             var elem = self.posToElem(0,i);
             var bounding = elem.getBoundingClientRect();
-            y_nodes[i].style.height = (bounding.height-1)+"px";
+            y_nodes[i].style.height = (bounding.height)+"px";
             //y_nodes.eq(i).css({height: (bounding.height-1)});//+'px"&#62'+(i+1);
         }
         var table = $(self.primaryTable());
-        $(".Table.axis#x").width(table.width()+2);
-        $(".Table.axis#y").height(table.height());
+        //$(".Table.axis#x").width(table.width()+2);
+        //$(".Table.axis#y").height(table.height());
     };
 	self.cursorMove = function(dColumn, dRow){
 		self.selectedEditable(false);
@@ -1935,18 +2160,20 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.cursorSelect(new_td);
 		}
 	}
-	self.cursorUpdate = function(){
-		var pos = $(self.selectedElem).position();
+	self.cursorUpdate = function(pos){
+		var pos = $(self.selectedElem).offset();
         pos.top += 2;
         pos.left += 2;
 		//$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();
-        $("#table_cursor").css({left:pos.left,top:pos.top}).height($(self.selectedElem).height()-2).width($(self.selectedElem).width()-1).get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
         var table = $(self.primaryTable());
-        var offset = table.offset();
-        if(!($(".Table.axis#x").get(0).style.left)){
-            $(".Table.axis#x").offset({left:offset.left,top:offset.top-17});//.width(table.width()+2);
-            $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
+        $("#table_cursor").offset({left:pos.left,top:pos.top}).height($(self.selectedElem).height()*WebSync.zoom-2).width($(self.selectedElem).width()*WebSync.zoom-1).get(0).scrollIntoViewIfNeeded();
+        if(table.css("position")=="absolute"||pos){
+            setTimeout(function(){
+                var offset = table.offset();
+                $(".Table.axis#x").offset({left:offset.left,top:offset.top-16});//.width(table.width()+2);
+                $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
+            },1);
         }
 	}
 	self.selectedEditable = function(edit){
@@ -1958,7 +2185,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 			self.selectedElem.contentEditable=true;
 			$("#table_cursor").css({borderStyle: 'dashed', outlineStyle: 'dashed'});
 			$('#ribbon_buttons a:contains("Text")').click();
-			self.setEndOfContenteditable(self.selectedElem);
+			//self.setEndOfContenteditable(self.selectedElem);
 		}
 	}
     self.clearSelect = function(){
@@ -1976,8 +2203,51 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 $(".Table.axis#x").remove();
                 $(".Table.axis#y").remove();
             });
+            self.enterLeaveBinds();
 		}
 	}
+    self.table = null;
+    self.enterLeaveBinds = function(){
+        if(self.selected){
+            var primary = self.primaryTable();
+            if(primary != self.table){
+                if(self.table){
+                    self.leaveTable(self.table);
+                }
+                self.table = primary;
+                self.enterTable(self.table);
+            }
+        } else {
+            if(self.table){
+                self.leaveTable(self.table);
+                self.table = null;
+            }
+        }
+    }
+    self.enterTable = function(table){
+        console.log("Entering");
+        $(table).children().on("keydown.TablesTemp", self.keypressHandler);
+        $(".table_clip").bind("keydown.TablesTemp", self.keypressHandler);
+        $(".content_container").delegate("resize.Tables", "table", function(e){
+            self.cursorUpdate();
+            self.headerUpdate();
+        });
+    }
+    $(document).on("zoom",function(){
+        if(self.selected){
+            self.cursorUpdate();
+            self.headerUpdate();
+        }
+    });
+    self.leaveTable = function(table){
+        console.log("Leaving");
+		$(table).unbind(".TablesTemp");
+		$(table).undelegate(".TablesTemp");
+		$(table).off(".TablesTemp");
+		$(".table_clip").unbind(".TablesTemp");
+		$(".table_clip").undelegate(".TablesTemp");
+		$(".table_clip").off(".TablesTemp");
+    }
     self.updateSelectedArea = function(){
         $(".Table.axis th").removeClass("active");
         if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){
@@ -2115,21 +2385,21 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 <div class='well'>
                 <b>object WebSyncAuth;</b>
                 <br>
-                <i>Type: Variable, Line: 11</i>
+                <i>Type: Variable, Line: 9</i>
                 <br>
                 <span>This is an <span class="internal">internal</span> object used for authenticating the websocket connection.</span>
                 </div>
                 <div class='well'>
                 <b>int WebSyncAuth.id;</b>
                 <br>
-                <i>Type: Variable, Line: 14</i>
+                <i>Type: Variable, Line: 12</i>
                 <br>
                 <span>This is the websocket connection id. Each connection has a unique id.</span>
                 </div>
                 <div class='well'>
                 <b>int WebSyncAuth.key;</b>
                 <br>
-                <i>Type: Variable, Line: 17</i>
+                <i>Type: Variable, Line: 15</i>
                 <br>
                 <span>This is a randomly generated string used as an API key.</span>
                 </div>
@@ -2145,31 +2415,30 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 &#60;html&#62
 	&#60;head&#62
 		&#60;link rel="shortcut icon" href="/favicon.ico?v=3" /&#62
-        &#60;title&#62WebSync&#60;/title&#62
+        &#60;title&#62WebSyn.ca&#60;/title&#62
         &#60;meta name="viewport" content="width=device-width, initial-scale=1.0"&#62
-		&#60;%= stylesheet_tag 'default' %&#62
-        &#60;%= javascript_tag 'bundle-norm' %&#62
-        &#60;% if defined?(@edit)&&@edit %&#62
+        &#60;% if defined?(edit)&&edit %&#62
             &#60;script type="text/javascript"&#62
             // Variable: object WebSyncAuth;
             // This is an internal object used for authenticating the websocket connection.
             WebSyncAuth = {
                 // Variable: int WebSyncAuth.id;
                 // This is the websocket connection id. Each connection has a unique id.
-                id:"&#60;%= @client_id %&#62",
+                id:"&#60;%= client_id %&#62",
                 // Variable: int WebSyncAuth.key;
                 // This is a randomly generated string used as an API key.
-                key:"&#60;%= @client_key %&#62",
-                view_op: "&#60;%= params[:op] %&#62"
+                key:"&#60;%= client_key %&#62",
+                view_op: "&#60;%= op %&#62",
+                websocket_port: &#60;%= $config['websocket']['port'] %&#62,
+                websocket_url: "&#60;%= $config['websocket']['url'] %&#62"
             }
             // Variable: object WebSyncData;
             // This contains the data for the document. This is automatically synced with the server.
-            WebSyncData = &#60;%= MultiJson.dump(@doc.body) %&#62;
+            WebSyncData = &#60;%= MultiJson.dump(doc.body) %&#62;
 
             // Set document title.
-            document.title = &#60;%= @doc.name.inspect %&#62 + " - WebSync";
+            document.title = "&#60;%= doc.name %&#62 - WebSync";
             &#60;/script&#62
-            &#60;%= javascript_tag 'bundle-edit' %&#62
         &#60;% end %&#62
         &#60;script&#62
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -2182,43 +2451,71 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
 
         &#60;/script&#62
 	&#60;/head&#62
-	&#60;body class="&#60;%= params[:op] %&#62"&#62
-        &#60;% if !(defined?(@no_menu)&&@no_menu) %&#62
-&#60;div class="menu"&#62
-	&#60;div class="navbar navbar-inverse navbar-fixed-top"&#62
-		&#60;div class="navbar-inner"&#62
-			&#60;div class="container-fluid"&#62
-				&#60;a class="brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom"&#62WebSync&#60;/a&#62
-                &#60;ul class="nav"&#62
-                    &#60;li class="text"&#62is a document editing tool similar to Google Drive or Microsoft Skydrive. &#60;/li&#62
-                &#60;/ul&#62
-                &#60;ul id="settings" class="nav pull-right ribbon-opt"&#62
-                    &#60;li&#62
-                        &#60;a href="/upload" title="Upload"&#62&#60;i class="icon-large icon-cloud-upload"&#62&#60;/i&#62&#60;/a&#62
-                    &#60;/li&#62
-                    &#60;% if admin? %&#62
-                        &#60;li&#62
-                            &#60;a href="/admin" title="Admin Control Panel"&#62&#60;i class="icon-cog icon-large"&#62&#60;/i&#62&#60;/a&#62
-                        &#60;/li&#62
-                    &#60;% end %&#62
-                    &#60;li&#62
-                        &#60;%= render_login_button %&#62
-                    &#60;/li&#62
-                &#60;/ul&#62
-            &#60;/div&#62
-        &#60;/div&#62
+	&#60;body class="&#60;%= (defined?(op) && op)=="view" ? "view" : "edit" %&#62"&#62
+        &#60;% if !(defined?(no_menu)&&no_menu) %&#62
+
+&#60;nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"&#62
+  &#60;div class="container"&#62
+      &#60;div class="navbar-header"&#62
+        &#60;button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"&#62
+          &#60;span class="sr-only"&#62Toggle navigation&#60;/span&#62
+          &#60;span class="icon-bar"&#62&#60;/span&#62
+          &#60;span class="icon-bar"&#62&#60;/span&#62
+          &#60;span class="icon-bar"&#62&#60;/span&#62
+        &#60;/button&#62
+        &#60;a class="navbar-brand" href="/" title="Produced by Outer Earth Interactive"&#62WebSyn.ca&#60;/a&#62
+      &#60;/div&#62
+
+      &#60;!-- Collect the nav links, forms, and other content for toggling --&#62
+      &#60;div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"&#62
+        &#60;p class="navbar-text"&#62is a document editing tool similar to Google Drive or Microsoft Skydrive.&#60;/p&#62
+        &#60;ul class="nav navbar-nav navbar-right"&#62
+            &#60;li&#62
+                &#60;a href="/upload" title="Upload"&#62&#60;i class="fa fa-lg fa-cloud-upload"&#62&#60;/i&#62&#60;/a&#62
+            &#60;/li&#62
+            &#60;% if admin? %&#62
+                &#60;li&#62
+                    &#60;a href="/admin" title="Admin Control Panel"&#62&#60;i class="fa fa-cog fa-lg"&#62&#60;/i&#62&#60;/a&#62
+                &#60;/li&#62
+            &#60;% end %&#62
+            &#60;li&#62
+                &#60;%= render_login_button %&#62
+            &#60;/li&#62
+        &#60;/ul&#62
     &#60;/div&#62
-&#60;/div&#62
+  &#60;/div&#62&#60;!-- /.navbar-collapse --&#62
+&#60;/nav&#62
+&#60;!--	&#60;header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner"&#62
+        &#60;div class="container"&#62
+            &#60;div class="navbar-header"&#62
+            &#60;a class="navbar-brand" href="/" data-toggle="tooltip" title="Produced by Outer Earth Interactive" data-placement="bottom"&#62WebSyn.ca&#60;/a&#62
+            &#60;/div&#62
+            &#60;ul class="nav"&#62
+                &#60;li class="text hidden-phone"&#62is a document editing tool similar to Google Drive or Microsoft Skydrive. &#60;/li&#62
+            &#60;/ul&#62
+            &#60;ul id="settings" class="nav pull-right ribbon-opt"&#62
+            &#60;/ul&#62
+        &#60;/div&#62
+    &#60;/header&#62 --&#62
         &#60;% end %&#62
 		&#60;%= yield %&#62
 	&#60;/body&#62
+    &#60;%= stylesheet_tag 'default' %&#62
+    &#60;%= javascript_tag 'bundle-norm' %&#62
+    &#60;%= (defined?(edit)&&edit) ? javascript_tag('bundle-edit') : "" %&#62
     &#60;% if !defined?(@javascripts).nil? %&#62
         &#60;% @javascripts.each do |script| %&#62
             &#60;script type="text/javascript" src="&#60;%= script %&#62"&#62&#60;/script&#62
         &#60;% end %&#62
     &#60;% end %&#62
     &#60;script type="text/javascript"&#62
-        $('[data-toggle="tooltip"]').tooltip();
+        var tooltipHandle = function(){
+            $('[data-toggle="tooltip"], nav [title]').tooltip({placement: 'bottom', container:'body'});
+            $('[data-toggle="tooltip-top"]').tooltip({placement: 'top', container:'body'});
+        }
+        for(var i=0;i&#60;6;i++){
+            setTimeout(tooltipHandle, i*500 +1);
+        }
     &#60;/script&#62
 &#60;/html&#62</pre>
         <script type='text/javascript'>

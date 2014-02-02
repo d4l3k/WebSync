@@ -1,6 +1,5 @@
 // WebSync: Notebook layout handler
-define("/assets/note.js",['websync'], function(websync) { var self = this;
-    console.log("Notes loaded");
+define("/assets/note.js",['websync'], function(websync) { var self = {};
     $(".content").hide().addClass("content-note").fadeIn();
     $(".content_well").attr("style","background-color: white !important; background-image:none;");
     $("body").append('<div id="context-menu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#">Rename</a></li><li><a tabindex="-1" href="#">Delete</a></li></ul></div>');
@@ -98,14 +97,15 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
         //}
         self.updateNav();
     }
-    if(_.isEmpty(WebSyncData.body)){
-        $("#note-well").append("<div class='note-section'><div class='note-page'><section class='note-title frozen'></section></div>");
-    }
-    else {
-        WebSync.fromJSON();
-    }
-    if(WebSyncAuth.view_op=='edit'){
-    }
+    $(document).on("modules_loaded", function(){
+        if(_.isEmpty(WebSyncData.body)){
+            $("#note-well").append("<div class='note-section'><div class='note-page'><section class='note-title frozen'></section></div>");
+        }
+        else {
+            WebSync.fromJSON();
+        }
+        NProgress.done();
+    });
     $(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
     $("#note-well").on("click",".note-page section",function(e){
         self.deselectNoteBubble();
@@ -141,6 +141,5 @@ define("/assets/note.js",['websync'], function(websync) { var self = this;
         var page = e.currentTarget.dataset.index;
         self.switchToPage(section,page);
     });
-    NProgress.done();
     return self;
 });

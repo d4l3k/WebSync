@@ -6,15 +6,24 @@ define(['websync'],function(){ var self = {};
         rangy.getSelection().getAllRanges()[0].surroundContents(elem);
         elem.dataset.latex = $(elem).text();
         elem.dataset.search_children=false;
-        $(elem).mathquill('editable');
+        $(elem).mathquill('editable').click();
     });
     $(".Equation-Editable").attr("contenteditable",false).each(function(e){
         console.log(e);
     }).mathquill("editable");
+    WebSync.registerDOMException("mathquill-rendered-math", function(obj){
+        return $(obj).mathquill("latex");
+    }, function(json){
+        setTimeout(function(){
+            $(".make-editable").removeClass("make-editable").mathquill("editable");
+        },1);
+        return '<span class="Equations Equation-Editable make-editable" contenteditable="false">'+json+'</span>';
+    });
     self.disable = function(){
 		$("*").unbind(".Equations");
 		$("*").undelegate(".Equations");
         $(".Equations").remove();
+        WebSync.unregisterDOMException("mathquill-rendered-math");
 	}
     // Return self so other modules can hook into this one.
     return self;

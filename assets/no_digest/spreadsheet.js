@@ -30,18 +30,22 @@ define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websy
         });
         $("#tableInner").get(0).innerHTML=html_set;//=JSONToDOM(WebSyncData.body);
     }
-    if(_.isEmpty(WebSyncData.body)){
-        console.log("Appending!!!");
-        for(var r=0;r<50;r++){
-            var row = $("<tr></tr>").appendTo($("#tableInner"));
-            for(var c=0;c<50;c++){
-                $("<td></td>").appendTo(row);
+
+    $(document).on("modules_loaded", function(){
+        if(_.isEmpty(WebSyncData.body)){
+            console.log("Appending!!!");
+            for(var r=0;r<50;r++){
+                var row = $("<tr></tr>").appendTo($("#tableInner"));
+                for(var c=0;c<50;c++){
+                    $("<td></td>").appendTo(row);
+                }
             }
         }
-    }
-    else {
-        WebSync.fromJSON();
-    }
+        else {
+            WebSync.fromJSON();
+        }
+        NProgress.done();
+    });
     if(WebSyncAuth.view_op=='edit'){
         //$(".slide").attr("contenteditable",true);
     }
@@ -55,6 +59,5 @@ define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websy
     $(".content_well").scroll(self.updateHeaders);
     $(".navbar-fixed-top").css({"border-bottom": "1px solid #aaa"})
     $("#spreadsheetWell tr:first-child td:first-child").trigger("mousedown").trigger("mouseup");
-    NProgress.done();
     return self;
 });

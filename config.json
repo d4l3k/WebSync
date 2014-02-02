@@ -46,9 +46,9 @@
             "url": "/assets/resize.js"
         }
         ,{
-            "name": "MathJax",
+            "name": "Equations",
             "description": "Enables equation editing.",
-            "url": "/assets/mathjax.js"
+            "url": "/assets/equations.js"
         }
     ],
     "default_asset_groups": [
@@ -59,7 +59,7 @@
                 "Tables",
                 "Chat",
                 "Page Layout",
-                "MathJax",
+                "Equations",
                 "Resize"
             ]
         }
@@ -70,7 +70,7 @@
                 "Tables",
                 "Chat",
                 "Presentation Layout",
-                "MathJax",
+                "Equations",
                 "Resize"
             ]
         }
@@ -81,7 +81,7 @@
                 "Tables",
                 "Chat",
                 "Spreadsheet Layout",
-                "MathJax",
+                "Equations",
                 "Resize"
             ]
         }
@@ -92,7 +92,7 @@
                 "Tables",
                 "Chat",
                 "Note Layout",
-                "MathJax",
+                "Equations",
                 "Resize"
             ]
         }

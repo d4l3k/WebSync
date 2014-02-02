@@ -8,14 +8,16 @@ define("/assets/page.js",['websync'], function(websync) { var self = this;
     if(WebSyncAuth.view_op=='edit'){
         $(".page").attr("contenteditable",true);
     }
-    $(".page").html(JSONToDOM(WebSyncData.body));
     WebSync.toJSON = function() {
 		WebSyncData.body = DOMToJSON($(".page").get(0).childNodes);
     }
     WebSync.fromJSON = function() {
         $(".content .page").get(0).innerHTML=JSONToDOM(WebSyncData.body);
     }
+    $(document).on("modules_loaded", function(){
+        WebSync.fromJSON();
+        NProgress.done();
+    });
 	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
-    NProgress.done();
     return self;
 });

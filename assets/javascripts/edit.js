@@ -1,5 +1,5 @@
 // WebSync: Text Editing Plugin
-define("edit",['websync'],function(websync){ var self = this;
+define("edit",['websync'],function(websync){ var self = {};
 	// Plugins should use a jQuery namespace for ease of use.
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
@@ -74,7 +74,7 @@ define("edit",['websync'],function(websync){ var self = this;
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
-    this.text_buttons.forEach(function(elem){
+    self.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
             document.execCommand(elem);
             //$(this).toggleClass("active");
@@ -217,6 +217,7 @@ define("edit",['websync'],function(websync){ var self = this;
     }
     $('#font').html(font_list.join("\n"));
     WebSync.updateRibbon();
+    return self;
 });
 
 

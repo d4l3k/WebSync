@@ -38,6 +38,26 @@ body,html {
     z-index: 10001;
     position: absolute;
 }
+body .mathquill-rendered-math {
+    border: none;
+    &.empty {
+        border: 1px solid #aaa;
+        &:before {
+            content: "equation";
+            font-size: 8pt;
+            color: #aaa;
+        }
+    }
+    sup {
+        top: initial;
+    }
+    sub {
+        bottom: initial;
+    }
+    * {
+        white-space: nowrap;
+    }
+}
 .menu {
     width: 100%;
     .dropdown-menu {
@@ -119,7 +139,7 @@ cursor {
 .hidden {
 	visibility: hidden;
 }
-.settings-popup {
+nav .settings-popup {
     position: absolute;
     display: none;
     top: 40px;
@@ -139,7 +159,7 @@ cursor {
             color: black !important;
             text-shadow: none;
             &:hover {
-                background-color: #ccc;
+                background-color: #cccccc;
             }
         }
         li.active a {
@@ -492,9 +512,13 @@ a#name {
 	position: relative;
 	left: -10px;
 }
-.navbar {
+nav.navbar {
     position: relative;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #cccccc;
+    border-color: #cccccc;
+    .collapse {
+        border-bottom: 1px solid #080808;
+    }
 }
 .float {
     position: absolute;
@@ -507,8 +531,8 @@ a#name {
     bottom: 0;
     top: 95px;
     background-color: #eee;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+    border-left: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
     &#presentation-nav {
         width: 240px;
         float: left;
@@ -520,14 +544,14 @@ a#name {
             left: 5px;
             right: 5px;
             bottom: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #cccccc;
             background-color: white;
             font-size: 10pt;
             border-radius: 4px;
             overflow-y: auto;
             .slidePreview {
                 color: black;
-                border: 1px solid #ccc;
+                border: 1px solid #cccccc;
                 border-radius: 4px;
                 height: 1.5in;
                 margin: 5px;
@@ -567,7 +591,7 @@ a#name {
         }
         a {
             img {
-                border: 1px solid #ccc;
+                border: 1px solid #cccccc;
             }
         }
         a img:hover, a img:active, a:hover img, a:active img {
@@ -575,7 +599,7 @@ a#name {
         }
         #chat_well {
             margin: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #cccccc;
             background-color: white;
             position: absolute;
             font-size: 10pt;
@@ -598,7 +622,7 @@ a#name {
                 margin: 0;
                 vertical-align: top;
                 padding: 5px;
-                border-bottom: 1px solid #ccc;
+                border-bottom: 1px solid #cccccc;
                 line-height: 10pt;
                 word-wrap: break-word;
                 min-height: 35px;

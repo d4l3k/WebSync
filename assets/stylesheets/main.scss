@@ -32,7 +32,17 @@ footer {
         line-height: 26px;
         color: #7f7f7f;
     }
-    margin-bottom: 50px !important;
+}
+.fork-me {
+    z-index:90000; position: fixed; top: 0; left: 0; border: 0;
+    background-image: url('/img/index/left-green.png');
+    height: 148px;
+    width: 148px;
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.1) {
+  #logo {
+    background-image: url('/img/index/left-green@2x.png');
+  }
 }
 .container-fluid.promo {
     //background-color: #f7f7f9;

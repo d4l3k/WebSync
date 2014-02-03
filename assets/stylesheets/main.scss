@@ -33,6 +33,9 @@ footer {
         color: #7f7f7f;
     }
 }
+nav + .container {
+    margin-top: 65px;
+}
 .fork-me {
     z-index:90000; position: fixed; top: 0; left: 0; border: 0;
     background-image: url('/img/index/left-green.png');
@@ -47,6 +50,7 @@ footer {
 .container-fluid.promo {
     //background-color: #f7f7f9;
     //border-bottom: 1px solid #e1e1e8;
+    margin-top: -15px;
     .row {
         max-width: 1500px;
         margin: 0 auto !important;
@@ -199,6 +203,9 @@ body > .container, body > .container-fluid {
     -------------------------------------------------- */
 
     /* Carousel base class */
+    .carousel {
+        margin-bottom: 15px
+    }
     .carousel .container {
       position: relative;
       z-index: 9;

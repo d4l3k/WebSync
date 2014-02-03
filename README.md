@@ -50,7 +50,7 @@ rackup
 ./backend.js
 ```
 
-This launches the main site on port 4567 and the web socket server on 4568.
+This launches the main site on port 9292 and the web socket server on 4568.
 
 To add an admin type:
 ```
@@ -63,7 +63,28 @@ rake "admin_remove[sample@sample.com]"
 
 Once the site is running you need to go into the admin panel and configure the script groups. Most of these are preconfigured from `config.json`
 
-Production
+Docker Production
+----
+The easiest way to run WebSync (and most secure) is in [Docker](http://www.docker.io/). The first step is to install that by following the instructions on Docker's site.
+
+Second, modify `WebSync/config/personal-docker/config.json` with the production database information. The WebSync container does not include any databases. You need to configure Redis and PostgreSQL seperately.
+
+Then you need to build the docker container with your changes:
+```
+sudo docker build -t websyncpersonal .
+```
+You can then launch WebSync by running:
+```
+sudo docker run -i -p 4567:4567 -p 4568:4568 -t websyncpersonal websync-start
+```
+Or, enter an interactive shell by running:
+```
+sudo docker run -i -p 4567:4567 -p 4568:4568 -t websyncpersonal /bin/bash
+```
+
+The `-p 4567:4567 -p 4568:4568` is the mapping between the containers ports and the servers external ports.
+
+Normal Production
 ----
 
 The production environment is currently setup for use with https://websyn.ca but should be fairly straight forward to setup with anything else.

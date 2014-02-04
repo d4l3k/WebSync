@@ -55,7 +55,6 @@ class User
     property :email, String, :key=>true
     property :password, BCryptHash
     property :group, String, :default=>'user'
-    property :anonymous, Boolean, :default=> false
     has n, :documents
     has n, :changes
     property :config, Json, :default=>{}
@@ -65,7 +64,19 @@ class User
         self.config= n_config
     end
 end
-class AnonymousUser < User; end
+class AnonymousUser 
+    attr_accessor :email, :password, :group, :documents, :changes, :config
+    def initialize
+        @email = "anon@websyn.ca"
+        @group = "anonymous"
+        @documents = []
+        @changes = []
+        @config = {}
+    end
+    def config_set key, value
+        self.config
+    end
+end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 

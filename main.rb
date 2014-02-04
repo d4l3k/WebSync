@@ -96,7 +96,7 @@ class WebSync < Sinatra::Base
             if logged_in?
                 return User.get(session['user'])
             end
-            nil
+            AnonymousUser.new
         end
         def admin_required
             if not admin?
@@ -116,8 +116,8 @@ class WebSync < Sinatra::Base
             end
         end
         def register email, pass
-            email.downcase!
-            if User.get(email).nil?
+            email.downcase!.strip
+            if email != "anon@websyn.ca" and User.get(email).nil?
                 user = User.create({:email=>email,:password=>pass})
                 authenticate email, pass
                 return user
@@ -176,6 +176,25 @@ class WebSync < Sinatra::Base
             response.header['redis'] = 'MISS'
             $redis.setex(tag, 3600, page) if !logged_in?
             return page
+        end
+        def document_auth doc_id=nil
+            doc_id ||= params[:doc]
+            if doc_id.is_a? String
+                doc_id = doc_id.decode62
+            end
+            doc = Document.get doc_id
+            if doc.nil?
+                halt 404
+            end
+            if not doc.public
+                if not logged_in?
+                    redirect "/login?#{env["REQUEST_PATH"]}"
+                elsif doc.user!=current_user
+                    status 403
+                    halt 403
+                end
+            end
+            return doc_id, doc
         end
     end
 
@@ -490,15 +509,7 @@ class WebSync < Sinatra::Base
         pass unless parts.length == 3
         doc = parts[1]
         op = parts[2]
-        doc_id = doc.decode62
-        doc = Document.get doc_id
-        if doc.nil?
-            halt 404
-        end
-        login_required
-        if (!doc.public)&&doc.user!=current_user
-            halt 403
-        end
+        doc_id, doc = document_auth doc
         @javascripts = [
             #'/assets/bundle-edit.js'
         ]

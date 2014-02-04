@@ -55,7 +55,8 @@ define(['websync'],function(edit,websink){ var self = {};
             display_name = user.email;
         }
         display_name = _.escape(display_name);
-        $("#user_list").append('<a target="_blank" id="client_'+client+'" href="https://secure.gravatar.com/'+user.id+'"><img data-toggle="tooltip" data-placement="bottom" title="'+display_name+'" src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d=http://i.imgur.com/xzn2nB0.png"></img></a>').children().last().children().tooltip();
+        var style = user.email == "anon@websyn.ca" ? "mm" : "retro";
+        $("#user_list").append('<a target="_blank" id="client_'+client+'" href="https://secure.gravatar.com/'+user.id+'"><img data-toggle="tooltip" data-placement="bottom" title="'+display_name+'" src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d='+style+'"></img></a>').children().last().children().tooltip();
     }
     $(document).bind('client_leave.Chat',function(e,data){
         console.log("Client leaving",data);
@@ -78,7 +79,8 @@ define(['websync'],function(edit,websink){ var self = {};
             display_name = user.email;
         }
         display_name = _.escape(display_name);
-        $("#chat_well").append('<p><a target="_blank" href="https://secure.gravatar.com/'+user.id+'"><img src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d=http://i.imgur.com/xzn2nB0.png"></img><span>'+display_name+':</span></a> '+_.escape(msg)+'</p>');
+        var style = user.email == "anon@websyn.ca" ? "mm" : "retro";
+        $("#chat_well").append('<p><a target="_blank" href="https://secure.gravatar.com/'+user.id+'"><img src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d='+style+'"></img><span>'+display_name+':</span></a> '+_.escape(msg)+'</p>');
         if(!self.open){
             $("#user_count").addClass("badge-pulse");
         }

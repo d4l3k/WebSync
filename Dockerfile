@@ -49,7 +49,7 @@ ENV HOME /home
 
 
 # Download dependencies
-RUN cd /src; bundle install --deployment; npm install -g
+RUN cd /src; bundle install --deployment; npm install
 
 #USER daemon
 RUN cd /src; rake assets:clean; rake assets:precompile

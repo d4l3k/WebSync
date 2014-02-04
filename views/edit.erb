@@ -9,7 +9,7 @@
 </style>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
         
-      <div class="navbar-header">
+      <div class="navbar-header hidden-xs">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
@@ -24,7 +24,6 @@
 				</ul>
 				<ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
 				</ul>
-                <div id="ribbon_button_active"></div>
 				<ul id="settings" class="nav navbar-nav pull-right ribbon-opt">
 					<li class>
                         <a id="settingsBtn" title="Settings"><i class="fa fa-cog fa-lg"></i></a>
@@ -33,72 +32,72 @@
                         <%= render_login_button %>
                     </li>
 				</ul>
-                <div class="popover fade bottom in settings-popup"><div class="arrow"></div><h3 class="popover-title"><b>Settings</b>
+                <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b>Settings</b>
                     <ul class="nav tab-nav nav-pills">
                         <li class="active" ><a href="#config" data-toggle="tab">Config</a></li>
                         <li><a href="#assets" data-toggle="tab">Assets</a></li>
                         <li><a href="#diffs" data-toggle="tab">Changes</a></li>
                     </ul>
-                <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
-                    <div class="tab-content">
-                        <div class="tab-pane" id="assets">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>URL</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="tab-pane" id="diffs">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Time</th>
-                                        <th>Patch</th>
-                                        <th>User</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="tab-pane active" id="config">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Property</th>
-                                        <th>Global Setting</th>
-                                        <th>Document Setting</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Use spaces instead of tabs</td>
-                                        <td><select class="form-control">
-                                            <option>True</option>
-                                            <option>False</option>
-                                        </select></td>
-                                        <td><div class='input-append'><select class="form-control">
-                                            <option>Use Global</option>
-                                            <option>True</option>
-                                            <option>False</option>
-                                        </select>
-                                        <button class="btn btn-warning">Override</button></div></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="assets">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>URL</th>
+                                            <th>Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="diffs">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Patch</th>
+                                            <th>User</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane active" id="config">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Property</th>
+                                            <th>Global Setting</th>
+                                            <th>Document Setting</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Use spaces instead of tabs</td>
+                                            <td><select class="form-control">
+                                                <option>True</option>
+                                                <option>False</option>
+                                            </select></td>
+                                            <td><div class='input-append'><select class="form-control">
+                                                <option>Use Global</option>
+                                                <option>True</option>
+                                                <option>False</option>
+                                            </select>
+                                            <button class="btn btn-warning">Override</button></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                </div>
 			</div>
-		</div>
+        </div>
 		<div class="ribbon">
 			<div id="File" class="container">
                 <div class="btn-group">

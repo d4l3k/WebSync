@@ -556,13 +556,6 @@ define('websync',{
 			$(this).addClass('active');
 			$('.ribbon .container').hide();
 			$("#"+$(this).text()).show();
-            var offset = $(this).offset();
-            var width = $(this).width();
-            var active_pos = $("#ribbon_button_active").offset().left;
-            var speed = Math.abs(offset.left-active_pos)*2;
-            if(speed>500)
-                speed = 0;
-            $('#ribbon_button_active').animate({left:offset.left,width: width},speed,'linear');
 		});
 		$($('#ribbon_buttons li').get(2)).click();
 	},

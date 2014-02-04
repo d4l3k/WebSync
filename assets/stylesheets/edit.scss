@@ -70,16 +70,6 @@ body .mathquill-rendered-math {
         width: 20px;
         cursor: pointer;
     }
-    #ribbon_button_active {
-        height: 40px;
-        position: absolute;
-        width: 0;
-        background-color: #e5e5e5;
-        background-color: rgba(255, 255, 255, 0.45) !important;
-        -webkit-box-shadow: inset 0 3px 8px rgba(0,0,0,0.125);
-        -moz-box-shadow: inset 0 3px 8px rgba(0,0,0,0.125);
-        box-shadow: inset 0 3px 8px rgba(0,0,0,0.125);
-    }
     #ribbon_buttons {
         li.active>a {
             background-color: transparent !important;
@@ -468,6 +458,8 @@ a#name {
     }
 }
 .ribbon {
+    //padding: 0 30px 5px 30px;
+    //padding: 0 0 5px 0;
 	.input-append, .input-prepend {
 		margin-top: 5px;
 		padding-right: 1px;
@@ -483,6 +475,13 @@ a#name {
     overflow-y: visible;
     .container {
         padding: 0 5px;
+        margin: 0 auto;
+        overflow-y: auto;
+        max-width: 1170px;
+        width: 100%;
+        & > :last-child {
+            margin-right: 5px;
+        }
         white-space: nowrap;
     }
 }
@@ -512,12 +511,45 @@ a#name {
 	position: relative;
 	left: -10px;
 }
+@media (max-width: 767px) {
+    nav.navbar .collapse > * {
+        float: none !important;
+    }
+}
 nav.navbar {
     position: relative;
     border-bottom: 1px solid #cccccc;
     border-color: #cccccc;
+    .navbar-header {
+        float: left;
+    }
     .collapse {
         border-bottom: 1px solid #080808;
+        padding: 0;
+        overflow: hidden;
+        overflow-x: scroll;
+        display: block !important;
+        width: auto;
+        height: 51px;
+        white-space: nowrap;
+        & > * {
+            display: inline-block;
+        }
+    }
+    .navbar-toggle {
+        display: none;
+    }
+    .navbar-nav {
+        float: left;
+        //display: inline-block;
+        margin: 0;
+        li {
+            float: left;
+            a {
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+        }
     }
 }
 .float {
@@ -626,6 +658,9 @@ nav.navbar {
                 line-height: 10pt;
                 word-wrap: break-word;
                 min-height: 35px;
+                &:last-child {
+                    border-bottom: none;
+                }
             }
         }
         .chat_input {

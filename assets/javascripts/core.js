@@ -160,7 +160,10 @@ define('websync',{
                 WebSync.clients = data['users'];
                 var to_trigger = {};
                 $.each(WebSync.clients,function(k,v){
-                    if(!WebSync.users[v.id]){
+                    console.log(k,v);
+                    if(v.email=="anon@websyn.ca"){
+                        WebSync.users[v.id] = { displayName: "Anonymous" };
+                    } else if(!WebSync.users[v.id]){
                         to_trigger[v.id]=[k];
                         $.ajax({
                             url:"https://secure.gravatar.com/"+v.id+".json",
@@ -187,6 +190,10 @@ define('websync',{
                 WebSync.clients[data['id']]=data['user'];
                 var user_id = data['user'].id;
                 var client_id = data['id']
+                console.log("USER INFO",data);
+                if(data['user'].email=="anon@websyn.ca"){
+                    WebSync.users[data['id']] = { displayName: "Anonymous" };
+                } 
                 if(!WebSync.users[data['user'].id]){
                     $.ajax({
                         url:"https://secure.gravatar.com/"+data['user'].id+".json",

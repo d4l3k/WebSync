@@ -75,7 +75,7 @@ wss.on('connection', function(ws) {
                                 users[client_id]={id:user_id,email:email.trim()};
                                 // TODO: Finish reimplementing the rest o' this shiz.
                                 redis.set('doc:'+doc_id+':users',JSON.stringify(users));
-                                redis.publish("doc:"+doc_id, JSON.stringify({type:"client_bounce",client:client_id,data:JSON.stringify({type:"new_user",id:client_id,user:{id:user_id,email:email.strip}})}));
+                                redis.publish("doc:"+doc_id, JSON.stringify({type:"client_bounce",client:client_id,data:JSON.stringify({type:"new_user",id:client_id,user:users[client_id]})}));
                                 ws.send(JSON.stringify({type:'info',user_id:user_id,users:users}))
                                 console.log("[Websocket Client Authed] ID: "+client_id+", Email: "+email);
                             });

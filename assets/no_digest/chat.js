@@ -21,7 +21,8 @@ define(['websync'],function(edit,websink){ var self = {};
         var user_info = WebSync.users[user.id];
         if(client_dom.length>0){
             if(user_info.displayName){
-                client_dom.children().attr('data-original-title',_.escape(user_info.displayName));
+                var display_name = user_info.displayName +' ('+user.email+')';
+                client_dom.children().attr('data-original-title',_.escape(display_name));
             }
         } else {
             self.addUser(client);
@@ -51,10 +52,12 @@ define(['websync'],function(edit,websink){ var self = {};
         var user = WebSync.clients[client];
         var user_info = WebSync.users[user.id];
         var display_name = user_info.displayName;
-        if(!display_name){
+        if(!display_name)
             display_name = user.email;
-        }
+        else 
+            display_name += ' ('+user.email+')'
         display_name = _.escape(display_name);
+        console.log(user);
         var style = user.email == "anon@websyn.ca" ? "mm" : "retro";
         $("#user_list").append('<a target="_blank" id="client_'+client+'" href="https://secure.gravatar.com/'+user.id+'"><img data-toggle="tooltip" data-placement="bottom" title="'+display_name+'" src="https://secure.gravatar.com/avatar/'+user.id+'?size=38&d='+style+'"></img></a>').children().last().children().tooltip();
     }

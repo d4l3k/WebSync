@@ -4,6 +4,9 @@
 	outline: none;
 	border: none;
 }
+html, body {
+    height: 100%;
+}
 @media (max-width: 979px) {
     .menu .navbar {
         ul li>a {
@@ -25,6 +28,18 @@ footer {
 }
 .row {
     margin: 0 !important;
+}
+.feature-head {
+    text-align: center;
+    padding: 30px;
+    background-color: white;
+    margin-top: -15px;
+    margin-bottom: 15px;
+    & > * {
+        margin: 0;
+        padding: 0;
+        font-size: 2em;
+    }
 }
 .row.features {
     span {
@@ -49,7 +64,7 @@ nav + .container {
   }
 }
 .container-fluid.promo {
-    //background-color: #f7f7f9;
+    background-color: #f1f1f1;
     //border-bottom: 1px solid #e1e1e8;
     margin-top: -15px;
     .row {
@@ -397,8 +412,27 @@ body > .container, body > .container-fluid {
     }
 /* Quick links on Home */
 .carousel-inner {
-    background-image: url("/img/banner.png");
+    background: #1c1c1e url("/img/banner.png") 50% 0 no-repeat fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
     background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
 }
+.forest {
+    width: 100%;
+    background: #1c1c1e url("/img/forest.png") 50% 100% no-repeat fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 500px;
+    overflow: hidden;
+    .phone {
+        height: 800px;
+        float: right;
+    }
+    iframe {
+        float: right;
+    }
+}
+

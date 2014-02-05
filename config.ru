@@ -1,4 +1,4 @@
-require './main'
+require './lib/main'
 =begin
 map '/assets' do
     environment = Sprockets::Environment.new

@@ -40,7 +40,7 @@ module AssetPipeline
     end
 end
 ENV["CONFIGMODE"] = "y"
-require './main'
+require './lib/main'
 AssetPipeline::Task.define! WebSync
 
 namespace :admin do

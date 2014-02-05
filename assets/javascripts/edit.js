@@ -88,7 +88,7 @@ define("edit",['websync'],function(websync){ var self = {};
         document.execCommand('hiliteColor', false, this.value);
     });
     // Reflects text in menu at top
-    $(".content_well").bind('selectionchange.TextEdit',function(){
+    $(document).bind('selectionchange.TextEdit',function(){
         if(!self._selectTimeout){
             self._selectTimeout = setTimeout(self.selectHandler,200);
         }
@@ -161,6 +161,8 @@ define("edit",['websync'],function(websync){ var self = {};
         }
     }
     self.rgb_to_hex = function(rgb){
+        console.log(rgb);
+        if(rgb == "rgba(0, 0, 0, 0)") return "#FFFFFF";
         if(rgb.indexOf('rgba')!=-1){
             //return '#000000';
         }
@@ -173,7 +175,7 @@ define("edit",['websync'],function(websync){ var self = {};
     }
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
-    this.disable = function(){
+    self.disable = function(){
 		var elem = $("#Text").remove();
 		WebSync.updateRibbon();
 		$("*").unbind(".TextEdit");
@@ -181,10 +183,10 @@ define("edit",['websync'],function(websync){ var self = {};
     }
     // Function: void [plugin=TextEdit].selectHandler();
     // Handling function for displaying accurate information about text in ribbon.
-    this.selectHandler = function(){
+    self.selectHandler = function(){
 		var style = WebSync.getCss();
-		$("#fontColor")[0].value = rgb_to_hex(style.color);
-        $("#hilightColor")[0].value = rgb_to_hex(style.backgroundColor);
+		$("#fontColor")[0].value = self.rgb_to_hex(style.color);
+        $("#hilightColor")[0].value = self.rgb_to_hex(style.backgroundColor);
         $('#font_size').val(Math.round(parseInt(style.fontSize)*(0.75))+"pt");
 
 		self.text_buttons.forEach(function(elem){

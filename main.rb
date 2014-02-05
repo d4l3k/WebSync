@@ -156,6 +156,7 @@ class WebSync < Sinatra::Base
                return '<a href="/login" title="Sign In"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> Sign In</span></a>'
             end
         end
+=begin
         def is_cached
             if ENV["RACK_ENV"]=="development"
                 return
@@ -170,12 +171,32 @@ class WebSync < Sinatra::Base
               return page
             end
         end
-        def set_cache(page)
+        def set_cache(page, time: 3600)
             etag Digest::SHA1.hexdigest(page)
             tag = "url:#{request.url}"
             response.header['redis'] = 'MISS'
-            $redis.setex(tag, 3600, page) if !logged_in?
+            $redis.setex(tag, time, page) if !logged_in?
             return page
+        end
+=end
+        def cache time: 3600, &block
+            if ENV["RACK_ENV"]=="development"
+                return yield
+            end
+            tag = "url:#{request.url}"
+            page = $redis.get(tag)
+            if page
+                etag Digest::SHA1.hexdigest(page)
+                ttl = $redis.ttl(tag)
+                response.header['redis-ttl'] = ttl.to_s
+                response.header['redis'] = 'HIT'
+            else
+                page = yield
+                etag Digest::SHA1.hexdigest(page)
+                response.header['redis'] = 'MISS'
+                $redis.setex(tag, time, page)
+                return page
+            end
         end
         def document_auth doc_id=nil
             doc_id ||= params[:doc]
@@ -227,17 +248,18 @@ class WebSync < Sinatra::Base
         sprockets.append_path File.join(root, 'assets', 'javascripts')
         sprockets.append_path File.join(root, 'assets', 'no_digest')
     end
-
+    get '/public' do
+        cache time: 30 do
+            erb :public
+        end
+    end
     get '/login' do
         if !logged_in?
             # Cache the page if there is no URL redirect after login.
             if request.query_string == ""
-                html = is_cached
-                if html
-                    return html
+                cache do
+                    erb :login
                 end
-                html = erb :login
-                set_cache html
             else
                 erb :login
             end
@@ -298,16 +320,15 @@ class WebSync < Sinatra::Base
         if logged_in?
             erb :file_list
         else
-            html = is_cached
-            if html
-                return html
+            cache do
+                erb :index
             end
-            html = erb :index
-            set_cache html
         end
     end
     get '/documentation' do
-        erb :documentation
+        cache do
+            erb :documentation
+        end
     end
     get '/admin' do
         admin_required
@@ -408,7 +429,9 @@ class WebSync < Sinatra::Base
     end
     get '/upload' do
         login_required
-        erb :upload
+        cache do
+            erb :upload
+        end
     end
     post '/upload' do
         login_required

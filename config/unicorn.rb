@@ -2,6 +2,8 @@
 # note the trailing slash in this example
 @dir = "./"
 
+ENV["RACK_ENV"] = "production"
+
 worker_processes 4
 working_directory @dir
 

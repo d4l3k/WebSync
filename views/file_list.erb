@@ -1,69 +1,11 @@
 <%= erb :nicehead %>
 <div class="container">
     <div class="row">
-        <div class="col-md-10">
-            <div class="ad link">
-                <script type="text/javascript"><!--
-                google_ad_client = "ca-pub-6781356745519353";
-                /* WebSync Link Ad */
-                google_ad_slot = "7740799799";
-                google_ad_width = 728;
-                google_ad_height = 15;
-                //-->
-                </script>
-                <script type="text/javascript"
-                src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-                </script>
-            </div>
-            <table class="table table-bordered table-hover table-click">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Owner</th>
-                        <th>Last Modified</th>
-                        <th style="width: 1px">Actions</th>
-                </thead>
-                <tbody>
-                    <% Document.all.each do |doc| %>
-                        <%
-                            color = 'error'
-                            if doc.user==current_user
-                                color = 'success'
-                            elsif doc.public
-                                color = 'info'
-                            end
-                        %>
-                        <tr class="<%= color %>">
-                            <td><a href="/<%= doc.id.encode62 %>/edit"><%= h(doc.name) %></a></td>
-                            <td><%= doc.user==current_user ? "You" : h(doc.user.email) %></td>
-                            <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
-                            <% if doc.user==current_user %>
-                                <td>
-                                    <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
-                                </td>
-                            <% end %>
-                        </tr>
-                    <% end %>
-                </tbody>
-            </table>
+        <div class="col-md-12">
+            <%= erb :file_partial %>
             <p>
                 <i>Works with Chrome, Firefox, Opera, and other modern browsers.</i>
             </p>
-        </div>
-        <div class="span2">
-            <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-6781356745519353";
-            /* WebSync Index */
-            //google_ad_slot = "7880400590";
-            //google_ad_slot = "9357133790";
-            google_ad_slot = "1833866998";
-            google_ad_width = 160; //(window.innerWidth-960)/2;
-            google_ad_height = 600;
-            //-->
-            </script>
-            <script type="text/javascript"
-            src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-            </script>
         </div>
     </div>
 </div>

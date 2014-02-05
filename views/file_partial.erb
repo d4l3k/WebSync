@@ -1,0 +1,58 @@
+<%
+user ||= current_user
+
+sort = "recent"
+sort_modes = %w(owner name recent)
+invert = false
+request.params.each do |k, v|
+    if sort_modes.include? k
+        sort = k
+    elsif k == "invert"
+        invert = true
+    end
+end
+options = {}
+order = :last_edit_time
+order = :name if sort == "name"
+order = :user_email if sort == "owner"
+sort_up = !invert
+sort_up = invert if sort=="recent"
+options[:order] = [sort_up ? order.asc : order.desc]
+docs = Document.all({public: true}.merge(options)) if defined?(shared) and shared
+docs ||= user.documents options
+
+
+headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent" }
+
+%>
+<table class="table table-bordered table-hover table-click">
+    <thead>
+        <tr>
+            <% headers.each do |title, url| 
+                
+            %>
+                <th><a href="?<%= url + ( (invert or sort != url) ? "" : "&invert" )%>">
+                    <%= title %>
+                    <% if sort == url %>
+                        <i class="fa fa-sort-<%= !sort_up ? "asc" : "desc" %>"></i>
+                    <% end %>
+                </a></th>
+            <% end %>
+            <th style="width: 1px">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% docs.each do |doc| %>
+            <tr>
+                <td><a href="/<%= doc.id.encode62 %>/edit"><%= h(doc.name) %></a></td>
+                <td><%= doc.user==current_user ? "You" : h(doc.user.email) %></td>
+                <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
+                <% if doc.user==current_user %>
+                    <td>
+                        <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
+                    </td>
+                <% end %>
+            </tr>
+        <% end %>
+    </tbody>
+</table>

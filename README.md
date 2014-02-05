@@ -18,15 +18,7 @@ Features
 
 TODO
 ----
-I'm in the process of switching over to [Waffle.IO](https://waffle.io/d4l3k/WebSync). However, grepping through the source code is a good way to find things that need to be done, but here's a list of a few major things.
-* Revert change previews
-* Anonymous Users
-* Better document sharing & permissions
-* Zooming with regards to tables and resizing.
-* Easier first-time deployment with automatic script group creation.
-* Absolutely positioned images & tables
-* Better documentation
-* Redesign website to be a little more unique.
+WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing GitHub issues, so you can just look at those instead.
 
 Dependencies
 ----
@@ -54,11 +46,11 @@ This launches the main site on port 9292 and the web socket server on 4568.
 
 To add an admin type:
 ```
-rake "admin_add[sample@sample.com]"
+rake "admin:add[sample@sample.com]"
 ```
 and to remove:
 ```
-rake "admin_remove[sample@sample.com]"
+rake "admin:remove[sample@sample.com]"
 ```
 
 Once the site is running you need to go into the admin panel and configure the script groups. Most of these are preconfigured from `config.json`

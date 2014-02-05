@@ -1,6 +1,6 @@
 <div class='container'>
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-6">
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Sign In</h3>
@@ -37,56 +37,43 @@
 </div>
 </div>
 
-<div class="col-md-5">
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Register</h3>
-  </div>
-  <div class="panel-body">
-  <form class="form-horizontal" action='register' method='post'>
-    <input type="hidden" name="redirect" value="<%= env["QUERY_STRING"] %>">
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="email">Email</label>
-    <div class="col-sm-10">
-      <input class="form-control" type="text" name='email' id="email" placeholder="Email">
+<div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Register</h3>
+      </div>
+      <div class="panel-body">
+      <form class="form-horizontal" action='register' method='post'>
+        <input type="hidden" name="redirect" value="<%= env["QUERY_STRING"] %>">
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="email">Email</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" name='email' id="email" placeholder="Email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="password">Password</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="password" name='password' id="password" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <label class="checkbox">
+            <input type="checkbox"> Remember me
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">Register</button>
+        </div>
+      </div>
+    </form>
     </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="password">Password</label>
-    <div class="col-sm-10">
-      <input class="form-control" type="password" name='password' id="password" placeholder="Password">
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <label class="checkbox">
-        <input type="checkbox"> Remember me
-      </label>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Register</button>
-    </div>
-  </div>
-</form>
-</div></div>
 </div>
-        <div class="col-md-2">
-            <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-6781356745519353";
-            /* WebSync Index */
-            //google_ad_slot = "7880400590";
-            //google_ad_slot = "9357133790";
-            google_ad_slot = "1833866998";
-            google_ad_width = 160; //(window.innerWidth-960)/2;
-            google_ad_height = 600;
-            //-->
-            </script>
-            <script type="text/javascript"
-            src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-            </script>
-    </div>
+</div>
+    <%= erb :banner_ad %>
 
 </div>
 </div>

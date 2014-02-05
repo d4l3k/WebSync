@@ -136,6 +136,9 @@ define('websync',{
 			else if(data.type=="name_update"){
 				$("#name").text(data.name);
 			}
+            else if(data.type=='ping'){
+                WebSync.connection.sendJSON({type: 'ping'});
+            }
             else if(data.type=='config'){
                 if(data.action=='get'){
                     if(data.property=='public'){
@@ -421,7 +424,9 @@ define('websync',{
     setZoom: function(zoom){
         WebSync.zoom = zoom;
         $('#zoom_level').data("slider").setValue(zoom*100)
-        $(".content_container").css({"transform":"scale("+zoom+")"});
+        var container = $(".content_container");
+        container.css({"transform":"scale("+zoom+")"});
+        WebSync.updateOrigin();
         $(document).trigger("zoom");
     },
     urlChange: function(){
@@ -585,6 +590,23 @@ define('websync',{
         $(".arrow").offset({left:$("#settingsBtn").parent().offset().left+13});
         $(".settings-popup .popover-content").css({maxHeight:window.innerHeight-$(".settings-popup").offset().top-100});
         WebSync.updateRibbon();
+        WebSync.updateOrigin();
+    },
+    // Function: void WebSync.updateOrigin();
+    // Changes the transform origin based on the content_container dimensions.
+    updateOrigin: function(){
+        var container = $(".content_container");
+        if(container.width() > container.parent().width() || container.parent().get(0) && container.parent().get(0).scrollWidth > container.parent().width()){
+            container.addClass("left");
+            // TODO: Center zoomed out
+            /*var side = container.parent().width() - container.width()*WebSync.zoom;
+            if(side > 0){
+                container.css({"margin-left":  side/2});
+            }*/
+        } else {
+            container.removeClass("left");
+            container.css({"margin-left":  "auto"});
+        }
     },
     // Function: void WebSync.checkDiff();
     // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
@@ -608,6 +630,16 @@ define('websync',{
             //WebSync.oldData = JSON.parse(stringWebSync);
         }
 	},
+    // Function: inte WebSync.selectionWordCount();
+    // Calculates the word count in the current selection.
+    selectionWordCount: function(){
+        return rangy.getSelection().toString().split(/\s+/).length
+    },
+    // Function: int WebSync.wordCount(jQuery node);
+    // Calculates the word count.
+    wordCount: function(node){
+        return $(node).text().split(/\s+/).length
+    },
     // Function: void WebSync.insertAtCursor(jQuery node);
     // Inserts a DOM element at selection cursor. This is probably going to be deprecated.
 	insertAtCursor: function(node) {

@@ -29,6 +29,7 @@ wss.on('connection', function(ws) {
         var doc_id = Base62.decode(parts[1]);
         console.log('Connection! (Document: '+doc_id+')');
         var authenticated = false;
+        var responded = true;
         var redis_sock, client_id, user_email;
         ws.sendJSON({type:'connected'});
         ws.on('message', function(message) {
@@ -53,7 +54,9 @@ wss.on('connection', function(ws) {
                             }
                         });
                         redis_sock.subscribe('doc:'+doc_id);
-                        ws.on('close',function(ws) {
+                        var close = function(){
+                            clearInterval(interval);
+                            ws.close();
                             redis_sock.quit();
                             redis.get('doc:'+doc_id+':users',function(err,reply){
                                 var users = JSON.parse(reply);
@@ -61,7 +64,16 @@ wss.on('connection', function(ws) {
                                 redis.set('doc:'+doc_id+':users',JSON.stringify(users));
                                 redis.publish("doc:"+doc_id, JSON.stringify({type:"client_bounce",client:client_id,data:JSON.stringify({type:"exit_user",id:client_id})}));
                             });
-                        });
+                        }
+                        var interval = setInterval(function(){
+                            if(!responded)
+                                close();
+                            else {
+                                responded = false;
+                                ws.sendJSON({type: 'ping'});
+                            }
+                        }, 30*1000);
+                        ws.on('close', close);
                         redis.expire('websocket:id:'+client_id,60*60*24*7);
                         redis.expire('websocket:key:'+client_id,60*60*24*7);
                         redis.get('websocket:id:'+data.id, function(err,email){
@@ -116,6 +128,8 @@ wss.on('connection', function(ws) {
                             });
                         });
                     });
+                } else if(data.type=='ping'){
+                    responded = true;
                 } else if(data.type=='config'){
                     if(data.action=="get"){
                         postgres.query("SELECT config, public FROM documents WHERE id = $1",[doc_id])

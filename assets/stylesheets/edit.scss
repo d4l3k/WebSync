@@ -180,7 +180,6 @@ nav .settings-popup {
     border-color: #f89406 #f89406 #ad6704 !important;
 }
 .content_well {
-	//padding-top: 0.1in;
     background-color: #eee !important;
     background-image: linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
     background-image: -o-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
@@ -225,14 +224,13 @@ nav .settings-popup {
 .layout-presentation {
     //box-shadow: 0 0 8px #aaa;
     #slides {
-        @include ex(transform-origin, top center);
         display: table;
         margin: 0 auto;
     }
     .slide {
         height: 6in;
         width: 8in;
-        margin: 0.1in auto;
+        margin: 0 auto;
         padding: 20px;
         border: 1px solid #aaa;
         border-radius: 4px;
@@ -285,7 +283,7 @@ nav .settings-popup {
         position:fixed;
     }
 }
-.content-page {
+.content-page .content_container {
 	min-height: 9in;
 	width: 8.5in;
 	padding: 1in;
@@ -417,7 +415,11 @@ a#name {
 .content {
     position: relative;
     text-align: initial;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
     display: inline-block;
+    margin-bottom: -15px;
 	table {
         @include ex(user-modify, read-only);
 	}
@@ -472,11 +474,18 @@ a#name {
     .btn+.btn-group {
         margin-left: 5px !important;
     }
-    overflow-y: visible;
+    overflow-y: auto;
     .container {
+        .btn-group {
+            position: initial;
+            .dropdown-menu {
+                top: 94%;
+                left: initial;
+            }
+        }
         padding: 0 5px;
         margin: 0 auto;
-        overflow-y: auto;
+        overflow-y: visible;
         max-width: 1170px;
         width: 100%;
         & > :last-child {
@@ -526,8 +535,7 @@ nav.navbar {
     .collapse {
         border-bottom: 1px solid #080808;
         padding: 0;
-        overflow: hidden;
-        overflow-x: scroll;
+        overflow: auto;
         display: block !important;
         width: auto;
         height: 51px;
@@ -739,6 +747,14 @@ nav.navbar {
         cursor: se-resize;
     }
 }
+.content_container {
+    @include ex(transform-origin, top center);
+    padding: 5px;
+    padding-top: 0.1in;
+    &.left {
+        @include ex(transform-origin, top left);
+    }
+}
 .content-note {
     height: 100%;
     left: 252px;
@@ -749,11 +765,7 @@ nav.navbar {
         height: 100%;
     }
     .content_container {
-        transform-origin: top left;
-        -moz-transform-origin: top left;
-        -webkit-transform-origin: top left;
-        -o-transform-origin: top left;
-        -ms-transform-origin: top left;
+        @include ex(transform-origin, top left);
     }
     .note-page {
         position: relative;

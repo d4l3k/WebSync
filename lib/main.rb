@@ -235,6 +235,8 @@ class WebSync < Sinatra::Base
         set :assets_precompile_no_digest, no_digest
     end
     configure do
+        set :public_folder, File.dirname(__FILE__) + '/../public'
+        set :views, File.dirname(__FILE__)+"/../views"
         use Rack::Session::Cookie, :expire_after => 60*60*24*7, :secret => $config['session_secret']
         enable :sessions
         set :session_secret, $config['session_secret']

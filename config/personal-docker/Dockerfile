@@ -1,7 +1,4 @@
 FROM d4l3k/websync:latest
-MAINTAINER Tristan Rice, rice@outerearth.net
-
-USER root
 
 ADD . /config
 

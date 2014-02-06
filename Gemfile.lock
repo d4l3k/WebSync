@@ -18,6 +18,8 @@ GEM
     bcrypt-ruby (3.1.2)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    childprocess (0.4.0)
+      ffi (~> 1.0, >= 1.0.11)
     closure-compiler (1.1.10)
     coderay (1.1.0)
     coffee-script (2.2.0)
@@ -78,6 +80,7 @@ GEM
     eventmachine (1.0.3)
     execjs (2.0.2)
     fastercsv (1.5.5)
+    ffi (1.9.3)
     ffi2-generators (0.1.1)
     hike (1.2.3)
     hiredis (0.4.5)
@@ -317,7 +320,13 @@ GEM
     rubysl-xmlrpc (2.0.0)
     rubysl-yaml (2.0.4)
     rubysl-zlib (2.0.1)
+    rubyzip (1.1.0)
     sass (3.2.14)
+    selenium-webdriver (2.39.0)
+      childprocess (>= 0.2.5)
+      multi_json (~> 1.0)
+      rubyzip (~> 1.0)
+      websocket (~> 1.0.4)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -344,6 +353,7 @@ GEM
       rack
       raindrops (~> 0.7)
     uuidtools (2.1.4)
+    websocket (1.0.7)
     yui-compressor (0.12.0)
 
 PLATFORMS
@@ -368,6 +378,7 @@ DEPENDENCIES
   redis
   rubysl
   sass
+  selenium-webdriver
   sinatra
   sinatra-asset-pipeline!
   thin

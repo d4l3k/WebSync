@@ -27,3 +27,6 @@ group :production do
     gem 'yui-compressor'
     gem 'closure-compiler'
 end
+group :test do
+    gem 'selenium-webdriver'
+end

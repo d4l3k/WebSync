@@ -473,6 +473,7 @@ define('websync',{
             $("nav").animate({top: 0},200);
             $(".content_well, .sidebar").animate({top: 94}, 200);
         }
+        $(document).trigger("viewmode");
     },
 	setupWebRTC: function(){
 		if(WebSync.createPeerConnection()){
@@ -597,7 +598,7 @@ define('websync',{
     // Changes the transform origin based on the content_container dimensions.
     updateOrigin: function(){
         var container = $(".content_container");
-        if(container.width() > container.parent().width() || container.parent().get(0) && container.parent().get(0).scrollWidth > container.parent().width()){
+        if(container.width() > container.parent().width() || container.parent().get(0) && container.parent().get(0).scrollWidth -2 > container.parent().width()){
             container.addClass("left");
             // TODO: Center zoomed out
             /*var side = container.parent().width() - container.width()*WebSync.zoom;

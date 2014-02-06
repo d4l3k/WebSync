@@ -1,2 +1,2 @@
-sudo docker pull d4l3k/websync
-sudo docker build -t websyncpersonal .
+docker pull d4l3k/websync
+docker build -t websyncpersonal .

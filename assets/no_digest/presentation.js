@@ -3,12 +3,27 @@ define("/assets/presentation.js",['websync'], function(websync) { var self = {};
     $(".content").hide().fadeIn();
     $("body").addClass("layout-presentation");
     $(".content").append($('<div id="slides" class="content_container"></div>'));
-    $('body').append($('<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button">Add Slide</button> <button id="remSlide" class="btn btn-danger" type="button">Delete Slide</button><div id="slideView" class="slideWell"></div></div>'));
+    $('body').append($('<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button"><i class="fa fa-plus fa-lg"></i></button> <button id="remSlide" class="btn btn-danger" type="button"><i class="fa fa-lg fa-trash-o"></i></button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="slideView" class="slideWell"></div></div>'));
     $('#presentation-nav').css({left: 0});
     $("#addSlide").click(function(){
         $(".slide.active").removeClass('active');
         $("<div class='slide active'></div>").appendTo($('#slides'));
         self.updateMenu();
+    });
+    var hidden = false;
+    $("#presentation-nav .toggle-sidebar").click(function(){
+        var pos = -240;
+        var button_pos = -47
+        if(hidden){
+            pos = 0;
+            button_pos = 5;
+        }
+        $(this).animate({right: button_pos});
+        $("#presentation-nav").animate({left: pos});
+        $(".content_well").animate({left: pos+240}, function(){
+            $(document).trigger("resize");
+        });
+        hidden = !hidden;
     });
     $("#remSlide").click(function(){
         var prev = $(".slide.active").prev();

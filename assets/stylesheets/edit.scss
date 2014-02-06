@@ -616,6 +616,11 @@ nav.navbar {
                 }
             }
         }
+        .toggle-sidebar {
+            position: absolute;
+            float: right;
+            right: 5px;
+        }
     }
     &#chat {
         position: fixed;

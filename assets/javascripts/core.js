@@ -552,8 +552,9 @@ define('websync',{
     // This updates the ribbon buttons based on the content in the ribbon bar. TODO: Use registration system & persist menu between updates.
 	updateRibbon: function(){
 		var menu_buttons = "";
+        var active = $("#ribbon_buttons .active").text();
 		$(".ribbon .container").each(function(elem){
-			menu_buttons += '<li><a>'+this.id+'</a></li>'
+			menu_buttons += '<li'+(this.id==active ? ' class="active"': "")+'><a>'+this.id+'</a></li>'
 		});
 		$('#ribbon_buttons').html(menu_buttons);
 		$('#ribbon_buttons li').click(function(e){
@@ -562,7 +563,7 @@ define('websync',{
 			$('.ribbon .container').hide();
 			$("#"+$(this).text()).show();
 		});
-		$($('#ribbon_buttons li').get(2)).click();
+		if(active=="") $('#ribbon_buttons li:contains(Text)').click();
 	},
     // Function: void WebSync.loadScripts();
     // Checks server for plugin scripts to load.

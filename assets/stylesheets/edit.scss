@@ -573,21 +573,23 @@ nav.navbar {
     background-color: #eee;
     border-left: 1px solid #cccccc;
     border-right: 1px solid #cccccc;
+    .toggle-sidebar {
+        position: absolute;
+        float: right;
+        right: 5px;
+    }
     &#presentation-nav {
-        width: 240px;
         float: left;
         left: 0;
         padding: 5px;
-        .slideWell {
+        .slideWell {/*
             position: absolute;
-            top: 45px;
+            top: 43px;
             left: 5px;
             right: 5px;
-            bottom: 5px;
-            border: 1px solid #cccccc;
-            background-color: white;
-            font-size: 10pt;
-            border-radius: 4px;
+            bottom: 5px;*/
+            margin-top: 5px;
+            min-height: 1in;
             overflow-y: auto;
             .slidePreview {
                 color: black;
@@ -616,12 +618,28 @@ nav.navbar {
                 }
             }
         }
-        .toggle-sidebar {
-            position: absolute;
-            float: right;
-            right: 5px;
-        }
     }
+    &#note-nav {
+        float: left;
+        left: 0px;
+        padding: 5px;
+        #notesView {
+            margin-top: 5px;
+            padding: 8px 0;
+            a {
+                cursor: pointer;
+            }
+            ul {
+                ul {
+                    margin-left: -20px;
+                    margin-right: 0px;
+                    a {
+                        padding-left: 30px;
+                    }
+                }
+            }
+        }
+}
     &#chat {
         position: fixed;
         #user_list{
@@ -760,43 +778,47 @@ nav.navbar {
         @include ex(transform-origin, top left);
     }
 }
-.content-note {
-    height: 100%;
-    left: 252px;
-    right: 0px;
-    position: absolute;
-    #note-well, .note-page, .note-section {
-        width: 100%;
-        height: 100%;
-    }
-    .content_container {
-        @include ex(transform-origin, top left);
-    }
-    .note-page {
-        position: relative;
-        .note-title {
-            position: relative;
-            left: 20px;
-            top: 20px;
-            min-height: 32pt;
-            line-height: 32pt;
-            min-width: 250px;
-            font-size: 24pt;
-
-            border-left: none;
-            border-bottom: 1px solid #666;
-            background-color: transparent;
-        }
-        section {
-            min-height: 16px;
-            padding: 8px;
-            width: 250px;
+.layout-note {
+    .content_well {
+        left: 252px;
+        .content {
+            height: 100%;
+            right: 0px;
             position: absolute;
-            display: inline-block;
-            background-color: #f5f5f5;
-            border-left: 3px solid #666;
-            &[contenteditable=true] {
-                outline: 1px dashed #aaa;
+            #note-well, .note-page, .note-section {
+                width: 100%;
+                height: 100%;
+            }
+            .content_container {
+                @include ex(transform-origin, top left);
+            }
+            .note-page {
+                position: relative;
+                .note-title {
+                    position: relative;
+                    left: 20px;
+                    top: 20px;
+                    min-height: 32pt;
+                    line-height: 32pt;
+                    min-width: 250px;
+                    font-size: 24pt;
+
+                    border-left: none;
+                    border-bottom: 1px solid #666;
+                    background-color: transparent;
+                }
+                section {
+                    min-height: 16px;
+                    padding: 8px;
+                    width: 250px;
+                    position: absolute;
+                    display: inline-block;
+                    background-color: #f5f5f5;
+                    border-left: 3px solid #666;
+                    &[contenteditable=true] {
+                        outline: 1px dashed #aaa;
+                    }
+                }
             }
         }
     }
@@ -826,30 +848,6 @@ ul.nav.nav-list {
 }
 .open {
     z-index: 10;
-}
-#note-nav {
-    left: 0px;
-    & > * {
-        margin: 5px 5px 0;
-    }
-    button + button {
-        margin-left: 0px;
-    }
-    #notesView {
-        padding: 8px 0;
-        a {
-            cursor: pointer;
-        }
-        ul {
-            ul {
-                margin-left: -20px;
-                margin-right: 0px;
-                a {
-                    padding-left: 30px;
-                }
-            }
-        }
-    }
 }
 .badge-pulse {
     @include ex(animation-duration, 1s);

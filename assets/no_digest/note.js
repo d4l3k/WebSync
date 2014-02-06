@@ -1,10 +1,26 @@
 // WebSync: Notebook layout handler
 define("/assets/note.js",['websync'], function(websync) { var self = {};
     $(".content").hide().addClass("content-note").fadeIn();
+    $("body").addClass("layout-note");
     $(".content_well").attr("style","background-color: white !important; background-image:none;");
     $("body").append('<div id="context-menu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#">Rename</a></li><li><a tabindex="-1" href="#">Delete</a></li></ul></div>');
     $(".content").append($('<div id="note-well" class="content_container"></div>'));
-    $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn btn-default" type="button">Add Section</button><button id="addPage" class="btn btn-default" type="button">Add Page</button><div id="notesView" class="panel panel-default"></div></div>'));    
+    $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Section</button> <button id="addPage" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Page</button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="notesView" class="panel panel-default"></div></div>'));    
+    var hidden = false;
+    $("#note-nav .toggle-sidebar").click(function(){
+        var pos = -250;
+        var button_pos = -47
+        if(hidden){
+            pos = 0;
+            button_pos = 5;
+        }
+        $(this).animate({right: button_pos});
+        $("#note-nav").animate({left: pos});
+        $(".content_well").animate({left: pos+250}, function(){
+            $(document).trigger("resize");
+        });
+        hidden = !hidden;
+    });
     self.updateNav = function(){
         var html = "<ul class='nav nav-list'>";
         var active_section = $(".note-section:visible")[0];

@@ -8,8 +8,8 @@ describe "Complete Test" do
         password = (rand*10**50).to_i.encode62
         driver.navigate.to "http://localhost:9292"
         # TODO: Test registration.
-        User.all(email: 'test@websyn.ca').documents.destroy!
-        User.all(email: 'test@websyn.ca').destroy!
+        assert User.all(email: 'test@websyn.ca').documents.destroy!
+        assert User.all(email: 'test@websyn.ca').destroy!
         user = User.first_or_create(email: 'test@websyn.ca', password: password)
         driver.find_element(:partial_link_text, 'Sign In').click
         
@@ -33,9 +33,8 @@ describe "Complete Test" do
         driver.find_element(:css, "#ribbon_buttons a").click
         driver.find_element(:css, "[href='delete']").click
         assert User.all(email: 'test@websyn.ca').documents.length == 0, "Document failed to be deleted."
-        User.all(email: 'test@websyn.ca').documents.destroy!
-        User.all(email: 'test@websyn.ca').destroy!
-
+        assert User.all(email: 'test@websyn.ca').documents.destroy!
+        assert User.all(email: 'test@websyn.ca').destroy!
         driver.quit
     end
 end

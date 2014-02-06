@@ -74,7 +74,7 @@ define("edit",['websync'],function(websync){ var self = {};
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
-    $("#File").append('<button id="word_count" class="Text btn btn-default" title="View Word Count" data-toggle="tooltip"><i class="fa fa-eye"></i> Word Count</button>');
+    $("#public_mode").after('<button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
     self.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
             document.execCommand(elem);
@@ -86,7 +86,7 @@ define("edit",['websync'],function(websync){ var self = {};
         var table = $("#word_count_info");
         var popover = table.parent().parent();
         popover.css({"max-width": 500, "z-index": 10000});
-        popover.children(".popover-title").remove();
+        table.parent().css({padding: 0});
         popover.children(".popover-content").html();
         var text = $(".content_container").text();
         var seltext = rangy.getSelection().toString();;
@@ -109,8 +109,8 @@ define("edit",['websync'],function(websync){ var self = {};
     }).on('hide.bs.popover',function(e){
         live_update = false;
     }).popover({placement: "bottom", html: true, container: 'body',
-        content: "<table id='word_count_info' class='table'><thead><tr><th></th><th>Document</th><th>Selection</th></tr></thead><tbody><tr><th>Word Count</th><td></td><td></td></tr><tr><th>Characters</th><td></td><td></td></tr><tr><th>Characters (without spaces)</th><td></td><td></td></tr></tbody></table>"
-    });
+        content: "<table id='word_count_info' class='table' style='margin: 0'><thead><tr><th></th><th>Document</th><th>Selection</th></tr></thead><tbody><tr><th>Words</th><td></td><td></td></tr><tr><th>Characters</th><td></td><td></td></tr><tr><th>... (no spaces)</th><td></td><td></td></tr></tbody></table>"
+    }).popover('show').popover('hide');
     $("#fontColor").change(function(e){
         document.execCommand('foreColor', false, this.value);
     });

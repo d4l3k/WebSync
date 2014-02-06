@@ -630,16 +630,6 @@ define('websync',{
             //WebSync.oldData = JSON.parse(stringWebSync);
         }
 	},
-    // Function: inte WebSync.selectionWordCount();
-    // Calculates the word count in the current selection.
-    selectionWordCount: function(){
-        return rangy.getSelection().toString().split(/\s+/).length
-    },
-    // Function: int WebSync.wordCount(jQuery node);
-    // Calculates the word count.
-    wordCount: function(node){
-        return $(node).text().split(/\s+/).length
-    },
     // Function: void WebSync.insertAtCursor(jQuery node);
     // Inserts a DOM element at selection cursor. This is probably going to be deprecated.
 	insertAtCursor: function(node) {

@@ -7,7 +7,7 @@ define("edit",['websync'],function(websync){ var self = {};
     // Enables the TextEdit plugin.
     self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript','insertHorizontalRule'];
     // Add ribbon text
-    $(".ribbon").append('<div id="Text" class="container"> \
+    $(".ribbon").append('<div id="Text" class="Text container"> \
             <button id="bold" title="Bold" class="btn btn-default"><i class="fa fa-bold"></i></button> \
             <button id="italic" title="Italic" class="btn btn-default"><i class="fa fa-italic"></i></button> \
             <button id="strikethrough" title="Strikethrough" class="btn btn-default"><i class="fa fa-strikethrough"></i></button> \
@@ -74,12 +74,42 @@ define("edit",['websync'],function(websync){ var self = {};
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
+    $("#File").append('<button id="word_count" class="Text btn btn-default" title="View Word Count" data-toggle="tooltip"><i class="fa fa-eye"></i> Word Count</button>');
     self.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
             document.execCommand(elem);
             //$(this).toggleClass("active");
             $(document).trigger('selectionchange');
         });
+    });
+    var updateText = function(){
+        var table = $("#word_count_info");
+        var popover = table.parent().parent();
+        popover.css({"max-width": 500, "z-index": 10000});
+        popover.children(".popover-title").remove();
+        popover.children(".popover-content").html();
+        var text = $(".content_container").text();
+        var seltext = rangy.getSelection().toString();;
+        table.find("tr").eq(1).find("td").eq(0).text(text.split(/\s+/).length)
+        table.find("tr").eq(1).find("td").eq(1).text(seltext == "" ? 0 : seltext.split(/\s+/).length)
+        table.find("tr").eq(2).find("td").eq(0).text(text.length)
+        table.find("tr").eq(2).find("td").eq(1).text(seltext.length)
+        table.find("tr").eq(3).find("td").eq(0).text(text.split(" ").join("").length)
+        table.find("tr").eq(3).find("td").eq(1).text(seltext.split(" ").join("").length)
+    }
+    var live_update = false;
+    $(document).on("selectionchange.Text",function(e){
+        if(live_update){
+            updateText();
+        }
+    });
+    $("#word_count").on('shown.bs.popover', function(e){
+        updateText();
+        live_update = true;
+    }).on('hide.bs.popover',function(e){
+        live_update = false;
+    }).popover({placement: "bottom", html: true, container: 'body',
+        content: "<table id='word_count_info' class='table'><thead><tr><th></th><th>Document</th><th>Selection</th></tr></thead><tbody><tr><th>Word Count</th><td></td><td></td></tr><tr><th>Characters</th><td></td><td></td></tr><tr><th>Characters (without spaces)</th><td></td><td></td></tr></tbody></table>"
     });
     $("#fontColor").change(function(e){
         document.execCommand('foreColor', false, this.value);
@@ -176,7 +206,7 @@ define("edit",['websync'],function(websync){ var self = {};
     // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     self.disable = function(){
-		var elem = $("#Text").remove();
+		var elem = $(".Text").remove();
 		WebSync.updateRibbon();
 		$("*").unbind(".TextEdit");
 		$("*").undelegate(".TextEdit");
@@ -203,7 +233,7 @@ define("edit",['websync'],function(websync){ var self = {};
 		self._selectTimeout = null;
 	}
     // Sets up the list of fonts
-    var fonts = ["Cursive","Monospace","Serif","Sans-serif","Fantasy","Arial","Arial Black","Arial Narrow","Arial Rounded MT Bold","Bookman Old Style","Bradley Hand ITC","Century","Century Gothic","Comic Sans MS","Droid Sans","Courier","Courier New","Georgia","Gentium","Impact","King","Lucida Console","Lalit","Modena","Monotype Corsiva","Papyrus","TeX","Times","Times New Roman","Trebuchet MS","Tahoma","Verdana","Verona",'Helvetica','Segoe'];
+    var fonts = ["Cursive","Monospace","Serif","Sans-serif","Fantasy","Arial","Arial Black","Arial Narrow","Arial Rounded MT Bold","Bookman Old Style","Bradley Hand ITC","Century","Century Gothic","Comic Sans MS","Droid Sans","Courier","Courier New","Georgia","Gentium","Impact","King","Lucida Console","Lalit","Modena","Monotype Corsiva","Papyrus","TeX","Times","Times New Roman","Trebuchet MS","Tahoma","Verdana","Verona",'Helvetica','Segoe','Open Sans'];
     var d = new Detector();
     var font_list = [];
     fonts = fonts.sort(function(a,b){

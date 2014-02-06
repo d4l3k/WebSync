@@ -417,6 +417,7 @@ body > .container, body > .container-fluid {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    overflow: visible;
 }
 .forest {
     width: 100%;

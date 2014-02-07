@@ -53,3 +53,17 @@ namespace :admin do
         User.get(args[:email]).update(group:"user")
     end
 end
+
+task :time, :email do |task, args|
+    text = `git_time_extractor`
+    data = CSV.parse(text)
+    time = 0
+    commits = 0
+    data.each do |line|
+        if not args.has_key? :email or args[:email]==line[3] or args[:email]==line[4]
+            commits += 1
+            time += line[1].to_i
+        end
+    end
+    puts "Number of Commits: #{commits}, Hours: #{time/60.0}"
+end

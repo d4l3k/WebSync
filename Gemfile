@@ -28,5 +28,6 @@ group :production do
     gem 'closure-compiler'
 end
 group :test do
+    gem 'git_time_extractor'
     gem 'selenium-webdriver'
 end

@@ -4,6 +4,7 @@
 		<link rel="shortcut icon" href="/favicon.ico?v=3" />
         <title>WebSyn.ca</title>
         <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <%= stylesheet_tag 'default' %>
         <% if defined?(edit)&&edit %>
             <script type="text/javascript">
             // Variable: object WebSyncAuth;
@@ -78,7 +79,6 @@
         <% end %>
 		<%= yield %>
 	</body>
-    <%= stylesheet_tag 'default' %>
     <%= javascript_tag 'bundle-norm' %>
     <%= (defined?(edit)&&edit) ? javascript_tag('bundle-edit') : "" %>
     <% if !defined?(@javascripts).nil? %>

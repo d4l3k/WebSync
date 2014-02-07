@@ -9,7 +9,7 @@ define(['websync'],function(edit,websink){ var self = {};
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
 	// Unbind Example: $("*").unbind(".Tables");
     self.open = false;
-    $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well"></div><div class="chat_input input-group"><input class="form-control" id="appendedInputButton" type="text" ><span class="input-group-btn"><button id="msg_btn" class="btn btn-default" type="button">Send</button></span></div></div>'));
+    $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well" class="panel panel-default"></div><div class="chat_input input-group"><input class="form-control" id="appendedInputButton" type="text" ><span class="input-group-btn"><button id="msg_btn" class="btn btn-default" type="button">Send</button></span></div></div>'));
     $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><i class="fa fa-comment fa-lg"></i> <span id="user_count" class="badge">1</span></a></li>'));
     $("#chat").css({right:-252});
     $("#chat img").tooltip();

@@ -406,6 +406,9 @@ a#name {
     .btn {
         margin-top: 5px;
     }
+    & > * {
+        //display: none;
+    }
     input[type="color"] {
         padding: 2px 4px !important;
         margin-top: 5px;
@@ -654,7 +657,7 @@ nav.navbar {
         }
         a {
             img {
-                border: 1px solid #cccccc;
+                border: 1px solid transparent;
             }
         }
         a img:hover, a img:active, a:hover img, a:active img {
@@ -662,12 +665,8 @@ nav.navbar {
         }
         #chat_well {
             margin: 5px;
-            border: 1px solid #cccccc;
-            background-color: white;
             position: absolute;
             font-size: 10pt;
-            right: 0px;
-            border-radius: 4px;
             bottom: 39px;
             top: 45px;
             width: 238px;

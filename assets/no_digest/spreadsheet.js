@@ -52,7 +52,7 @@ define("/assets/spreadsheet.js",['websync', "/assets/tables.js"], function(websy
 	$(".content_well").children().bind("mousedown selectstart",function(e){ e.stopPropagation(); });
     self.updateHeaders = function(e){
         $(".axis#y").offset({left: -1});
-        $(".axis#x").offset({top: $('.content_well').offset().top});
+        $(".axis#x").offset({top: $('.content_well').offset().top+1});
         $("#top_corner").offset({left: -1, top: $('.content_well').offset().top-1});
     }
     self.updateHeaders();

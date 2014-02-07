@@ -431,12 +431,21 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     }
     self.enterTable = function(table){
         console.log("Entering");
-        $(table).children().on("keydown.TablesTemp", self.keypressHandler);
-        $(".table_clip").bind("keydown.TablesTemp", self.keypressHandler);
+        //$(table).children().on("keydown.TablesTemp", self.keypressHandler);
+        $(document).on("keydown.TablesTemp", self.keypressHandler);
         $(".content_container").delegate("resize.Tables", "table", function(e){
             self.cursorUpdate();
             self.headerUpdate();
         });
+    }
+    self.leaveTable = function(table){
+        console.log("Leaving");
+		$(table).unbind(".TablesTemp");
+		$(table).undelegate(".TablesTemp");
+		$(table).off(".TablesTemp");
+		$(document).unbind(".TablesTemp");
+		$(document).undelegate(".TablesTemp");
+		$(document).off(".TablesTemp");
     }
     $(document).on("zoom",function(){
         if(self.selected){
@@ -444,15 +453,6 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             self.headerUpdate();
         }
     });
-    self.leaveTable = function(table){
-        console.log("Leaving");
-		$(table).unbind(".TablesTemp");
-		$(table).undelegate(".TablesTemp");
-		$(table).off(".TablesTemp");
-		$(".table_clip").unbind(".TablesTemp");
-		$(".table_clip").undelegate(".TablesTemp");
-		$(".table_clip").off(".TablesTemp");
-    }
     self.updateSelectedArea = function(){
         $(".Table.axis th").removeClass("active");
         if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){

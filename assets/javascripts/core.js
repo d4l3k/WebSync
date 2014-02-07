@@ -670,7 +670,9 @@ define('websync',{
 		//if(stringWebSync!=WebSync.oldDataString){
 		//}
         var patches = jsonpatch.generate(WebSync.patchObserver);
-        if(patches.length > 0){
+        if(WebSyncAuth.access=="viewer" && patches.length > 0){
+            WebSync.error("<b>Error</b> You don't have permission to make changes.");
+        } else if(patches.length > 0){
             console.log("Diffing", patches)
             $(document).trigger("diffed");
             WebSync.connection.sendJSON({type: "data_patch", patch: patches});

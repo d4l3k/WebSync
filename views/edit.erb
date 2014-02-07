@@ -63,17 +63,49 @@
                                 </table>
                             </div>
                             <div class="tab-pane active" id="permissions">
-                                Access Mode:
-                                <select id="access_mode" class="form-control">
-                                    <option value="public">Public</option>
-                                    <option value="hidden">Hidden (link only)</option>
-                                    <option value="private">Private</option>
-                                </select>
-                                Default permission level:
-                                <select id="default_permissions" class="form-control">
-                                    <option value="editor">Editor</option>
-                                    <option value="viewer">Viewer</option>
-                                </select>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h3>Default Access</h3>
+                                        Access Mode:
+                                        <select id="access_mode" class="form-control">
+                                            <option value="public">Public</option>
+                                            <option value="hidden">Hidden (link only)</option>
+                                            <option value="private">Private</option>
+                                        </select>
+                                        Default permission level:
+                                        <select id="default_permissions" class="form-control">
+                                            <option value="editor">Editor</option>
+                                            <option value="viewer">Viewer</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3>User Access</h3>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Email</th>
+                                                    <th>Access Level</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Use spaces instead of tabs</td>
+                                                    <td><select class="form-control">
+                                                        <option>True</option>
+                                                        <option>False</option>
+                                                    </select></td>
+                                                    <td><div class='input-append'><select class="form-control">
+                                                        <option>Use Global</option>
+                                                        <option>True</option>
+                                                        <option>False</option>
+                                                    </select>
+                                                    <button class="btn btn-warning">Override</button></div></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane" id="config">
                                 <table class="table table-bordered">

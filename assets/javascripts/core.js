@@ -274,8 +274,12 @@ define('websync',{
 	initialize: function(){
         NProgress.start();
 		this.webSocketStart();
-        $("#public_mode").change(function(){
-            WebSync.connection.sendJSON({type:'config',action:'set',property:'public',value: ($(this).val()=="Public")})
+        $("#access_mode, #default_permissions").change(function(){
+            if(WebSyncAuth.access=="owner"){
+                WebSync.connection.sendJSON({type:'default_permissions', access: $("#access_mode").val(), default_level: $("#default_permissions").val()});
+            } else {
+                WebSync.error("Invalid permissions.");
+            }
         });
 		$("#name").blur(function(){
 			var name = $(this).text();

@@ -28,7 +28,8 @@
 				</ul>
                 <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b>Settings</b>
                     <ul class="nav tab-nav nav-pills">
-                        <li class="active" ><a href="#config" data-toggle="tab">Config</a></li>
+                        <li class="active" ><a href="#permissions" data-toggle="tab">Permissions</a></li>
+                        <li><a href="#config" data-toggle="tab">Config</a></li>
                         <li><a href="#assets" data-toggle="tab">Assets</a></li>
                         <li><a href="#diffs" data-toggle="tab">Changes</a></li>
                     </ul>
@@ -61,7 +62,20 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="tab-pane active" id="config">
+                            <div class="tab-pane active" id="permissions">
+                                Access Mode:
+                                <select id="access_mode" class="form-control">
+                                    <option>Public</option>
+                                    <option>Hidden (link only)</option>
+                                    <option>Private</option>
+                                </select>
+                                Default permission level:
+                                <select id="default_permissions" class="form-control">
+                                    <option>Editor</option>
+                                    <option>Viewer</option>
+                                </select>
+                            </div>
+                            <div class="tab-pane" id="config">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -110,10 +124,6 @@
 					<option>Normal</option>
 					<option>Zen</option>
                     <option>Presentation</option>
-				</select>
-                <select id="public_mode" class="form-control" title="Publicly Accessable" class="ribbon_button">
-					<option>Public</option>
-					<option>Private</option>
 				</select>
                 <a href="delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
 			</div>

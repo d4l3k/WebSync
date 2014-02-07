@@ -186,9 +186,7 @@ wss.on('connection', function(ws) {
                         if(data.action=="get"){
                             postgres.query("SELECT config, public FROM documents WHERE id = $1",[doc_id])
                             .on('row',function(row){
-                                if(data.property=="public"){
-                                    ws.send(JSON.stringify({type:'config', action:'get',property:'public', value: row.public}));
-                                } else if(data.space=='document'){
+                                if(data.space=='document'){
                                     var doc_data = JSON.parse(row.config);
                                     ws.send(JSON.stringify({type:'config',action:'get',space:data.space, value: doc_data[data.property], id:data.id}));
 
@@ -196,9 +194,6 @@ wss.on('connection', function(ws) {
                                 //TODO: Implement user config
                             });
                         } else if(data.action=="set"){
-                            if(data.property=='public'&&editor){
-                                postgres.query("UPDATE documents SET public=$2 WHERE id = $1",[doc_id,data.value]);
-                            }
                         }
                     } else if(data.type=="data_patch"&&editor){
                         postgres.query("SELECT body FROM documents WHERE id = $1", [doc_id])

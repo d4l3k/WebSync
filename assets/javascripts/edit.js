@@ -74,7 +74,7 @@ define("edit",['websync'],function(websync){ var self = {};
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
-    $("#public_mode").after(' <button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
+    $("#view_mode").after(' <button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
     self.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
             document.execCommand(elem);

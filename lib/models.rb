@@ -5,21 +5,44 @@ $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$c
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 class Document
     include DataMapper::Resource
-    property :id, Serial
-    property :name, Text
-    property :body, Json, :default=>{}, :lazy=>true
-    property :created, DateTime
-    property :last_edit_time, DateTime
-    property :public, Boolean, :default=>false
-    property :config, Json, :default=>{}
+    property :id,               Serial
+    property :name,             Text
+    property :body,             Json,       :default=>{}, :lazy=>true
+    property :created,          DateTime
+    property :last_edit_time,   DateTime
+    property :visibility,       String,     :default=>"private"
+    property :default_level,    String,     :default=>"viewer"
+    property :config,           Json,       :default=>{}
     has n, :assets, :through => Resource
     has n, :changes
-    belongs_to :user
+    has n, :permissions
+    has n, :users, 'User', :through => :permissions
     def config_set key, value
         n_config = config.dup
         n_config[key]=value
         self.config= n_config
     end
+end
+class User
+    include DataMapper::Resource
+    property :email, String, :key=>true
+    property :password, BCryptHash
+    property :group, String, :default=>'user'
+    has n, :permissions
+    has n, :documents, 'Document', :through => :permissions
+    has n, :changes
+    property :config, Json, :default=>{}
+    def config_set key, value
+        n_config = config.dup
+        n_config[key]=value
+        self.config= n_config
+    end
+end
+class Permission
+    include DataMapper::Resource
+    property    :level,     Text,       default: "viewer" # owner, editor
+    belongs_to  :user,      :key => true
+    belongs_to  :document,  :key => true
 end
 class Change
     include DataMapper::Resource
@@ -50,20 +73,6 @@ class Asset
 end
 class Javascript < Asset; end
 class Stylesheet < Asset; end
-class User
-    include DataMapper::Resource
-    property :email, String, :key=>true
-    property :password, BCryptHash
-    property :group, String, :default=>'user'
-    has n, :documents
-    has n, :changes
-    property :config, Json, :default=>{}
-    def config_set key, value
-        n_config = config.dup
-        n_config[key]=value
-        self.config= n_config
-    end
-end
 class AnonymousUser 
     attr_accessor :email, :password, :group, :documents, :changes, :config
     def initialize

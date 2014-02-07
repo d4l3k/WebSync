@@ -207,10 +207,11 @@ class WebSync < Sinatra::Base
             if doc.nil?
                 halt 404
             end
-            if not doc.public
+            if doc.visibility=="private"
+                perms = doc.permissions(user:current_user)
                 if not logged_in?
                     redirect "/login?#{env["REQUEST_PATH"]}"
-                elsif doc.user!=current_user
+                elsif perms.length==0 # isn't on the permission list
                     status 403
                     halt 403
                 end
@@ -423,10 +424,10 @@ class WebSync < Sinatra::Base
             :body => {body:[]},
             :created => Time.now,
             :last_edit_time => Time.now,
-            :user => current_user
         )
         doc.assets = group.assets
         doc.save
+        perm = Permission.create(user: current_user, document: doc, level: "owner")
         redirect "/#{doc.id.encode62}/edit"
     end
     get '/upload' do
@@ -500,7 +501,7 @@ class WebSync < Sinatra::Base
     end
     get '/:doc/delete' do
         doc_id, doc = document_auth
-        if doc.user==current_user
+        if doc.permissions(level: "owner").user[0]==current_user
             doc.destroy!
         else
             halt 403
@@ -518,10 +519,12 @@ class WebSync < Sinatra::Base
         ]
         client_id = $redis.incr("clientid")
         client_key = SecureRandom.uuid
+        access = doc.permissions(user: current_user)[0].level
+        access ||= doc.default_level
         $redis.set "websocket:id:#{client_id}",current_user.email
         $redis.set "websocket:key:#{client_id}", client_key+":#{doc_id}"
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
-        erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op}
+        erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op, access: access}
     end
 end

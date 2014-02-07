@@ -15,10 +15,12 @@
                 id:"<%= client_id %>",
                 // Variable: int WebSyncAuth.key;
                 // This is a randomly generated string used as an API key.
-                key:"<%= client_key %>",
+                key: "<%= client_key %>",
                 view_op: "<%= op %>",
                 websocket_port: <%= $config['websocket']['port'] %>,
-                websocket_url: "<%= $config['websocket']['url'] %>"
+                websocket_url: "<%= $config['websocket']['url'] %>",
+                // This is the user's access level. Can be: viewer, editor, owner
+                access: "<%= access %>"
             }
             // Variable: object WebSyncData;
             // This contains the data for the document. This is automatically synced with the server.
@@ -28,16 +30,6 @@
             document.title = "<%= doc.name %> - WebSync";
             </script>
         <% end %>
-        <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-          ga('create', 'UA-41779193-1', 'websyn.ca');
-          ga('send', 'pageview');
-
-        </script>
 	</head>
 	<body class="<%= (defined?(op) && op)=="view" ? "view" : "edit" %>">
         <% if !(defined?(no_menu)&&no_menu) %>
@@ -94,5 +86,15 @@
         for(var i=0;i<6;i++){
             setTimeout(tooltipHandle, i*500 +1);
         }
+    </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41779193-1', 'websyn.ca');
+      ga('send', 'pageview');
+
     </script>
 </html>

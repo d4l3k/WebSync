@@ -139,6 +139,26 @@ define('websync',{
             else if(data.type=='ping'){
                 WebSync.connection.sendJSON({type: 'ping'});
             }
+            else if(data.type=="permissions"){
+                $("#access_mode").val(data.visibility);
+                $("#default_permissions").val(data.default_level);
+                var users = $("#user_perms tbody");
+                var html = "";
+                _.each(data.users,function(user){
+                    html += "<tr>";
+                    html += "<td>"+user.user_email+"</td><td><select class='form-control'>"
+                    _.each(["viewer", "editor", "owner"], function(level){
+                        html += "<option value='"+level+"'"
+                        if(level == user.level) html += " selected"
+                        html += ">"
+                        html += level.charAt(0).toUpperCase() + level.slice(1)
+                        html += "</option>"
+                    });
+                    html += "</select></td><td><a class='btn btn-danger'>Delete</a></td>"
+                    html += "</tr>";
+                });
+                users.html(html);
+            }
             else if(data.type=='config'){
                 if(data.action=='get'){
                     var callback = WebSync._config_callbacks[data.id]
@@ -274,9 +294,12 @@ define('websync',{
 	initialize: function(){
         NProgress.start();
 		this.webSocketStart();
+        $("#settingsBtn, [href='#permissions']").click(function(){
+            WebSync.connection.sendJSON({type:"permission_info"});
+        });
         $("#access_mode, #default_permissions").change(function(){
             if(WebSyncAuth.access=="owner"){
-                WebSync.connection.sendJSON({type:'default_permissions', access: $("#access_mode").val(), default_level: $("#default_permissions").val()});
+                WebSync.connection.sendJSON({type:'default_permissions', visibility: $("#access_mode").val(), default_level: $("#default_permissions").val()});
             } else {
                 WebSync.error("Invalid permissions.");
             }

@@ -40,9 +40,9 @@ wss.on('connection', function(ws) {
                 if(info){
                     callback(info.level);
                 } else {
-                    postgres.query("SELECT access, default_level FROM documents WHERE id = $1", [doc_id])
+                    postgres.query("SELECT visiblity, default_level FROM documents WHERE id = $1", [doc_id])
                     .on("row", function(row){
-                        if(row.access=="private"){
+                        if(row.visibility=="private"){
                             callback("none");
                         } else {
                             callback(row.default_level);
@@ -175,7 +175,7 @@ wss.on('connection', function(ws) {
                     } else if(data.type=="permission_info"){
                         if(auth_level=="editor"||auth_level=="owner"){
                             var perms;
-                            postgres.query("SELECT access, default_level FROM documents WHERE id = $1", [doc_id])
+                            postgres.query("SELECT visibility, default_level FROM documents WHERE id = $1", [doc_id])
                             .on("row", function(row){
                                 perms = row;
                             })
@@ -196,7 +196,7 @@ wss.on('connection', function(ws) {
                         userAuth(function(auth){
                             if(auth=="owner"){
                                 // TODO: Sanitize inputs. But whateva.
-                                postgres.query("UPDATE documents SET access=$1, default_level=$2 WHERE id = $3", [data.access, data.default_level, doc_id]);
+                                postgres.query("UPDATE documents SET visibility=$1, default_level=$2 WHERE id = $3", [data.visibility, data.default_level, doc_id]);
                             } else {
                                 ws.sendJSON({type: "error", reason: "Invalid permissions."});
                             }

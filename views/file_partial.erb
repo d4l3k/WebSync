@@ -18,7 +18,7 @@ order = :user_email if sort == "owner"
 sort_up = !invert
 sort_up = invert if sort=="recent"
 options[:order] = [sort_up ? order.asc : order.desc]
-docs = Document.all({public: true}.merge(options)) if defined?(shared) and shared
+docs = Document.all({visibility: "public"}.merge(options)) if defined?(shared) and shared
 docs ||= user.documents options
 
 
@@ -45,9 +45,9 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent" }
         <% docs.each do |doc| %>
             <tr>
                 <td><a href="/<%= doc.id.encode62 %>/edit"><%= h(doc.name) %></a></td>
-                <td><%= doc.user==current_user ? "You" : h(doc.user.email) %></td>
+                <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : h(doc.permissions(level: "owner").user[0].email) %></td>
                 <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
-                <% if doc.user==current_user %>
+                <% if doc.permissions(level: "owner").user[0]==current_user %>
                     <td>
                         <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
                     </td>

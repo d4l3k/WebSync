@@ -191,7 +191,6 @@ define("edit",['websync'],function(websync){ var self = {};
         }
     }
     self.rgb_to_hex = function(rgb){
-        console.log(rgb);
         if(rgb == "rgba(0, 0, 0, 0)") return "#FFFFFF";
         if(rgb.indexOf('rgba')!=-1){
             //return '#000000';

@@ -191,14 +191,12 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                 var pos = self.selectedPos(self.active);
                 console.log(pos);
                 $(self.posToElem(pos[0],0)).width(e.pageX-self.origX+self.origWidth);
-                $(".Table.axis#x").width(table.width()+2);
             }
             if(self.origY){
                 $(self.active).height(e.pageY-self.origY+self.origHeight);
                 var pos = self.selectedPos(self.active);
                 console.log(pos);
                 $(self.posToElem(0,pos[1]).parentElement).height(e.pageY-self.origY+self.origHeight);
-                $(".Table.axis#y").height(table.height());
             }
             self.cursorUpdate();
         }
@@ -234,11 +232,25 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
     $(document).bind("paste.Tables",function(e){
         if(self.selected){
-            console.log($(e.originalEvent.clipboardData.getData('text/html')));
+            var nodes = $(e.originalEvent.clipboardData.getData('text/html'));
+            nodes.find("script").remove();
+            if(nodes.filter("table").length > 0) {
+                rows = nodes.filter("table").find("tr");
+                var pos = self.selectedPos();
+                _.each(rows, function(row, i){
+                    console.log(row, i);
+                    _.each($(row).children(), function(element, j){
+                        // TODO: Finish up pasting.
+                        var html = $(element).html();
+                        var elem = self.posToElem(pos[0]+j, pos[1]+i)
+                        $(elem).html(html);
+                    });
+                });
+                e.preventDefault();
+            }
         }
     });
     self.keypressHandler = function(e){
-        console.log("KEYPRESS", e)
         if(self.selectedElem){
             if(self.selected){ //&&!e.shiftKey){
                 var editting = false;
@@ -271,7 +283,10 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
                     // Down a1rrow
                     self.cursorMove(0,1);
                     e.preventDefault();
-                } else {
+                } else if(e.keyCode==46&&!editting){ // Delete key
+                    self.emptySelection();
+                    e.preventDefault();
+                }else {
                     if((!self.selectedElem.contentEditable||self.selectedElem.contentEditable=="inherit")&&_.indexOf([16,17,18,91,92],e.keyCode)==-1&&!(e.keyCode==67&&e.ctrlKey)){
                         self.selectedEditable(true);
 
@@ -376,8 +391,8 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         if(table.css("position")=="absolute"||pos){
             setTimeout(function(){
                 var offset = table.offset();
-                $(".Table.axis#x").offset({left:offset.left,top:offset.top-16});//.width(table.width()+2);
-                $(".Table.axis#y").offset({left:offset.left-39,top:offset.top});//.height(table.height());
+                $(".Table.axis#x").offset({left:offset.left,top:offset.top-16}).width(table.width());
+                $(".Table.axis#y").offset({left:offset.left-39,top:offset.top}).height(table.height());
             },1);
         }
 	}
@@ -455,7 +470,7 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
     });
     self.updateSelectedArea = function(){
         $(".Table.axis th").removeClass("active");
-        if(self.selectedElem===self.selectionEnd||!self.selectionEnd||!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){
+        if(!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){
             $("#table_selection").hide();
             if(self.selected){
                 $($(".Table.axis#x").children().children().children()[self.selectedPos()[0]]).addClass("active");
@@ -463,10 +478,11 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
         }
         else {
+            var end = self.selectionEnd || self.selectedElem
             var pos = $(self.selectedElem).position();//offset();
-            var endPos = $(self.selectionEnd).position();//offset();
-            var baseWidth = $(self.selectionEnd).width();
-            var baseHeight = $(self.selectionEnd).height();
+            var endPos = $(end).position();//offset();
+            var baseWidth = $(end).width();
+            var baseHeight = $(end).height();
             if(pos.left>endPos.left){
                 var tmp_left = pos.left;
                 pos.left = endPos.left;
@@ -481,12 +497,15 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
             var height = endPos.top+baseHeight -pos.top;
             var width = endPos.left+baseWidth -pos.left;
-            $("#table_selection").show().css({left:pos.left,top:pos.top}).height(height).width(width);
+            if(self.selectionEnd)
+                $("#table_selection").show().css({left:pos.left,top:pos.top}).height(height).width(width);
+            else
+                $("#table_selection").hide()
             //$("#table_selection").show().animate({top:pos.top,left:pos.left,height:height,width:width},50,'linear');//offset(pos).height(height).width(width);
             // Set hidden selection area contents to mini-table.
             var selection_html = "<table><tbody>";
             var tpos_start = self.selectedPos();
-            var tpos_end = self.selectedPos(self.selectionEnd);
+            var tpos_end = self.selectedPos(end);
 
             var top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
             var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
@@ -503,12 +522,29 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
             }
             selection_html+="</tbody></table>";
             $("#table_clip").html(selection_html);
-            // Hidden selection area for copying.
-            var range = rangy.createRange();
-            range.selectNodeContents($("#table_clip").get(0));
-            var sel = rangy.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
+            if(self.selectedElem.contentEditable!="true"){
+                // Hidden selection area for copying.
+                var range = rangy.createRange();
+                range.selectNodeContents($("#table_clip").get(0));
+                var sel = rangy.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    }
+    self.emptySelection = function(){
+        var end = self.selectionEnd || self.selectedElem
+        var tpos_start = self.selectedPos();
+        var tpos_end = self.selectedPos(end);
+
+        var top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
+        var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
+        var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
+        var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
+        for(var y=top;y<=bottom;y++){
+            for(var x=left;x<=right;x++){
+                self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML="";
+            }
         }
     }
     self.setEndOfContenteditable = function(contentEditableElement)

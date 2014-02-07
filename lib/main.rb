@@ -116,7 +116,7 @@ class WebSync < Sinatra::Base
             end
         end
         def register email, pass
-            email.downcase!.strip
+            email = email.downcase.strip
             if email != "anon@websyn.ca" and User.get(email).nil?
                 user = User.create({:email=>email,:password=>pass})
                 authenticate email, pass
@@ -519,7 +519,8 @@ class WebSync < Sinatra::Base
         ]
         client_id = $redis.incr("clientid")
         client_key = SecureRandom.uuid
-        access = doc.permissions(user: current_user)[0].level
+        user = doc.permissions(user: current_user)[0]
+        access = user.level if user
         access ||= doc.default_level
         $redis.set "websocket:id:#{client_id}",current_user.email
         $redis.set "websocket:key:#{client_id}", client_key+":#{doc_id}"

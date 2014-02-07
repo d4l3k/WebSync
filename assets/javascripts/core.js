@@ -146,7 +146,9 @@ define('websync',{
                 var html = "";
                 _.each(data.users,function(user){
                     html += "<tr>";
-                    html += "<td>"+user.user_email+"</td><td><select class='form-control'>"
+                    html += "<td>"+user.user_email+"</td><td><select class='form-control'"
+                    if(WebSync.clients[WebSyncAuth.id].email==user.user_email) html += " disabled"
+                    html += ">"
                     _.each(["viewer", "editor", "owner"], function(level){
                         html += "<option value='"+level+"'"
                         if(level == user.level) html += " selected"
@@ -154,7 +156,9 @@ define('websync',{
                         html += level.charAt(0).toUpperCase() + level.slice(1)
                         html += "</option>"
                     });
-                    html += "</select></td><td><a class='btn btn-danger'>Delete</a></td>"
+                    html += "</select></td><td><a class='btn btn-danger'"
+                    if(WebSync.clients[WebSyncAuth.id].email==user.user_email) html += " disabled"
+                    html += ">Delete</a></td>"
                     html += "</tr>";
                 });
                 users.html(html);
@@ -297,6 +301,26 @@ define('websync',{
         $("#settingsBtn, [href='#permissions']").click(function(){
             WebSync.connection.sendJSON({type:"permission_info"});
         });
+        $("#user_perms").delegate("select", "change", function(e){
+            var email = $(e.target).parent().parent().children().eq(0).text();
+            var choice = $(e.target).val();
+            WebSync.connection.sendJSON({type: 'share', email: email, level: choice});
+        });
+        $("#user_perms").delegate("a", "click", function(e){
+            var email = $(e.target).parent().parent().children().eq(0).text();
+            WebSync.connection.sendJSON({type: 'share', email: email, level: "delete"});
+            setTimeout(function(){
+                WebSync.connection.sendJSON({type:"permission_info"});
+            },200);
+        });
+        $("#share_with").click(function(){
+            var email = $("#share_email").val();
+            WebSync.connection.sendJSON({type: "share", email: email, level: "viewer"});
+            setTimeout(function(){
+                WebSync.connection.sendJSON({type:"permission_info"});
+            },200);
+            $("#share_email").val("");
+        });
         $("#access_mode, #default_permissions").change(function(){
             if(WebSyncAuth.access=="owner"){
                 WebSync.connection.sendJSON({type:'default_permissions', visibility: $("#access_mode").val(), default_level: $("#default_permissions").val()});
@@ -321,7 +345,7 @@ define('websync',{
 		});
         $(".settings-popup #config").delegate('button','click',function(){ $(this.parentElement.children[0]).prop('disabled', function (_, val) { return ! val; }); $(this).toggleClass("active");});
 		$("nav, .content_well").bind("mousedown selectstart",function(e){ if(e.target.tagName!="SELECT"){return false;} });
-		$("#name").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
+		$("#name, #permissions input[type=text]").bind("mousedown selectstart",function(e){ e.stopPropagation(); });
         $('#zoom_level').slider()
          .on('slide', function(e){
 			WebSync.setZoom($('#zoom_level').data("slider").getValue()/100.0)

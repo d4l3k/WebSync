@@ -40,7 +40,7 @@ wss.on('connection', function(ws) {
                 if(info){
                     callback(info.level);
                 } else {
-                    postgres.query("SELECT visiblity, default_level FROM documents WHERE id = $1", [doc_id])
+                    postgres.query("SELECT visibility, default_level FROM documents WHERE id = $1", [doc_id])
                     .on("row", function(row){
                         if(row.visibility=="private"){
                             callback("none");
@@ -162,10 +162,15 @@ wss.on('connection', function(ws) {
                     } else if(data.type=="share"){
                         userAuth(function(auth){
                             if(auth=="owner"){
+                                console.log("1");
                                 postgres.query("DELETE FROM permissions WHERE document_id = $1 AND user_email = $2", [doc_id, data.email])
+                                .on("error", function(err){
+                                    console.log("2");
+                                })
                                 .on("end", function(){
                                     if(data.level!="delete") {
-                                        postgres.query("INSERT INTO permissions (user_email, document_id, level) VALUES ('rice@outerearth.net', 1, 'editor')", [doc_id, data.email, data.level]);
+                                        console.log("3");
+                                        postgres.query("INSERT INTO permissions (user_email, document_id, level) VALUES ($2, $1, $3)", [doc_id, data.email, data.level]);
                                     }
                                 });
                             } else {

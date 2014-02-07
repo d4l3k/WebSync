@@ -7,6 +7,7 @@ Base62 = require('base62');
 redisLib = require('redis');
 var pg = require('pg');
 md5 = require('MD5');
+var _ = require("underscore");
 
 
 fs.readFile('./config.json', function(err, buffer){
@@ -171,6 +172,26 @@ wss.on('connection', function(ws) {
                                 ws.sendJSON({type: "error", reason: "Invalid permissions."});
                             }
                         });
+                    } else if(data.type=="permission_info"){
+                        if(auth_level=="editor"||auth_level=="owner"){
+                            var perms;
+                            postgres.query("SELECT access, default_level FROM documents WHERE id = $1", [doc_id])
+                            .on("row", function(row){
+                                perms = row;
+                            })
+                            .on("end", function(){
+                                perms.users = []
+                                postgres.query("SELECT user_email, level FROM permissions WHERE document_id = $1", [doc_id])
+                                .on("row", function(row){
+                                    perms.users.push(row);
+                                })
+                                .on("end", function(){
+                                    ws.sendJSON(_.extend({type: "permissions"}, perms));
+                                });
+                            });
+                        } else {
+                            ws.sendJSON({type: "error", reason: "invalid permissions."});
+                        }
                     } else if(data.type=="default_permissions"){
                         userAuth(function(auth){
                             if(auth=="owner"){

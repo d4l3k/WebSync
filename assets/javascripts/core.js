@@ -2,7 +2,7 @@
     WebSync: Core.js
     This is the core file that runs the WebSync editor.
 
-    Copyright (c) 2013. All Rights reserved.
+    Copyright (c) 2014. All Rights reserved.
 
     Tristan Rice
     rice (at) outerearth (dot) net
@@ -141,15 +141,10 @@ define('websync',{
             }
             else if(data.type=='config'){
                 if(data.action=='get'){
-                    if(data.property=='public'){
-                        $("#public_mode").val(data.value ? "Public" : "Private");
-                    }
-                    else {
-                        var callback = WebSync._config_callbacks[data.id]
-                        if(callback){
-                            callback(data.property,data.value,data.space);
-                            delete WebSync._config_callbacks[data.id];
-                        }
+                    var callback = WebSync._config_callbacks[data.id]
+                    if(callback){
+                        callback(data.property,data.value,data.space);
+                        delete WebSync._config_callbacks[data.id];
                     }
                 }
             }

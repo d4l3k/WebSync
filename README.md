@@ -18,7 +18,7 @@ Features
 
 TODO
 ----
-WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing GitHub issues, so you can just look at those instead.
+WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing GitHub issues, but you can just look at those instead.
 
 Dependencies
 ----

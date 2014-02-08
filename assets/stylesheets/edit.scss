@@ -164,6 +164,20 @@ nav .settings-popup {
         overflow-y: auto;
     }
 }
+@media (max-width: 767px) {
+    nav .settings-popup {
+        left: 15px;
+        right: 15px;
+        .popover-content {
+            padding: 0;
+            padding-bottom: 15px;
+            width: 100%;
+            .fa-lg {
+                line-height: 1em;
+            }
+        }
+    }
+}
 .settings-popup .arrow {
     /*left: 914px !important;*/
 }

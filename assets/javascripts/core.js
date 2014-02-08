@@ -158,7 +158,7 @@ define('websync',{
                     });
                     html += "</select></td><td><a class='btn btn-danger'"
                     if(WebSync.clients[WebSyncAuth.id].email==user.user_email) html += " disabled"
-                    html += ">Delete</a></td>"
+                    html += "><i class='fa fa-trash-o visible-xs fa-lg'></i> <span class='hidden-xs'>Delete</span></a></td>"
                     html += "</tr>";
                 });
                 users.html(html);

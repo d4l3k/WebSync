@@ -195,8 +195,8 @@ class WebSync < Sinatra::Base
                 etag Digest::SHA1.hexdigest(page)
                 response.header['redis'] = 'MISS'
                 $redis.setex(tag, time, page)
-                return page
             end
+            page
         end
         def document_auth doc_id=nil
             doc_id ||= params[:doc]

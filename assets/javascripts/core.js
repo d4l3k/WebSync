@@ -847,11 +847,17 @@ function NODEtoJSON(obj){
         childNodes:[]
     }
     var exempt = null;
-    _.each(obj.classList, function(cl){
-        if(WebSync.domExceptions[cl]){
-            exempt = cl;
-        }
-    });
+    if(WebSync.domExceptions[obj.nodeName]){
+        exempt = obj.nodeName;
+    } else if(WebSync.domExceptions["#"+obj.id]){
+        exempt = "#"+obj.id;
+    } else {
+        _.each(obj.classList, function(cl){
+            if(WebSync.domExceptions["."+cl]){
+                exempt = "."+cl;
+            }
+        });
+    }
     if(exempt){
         delete jso.childNodes;
         jso.exempt = exempt;

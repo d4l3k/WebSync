@@ -16,6 +16,11 @@ define('/assets/tables.js',['edit','websync'],function(edit,websync){ var self =
         var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
         WebSync.insertAtCursor(new_table)
     });
+    // TODO: More efficient table json & =equation() support.
+    /*WebSync.registerDOMException("table", function(obj){
+    }, function(json){
+        return '<span class="Equations Equation-Editable make-editable" contenteditable="false">'+json+'</span>';
+    });*/
 	$('.Table [title="Insert Row Above"]').bind("click.Tables",function(e){
 		if(self.selected){
 			var html = "<tr>";

@@ -210,7 +210,7 @@ wss.on('connection', function(ws) {
                         responded = true;
                     } else if(data.type=='config'){
                         if(data.action=="get"){
-                            postgres.query("SELECT config, public FROM documents WHERE id = $1",[doc_id])
+                            postgres.query("SELECT config FROM documents WHERE id = $1",[doc_id])
                             .on('row',function(row){
                                 if(data.space=='document'){
                                     var doc_data = JSON.parse(row.config);

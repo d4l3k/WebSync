@@ -1,5 +1,10 @@
 define(['websync'],function(){ var self = {};
-    $("#Insert").append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");// ÷
+    $("#Insert").append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");
+    self.active = false;
+    $("#drawing_mode").click(function(){
+        $(this).toggleClass("active");
+        self.active = !self.active;
+    });
     WebSync.registerDOMException(".drawing", function(obj){
         return $(obj).mathquill("latex");
     }, function(json){

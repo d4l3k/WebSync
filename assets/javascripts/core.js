@@ -918,7 +918,7 @@ function NODEtoDOM(obj){
     // TODO: Potentially disallow iframes!
     if(obj.name=="script")
         return "";
-    if(obj.exempt){
+    if(obj.exempt&&WebSync.domExceptions[obj.exempt]){
         return WebSync.domExceptions[obj.exempt].load(obj.data);
     }
     html+="<"+obj.name;

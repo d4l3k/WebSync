@@ -10,7 +10,7 @@ define(['websync'],function(){ var self = {};
             self.resizeOn(tmp);
         }
     });
-    $(".content_container").delegate("img, iframe, table, .note-page section", "click.Resize", function(e){
+    $(".content_container").delegate("img, iframe, table, .note-page section, canvas", "click.Resize", function(e){
         if(WebSyncAuth.view_op=="edit"){
             self.resizeOn(this);
             e.stopPropagation();
@@ -25,7 +25,7 @@ define(['websync'],function(){ var self = {};
     $(".content").delegate(".Resize.handle.dragable", "mousedown.Resize", function(e){
         console.log(e);
         self.drag = true;
-        self.origMove = $(e.currentTarget).position();
+        self.origMove = $(self.active).position();
         self.origMouse = {left: e.pageX, top: e.pageY};
         e.preventDefault();
     });

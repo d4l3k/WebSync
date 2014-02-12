@@ -786,6 +786,10 @@ nav.navbar {
 .content_container {
     @include ex(transform-origin, top center);
     padding: 5px;
+    position: relative;
+    [contenteditable=true] {
+        position: relative;
+    }
     padding-top: 0.1in;
     &.left {
         @include ex(transform-origin, top left);

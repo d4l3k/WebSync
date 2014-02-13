@@ -74,5 +74,5 @@ task :documentation do
     system("docco assets/javascripts/{edit,core}.js assets/no_digest/*.js lib/main.rb bin/backend.js")
 end
 task :hooks do
-    system("ln -s hooks/pre-commit.sh .git/hooks/pre-commit")
+    system("ln -s ../../hooks/pre-commit.sh .git/hooks/pre-commit")
 end

@@ -1,2 +1,2 @@
 rake documentation
-notify-send "hook works"
+git add docs/*

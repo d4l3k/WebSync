@@ -73,7 +73,7 @@ task :loc do
 end
 task :beautify do
     system("js-beautify -r assets/javascripts/{edit,core}.js assets/no_digest/*.js bin/backend.js")
-    system("css-beautify -r assets/stylesheets/*.scss")
+    #system("css-beautify -r assets/stylesheets/*.scss")
 end
 task :documentation do
     system("docco assets/javascripts/{edit,core}.js assets/no_digest/*.js lib/*.rb bin/backend.js")

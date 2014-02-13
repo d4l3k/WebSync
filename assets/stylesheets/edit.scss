@@ -189,7 +189,7 @@ nav .settings-popup {
             line-height: 18px;
             color: black !important;
             text-shadow: none;
-            &: hover {
+            &:hover {
                 background-color: #cccccc;
             }
         }
@@ -260,7 +260,7 @@ nav .settings-popup {
         margin: 10px 5px;
         a {
             cursor: pointer;
-            &: hover {
+            &:hover {
                 color: white;
             }
             margin: 5px;
@@ -403,13 +403,13 @@ nav .settings-popup {
         -webkit-user-modify: read-only !important;
     }
 }
-: focus, : active {
+:focus, :active {
     outline: none;
 }
-: : -moz-selection {
+::-moz-selection {
     background-color: #b3d4fc;
 }
-: : selection {
+::selection {
     background-color: #b3d4fc;
 }
 nav.no-connection {
@@ -433,7 +433,7 @@ a#name {
         background-color: rgba(255, 255, 255, 0.45) !important;
         outline: none;
     }
-    &: hover {
+    &:hover {
         //background-color: #777;
         background-color: rgba(255, 255, 255, 0.45) !important;
     }
@@ -716,7 +716,7 @@ nav.navbar {
                 border: 1px solid transparent;
             }
         }
-        a img: hover, a img: active, a: hover img, a: active img {
+        a img:hover, a img:active, a:hover img, a:active img {
             border: 1px solid black;
         }
         #chat_well {
@@ -890,7 +890,7 @@ ul.nav.nav-list {
     li {
         &.active2 > a,
         .active > a {
-            &: hover {
+            &:hover {
                 background-color: transparent !important;
             }
             border-right: 1px solid #333333;

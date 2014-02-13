@@ -72,7 +72,17 @@ task :loc do
     system("cloc lib Gemfile Rakefile config.ru views assets/stylesheets/{main,edit}.scss bin --force-lang=html,erb --force-lang=ruby,Rakefile assets/javascripts/{edit,core,bundle-edit,bundle-norm}.js assets/no_digest config.json Dockerfile config spec")
 end
 task :beautify do
-    system("js-beautify -r assets/javascripts/{edit,core}.js assets/no_digest/*.js bin/backend.js")
+    files = %w(
+        assets/javascripts/{edit,core}.js
+        assets/no_digest/*.js
+        lib/*.rb
+        bin/backend.js
+        )
+    paths = []
+    files.each do |file|
+        paths += Dir.glob(file)
+    end
+    system("js-beautify -r #{files.join " "}")
     #system("css-beautify -r assets/stylesheets/*.scss")
 end
 task :documentation do

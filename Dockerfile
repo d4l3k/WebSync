@@ -37,7 +37,7 @@ RUN npm install -g git+https://github.com/juice49/pm2.git#master
 #RUN npm install -g pm2
 RUN mkdir /.pm2; mkdir /.pm2/pids/; mkdir /.pm2/logs/; chown -R daemon /.pm2; chmod 755 -R /.pm2
 
-RUN npm install -g js-beautify
+RUN npm install -g js-beautify docco
 
 ADD . /src
 

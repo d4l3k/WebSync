@@ -1,4 +1,4 @@
-WebSync by Outer Earth Interactive [![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync) 
+WebSync [![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync) 
 ============
 WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive.
 

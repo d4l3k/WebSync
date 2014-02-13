@@ -112,26 +112,29 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">"/assets/page.js"</span>,[<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(websync)</span> {</span> <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">"/assets/page.js"</span>, [<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(websync)</span> {</span>
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     console.log(<span class="hljs-string">"Page loaded"</span>);
     $(<span class="hljs-string">".content"</span>).hide().append($(<span class="hljs-string">'&lt;div class="content_container"&gt;&lt;div class="page"&gt;&lt;/div&gt;&lt;/div&gt;'</span>)).addClass(<span class="hljs-string">"content-page"</span>).fadeIn();
-    <span class="hljs-keyword">if</span>(!WebSyncData.body){
+    <span class="hljs-keyword">if</span> (!WebSyncData.body) {
         WebSyncData.body = [];
     }
-    <span class="hljs-keyword">if</span>(WebSyncAuth.view_op==<span class="hljs-string">'edit'</span>){
-        $(<span class="hljs-string">".page"</span>).attr(<span class="hljs-string">"contenteditable"</span>,<span class="hljs-literal">true</span>);
+    <span class="hljs-keyword">if</span> (WebSyncAuth.view_op == <span class="hljs-string">'edit'</span>) {
+        $(<span class="hljs-string">".page"</span>).attr(<span class="hljs-string">"contenteditable"</span>, <span class="hljs-literal">true</span>);
     }
     WebSync.toJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-		WebSyncData.body = DOMToJSON($(<span class="hljs-string">".page"</span>).get(<span class="hljs-number">0</span>).childNodes);
+        WebSyncData.body = DOMToJSON($(<span class="hljs-string">".page"</span>).get(<span class="hljs-number">0</span>).childNodes);
     }
     WebSync.fromJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-        $(<span class="hljs-string">".content .page"</span>).get(<span class="hljs-number">0</span>).innerHTML=JSONToDOM(WebSyncData.body);
+        $(<span class="hljs-string">".content .page"</span>).get(<span class="hljs-number">0</span>).innerHTML = JSONToDOM(WebSyncData.body);
     }
-    $(document).on(<span class="hljs-string">"modules_loaded"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    $(document).on(<span class="hljs-string">"modules_loaded"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         WebSync.fromJSON();
         NProgress.done();
     });
-	$(<span class="hljs-string">".content_well"</span>).children().bind(<span class="hljs-string">"mousedown selectstart"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span> e.stopPropagation(); });
+    $(<span class="hljs-string">".content_well"</span>).children().bind(<span class="hljs-string">"mousedown selectstart"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        e.stopPropagation();
+    });
     <span class="hljs-keyword">return</span> self;
 });</pre></div></div>
             

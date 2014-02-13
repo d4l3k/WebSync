@@ -115,7 +115,8 @@ pluginName is an optional argument that should only be used if the module is bei
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">'/assets/tables.js'</span>,[<span class="hljs-string">'edit'</span>,<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edit,websync)</span>{</span> <span class="hljs-keyword">var</span> self = {};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">'/assets/tables.js'</span>, [<span class="hljs-string">'edit'</span>, <span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edit, websync)</span> {</span>
+    <span class="hljs-keyword">var</span> self = {};</pre></div></div>
             
         </li>
         
@@ -148,7 +149,7 @@ Unbind Example: $(“*”).unbind(“.Tables”);</p>
             <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">".ribbon"</span>).append($(<span class="hljs-string">'&lt;div id="Table" class="Table container" style="display: none;"&gt;&lt;button class="btn btn-default" title="Delete Table"&gt;&lt;i class="fa fa-trash-o"&gt;&lt;/i&gt; Table&lt;/button&gt;&lt;div class="btn-group"&gt;&lt;button class="btn btn-default" type="button" title="Insert Row Above"&gt;&lt;i class="fa fa-plus"&gt;&lt;/i&gt;&lt;/button&gt;&lt;/span&gt;&lt;button class="btn btn-default" type="button" title="Delete Row"&gt;&lt;i class="fa fa-trash"&gt;&lt;/i&gt; Row&lt;/button&gt;&lt;button class="btn btn-default" type="button" title="Insert Row Below"&gt;&lt;i class="fa fa-plus"&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;     &lt;div class="btn-group"&gt;&lt;button class="btn btn-default" type="button" title="Insert Column Left"&gt;&lt;i class="fa fa-plus"&gt;&lt;/i&gt;&lt;/button&gt;&lt;/span&gt;&lt;button class="btn btn-default" type="button" title="Delete Column"&gt;&lt;i class="fa fa-trash"&gt;&lt;/i&gt; Column&lt;/button&gt;&lt;button class="btn btn-default" type="button" title="Insert Column Right"&gt;&lt;i class="fa fa-plus"&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;'</span>));
     $(<span class="hljs-string">".content"</span>).append($(<span class="hljs-string">'&lt;div id="table_cursor" class="Table"&gt;&lt;/div&gt;&lt;div id="table_selection" class="Table"&gt;&lt;/div&gt;&lt;div id="table_clip" style="position:absolute; left:-1000px;top:-1000px;"&gt;&lt;/div&gt;'</span>));
     $(<span class="hljs-string">"#Insert"</span>).append($(<span class="hljs-string">'&lt;button id="table" title="Table" class="btn btn-default Table"&gt;&lt;i class="fa fa-table"&gt;&lt;/i&gt;&lt;/button&gt;'</span>))
-    $(<span class="hljs-string">"#table"</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">"#table"</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         console.log(e);
         <span class="hljs-keyword">var</span> new_table = $(<span class="hljs-string">"&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;"</span>)
         WebSync.insertAtCursor(new_table)
@@ -171,130 +172,129 @@ Unbind Example: $(“*”).unbind(“.Tables”);</p>
     }, function(json){
         return '&lt;span class="Equations Equation-Editable make-editable" contenteditable="false"&gt;'+json+'&lt;/span&gt;';
     });*/</span>
-	$(<span class="hljs-string">'.Table [title="Insert Row Above"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			<span class="hljs-keyword">var</span> html = <span class="hljs-string">"&lt;tr&gt;"</span>;
-			<span class="hljs-keyword">var</span> size = self.tableSize();
-			<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">0</span>];i++){
-				html+=<span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>;
-			}
-			html+=<span class="hljs-string">"&lt;/tr&gt;"</span>;
-			$(html).insertBefore( self.selectedElem.parentElement);
-            self.posCache={};
-			self.cursorMove(<span class="hljs-number">0</span>,-<span class="hljs-number">1</span>);
-		}
-	});
-	$(<span class="hljs-string">'.Table [title="Insert Row Below"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			<span class="hljs-keyword">var</span> html = <span class="hljs-string">"&lt;tr&gt;"</span>;
-			<span class="hljs-keyword">var</span> size = self.tableSize();
-			<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">0</span>];i++){
-				html+=<span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>;
-			}
-			html+=<span class="hljs-string">"&lt;/tr&gt;"</span>;
-			$(html).insertAfter( self.selectedElem.parentElement);
-            self.posCache={};
-			self.cursorMove(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);
-		}
-	});
-	$(<span class="hljs-string">'.Table [title="Delete Row"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			self.selectedElem.parentElement.remove();
-            self.posCache={};
-		}
-		self.clearSelect();
-	});
-	$(<span class="hljs-string">'.Table [title="Insert Column Left"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			<span class="hljs-keyword">var</span> size = self.tableSize();
-			<span class="hljs-keyword">var</span> pos = self.selectedPos();
-			<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">1</span>];i++){
-				$(<span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>).insertBefore(self.selectedElem.parentElement.parentElement.children[i].children[pos[<span class="hljs-number">0</span>]]);
-			}
-			self.cursorMove(-<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
-            self.posCache={};
-		}
-	});
-	$(<span class="hljs-string">'.Table [title="Insert Column Right"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			<span class="hljs-keyword">var</span> size = self.tableSize();
-			<span class="hljs-keyword">var</span> pos = self.selectedPos();
-			<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">1</span>];i++){
-				$(<span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>).insertAfter(self.selectedElem.parentElement.parentElement.children[i].children[pos[<span class="hljs-number">0</span>]]);
-			}
-            self.posCache={};
-			self.cursorMove(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
-		}
-	});
-	$(<span class="hljs-string">'.Table [title="Delete Column"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			<span class="hljs-keyword">var</span> size = self.tableSize();
-			<span class="hljs-keyword">var</span> pos = self.selectedPos();
-			<span class="hljs-keyword">var</span> parentElem = self.selectedElem.parentElement.parentElement
-			<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">1</span>];i++){
-				parentElem.children[i].children[pos[<span class="hljs-number">0</span>]].remove();
-			}
-            self.posCache={};
-			self.clearSelect();
-		}
-	});
-	$(<span class="hljs-string">'.Table [title="Delete Table"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			self.selectedElem.parentElement.parentElement.parentElement.remove();
-			self.clearSelect();
-		}
-	});
+    $(<span class="hljs-string">'.Table [title="Insert Row Above"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            <span class="hljs-keyword">var</span> html = <span class="hljs-string">"&lt;tr&gt;"</span>;
+            <span class="hljs-keyword">var</span> size = self.tableSize();
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">0</span>]; i++) {
+                html += <span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>;
+            }
+            html += <span class="hljs-string">"&lt;/tr&gt;"</span>;
+            $(html).insertBefore(self.selectedElem.parentElement);
+            self.posCache = {};
+            self.cursorMove(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>);
+        }
+    });
+    $(<span class="hljs-string">'.Table [title="Insert Row Below"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            <span class="hljs-keyword">var</span> html = <span class="hljs-string">"&lt;tr&gt;"</span>;
+            <span class="hljs-keyword">var</span> size = self.tableSize();
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">0</span>]; i++) {
+                html += <span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>;
+            }
+            html += <span class="hljs-string">"&lt;/tr&gt;"</span>;
+            $(html).insertAfter(self.selectedElem.parentElement);
+            self.posCache = {};
+            self.cursorMove(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+        }
+    });
+    $(<span class="hljs-string">'.Table [title="Delete Row"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            self.selectedElem.parentElement.remove();
+            self.posCache = {};
+        }
+        self.clearSelect();
+    });
+    $(<span class="hljs-string">'.Table [title="Insert Column Left"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            <span class="hljs-keyword">var</span> size = self.tableSize();
+            <span class="hljs-keyword">var</span> pos = self.selectedPos();
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">1</span>]; i++) {
+                $(<span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>).insertBefore(self.selectedElem.parentElement.parentElement.children[i].children[pos[<span class="hljs-number">0</span>]]);
+            }
+            self.cursorMove(-<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+            self.posCache = {};
+        }
+    });
+    $(<span class="hljs-string">'.Table [title="Insert Column Right"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            <span class="hljs-keyword">var</span> size = self.tableSize();
+            <span class="hljs-keyword">var</span> pos = self.selectedPos();
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">1</span>]; i++) {
+                $(<span class="hljs-string">"&lt;td&gt;&lt;/td&gt;"</span>).insertAfter(self.selectedElem.parentElement.parentElement.children[i].children[pos[<span class="hljs-number">0</span>]]);
+            }
+            self.posCache = {};
+            self.cursorMove(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+        }
+    });
+    $(<span class="hljs-string">'.Table [title="Delete Column"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            <span class="hljs-keyword">var</span> size = self.tableSize();
+            <span class="hljs-keyword">var</span> pos = self.selectedPos();
+            <span class="hljs-keyword">var</span> parentElem = self.selectedElem.parentElement.parentElement
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">1</span>]; i++) {
+                parentElem.children[i].children[pos[<span class="hljs-number">0</span>]].remove();
+            }
+            self.posCache = {};
+            self.clearSelect();
+        }
+    });
+    $(<span class="hljs-string">'.Table [title="Delete Table"]'</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            self.selectedElem.parentElement.parentElement.parentElement.remove();
+            self.clearSelect();
+        }
+    });
     self.lastSize = <span class="hljs-string">""</span>;
-    self.observer = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    self.observer = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         <span class="hljs-keyword">var</span> bounding_data = <span class="hljs-built_in">JSON</span>.stringify(self.selectedElem.getBoundingClientRect());
-        <span class="hljs-keyword">if</span>(bounding_data!=self.lastSize){
-            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">if</span> (bounding_data != self.lastSize) {
+            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
                 self.cursorUpdate();
-            },<span class="hljs-number">1</span>);
-            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+            }, <span class="hljs-number">1</span>);
+            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
                 self.headerUpdate();
-            },<span class="hljs-number">2</span>);
-            self.lasttSize=bounding_data;
+            }, <span class="hljs-number">2</span>);
+            self.lasttSize = bounding_data;
         }
     };
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"table"</span>,<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(!self.selectedElem || self.selectedElem.contentEditable!=<span class="hljs-string">"true"</span>){
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"table"</span>, <span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (!self.selectedElem || self.selectedElem.contentEditable != <span class="hljs-string">"true"</span>) {
             $(<span class="hljs-string">'a:contains("Table")'</span>).click();
         }
         e.stopPropagation();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>,<span class="hljs-string">"mouseenter.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.selectionActive&amp;&amp;self.primaryTable()===self.primaryTable(<span class="hljs-keyword">this</span>)){
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>, <span class="hljs-string">"mouseenter.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selectionActive &amp;&amp; self.primaryTable() === self.primaryTable(<span class="hljs-keyword">this</span>)) {
             self.selectionEnd = <span class="hljs-keyword">this</span>;
             self.updateSelectedArea();
         }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>,<span class="hljs-string">"mouseleave.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-    });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#x th"</span>, <span class="hljs-string">"mousemove.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>, <span class="hljs-string">"mouseleave.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>});
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#x th"</span>, <span class="hljs-string">"mousemove.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         <span class="hljs-keyword">var</span> position = $(<span class="hljs-keyword">this</span>).offset();
         $(<span class="hljs-string">'.Table.axis th.resize'</span>).removeClass(<span class="hljs-string">'resize'</span>);
-        <span class="hljs-keyword">if</span>(<span class="hljs-built_in">Math</span>.abs(e.pageX-position.left)&lt;<span class="hljs-number">5</span> || <span class="hljs-built_in">Math</span>.abs(e.pageX-(position.left+$(<span class="hljs-keyword">this</span>).width()))&lt;<span class="hljs-number">5</span>){
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.abs(e.pageX - position.left) &lt; <span class="hljs-number">5</span> || <span class="hljs-built_in">Math</span>.abs(e.pageX - (position.left + $(<span class="hljs-keyword">this</span>).width())) &lt; <span class="hljs-number">5</span>) {
             $(<span class="hljs-keyword">this</span>).addClass(<span class="hljs-string">"resize"</span>);
         }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#y th"</span>, <span class="hljs-string">"mousemove.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#y th"</span>, <span class="hljs-string">"mousemove.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         <span class="hljs-keyword">var</span> position = $(<span class="hljs-keyword">this</span>).offset();
         console.log(e.pageY, position.top);
         $(<span class="hljs-string">'.Table.axis th.resize'</span>).removeClass(<span class="hljs-string">'resize'</span>);
-        <span class="hljs-keyword">if</span>(<span class="hljs-built_in">Math</span>.abs(e.pageY-position.top)&lt;<span class="hljs-number">5</span> || <span class="hljs-built_in">Math</span>.abs(e.pageY-(position.top+$(<span class="hljs-keyword">this</span>).height()))&lt;<span class="hljs-number">5</span>){
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.abs(e.pageY - position.top) &lt; <span class="hljs-number">5</span> || <span class="hljs-built_in">Math</span>.abs(e.pageY - (position.top + $(<span class="hljs-keyword">this</span>).height())) &lt; <span class="hljs-number">5</span>) {
             $(<span class="hljs-keyword">this</span>).addClass(<span class="hljs-string">"resize"</span>);
         }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>,<span class="hljs-string">"mousedown.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>, <span class="hljs-string">"mousedown.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         console.log(e);
-        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>!=self.selectedElem){
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != self.selectedElem) {
             self.cursorSelect(<span class="hljs-keyword">this</span>);
-            self.selectedElem.contentEditable=<span class="hljs-literal">true</span>;
-			self.setEndOfContenteditable(self.selectedElem);
-            self.selectedElem.contentEditable=<span class="hljs-string">"inherit"</span>;
+            self.selectedElem.contentEditable = <span class="hljs-literal">true</span>;
+            self.setEndOfContenteditable(self.selectedElem);
+            self.selectedElem.contentEditable = <span class="hljs-string">"inherit"</span>;
         }
-        self.selectionActive=<span class="hljs-literal">true</span>;
+        self.selectionActive = <span class="hljs-literal">true</span>;
         self.selectionEnd = <span class="hljs-literal">null</span>;
         self.updateSelectedArea();</pre></div></div>
             
@@ -312,16 +312,16 @@ Unbind Example: $(“*”).unbind(“.Tables”);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    });
-    $(<span class="hljs-string">".content"</span>).bind(<span class="hljs-string">"mousemove.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.selectionActive &amp;&amp; self.selectedElem.contentEditable!=<span class="hljs-string">"true"</span>){
+    $(<span class="hljs-string">".content"</span>).bind(<span class="hljs-string">"mousemove.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selectionActive &amp;&amp; self.selectedElem.contentEditable != <span class="hljs-string">"true"</span>) {
             e.preventDefault();
         }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>,<span class="hljs-string">"mouseup.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        self.selectionActive=<span class="hljs-literal">false</span>;
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>, <span class="hljs-string">"mouseup.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        self.selectionActive = <span class="hljs-literal">false</span>;
     });
     self.selectionActive = <span class="hljs-literal">false</span>;
-    $(<span class="hljs-string">".content"</span>).bind(<span class="hljs-string">"click.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span></pre></div></div>
+    $(<span class="hljs-string">".content"</span>).bind(<span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span></pre></div></div>
             
         </li>
         
@@ -338,11 +338,11 @@ Unbind Example: $(“*”).unbind(“.Tables”);</p>
             
             <div class="content"><div class='highlight'><pre>        self.clearSelect();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>,<span class="hljs-string">"contextmenu.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>!=self.selectedElem){
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>, <span class="hljs-string">"contextmenu.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != self.selectedElem) {
             self.cursorSelect(<span class="hljs-keyword">this</span>);
         }
-        <span class="hljs-keyword">if</span>(self.selectedElem.contentEditable!=<span class="hljs-string">"true"</span>){</pre></div></div>
+        <span class="hljs-keyword">if</span> (self.selectedElem.contentEditable != <span class="hljs-string">"true"</span>) {</pre></div></div>
             
         </li>
         
@@ -360,43 +360,43 @@ $(this).contextmenu();</p>
             
             <div class="content"><div class='highlight'><pre>        }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>,<span class="hljs-string">"dblclick.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selectedElem.contentEditable!=<span class="hljs-string">"true"</span>){
-			self.selectedEditable(<span class="hljs-literal">true</span>);
-		}
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">"td"</span>, <span class="hljs-string">"dblclick.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selectedElem.contentEditable != <span class="hljs-string">"true"</span>) {
+            self.selectedEditable(<span class="hljs-literal">true</span>);
+        }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#x th.resize"</span>, <span class="hljs-string">"mousedown.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#x th.resize"</span>, <span class="hljs-string">"mousedown.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         self.drag = <span class="hljs-literal">true</span>;
         self.active = <span class="hljs-keyword">this</span>;
         self.origX = e.pageX;
         self.origWidth = $(<span class="hljs-keyword">this</span>).width();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#y th.resize"</span>, <span class="hljs-string">"mousedown.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#y th.resize"</span>, <span class="hljs-string">"mousedown.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         self.drag = <span class="hljs-literal">true</span>;
         self.active = <span class="hljs-keyword">this</span>;
         self.origY = e.pageY;
         self.origHeight = $(<span class="hljs-keyword">this</span>).height();
     });
-    $(document).bind(<span class="hljs-string">'mousemove.Tables'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.drag){
-        <span class="hljs-keyword">var</span> table = $(self.primaryTable());
-            <span class="hljs-keyword">if</span>(self.origX){
-                $(self.active).width(e.pageX-self.origX+self.origWidth);
+    $(document).bind(<span class="hljs-string">'mousemove.Tables'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.drag) {
+            <span class="hljs-keyword">var</span> table = $(self.primaryTable());
+            <span class="hljs-keyword">if</span> (self.origX) {
+                $(self.active).width(e.pageX - self.origX + self.origWidth);
                 <span class="hljs-keyword">var</span> pos = self.selectedPos(self.active);
                 console.log(pos);
-                $(self.posToElem(pos[<span class="hljs-number">0</span>],<span class="hljs-number">0</span>)).width(e.pageX-self.origX+self.origWidth);
+                $(self.posToElem(pos[<span class="hljs-number">0</span>], <span class="hljs-number">0</span>)).width(e.pageX - self.origX + self.origWidth);
             }
-            <span class="hljs-keyword">if</span>(self.origY){
-                $(self.active).height(e.pageY-self.origY+self.origHeight);
+            <span class="hljs-keyword">if</span> (self.origY) {
+                $(self.active).height(e.pageY - self.origY + self.origHeight);
                 <span class="hljs-keyword">var</span> pos = self.selectedPos(self.active);
                 console.log(pos);
-                $(self.posToElem(<span class="hljs-number">0</span>,pos[<span class="hljs-number">1</span>]).parentElement).height(e.pageY-self.origY+self.origHeight);
+                $(self.posToElem(<span class="hljs-number">0</span>, pos[<span class="hljs-number">1</span>]).parentElement).height(e.pageY - self.origY + self.origHeight);
             }
             self.cursorUpdate();
         }
     });
-    $(document).bind( <span class="hljs-string">"mouseup.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.drag){
+    $(document).bind(<span class="hljs-string">"mouseup.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.drag) {
             console.log(e);
             e.preventDefault();
             self.origX = <span class="hljs-literal">null</span>;
@@ -406,34 +406,34 @@ $(this).contextmenu();</p>
             self.drag = <span class="hljs-literal">false</span>;
         }
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#x th:not('resize')"</span>, <span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#x th:not('resize')"</span>, <span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         <span class="hljs-keyword">var</span> pos = self.selectedPos(<span class="hljs-keyword">this</span>);
         <span class="hljs-keyword">var</span> size = self.tableSize();
-        self.cursorSelect(self.posToElem(pos[<span class="hljs-number">0</span>],<span class="hljs-number">0</span>));
-        <span class="hljs-keyword">if</span>(!e.shiftKey){
-            self.selectionEnd = self.posToElem(pos[<span class="hljs-number">0</span>],size[<span class="hljs-number">1</span>]-<span class="hljs-number">1</span>);
+        self.cursorSelect(self.posToElem(pos[<span class="hljs-number">0</span>], <span class="hljs-number">0</span>));
+        <span class="hljs-keyword">if</span> (!e.shiftKey) {
+            self.selectionEnd = self.posToElem(pos[<span class="hljs-number">0</span>], size[<span class="hljs-number">1</span>] - <span class="hljs-number">1</span>);
         }
         self.updateSelectedArea();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#y th:not('resize')"</span>, <span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Table.axis#y th:not('resize')"</span>, <span class="hljs-string">"click.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         <span class="hljs-keyword">var</span> pos = self.selectedPos(<span class="hljs-keyword">this</span>);
         <span class="hljs-keyword">var</span> size = self.tableSize();
-        self.cursorSelect(self.posToElem(<span class="hljs-number">0</span>,pos[<span class="hljs-number">1</span>]));
-        <span class="hljs-keyword">if</span>(!e.shiftKey){
-            self.selectionEnd = self.posToElem(size[<span class="hljs-number">0</span>]-<span class="hljs-number">1</span>,pos[<span class="hljs-number">1</span>]);
+        self.cursorSelect(self.posToElem(<span class="hljs-number">0</span>, pos[<span class="hljs-number">1</span>]));
+        <span class="hljs-keyword">if</span> (!e.shiftKey) {
+            self.selectionEnd = self.posToElem(size[<span class="hljs-number">0</span>] - <span class="hljs-number">1</span>, pos[<span class="hljs-number">1</span>]);
         }
         self.updateSelectedArea();
     });
-    $(document).bind(<span class="hljs-string">"paste.Tables"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.selected){
+    $(document).bind(<span class="hljs-string">"paste.Tables"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
             <span class="hljs-keyword">var</span> nodes = $(e.originalEvent.clipboardData.getData(<span class="hljs-string">'text/html'</span>));
             nodes.find(<span class="hljs-string">"script"</span>).remove();
-            <span class="hljs-keyword">if</span>(nodes.filter(<span class="hljs-string">"table"</span>).length &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">if</span> (nodes.filter(<span class="hljs-string">"table"</span>).length &gt; <span class="hljs-number">0</span>) {
                 rows = nodes.filter(<span class="hljs-string">"table"</span>).find(<span class="hljs-string">"tr"</span>);
                 <span class="hljs-keyword">var</span> pos = self.selectedPos();
-                _.each(rows, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(row, i)</span>{</span>
+                _.each(rows, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(row, i)</span> {</span>
                     console.log(row, i);
-                    _.each($(row).children(), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, j)</span>{</span></pre></div></div>
+                    _.each($(row).children(), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, j)</span> {</span></pre></div></div>
             
         </li>
         
@@ -449,7 +449,7 @@ $(this).contextmenu();</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">var</span> html = $(element).html();
-                        <span class="hljs-keyword">var</span> elem = self.posToElem(pos[<span class="hljs-number">0</span>]+j, pos[<span class="hljs-number">1</span>]+i)
+                        <span class="hljs-keyword">var</span> elem = self.posToElem(pos[<span class="hljs-number">0</span>] + j, pos[<span class="hljs-number">1</span>] + i)
                         $(elem).html(html);
                     });
                 });
@@ -457,16 +457,16 @@ $(this).contextmenu();</p>
             }
         }
     });
-    self.keypressHandler = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.selectedElem){
-            <span class="hljs-keyword">if</span>(self.selected){ <span class="hljs-comment">//&amp;&amp;!e.shiftKey){</span>
+    self.keypressHandler = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selectedElem) {
+            <span class="hljs-keyword">if</span> (self.selected) { <span class="hljs-comment">//&amp;&amp;!e.shiftKey){</span>
                 <span class="hljs-keyword">var</span> editting = <span class="hljs-literal">false</span>;
-                <span class="hljs-keyword">if</span>(self.selectedElem.contentEditable){
-                    editting=self.selectedElem.contentEditable==<span class="hljs-string">"true"</span>;
+                <span class="hljs-keyword">if</span> (self.selectedElem.contentEditable) {
+                    editting = self.selectedElem.contentEditable == <span class="hljs-string">"true"</span>;
                 }
-                <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">13</span>&amp;&amp;!e.shiftKey){
-                    self.cursorMove(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">9</span>){</pre></div></div>
+                <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">13</span> &amp;&amp; !e.shiftKey) {
+                    self.cursorMove(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">9</span>) {</pre></div></div>
             
         </li>
         
@@ -482,9 +482,9 @@ $(this).contextmenu();</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    self.selectedEditable(<span class="hljs-literal">false</span>);
-                    self.cursorMove(<span class="hljs-number">1</span>-<span class="hljs-number">2</span>*e.shiftKey,<span class="hljs-number">0</span>);
+                    self.cursorMove(<span class="hljs-number">1</span> - <span class="hljs-number">2</span> * e.shiftKey, <span class="hljs-number">0</span>);
                     e.preventDefault();
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">27</span>){</pre></div></div>
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">27</span>) {</pre></div></div>
             
         </li>
         
@@ -500,7 +500,7 @@ $(this).contextmenu();</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    self.selectedEditable(<span class="hljs-literal">false</span>);
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">37</span>&amp;&amp;!editting){</pre></div></div>
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">37</span> &amp;&amp; !editting) {</pre></div></div>
             
         </li>
         
@@ -515,9 +515,9 @@ $(this).contextmenu();</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    self.cursorMove(-<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
+            <div class="content"><div class='highlight'><pre>                    self.cursorMove(-<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
                     e.preventDefault();
-                }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">39</span>&amp;&amp;!editting){</pre></div></div>
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">39</span> &amp;&amp; !editting) {</pre></div></div>
             
         </li>
         
@@ -532,9 +532,9 @@ $(this).contextmenu();</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    self.cursorMove(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
+            <div class="content"><div class='highlight'><pre>                    self.cursorMove(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
                     e.preventDefault();
-                }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">38</span>&amp;&amp;!editting){</pre></div></div>
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">38</span> &amp;&amp; !editting) {</pre></div></div>
             
         </li>
         
@@ -549,9 +549,9 @@ $(this).contextmenu();</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    self.cursorMove(<span class="hljs-number">0</span>,-<span class="hljs-number">1</span>);
+            <div class="content"><div class='highlight'><pre>                    self.cursorMove(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>);
                     e.preventDefault();
-                }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">40</span>&amp;&amp;!editting){</pre></div></div>
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">40</span> &amp;&amp; !editting) {</pre></div></div>
             
         </li>
         
@@ -566,13 +566,13 @@ $(this).contextmenu();</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    self.cursorMove(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);
+            <div class="content"><div class='highlight'><pre>                    self.cursorMove(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
                     e.preventDefault();
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">46</span>&amp;&amp;!editting){ <span class="hljs-comment">// Delete key</span>
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">46</span> &amp;&amp; !editting) { <span class="hljs-comment">// Delete key</span>
                     self.emptySelection();
                     e.preventDefault();
-                }<span class="hljs-keyword">else</span> {
-                    <span class="hljs-keyword">if</span>((!self.selectedElem.contentEditable||self.selectedElem.contentEditable==<span class="hljs-string">"inherit"</span>)&amp;&amp;_.indexOf([<span class="hljs-number">16</span>,<span class="hljs-number">17</span>,<span class="hljs-number">18</span>,<span class="hljs-number">91</span>,<span class="hljs-number">92</span>],e.keyCode)==-<span class="hljs-number">1</span>&amp;&amp;!(e.keyCode==<span class="hljs-number">67</span>&amp;&amp;e.ctrlKey)){
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">if</span> ((!self.selectedElem.contentEditable || self.selectedElem.contentEditable == <span class="hljs-string">"inherit"</span>) &amp;&amp; _.indexOf([<span class="hljs-number">16</span>, <span class="hljs-number">17</span>, <span class="hljs-number">18</span>, <span class="hljs-number">91</span>, <span class="hljs-number">92</span>], e.keyCode) == -<span class="hljs-number">1</span> &amp;&amp; !(e.keyCode == <span class="hljs-number">67</span> &amp;&amp; e.ctrlKey)) {
                         self.selectedEditable(<span class="hljs-literal">true</span>);
 
                         $(self.selectedElem).focus();</pre></div></div>
@@ -591,10 +591,10 @@ $(this).contextmenu();</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    }
-                    setTimeout(self.cursorUpdate,<span class="hljs-number">1</span>);
+                    setTimeout(self.cursorUpdate, <span class="hljs-number">1</span>);
                 }
             } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">if</span>(!self.selectedElem.contentEditable||self.selectedElem.contentEditable==<span class="hljs-string">"false"</span>){
+                <span class="hljs-keyword">if</span> (!self.selectedElem.contentEditable || self.selectedElem.contentEditable == <span class="hljs-string">"false"</span>) {
                     self.selectedEditable(<span class="hljs-literal">true</span>);
 
                     $(self.selectedElem).focus();</pre></div></div>
@@ -634,12 +634,12 @@ Disables the plugin. This has to be set for possible plugin unloading.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-		<span class="hljs-keyword">var</span> elem = $(<span class="hljs-string">".Table"</span>).remove();
-		WebSync.updateRibbon();
-		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Tables"</span>);
-		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Tables"</span>);
-	}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">var</span> elem = $(<span class="hljs-string">".Table"</span>).remove();
+        WebSync.updateRibbon();
+        $(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Tables"</span>);
+        $(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Tables"</span>);
+    }</pre></div></div>
             
         </li>
         
@@ -654,7 +654,7 @@ Disables the plugin. This has to be set for possible plugin unloading.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	self.cursorSelect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(td)</span>{</span>
+            <div class="content"><div class='highlight'><pre>    self.cursorSelect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(td)</span> {</span>
         $(<span class="hljs-string">"#ribbon_buttons a:contains('Table')"</span>).parent().fadeIn(<span class="hljs-number">200</span>);</pre></div></div>
             
         </li>
@@ -670,14 +670,14 @@ Disables the plugin. This has to be set for possible plugin unloading.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span>(self.selectedElem){
-			self.selectedEditable(<span class="hljs-literal">false</span>);
-		}
-		document.getSelection().removeAllRanges();
-		self.selected = <span class="hljs-literal">true</span>;
-		self.selectedElem = td;
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (self.selectedElem) {
+            self.selectedEditable(<span class="hljs-literal">false</span>);
+        }
+        document.getSelection().removeAllRanges();
+        self.selected = <span class="hljs-literal">true</span>;
+        self.selectedElem = td;
         $(self.selectedElem).focus();
-		self.selectedEditable(<span class="hljs-literal">false</span>);</pre></div></div>
+        self.selectedEditable(<span class="hljs-literal">false</span>);</pre></div></div>
             
         </li>
         
@@ -692,34 +692,34 @@ Disables the plugin. This has to be set for possible plugin unloading.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        self.selectedElem.addEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>,self.observer);
-        <span class="hljs-keyword">if</span>($(<span class="hljs-string">".Table.axis"</span>).length==<span class="hljs-number">0</span>) {
+            <div class="content"><div class='highlight'><pre>        self.selectedElem.addEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>, self.observer);
+        <span class="hljs-keyword">if</span> ($(<span class="hljs-string">".Table.axis"</span>).length == <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">var</span> size = self.tableSize();
             <span class="hljs-keyword">var</span> nodes = <span class="hljs-string">'&lt;table class="Table axis" id="x"&gt;&lt;thead&gt;&lt;tr&gt;'</span>;
-            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">0</span>];i++){
-                <span class="hljs-keyword">var</span> elem = self.posToElem(i,<span class="hljs-number">0</span>);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">0</span>]; i++) {
+                <span class="hljs-keyword">var</span> elem = self.posToElem(i, <span class="hljs-number">0</span>);
                 <span class="hljs-keyword">var</span> bounding = elem.getBoundingClientRect();
-                nodes+=<span class="hljs-string">'&lt;th style="width: '</span>+(bounding.width-<span class="hljs-number">1</span>).toFixed(<span class="hljs-number">0</span>)+<span class="hljs-string">'px"&gt;'</span>+self.columnLabel(i)+<span class="hljs-string">'&lt;/th&gt;'</span>;
+                nodes += <span class="hljs-string">'&lt;th style="width: '</span> + (bounding.width - <span class="hljs-number">1</span>).toFixed(<span class="hljs-number">0</span>) + <span class="hljs-string">'px"&gt;'</span> + self.columnLabel(i) + <span class="hljs-string">'&lt;/th&gt;'</span>;
             }
-            nodes+=<span class="hljs-string">'&lt;/tr&gt;&lt;/thead&gt;&lt;/table&gt;&lt;table class="Table axis" id="y"&gt;&lt;thead&gt;'</span>;
-            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">1</span>];i++){
-                <span class="hljs-keyword">var</span> elem = self.posToElem(<span class="hljs-number">0</span>,i);
-                nodes+=<span class="hljs-string">'&lt;tr&gt;&lt;th style="height: '</span>+($(elem).height()+<span class="hljs-number">1</span>)+<span class="hljs-string">'px"&gt;'</span>+(i+<span class="hljs-number">1</span>)+<span class="hljs-string">'&lt;/th&gt;&lt;/tr&gt;'</span>;
+            nodes += <span class="hljs-string">'&lt;/tr&gt;&lt;/thead&gt;&lt;/table&gt;&lt;table class="Table axis" id="y"&gt;&lt;thead&gt;'</span>;
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">1</span>]; i++) {
+                <span class="hljs-keyword">var</span> elem = self.posToElem(<span class="hljs-number">0</span>, i);
+                nodes += <span class="hljs-string">'&lt;tr&gt;&lt;th style="height: '</span> + ($(elem).height() + <span class="hljs-number">1</span>) + <span class="hljs-string">'px"&gt;'</span> + (i + <span class="hljs-number">1</span>) + <span class="hljs-string">'&lt;/th&gt;&lt;/tr&gt;'</span>;
             }
-            nodes+=<span class="hljs-string">'&lt;/thead&gt;&lt;/table&gt;'</span>;
+            nodes += <span class="hljs-string">'&lt;/thead&gt;&lt;/table&gt;'</span>;
             $(<span class="hljs-string">".content"</span>).append($(nodes));
             $(<span class="hljs-string">".Table.axis"</span>).fadeIn(<span class="hljs-number">200</span>);
         }
-		self.cursorUpdate();
+        self.cursorUpdate();
         self.enterLeaveBinds();
-	}
-    self.headerUpdate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    }
+    self.headerUpdate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         <span class="hljs-keyword">var</span> size = self.tableSize();
         <span class="hljs-keyword">var</span> x_nodes = $(<span class="hljs-string">".axis#x th"</span>);
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">0</span>];i++){
-            <span class="hljs-keyword">var</span> elem = self.posToElem(i,<span class="hljs-number">0</span>);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">0</span>]; i++) {
+            <span class="hljs-keyword">var</span> elem = self.posToElem(i, <span class="hljs-number">0</span>);
             <span class="hljs-keyword">var</span> bounding = elem.getBoundingClientRect();
-            x_nodes[i].style.width = (bounding.width)+<span class="hljs-string">"px"</span>;</pre></div></div>
+            x_nodes[i].style.width = (bounding.width) + <span class="hljs-string">"px"</span>;</pre></div></div>
             
         </li>
         
@@ -736,10 +736,10 @@ Disables the plugin. This has to be set for possible plugin unloading.</p>
             
             <div class="content"><div class='highlight'><pre>        }
         <span class="hljs-keyword">var</span> y_nodes = $(<span class="hljs-string">".axis#y th"</span>);
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i&lt;size[<span class="hljs-number">1</span>];i++){
-            <span class="hljs-keyword">var</span> elem = self.posToElem(<span class="hljs-number">0</span>,i);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; size[<span class="hljs-number">1</span>]; i++) {
+            <span class="hljs-keyword">var</span> elem = self.posToElem(<span class="hljs-number">0</span>, i);
             <span class="hljs-keyword">var</span> bounding = elem.getBoundingClientRect();
-            y_nodes[i].style.height = (bounding.height)+<span class="hljs-string">"px"</span>;</pre></div></div>
+            y_nodes[i].style.height = (bounding.height) + <span class="hljs-string">"px"</span>;</pre></div></div>
             
         </li>
         
@@ -772,18 +772,18 @@ $(“.Table.axis#y”).height(table.height());</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    };
-	self.cursorMove = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dColumn, dRow)</span>{</span>
-		self.selectedEditable(<span class="hljs-literal">false</span>);
-		<span class="hljs-keyword">var</span> pos = self.selectedPos();
-		<span class="hljs-keyword">var</span> column = pos[<span class="hljs-number">0</span>];
-		<span class="hljs-keyword">var</span> row = pos[<span class="hljs-number">1</span>];
-		<span class="hljs-keyword">if</span>(self.selectedElem.parentElement.parentElement.children.length&gt;row+dRow&amp;&amp;self.selectedElem.parentElement.parentElement.children[<span class="hljs-number">0</span>].children.length&gt;column+dColumn&amp;&amp;row+dRow&gt;=<span class="hljs-number">0</span>&amp;&amp;column+dColumn&gt;=<span class="hljs-number">0</span>){
-			<span class="hljs-keyword">var</span> new_td = self.selectedElem.parentElement.parentElement.children[row+dRow].children[column+dColumn];
-			self.cursorSelect(new_td);
-		}
-	}
-	self.cursorUpdate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pos)</span>{</span>
-		<span class="hljs-keyword">var</span> pos = $(self.selectedElem).offset();
+    self.cursorMove = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dColumn, dRow)</span> {</span>
+        self.selectedEditable(<span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">var</span> pos = self.selectedPos();
+        <span class="hljs-keyword">var</span> column = pos[<span class="hljs-number">0</span>];
+        <span class="hljs-keyword">var</span> row = pos[<span class="hljs-number">1</span>];
+        <span class="hljs-keyword">if</span> (self.selectedElem.parentElement.parentElement.children.length &gt; row + dRow &amp;&amp; self.selectedElem.parentElement.parentElement.children[<span class="hljs-number">0</span>].children.length &gt; column + dColumn &amp;&amp; row + dRow &gt;= <span class="hljs-number">0</span> &amp;&amp; column + dColumn &gt;= <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">var</span> new_td = self.selectedElem.parentElement.parentElement.children[row + dRow].children[column + dColumn];
+            self.cursorSelect(new_td);
+        }
+    }
+    self.cursorUpdate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pos)</span> {</span>
+        <span class="hljs-keyword">var</span> pos = $(self.selectedElem).offset();
         pos.top += <span class="hljs-number">2</span>;
         pos.left += <span class="hljs-number">2</span>;</pre></div></div>
             
@@ -802,24 +802,39 @@ $(“.Table.axis#y”).height(table.height());</p>
             
             <div class="content"><div class='highlight'><pre>        self.updateSelectedArea();
         <span class="hljs-keyword">var</span> table = $(self.primaryTable());
-        $(<span class="hljs-string">"#table_cursor"</span>).offset({left:pos.left,top:pos.top}).height($(self.selectedElem).height()*WebSync.zoom-<span class="hljs-number">2</span>).width($(self.selectedElem).width()*WebSync.zoom-<span class="hljs-number">1</span>).get(<span class="hljs-number">0</span>).scrollIntoViewIfNeeded();
-        <span class="hljs-keyword">if</span>(table.css(<span class="hljs-string">"position"</span>)==<span class="hljs-string">"absolute"</span>||pos){
-            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">"#table_cursor"</span>).offset({
+            left: pos.left,
+            top: pos.top
+        }).height($(self.selectedElem).height() * WebSync.zoom - <span class="hljs-number">2</span>).width($(self.selectedElem).width() * WebSync.zoom - <span class="hljs-number">1</span>).get(<span class="hljs-number">0</span>).scrollIntoViewIfNeeded();
+        <span class="hljs-keyword">if</span> (table.css(<span class="hljs-string">"position"</span>) == <span class="hljs-string">"absolute"</span> || pos) {
+            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
                 <span class="hljs-keyword">var</span> offset = table.offset();
-                $(<span class="hljs-string">".Table.axis#x"</span>).offset({left:offset.left,top:offset.top-<span class="hljs-number">16</span>}).width(table.width());
-                $(<span class="hljs-string">".Table.axis#y"</span>).offset({left:offset.left-<span class="hljs-number">39</span>,top:offset.top}).height(table.height());
-            },<span class="hljs-number">1</span>);
+                $(<span class="hljs-string">".Table.axis#x"</span>).offset({
+                    left: offset.left,
+                    top: offset.top - <span class="hljs-number">16</span>
+                }).width(table.width());
+                $(<span class="hljs-string">".Table.axis#y"</span>).offset({
+                    left: offset.left - <span class="hljs-number">39</span>,
+                    top: offset.top
+                }).height(table.height());
+            }, <span class="hljs-number">1</span>);
         }
-	}
-	self.selectedEditable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edit)</span>{</span>
-		<span class="hljs-keyword">if</span>(!edit){
-			self.selectedElem.contentEditable=<span class="hljs-string">"inherit"</span>;
-			$(<span class="hljs-string">"#table_cursor"</span>).css({borderStyle: <span class="hljs-string">'solid'</span>, outlineStyle: <span class="hljs-string">'solid'</span>});
-			$(<span class="hljs-string">'#ribbon_buttons a:contains("Table")'</span>).click();
-		}<span class="hljs-keyword">else</span>{
-			self.selectedElem.contentEditable=<span class="hljs-literal">true</span>;
-			$(<span class="hljs-string">"#table_cursor"</span>).css({borderStyle: <span class="hljs-string">'dashed'</span>, outlineStyle: <span class="hljs-string">'dashed'</span>});
-			$(<span class="hljs-string">'#ribbon_buttons a:contains("Text")'</span>).click();</pre></div></div>
+    }
+    self.selectedEditable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edit)</span> {</span>
+        <span class="hljs-keyword">if</span> (!edit) {
+            self.selectedElem.contentEditable = <span class="hljs-string">"inherit"</span>;
+            $(<span class="hljs-string">"#table_cursor"</span>).css({
+                borderStyle: <span class="hljs-string">'solid'</span>,
+                outlineStyle: <span class="hljs-string">'solid'</span>
+            });
+            $(<span class="hljs-string">'#ribbon_buttons a:contains("Table")'</span>).click();
+        } <span class="hljs-keyword">else</span> {
+            self.selectedElem.contentEditable = <span class="hljs-literal">true</span>;
+            $(<span class="hljs-string">"#table_cursor"</span>).css({
+                borderStyle: <span class="hljs-string">'dashed'</span>,
+                outlineStyle: <span class="hljs-string">'dashed'</span>
+            });
+            $(<span class="hljs-string">'#ribbon_buttons a:contains("Text")'</span>).click();</pre></div></div>
             
         </li>
         
@@ -834,45 +849,47 @@ $(“.Table.axis#y”).height(table.height());</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		}
-	}
-    self.clearSelect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-		<span class="hljs-keyword">if</span>(self.selected){
-			self.selected = <span class="hljs-literal">false</span>;
-			self.selectedEditable(<span class="hljs-literal">false</span>);
-			$(<span class="hljs-string">"#table_cursor"</span>).offset({left:-<span class="hljs-number">10000</span>});
-            self.selectedElem.removeEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>,self.observer);
-			<span class="hljs-keyword">delete</span> self.selectedElem;
+            <div class="content"><div class='highlight'><pre>        }
+    }
+    self.clearSelect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
+            self.selected = <span class="hljs-literal">false</span>;
+            self.selectedEditable(<span class="hljs-literal">false</span>);
+            $(<span class="hljs-string">"#table_cursor"</span>).offset({
+                left: -<span class="hljs-number">10000</span>
+            });
+            self.selectedElem.removeEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>, self.observer);
+            <span class="hljs-keyword">delete</span> self.selectedElem;
             $(<span class="hljs-string">"#ribbon_buttons a:contains('Table')"</span>).parent().fadeOut(<span class="hljs-number">200</span>);
-			$(<span class="hljs-string">'#ribbon_buttons a:contains("Text")'</span>).click();
-            self.selectedElem=<span class="hljs-literal">null</span>;
+            $(<span class="hljs-string">'#ribbon_buttons a:contains("Text")'</span>).click();
+            self.selectedElem = <span class="hljs-literal">null</span>;
             self.updateSelectedArea();
-            $(<span class="hljs-string">".Table.axis"</span>).fadeOut(<span class="hljs-number">200</span>).promise().done(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+            $(<span class="hljs-string">".Table.axis"</span>).fadeOut(<span class="hljs-number">200</span>).promise().done(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
                 $(<span class="hljs-string">".Table.axis#x"</span>).remove();
                 $(<span class="hljs-string">".Table.axis#y"</span>).remove();
             });
             self.enterLeaveBinds();
-		}
-	}
+        }
+    }
     self.table = <span class="hljs-literal">null</span>;
-    self.enterLeaveBinds = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-        <span class="hljs-keyword">if</span>(self.selected){
+    self.enterLeaveBinds = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
             <span class="hljs-keyword">var</span> primary = self.primaryTable();
-            <span class="hljs-keyword">if</span>(primary != self.table){
-                <span class="hljs-keyword">if</span>(self.table){
+            <span class="hljs-keyword">if</span> (primary != self.table) {
+                <span class="hljs-keyword">if</span> (self.table) {
                     self.leaveTable(self.table);
                 }
                 self.table = primary;
                 self.enterTable(self.table);
             }
         } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">if</span>(self.table){
+            <span class="hljs-keyword">if</span> (self.table) {
                 self.leaveTable(self.table);
                 self.table = <span class="hljs-literal">null</span>;
             }
         }
     }
-    self.enterTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(table)</span>{</span>
+    self.enterTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(table)</span> {</span>
         console.log(<span class="hljs-string">"Entering"</span>);</pre></div></div>
             
         </li>
@@ -889,57 +906,59 @@ $(“.Table.axis#y”).height(table.height());</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>        $(document).on(<span class="hljs-string">"keydown.TablesTemp"</span>, self.keypressHandler);
-        $(<span class="hljs-string">".content_container"</span>).delegate(<span class="hljs-string">"resize.Tables"</span>, <span class="hljs-string">"table"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        $(<span class="hljs-string">".content_container"</span>).delegate(<span class="hljs-string">"resize.Tables"</span>, <span class="hljs-string">"table"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
             self.cursorUpdate();
             self.headerUpdate();
         });
     }
-    self.leaveTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(table)</span>{</span>
+    self.leaveTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(table)</span> {</span>
         console.log(<span class="hljs-string">"Leaving"</span>);
-		$(table).unbind(<span class="hljs-string">".TablesTemp"</span>);
-		$(table).undelegate(<span class="hljs-string">".TablesTemp"</span>);
-		$(table).off(<span class="hljs-string">".TablesTemp"</span>);
-		$(document).unbind(<span class="hljs-string">".TablesTemp"</span>);
-		$(document).undelegate(<span class="hljs-string">".TablesTemp"</span>);
-		$(document).off(<span class="hljs-string">".TablesTemp"</span>);
+        $(table).unbind(<span class="hljs-string">".TablesTemp"</span>);
+        $(table).undelegate(<span class="hljs-string">".TablesTemp"</span>);
+        $(table).off(<span class="hljs-string">".TablesTemp"</span>);
+        $(document).unbind(<span class="hljs-string">".TablesTemp"</span>);
+        $(document).undelegate(<span class="hljs-string">".TablesTemp"</span>);
+        $(document).off(<span class="hljs-string">".TablesTemp"</span>);
     }
-    $(document).on(<span class="hljs-string">"zoom"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-        <span class="hljs-keyword">if</span>(self.selected){
+    $(document).on(<span class="hljs-string">"zoom"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (self.selected) {
             self.cursorUpdate();
             self.headerUpdate();
         }
     });
-    self.updateSelectedArea = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    self.updateSelectedArea = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         $(<span class="hljs-string">".Table.axis th"</span>).removeClass(<span class="hljs-string">"active"</span>);
-        <span class="hljs-keyword">if</span>(!self.selected||self.primaryTable()!=self.primaryTable(self.selectionEnd)){
+        <span class="hljs-keyword">if</span> (!self.selected || self.primaryTable() != self.primaryTable(self.selectionEnd)) {
             $(<span class="hljs-string">"#table_selection"</span>).hide();
-            <span class="hljs-keyword">if</span>(self.selected){
+            <span class="hljs-keyword">if</span> (self.selected) {
                 $($(<span class="hljs-string">".Table.axis#x"</span>).children().children().children()[self.selectedPos()[<span class="hljs-number">0</span>]]).addClass(<span class="hljs-string">"active"</span>);
                 $($(<span class="hljs-string">".Table.axis#y"</span>).children().children()[self.selectedPos()[<span class="hljs-number">1</span>]]).children().addClass(<span class="hljs-string">"active"</span>);
             }
-        }
-        <span class="hljs-keyword">else</span> {
+        } <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">var</span> end = self.selectionEnd || self.selectedElem
-            <span class="hljs-keyword">var</span> pos = $(self.selectedElem).position();<span class="hljs-comment">//offset();</span>
-            <span class="hljs-keyword">var</span> endPos = $(end).position();<span class="hljs-comment">//offset();</span>
+            <span class="hljs-keyword">var</span> pos = $(self.selectedElem).position(); <span class="hljs-comment">//offset();</span>
+            <span class="hljs-keyword">var</span> endPos = $(end).position(); <span class="hljs-comment">//offset();</span>
             <span class="hljs-keyword">var</span> baseWidth = $(end).width();
             <span class="hljs-keyword">var</span> baseHeight = $(end).height();
-            <span class="hljs-keyword">if</span>(pos.left&gt;endPos.left){
+            <span class="hljs-keyword">if</span> (pos.left &gt; endPos.left) {
                 <span class="hljs-keyword">var</span> tmp_left = pos.left;
                 pos.left = endPos.left;
                 endPos.left = tmp_left;
                 baseWidth = $(self.selectedElem).width();
             }
-            <span class="hljs-keyword">if</span>(pos.top&gt;endPos.top){
+            <span class="hljs-keyword">if</span> (pos.top &gt; endPos.top) {
                 <span class="hljs-keyword">var</span> tmp_top = pos.top;
                 pos.top = endPos.top;
                 endPos.top = tmp_top;
                 baseHeight = $(self.selectedElem).height();
             }
-            <span class="hljs-keyword">var</span> height = endPos.top+baseHeight -pos.top;
-            <span class="hljs-keyword">var</span> width = endPos.left+baseWidth -pos.left;
-            <span class="hljs-keyword">if</span>(self.selectionEnd)
-                $(<span class="hljs-string">"#table_selection"</span>).show().css({left:pos.left,top:pos.top}).height(height).width(width);
+            <span class="hljs-keyword">var</span> height = endPos.top + baseHeight - pos.top;
+            <span class="hljs-keyword">var</span> width = endPos.left + baseWidth - pos.left;
+            <span class="hljs-keyword">if</span> (self.selectionEnd)
+                $(<span class="hljs-string">"#table_selection"</span>).show().css({
+                    left: pos.left,
+                    top: pos.top
+                }).height(height).width(width);
             <span class="hljs-keyword">else</span>
                 $(<span class="hljs-string">"#table_selection"</span>).hide()</pre></div></div>
             
@@ -965,18 +984,18 @@ Set hidden selection area contents to mini-table.</p>
             <span class="hljs-keyword">var</span> bottom = tpos_start[<span class="hljs-number">1</span>] &gt; tpos_end[<span class="hljs-number">1</span>] ? tpos_start[<span class="hljs-number">1</span>] : tpos_end[<span class="hljs-number">1</span>];
             <span class="hljs-keyword">var</span> left = tpos_start[<span class="hljs-number">0</span>] &lt; tpos_end[<span class="hljs-number">0</span>] ? tpos_start[<span class="hljs-number">0</span>] : tpos_end[<span class="hljs-number">0</span>];
             <span class="hljs-keyword">var</span> right = tpos_start[<span class="hljs-number">0</span>] &gt; tpos_end[<span class="hljs-number">0</span>] ? tpos_start[<span class="hljs-number">0</span>] : tpos_end[<span class="hljs-number">0</span>];
-            $(<span class="hljs-string">".Table.axis#x"</span>).children().children().children().slice(left,right+<span class="hljs-number">1</span>).addClass(<span class="hljs-string">"active"</span>);
-            $(<span class="hljs-string">".Table.axis#y"</span>).children().children().slice(top,bottom+<span class="hljs-number">1</span>).children().addClass(<span class="hljs-string">"active"</span>);
-            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> y=top;y&lt;=bottom;y++){
-                selection_html+=<span class="hljs-string">"&lt;tr&gt;"</span>;
-                <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> x=left;x&lt;=right;x++){
-                    selection_html+=<span class="hljs-string">"&lt;td&gt;"</span>+self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML+<span class="hljs-string">"&lt;/td&gt;"</span>;
+            $(<span class="hljs-string">".Table.axis#x"</span>).children().children().children().slice(left, right + <span class="hljs-number">1</span>).addClass(<span class="hljs-string">"active"</span>);
+            $(<span class="hljs-string">".Table.axis#y"</span>).children().children().slice(top, bottom + <span class="hljs-number">1</span>).children().addClass(<span class="hljs-string">"active"</span>);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y = top; y &lt;= bottom; y++) {
+                selection_html += <span class="hljs-string">"&lt;tr&gt;"</span>;
+                <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x = left; x &lt;= right; x++) {
+                    selection_html += <span class="hljs-string">"&lt;td&gt;"</span> + self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML + <span class="hljs-string">"&lt;/td&gt;"</span>;
                 }
-                selection_html+=<span class="hljs-string">"&lt;/tr&gt;"</span>;
+                selection_html += <span class="hljs-string">"&lt;/tr&gt;"</span>;
             }
-            selection_html+=<span class="hljs-string">"&lt;/tbody&gt;&lt;/table&gt;"</span>;
+            selection_html += <span class="hljs-string">"&lt;/tbody&gt;&lt;/table&gt;"</span>;
             $(<span class="hljs-string">"#table_clip"</span>).html(selection_html);
-            <span class="hljs-keyword">if</span>(self.selectedElem.contentEditable!=<span class="hljs-string">"true"</span>){</pre></div></div>
+            <span class="hljs-keyword">if</span> (self.selectedElem.contentEditable != <span class="hljs-string">"true"</span>) {</pre></div></div>
             
         </li>
         
@@ -999,7 +1018,7 @@ Set hidden selection area contents to mini-table.</p>
             }
         }
     }
-    self.emptySelection = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    self.emptySelection = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         <span class="hljs-keyword">var</span> end = self.selectionEnd || self.selectedElem
         <span class="hljs-keyword">var</span> tpos_start = self.selectedPos();
         <span class="hljs-keyword">var</span> tpos_end = self.selectedPos(end);
@@ -1008,59 +1027,56 @@ Set hidden selection area contents to mini-table.</p>
         <span class="hljs-keyword">var</span> bottom = tpos_start[<span class="hljs-number">1</span>] &gt; tpos_end[<span class="hljs-number">1</span>] ? tpos_start[<span class="hljs-number">1</span>] : tpos_end[<span class="hljs-number">1</span>];
         <span class="hljs-keyword">var</span> left = tpos_start[<span class="hljs-number">0</span>] &lt; tpos_end[<span class="hljs-number">0</span>] ? tpos_start[<span class="hljs-number">0</span>] : tpos_end[<span class="hljs-number">0</span>];
         <span class="hljs-keyword">var</span> right = tpos_start[<span class="hljs-number">0</span>] &gt; tpos_end[<span class="hljs-number">0</span>] ? tpos_start[<span class="hljs-number">0</span>] : tpos_end[<span class="hljs-number">0</span>];
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> y=top;y&lt;=bottom;y++){
-            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> x=left;x&lt;=right;x++){
-                self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML=<span class="hljs-string">""</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y = top; y &lt;= bottom; y++) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x = left; x &lt;= right; x++) {
+                self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML = <span class="hljs-string">""</span>;
             }
         }
     }
-    self.setEndOfContenteditable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(contentEditableElement)</span>
-    {</span>
-        <span class="hljs-keyword">var</span> range,selection;
-        <span class="hljs-keyword">if</span>(document.createRange)<span class="hljs-comment">//Firefox, Chrome, Opera, Safari, IE 9+</span>
+    self.setEndOfContenteditable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(contentEditableElement)</span> {</span>
+        <span class="hljs-keyword">var</span> range, selection;
+        <span class="hljs-keyword">if</span> (document.createRange) <span class="hljs-comment">//Firefox, Chrome, Opera, Safari, IE 9+</span>
         {
-            range = document.createRange();<span class="hljs-comment">//Create a range (a range is a like the selection but invisible)</span>
-            range.selectNodeContents(contentEditableElement);<span class="hljs-comment">//Select the entire contents of the element with the range</span>
-            range.collapse(<span class="hljs-literal">false</span>);<span class="hljs-comment">//collapse the range to the end point. false means collapse to end rather than the start</span>
-            selection = window.getSelection();<span class="hljs-comment">//get the selection object (allows you to change selection)</span>
-            selection.removeAllRanges();<span class="hljs-comment">//remove any selections already made</span>
-            selection.addRange(range);<span class="hljs-comment">//make the range you have just created the visible selection</span>
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(document.selection)<span class="hljs-comment">//IE 8 and lower</span>
+            range = document.createRange(); <span class="hljs-comment">//Create a range (a range is a like the selection but invisible)</span>
+            range.selectNodeContents(contentEditableElement); <span class="hljs-comment">//Select the entire contents of the element with the range</span>
+            range.collapse(<span class="hljs-literal">false</span>); <span class="hljs-comment">//collapse the range to the end point. false means collapse to end rather than the start</span>
+            selection = window.getSelection(); <span class="hljs-comment">//get the selection object (allows you to change selection)</span>
+            selection.removeAllRanges(); <span class="hljs-comment">//remove any selections already made</span>
+            selection.addRange(range); <span class="hljs-comment">//make the range you have just created the visible selection</span>
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (document.selection) <span class="hljs-comment">//IE 8 and lower</span>
         {
-            range = document.body.createTextRange();<span class="hljs-comment">//Create a range (a range is a like the selection but invisible)</span>
-            range.moveToElementText(contentEditableElement);<span class="hljs-comment">//Select the entire contents of the element with the range</span>
-            range.collapse(<span class="hljs-literal">false</span>);<span class="hljs-comment">//collapse the range to the end point. false means collapse to end rather than the start</span>
-            range.select();<span class="hljs-comment">//Select the range (make it the visible selection</span>
+            range = document.body.createTextRange(); <span class="hljs-comment">//Create a range (a range is a like the selection but invisible)</span>
+            range.moveToElementText(contentEditableElement); <span class="hljs-comment">//Select the entire contents of the element with the range</span>
+            range.collapse(<span class="hljs-literal">false</span>); <span class="hljs-comment">//collapse the range to the end point. false means collapse to end rather than the start</span>
+            range.select(); <span class="hljs-comment">//Select the range (make it the visible selection</span>
         }
     }
-    self.primaryTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span>{</span>
-        <span class="hljs-keyword">return</span> (elem||self.selectedElem).parentElement.parentElement.parentElement;
+    self.primaryTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span> {</span>
+        <span class="hljs-keyword">return</span> (elem || self.selectedElem).parentElement.parentElement.parentElement;
     }
-    self.posToElem = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span>{</span>
+    self.posToElem = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> {</span>
         <span class="hljs-keyword">return</span> self.selectedElem.parentElement.parentElement.children[y].children[x];
     }
     self.posCache = {};
-	self.selectedPos = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(targetElem)</span>{</span>
-        <span class="hljs-keyword">var</span> child = (targetElem||self.selectedElem);
-        <span class="hljs-keyword">if</span>(self.posCache[child]){
+    self.selectedPos = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(targetElem)</span> {</span>
+        <span class="hljs-keyword">var</span> child = (targetElem || self.selectedElem);
+        <span class="hljs-keyword">if</span> (self.posCache[child]) {
             <span class="hljs-keyword">return</span> self.posCache[child];
-        }
-        <span class="hljs-keyword">else</span> {
+        } <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">var</span> column = <span class="hljs-number">0</span>;
-            <span class="hljs-keyword">while</span>( (child = child.previousSibling) != <span class="hljs-literal">null</span> )
+            <span class="hljs-keyword">while</span> ((child = child.previousSibling) != <span class="hljs-literal">null</span>)
                 column++;
-            child = (targetElem||self.selectedElem).parentElement
+            child = (targetElem || self.selectedElem).parentElement
             <span class="hljs-keyword">var</span> row = <span class="hljs-number">0</span>
-            <span class="hljs-keyword">while</span>( (child = child.previousSibling) != <span class="hljs-literal">null</span> )
+            <span class="hljs-keyword">while</span> ((child = child.previousSibling) != <span class="hljs-literal">null</span>)
                 row++;
-            self.posCache[child]=[column,row];
-            <span class="hljs-keyword">return</span> [column,row];
+            self.posCache[child] = [column, row];
+            <span class="hljs-keyword">return</span> [column, row];
         }
-	}
-	self.tableSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-		<span class="hljs-keyword">return</span> [self.selectedElem.parentElement.children.length,self.selectedElem.parentElement.parentElement.children.length]
-	}</pre></div></div>
+    }
+    self.tableSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">return</span> [self.selectedElem.parentElement.children.length, self.selectedElem.parentElement.parentElement.children.length]
+    }</pre></div></div>
             
         </li>
         
@@ -1092,14 +1108,14 @@ Set hidden selection area contents to mini-table.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      a += <span class="hljs-number">1</span>; <span class="hljs-comment">// This line is funky</span>
-      c = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">while</span> (a &gt;= x) {
-        c++;
-        a -= x;
-        x *= <span class="hljs-number">26</span>;
-      }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        a += <span class="hljs-number">1</span>; <span class="hljs-comment">// This line is funky</span>
+        c = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span> (a &gt;= x) {
+            c++;
+            a -= x;
+            x *= <span class="hljs-number">26</span>;
+        }</pre></div></div>
             
         </li>
         
@@ -1114,13 +1130,13 @@ Set hidden selection area contents to mini-table.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> s = <span class="hljs-string">""</span>;
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; c; i++) {
-        s = alpha.charAt(a % <span class="hljs-number">26</span>) + s;
-        a = <span class="hljs-built_in">Math</span>.floor(a/<span class="hljs-number">26</span>);
-      }
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> s = <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; c; i++) {
+            s = alpha.charAt(a % <span class="hljs-number">26</span>) + s;
+            a = <span class="hljs-built_in">Math</span>.floor(a / <span class="hljs-number">26</span>);
+        }
 
-      <span class="hljs-keyword">return</span> s;
+        <span class="hljs-keyword">return</span> s;
     }</pre></div></div>
             
         </li>

@@ -111,10 +111,11 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">var</span> self = {};
+            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> self = {};
     $(<span class="hljs-string">"#Text"</span>).append(<span class="hljs-string">'&lt;button id="floatElement" title="Toggle Float" class="btn btn-default"&gt;&lt;i class="fa fa-arrows"&gt;&lt;/i&gt;&lt;/button&gt;'</span>);
-    $(<span class="hljs-string">"#floatElement"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-        <span class="hljs-keyword">if</span>(self.active){
+    $(<span class="hljs-string">"#floatElement"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (self.active) {
             $(self.active).toggleClass(<span class="hljs-string">"float"</span>).trigger(<span class="hljs-string">"resize"</span>);
             <span class="hljs-keyword">var</span> tmp = self.active;
             tmp.style.top = <span class="hljs-literal">null</span>;
@@ -123,51 +124,57 @@
             self.resizeOn(tmp);
         }
     });
-    $(<span class="hljs-string">".content_container"</span>).delegate(<span class="hljs-string">"img, iframe, table, .note-page section, canvas"</span>, <span class="hljs-string">"click.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(WebSyncAuth.view_op==<span class="hljs-string">"edit"</span>){
+    $(<span class="hljs-string">".content_container"</span>).delegate(<span class="hljs-string">"img, iframe, table, .note-page section, canvas"</span>, <span class="hljs-string">"click.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (WebSyncAuth.view_op == <span class="hljs-string">"edit"</span>) {
             self.resizeOn(<span class="hljs-keyword">this</span>);
             e.stopPropagation();
         }
     });
-    $(<span class="hljs-string">".content"</span>).bind(<span class="hljs-string">"click.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    $(<span class="hljs-string">".content"</span>).bind(<span class="hljs-string">"click.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         self.resizeOff();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle"</span>, <span class="hljs-string">"click.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle"</span>, <span class="hljs-string">"click.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         e.stopPropagation();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle.dragable"</span>, <span class="hljs-string">"mousedown.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle.dragable"</span>, <span class="hljs-string">"mousedown.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         console.log(e);
         self.drag = <span class="hljs-literal">true</span>;
         self.origMove = $(self.active).position();
-        self.origMouse = {left: e.pageX, top: e.pageY};
+        self.origMouse = {
+            left: e.pageX,
+            top: e.pageY
+        };
         e.preventDefault();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle.bottom"</span>, <span class="hljs-string">"mousedown.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle.bottom"</span>, <span class="hljs-string">"mousedown.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         console.log(e);
         self.drag = <span class="hljs-literal">true</span>;
         self.origY = e.pageY;
         self.origHeight = $(self.active).outerHeight();
         e.preventDefault();
     });
-    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle.right"</span>, <span class="hljs-string">"mousedown.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">".content"</span>).delegate(<span class="hljs-string">".Resize.handle.right"</span>, <span class="hljs-string">"mousedown.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         console.log(e);
         self.drag = <span class="hljs-literal">true</span>;
         self.origX = e.pageX;
         self.origWidth = $(self.active).outerWidth();
         e.preventDefault();
     });
-    $(document).bind(<span class="hljs-string">"mousemove.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.drag){
-            <span class="hljs-keyword">if</span>(self.origY){
-                $(self.active).outerHeight((e.pageY-self.origY)/WebSync.zoom + self.origHeight);
+    $(document).bind(<span class="hljs-string">"mousemove.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.drag) {
+            <span class="hljs-keyword">if</span> (self.origY) {
+                $(self.active).outerHeight((e.pageY - self.origY) / WebSync.zoom + self.origHeight);
             }
-            <span class="hljs-keyword">if</span>(self.origX){
-                $(self.active).outerWidth((e.pageX-self.origX)/WebSync.zoom + self.origWidth);
+            <span class="hljs-keyword">if</span> (self.origX) {
+                $(self.active).outerWidth((e.pageX - self.origX) / WebSync.zoom + self.origWidth);
             }
-            <span class="hljs-keyword">if</span>(self.origMove){
+            <span class="hljs-keyword">if</span> (self.origMove) {
                 <span class="hljs-keyword">var</span> x_offset = e.pageX - self.origMouse.left;
                 <span class="hljs-keyword">var</span> y_offset = e.pageY - self.origMouse.top;
-                <span class="hljs-keyword">var</span> new_position = {left: self.origMove.left + x_offset, top: self.origMove.top + y_offset}
+                <span class="hljs-keyword">var</span> new_position = {
+                    left: self.origMove.left + x_offset,
+                    top: self.origMove.top + y_offset
+                }
                 $(self.active).css(new_position);
             }
             $(self.active).trigger(<span class="hljs-string">"resize"</span>);
@@ -175,8 +182,8 @@
             e.preventDefault();
         }
     });
-    $(document).bind( <span class="hljs-string">"mouseup.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.drag){
+    $(document).bind(<span class="hljs-string">"mouseup.Resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.drag) {
             console.log(e);
             e.preventDefault();
             self.origX = <span class="hljs-literal">null</span>;
@@ -188,7 +195,7 @@
             self.drag = <span class="hljs-literal">false</span>;
         }
     });
-    self.resizeOn = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span>{</span>
+    self.resizeOn = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span> {</span>
         self.resizeOff();
         self.active = elem;</pre></div></div>
             
@@ -205,7 +212,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle top left'</span>+($(elem).css(<span class="hljs-string">"position"</span>)==<span class="hljs-string">"absolute"</span>? <span class="hljs-string">" dragable\"&gt;&lt;i class='fa fa-arrows'&gt;&lt;/i&gt;"</span> : <span class="hljs-string">"\"&gt;"</span> )+ <span class="hljs-string">'&lt;/div&gt;'</span>);
+            <div class="content"><div class='highlight'><pre>        $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle top left'</span> + ($(elem).css(<span class="hljs-string">"position"</span>) == <span class="hljs-string">"absolute"</span> ? <span class="hljs-string">" dragable\"&gt;&lt;i class='fa fa-arrows'&gt;&lt;/i&gt;"</span> : <span class="hljs-string">"\"&gt;"</span>) + <span class="hljs-string">'&lt;/div&gt;'</span>);
         $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle top middle"&gt;&lt;/div&gt;'</span>);
         $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle top right"&gt;&lt;/div&gt;'</span>);
         $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle right middle"&gt;&lt;/div&gt;'</span>);
@@ -214,46 +221,58 @@
         $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle bottom left"&gt;&lt;/div&gt;'</span>);
         $(<span class="hljs-string">".content"</span>).append(<span class="hljs-string">'&lt;div class="Resize handle left middle"&gt;&lt;/div&gt;'</span>);
         self.updateHandles();
-        self.active.addEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>,self.observer);
+        self.active.addEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>, self.observer);
     };
-    self.updateHandles = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-        <span class="hljs-keyword">if</span>(!self.active) <span class="hljs-keyword">return</span>;
+    self.updateHandles = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (!self.active) <span class="hljs-keyword">return</span>;
         <span class="hljs-keyword">var</span> offset = $(self.active).offset();
-        $(<span class="hljs-string">".Resize.handle.top"</span>).offset({top: offset.top-<span class="hljs-number">4</span>});
-        $(<span class="hljs-string">".Resize.handle.left"</span>).offset({left: offset.left-<span class="hljs-number">4</span>});
-        $(<span class="hljs-string">".Resize.handle.right"</span>).offset({left: offset.left+$(self.active).outerWidth()*WebSync.zoom-<span class="hljs-number">3</span>});
-        $(<span class="hljs-string">".Resize.handle.bottom"</span>).offset({top: offset.top+$(self.active).outerHeight()*WebSync.zoom-<span class="hljs-number">3</span>});
-        $(<span class="hljs-string">".Resize.handle.right.middle, .Resize.handle.left.middle"</span>).offset({top: offset.top+$(self.active).outerHeight()*WebSync.zoom/<span class="hljs-number">2</span>-<span class="hljs-number">4</span>});
-        $(<span class="hljs-string">".Resize.handle.top.middle, .Resize.handle.bottom.middle"</span>).offset({left: offset.left+$(self.active).outerWidth()*WebSync.zoom/<span class="hljs-number">2</span>-<span class="hljs-number">4</span>});
+        $(<span class="hljs-string">".Resize.handle.top"</span>).offset({
+            top: offset.top - <span class="hljs-number">4</span>
+        });
+        $(<span class="hljs-string">".Resize.handle.left"</span>).offset({
+            left: offset.left - <span class="hljs-number">4</span>
+        });
+        $(<span class="hljs-string">".Resize.handle.right"</span>).offset({
+            left: offset.left + $(self.active).outerWidth() * WebSync.zoom - <span class="hljs-number">3</span>
+        });
+        $(<span class="hljs-string">".Resize.handle.bottom"</span>).offset({
+            top: offset.top + $(self.active).outerHeight() * WebSync.zoom - <span class="hljs-number">3</span>
+        });
+        $(<span class="hljs-string">".Resize.handle.right.middle, .Resize.handle.left.middle"</span>).offset({
+            top: offset.top + $(self.active).outerHeight() * WebSync.zoom / <span class="hljs-number">2</span> - <span class="hljs-number">4</span>
+        });
+        $(<span class="hljs-string">".Resize.handle.top.middle, .Resize.handle.bottom.middle"</span>).offset({
+            left: offset.left + $(self.active).outerWidth() * WebSync.zoom / <span class="hljs-number">2</span> - <span class="hljs-number">4</span>
+        });
     }
-    $(document).on(<span class="hljs-string">"zoom.Resize"</span>,self.updateHandles);
-    $(document).on(<span class="hljs-string">"resize.Resize"</span>,self.updateHandles);
-    self.observer = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    $(document).on(<span class="hljs-string">"zoom.Resize"</span>, self.updateHandles);
+    $(document).on(<span class="hljs-string">"resize.Resize"</span>, self.updateHandles);
+    self.observer = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         <span class="hljs-keyword">var</span> bounding_data = <span class="hljs-built_in">JSON</span>.stringify(self.active.getBoundingClientRect());
-        <span class="hljs-keyword">if</span>(bounding_data!=self.lastSize){
-            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">if</span> (bounding_data != self.lastSize) {
+            setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
                 self.updateHandles();
-            },<span class="hljs-number">1</span>);
-            self.lasttSize=bounding_data;
+            }, <span class="hljs-number">1</span>);
+            self.lasttSize = bounding_data;
         }
-    };    
-    self.resizeOff = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    };
+    self.resizeOff = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         self.drag = <span class="hljs-literal">false</span>;
         self.origX = <span class="hljs-literal">null</span>;
         self.origY = <span class="hljs-literal">null</span>;
         self.origWidth = <span class="hljs-literal">null</span>;
         self.origHeight = <span class="hljs-literal">null</span>;
         $(<span class="hljs-string">".Resize.handle"</span>).remove();
-        <span class="hljs-keyword">if</span>(self.active){
-            self.active.removeEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>,self.observer);
+        <span class="hljs-keyword">if</span> (self.active) {
+            self.active.removeEventListener(<span class="hljs-string">"DOMSubtreeModified"</span>, self.observer);
         }
         self.active = <span class="hljs-literal">null</span>;
     }
-    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         self.resizeOff();
-		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Resize"</span>);
-		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Resize"</span>);
-	}</pre></div></div>
+        $(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Resize"</span>);
+        $(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Resize"</span>);
+    }</pre></div></div>
             
         </li>
         

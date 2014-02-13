@@ -1,23 +1,62 @@
 $blue: #08c;
-
-@mixin ex($key, $val) {
-    -moz-#{$key}: $val;
-    -o-#{$key}: $val;
-    -ms-#{$key}: $val;
-    -webkit-#{$key}: $val;
-    #{$key}: $val;
+ @mixin ex($key, $val) {
+    -moz-# {
+        $key
+    }
+    : $val;
+    -o-# {
+        $key
+    }
+    : $val;
+    -ms-# {
+        $key
+    }
+    : $val;
+    -webkit-# {
+        $key
+    }
+    : $val;
+    # {
+        $key
+    }
+    : $val;
 }
 @mixin keyframes($name) {
-    @-moz-keyframes #{$name} { @content; }
-    @-o-keyframes #{$name} { @content; }
-    @-webkit-keyframes #{$name} { @content; }
-    @-ms-keyframes #{$name} { @content; }
-    @keyframes #{$name} { @content; }
+    @-moz-keyframes # {
+        $name
+    }
+    {
+        @content;
+    }
+    @-o-keyframes # {
+        $name
+    }
+    {
+        @content;
+    }
+    @-webkit-keyframes # {
+        $name
+    }
+    {
+        @content;
+    }
+    @-ms-keyframes # {
+        $name
+    }
+    {
+        @content;
+    }
+    @keyframes # {
+        $name
+    }
+    {
+        @content;
+    }
 }
-
-body,html {
+body,
+html {
     overflow: hidden;
-	//background-color: #eee !important;
+    //background-color: #eee !important;
     position: fixed;
     width: 100%;
     height: 100%;
@@ -42,7 +81,7 @@ body .mathquill-rendered-math {
     border: none;
     &.empty {
         border: 1px solid #aaa;
-        &:before {
+        &: before {
             content: "equation";
             font-size: 8pt;
             color: #aaa;
@@ -102,13 +141,15 @@ body .mathquill-rendered-math {
     background-image: -o-linear-gradient(top,#fff,#e6e6e6);
     background-image: linear-gradient(to bottom,#fff,#e6e6e6);
 }*/
+
 .content * {
     line-height: 1.15em;
 }
 .content li p {
     display: inline;
 }
-.content ol, .content ul {
+.content ol,
+.content ul {
     margin: 0 0 0px 25px;
 }
 .zen .menu {
@@ -123,11 +164,11 @@ body .mathquill-rendered-math {
     border: none;
 }
 cursor {
-	background-color: red;
-	padding-right: 3px;
+    background-color: red;
+    padding-right: 3px;
 }
 .hidden {
-	visibility: hidden;
+    visibility: hidden;
 }
 nav .settings-popup {
     position: absolute;
@@ -138,7 +179,7 @@ nav .settings-popup {
     margin: 0 auto;
     max-width: none;
     ul.tab-nav {
-        float:none;
+        float: none;
         margin-top: -9px;
         margin-bottom: -12px;
         margin-left: 8px;
@@ -148,13 +189,13 @@ nav .settings-popup {
             line-height: 18px;
             color: black !important;
             text-shadow: none;
-            &:hover {
+            &: hover {
                 background-color: #cccccc;
             }
         }
         li.active a {
             color: white !important;
-            text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
         }
     }
     .tab-content {
@@ -187,7 +228,8 @@ nav .settings-popup {
 .settings-popup td {
     vertical-align: middle;
 }
-.settings-popup .input-append, .settings-popup select {
+.settings-popup .input-append,
+.settings-popup select {
     margin-bottom: 0px !important;
 }
 .settings-popup .input-append .active {
@@ -200,16 +242,10 @@ nav .settings-popup {
     background-image: -moz-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
     background-image: -webkit-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
     background-image: -ms-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, #C0C0C0),
-        color-stop(1, #F0F0F0)
-    );
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #C0C0C0), color-stop(1, #F0F0F0));
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
     background-attachment: fixed;
-	position: absolute;
+    position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
@@ -224,7 +260,7 @@ nav .settings-popup {
         margin: 10px 5px;
         a {
             cursor: pointer;
-            &:hover {
+            &: hover {
                 color: white;
             }
             margin: 5px;
@@ -233,7 +269,8 @@ nav .settings-popup {
     }
 }
 .content_well > div {
-    @include ex(transform-origin, top center);
+    @include ex(transform-origin,
+    top center);
 }
 .layout-presentation {
     //box-shadow: 0 0 8px #aaa;
@@ -251,7 +288,7 @@ nav .settings-popup {
         background-color: white;
         font-size: 24px;
         line-height: 1.15;
-        display:none;
+        display: none;
         -user-modify: read-write;
         -moz-user-modify: read-write;
         -webkit-user-modify: read-write;
@@ -262,7 +299,7 @@ nav .settings-popup {
         -moz-hyphens: auto;
         -ms-hyphens: auto;
         &.active {
-            display:block;
+            display: block;
         }
     }
     .content_well {
@@ -294,17 +331,17 @@ nav .settings-popup {
         position: fixed;
     }
     .axis {
-        position:fixed;
+        position: fixed;
     }
 }
 .content-page .content_container {
-	min-height: 9in;
-	width: 8.5in;
-	padding: 1in;
+    min-height: 9in;
+    width: 8.5in;
+    padding: 1in;
     margin: 0.1in auto;
-	border: 1px solid #aaa;
+    border: 1px solid #aaa;
     border-radius: 4px;
-	background-color: white;
+    background-color: white;
     //box-shadow: 0 0 8px #aaa;
     .page {
         -user-modify: read-write;
@@ -324,7 +361,7 @@ nav .settings-popup {
 }
 .view {
     .menu {
-        display:none;
+        display: none;
     }
     .content_well {
         top: 0px;
@@ -358,59 +395,61 @@ nav .settings-popup {
     .content {
         border: none;
     }
-    .page, .slide {
+    .page,
+    .slide {
         border: none;
-        -user-modify: read-only  !important;
+        -user-modify: read-only !important;
         -moz-user-modify: read-only !important;
         -webkit-user-modify: read-only !important;
     }
 }
-:focus, :active {
-	outline: none;
+: focus, : active {
+    outline: none;
 }
-::-moz-selection {
-	background-color: #b3d4fc;
+: : -moz-selection {
+    background-color: #b3d4fc;
 }
-::selection {
-	background-color: #b3d4fc;
+: : selection {
+    background-color: #b3d4fc;
 }
 nav.no-connection {
     background-color: #800;
 }
 a#name {
-	//background-color: #555;
-	background-color: rgba(255,255,255,0.3) !important;
-	font-size: 1.5em;
-	overflow: hidden;
-	text-overflow:ellipsis;
-	max-width: 3in;
-	height: 50px;
+    //background-color: #555;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    font-size: 1.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 3in;
+    height: 50px;
     margin-bottom: -5px;
-	white-space: nowrap;
+    white-space: nowrap;
     display: inline-block;
-    &:focus {
+    &: focus {
         max-width: initial;
         //background-color: #777;
         text-overflow: clip;
-        background-color: rgba(255,255,255,0.45) !important;
+        background-color: rgba(255, 255, 255, 0.45) !important;
         outline: none;
     }
-    &:hover {
+    &: hover {
         //background-color: #777;
-        background-color: rgba(255,255,255,0.45) !important;
+        background-color: rgba(255, 255, 255, 0.45) !important;
     }
 }
 .preformatted {
     font-family: monospace;
     white-space: pre;
 }
-.ribbon button, .ribbon select {
-	margin-bottom: 0px !important;
+.ribbon button,
+.ribbon select {
+    margin-bottom: 0px !important;
     margin-top: 5px;
-	width: auto !important;
+    width: auto !important;
 }
 #font_size {
-	width: auto !important;
+    width: auto !important;
 }
 .ribbon {
     .form-control {
@@ -437,15 +476,17 @@ a#name {
     height: 100%;
     display: inline-block;
     margin-bottom: -15px;
-	table {
+    table {
         @include ex(user-modify, read-only);
-	}
-    table, th, td {
+    }
+    table,
+    th,
+    td {
         border: 1px solid #888;
         word-wrap: break-word;
         overflow-wrap: break-work;
         hyphens: auto;
-        border-collapse:collapse;
+        border-collapse: collapse;
     }
     td {
         padding-left: 1px;
@@ -479,15 +520,15 @@ a#name {
 .ribbon {
     //padding: 0 30px 5px 30px;
     //padding: 0 0 5px 0;
-	.input-append, .input-prepend {
-		margin-top: 5px;
-		padding-right: 1px;
-		padding-left: 1px;
-		margin-bottom: 0px !important;
-	}
-	.btn-group {
-		margin-left: 0px !important;
-	}
+    .input-append, .input-prepend {
+        margin-top: 5px;
+        padding-right: 1px;
+        padding-left: 1px;
+        margin-bottom: 0px !important;
+    }
+    .btn-group {
+        margin-left: 0px !important;
+    }
     .btn+.btn-group {
         margin-left: 5px !important;
     }
@@ -505,37 +546,37 @@ a#name {
         overflow-y: visible;
         max-width: 1170px;
         width: 100%;
-        & > :last-child {
+        & >: last-child {
             margin-right: 5px;
         }
         white-space: nowrap;
     }
 }
 #table_cursor {
-	position: absolute;
-	outline: 2px solid black;
-	border: 0px solid transparent;
-	padding-left: 1px;
-	padding-right: 1px;
-	padding-bottom: 1px;
-	pointer-events: none;
-	background: none !important;
-	left: -1000px;
-	top: 0px;
+    position: absolute;
+    outline: 2px solid black;
+    border: 0px solid transparent;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    pointer-events: none;
+    background: none !important;
+    left: -1000px;
+    top: 0px;
     z-index: 902;
 }
 #table_selection {
     position: absolute;
     pointer-events: none;
-    left:-1000px;
+    left: -1000px;
     top: 0px;
     padding: 1px 2px;
     z-index: 899;
-	background-color: rgba(0,120,252,0.2);
+    background-color: rgba(0, 120, 252, 0.2);
 }
 .dropdown-menu i {
-	position: relative;
-	left: -10px;
+    position: relative;
+    left: -10px;
 }
 @media (max-width: 767px) {
     nav.navbar .collapse > * {
@@ -583,7 +624,7 @@ nav.navbar {
 .sidebar {
     width: 250px;
     float: right;
-    position:absolute;
+    position: absolute;
     right: 0;
     bottom: 0;
     top: 95px;
@@ -599,7 +640,8 @@ nav.navbar {
         float: left;
         left: 0;
         padding: 5px;
-        .slideWell {/*
+        .slideWell {
+            /*
             position: absolute;
             top: 43px;
             left: 5px;
@@ -656,10 +698,10 @@ nav.navbar {
                 }
             }
         }
-}
+    }
     &#chat {
         position: fixed;
-        #user_list{
+        #user_list {
             display: table;
             border-spacing: 5px;
             a {
@@ -674,7 +716,7 @@ nav.navbar {
                 border: 1px solid transparent;
             }
         }
-        a img:hover, a img:active, a:hover img, a:active img {
+        a img: hover, a img: active, a: hover img, a: active img {
             border: 1px solid black;
         }
         #chat_well {
@@ -685,7 +727,6 @@ nav.navbar {
             top: 45px;
             width: 238px;
             overflow-y: auto;
-
             span {
                 font-weight: bold;
             }
@@ -702,7 +743,7 @@ nav.navbar {
                 line-height: 10pt;
                 word-wrap: break-word;
                 min-height: 35px;
-                &:last-child {
+                &: last-child {
                     border-bottom: none;
                 }
             }
@@ -784,7 +825,8 @@ nav.navbar {
     }
 }
 .content_container {
-    @include ex(transform-origin, top center);
+    @include ex(transform-origin,
+    top center);
     padding: 5px;
     position: relative;
     [contenteditable=true] {
@@ -807,7 +849,8 @@ nav.navbar {
                 height: 100%;
             }
             .content_container {
-                @include ex(transform-origin, top left);
+                @include ex(transform-origin,
+                top left);
             }
             .note-page {
                 position: relative;
@@ -819,7 +862,6 @@ nav.navbar {
                     line-height: 32pt;
                     min-width: 250px;
                     font-size: 24pt;
-
                     border-left: none;
                     border-bottom: 1px solid #666;
                     background-color: transparent;
@@ -846,8 +888,9 @@ ul.nav.nav-list {
         color: #333333;
     }
     li {
-        &.active2 > a, .active > a {
-            &:hover {
+        &.active2 > a,
+        .active > a {
+            &: hover {
                 background-color: transparent !important;
             }
             border-right: 1px solid #333333;
@@ -867,10 +910,14 @@ ul.nav.nav-list {
     z-index: 10;
 }
 .badge-pulse {
-    @include ex(animation-duration, 1s);
-    @include ex(animation-name, badge-glow);
-    @include ex(animation-iteration-count, infinite);
-    @include ex(animation-direction, alternate);
+    @include ex(animation-duration,
+    1s);
+    @include ex(animation-name,
+    badge-glow);
+    @include ex(animation-iteration-count,
+    infinite);
+    @include ex(animation-direction,
+    alternate);
 }
 @include keyframes(badge-glow) {
     from {

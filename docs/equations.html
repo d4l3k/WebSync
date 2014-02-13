@@ -112,7 +112,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">var</span> self = {};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> self = {};</pre></div></div>
             
         </li>
         
@@ -143,11 +144,11 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">"#Insert"</span>).append(<span class="hljs-string">" &lt;button id='insert_equation' class='btn btn-default Equations' title='Insert Equation'&gt;Equation&lt;/button&gt;"</span>);
-    $(<span class="hljs-string">"#insert_equation"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    $(<span class="hljs-string">"#insert_equation"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         <span class="hljs-keyword">var</span> elem = $(<span class="hljs-string">'&lt;span class="Equations Equation-Editable" contenteditable="false"&gt;&lt;/span&gt;'</span>)[<span class="hljs-number">0</span>]
         rangy.getSelection().getAllRanges()[<span class="hljs-number">0</span>].surroundContents(elem);
         elem.dataset.latex = $(elem).text();
-        elem.dataset.search_children=<span class="hljs-literal">false</span>;
+        elem.dataset.search_children = <span class="hljs-literal">false</span>;
         $(elem).mathquill(<span class="hljs-string">'editable'</span>).click();
     });</pre></div></div>
             
@@ -164,13 +165,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    WebSync.registerDOMException(<span class="hljs-string">".mathquill-rendered-math"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span>{</span>
+            <div class="content"><div class='highlight'><pre>    WebSync.registerDOMException(<span class="hljs-string">".mathquill-rendered-math"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
         <span class="hljs-keyword">return</span> $(obj).mathquill(<span class="hljs-string">"latex"</span>);
-    }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(json)</span>{</span>
-        setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(json)</span> {</span>
+        setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
             $(<span class="hljs-string">".make-editable"</span>).removeClass(<span class="hljs-string">"make-editable"</span>).mathquill(<span class="hljs-string">"editable"</span>);
-        },<span class="hljs-number">1</span>);
-        <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;span class="Equations Equation-Editable make-editable" contenteditable="false"&gt;'</span>+json+<span class="hljs-string">'&lt;/span&gt;'</span>;
+        }, <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;span class="Equations Equation-Editable make-editable" contenteditable="false"&gt;'</span> + json + <span class="hljs-string">'&lt;/span&gt;'</span>;
     });</pre></div></div>
             
         </li>
@@ -186,13 +187,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Equations"</span>);
-		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Equations"</span>);
+            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Equations"</span>);
+        $(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Equations"</span>);
         $(<span class="hljs-string">".Equations"</span>).remove();
         WebSync.unregisterDOMException(<span class="hljs-string">".mathquill-rendered-math"</span>);
 
-	}</pre></div></div>
+    }</pre></div></div>
             
         </li>
         

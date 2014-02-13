@@ -112,7 +112,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">var</span> self = {};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> self = {};</pre></div></div>
             
         </li>
         
@@ -145,7 +146,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">"#Insert"</span>).append(<span class="hljs-string">" &lt;button id='drawing_mode' class='btn btn-default Drawing' title='Draw'&gt;&lt;i class='fa fa-pencil'&gt;&lt;/i&gt;&lt;/button&gt;"</span>);
-    $(<span class="hljs-string">"#drawing_mode"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    $(<span class="hljs-string">"#drawing_mode"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         $(<span class="hljs-keyword">this</span>).toggleClass(<span class="hljs-string">"active"</span>);
         self.active = !self.active;
     });</pre></div></div>
@@ -163,8 +164,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">".content_container"</span>).bind(<span class="hljs-string">"mousedown.Drawing"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.active){
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">".content_container"</span>).bind(<span class="hljs-string">"mousedown.Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.active) {
             self.drag = <span class="hljs-literal">true</span>;
             self.last_time = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();</pre></div></div>
             
@@ -182,18 +183,18 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>            self.active_id = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getTime().toString();
-            self.points[self.active_id]=[];
-            <span class="hljs-keyword">if</span>($(e.target).attr(<span class="hljs-string">"contenteditable"</span>)==<span class="hljs-string">"true"</span>){
+            self.points[self.active_id] = [];
+            <span class="hljs-keyword">if</span> ($(e.target).attr(<span class="hljs-string">"contenteditable"</span>) == <span class="hljs-string">"true"</span>) {
                 self.parent = e.target;
             } <span class="hljs-keyword">else</span> {
                 self.parent = $(e.target).parents(<span class="hljs-string">"[contenteditable=true]"</span>);
             }
             self.canvas = document.createElement(<span class="hljs-string">"canvas"</span>);
-            $(self.canvas).addClass(<span class="hljs-string">"Drawing"</span>).data(<span class="hljs-string">"drawid"</span>,self.active_id).prependTo(self.parent);
+            $(self.canvas).addClass(<span class="hljs-string">"Drawing"</span>).data(<span class="hljs-string">"drawid"</span>, self.active_id).prependTo(self.parent);
             self.savePoint(e);
         }
-    }).bind(<span class="hljs-string">"mousemove.Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.active&amp;&amp;self.drag){
+    }).bind(<span class="hljs-string">"mousemove.Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.active &amp;&amp; self.drag) {
             <span class="hljs-keyword">var</span> date = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();</pre></div></div>
             
         </li>
@@ -209,8 +210,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                self.savePoint(e);
-                self.last_time = date;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            self.savePoint(e);
+            self.last_time = date;</pre></div></div>
             
         </li>
         
@@ -226,8 +227,8 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        }
-    }).bind(<span class="hljs-string">"mouseup.Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(self.active&amp;&amp;self.drag){
+    }).bind(<span class="hljs-string">"mouseup.Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+        <span class="hljs-keyword">if</span> (self.active &amp;&amp; self.drag) {
             self.drag = <span class="hljs-literal">false</span>;
             self.savePoint(e);
         }
@@ -246,9 +247,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    self.savePoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+            <div class="content"><div class='highlight'><pre>    self.savePoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
         <span class="hljs-keyword">var</span> corner = $(<span class="hljs-string">".content_container"</span>).offset();
-        <span class="hljs-keyword">var</span> point = [e.pageX-corner.left-<span class="hljs-number">100</span>,e.pageY-corner.top-<span class="hljs-number">100</span>]
+        <span class="hljs-keyword">var</span> point = [e.pageX - corner.left - <span class="hljs-number">100</span>, e.pageY - corner.top - <span class="hljs-number">100</span>]
         self.points[self.active_id].push(point);
         self.drawPoints(self.active_id, self.canvas);
         e.preventDefault();
@@ -267,7 +268,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    self.drawPoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id, canvas)</span>{</span>
+            <div class="content"><div class='highlight'><pre>    self.drawPoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id, canvas)</span> {</span>
         <span class="hljs-keyword">var</span> points = self.points[id];</pre></div></div>
             
         </li>
@@ -284,11 +285,11 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> top, left, bottom, right;
-        _.each(points,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
-            <span class="hljs-keyword">if</span>(point[<span class="hljs-number">0</span>]-<span class="hljs-number">5</span> &lt; left || !left) left = point[<span class="hljs-number">0</span>]-<span class="hljs-number">5</span>;
-            <span class="hljs-keyword">if</span>(point[<span class="hljs-number">0</span>]+<span class="hljs-number">5</span> &gt; right || !right) right = point[<span class="hljs-number">0</span>]+<span class="hljs-number">5</span>;
-            <span class="hljs-keyword">if</span>(point[<span class="hljs-number">1</span>]-<span class="hljs-number">5</span> &lt; top || !top) top = point[<span class="hljs-number">1</span>]-<span class="hljs-number">5</span>;
-            <span class="hljs-keyword">if</span>(point[<span class="hljs-number">1</span>]+<span class="hljs-number">5</span> &gt; bottom || !bottom) bottom = point[<span class="hljs-number">1</span>]+<span class="hljs-number">5</span>;
+        _.each(points, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
+            <span class="hljs-keyword">if</span> (point[<span class="hljs-number">0</span>] - <span class="hljs-number">5</span> &lt; left || !left) left = point[<span class="hljs-number">0</span>] - <span class="hljs-number">5</span>;
+            <span class="hljs-keyword">if</span> (point[<span class="hljs-number">0</span>] + <span class="hljs-number">5</span> &gt; right || !right) right = point[<span class="hljs-number">0</span>] + <span class="hljs-number">5</span>;
+            <span class="hljs-keyword">if</span> (point[<span class="hljs-number">1</span>] - <span class="hljs-number">5</span> &lt; top || !top) top = point[<span class="hljs-number">1</span>] - <span class="hljs-number">5</span>;
+            <span class="hljs-keyword">if</span> (point[<span class="hljs-number">1</span>] + <span class="hljs-number">5</span> &gt; bottom || !bottom) bottom = point[<span class="hljs-number">1</span>] + <span class="hljs-number">5</span>;
         });</pre></div></div>
             
         </li>
@@ -305,16 +306,20 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        canvas.width = <span class="hljs-number">100</span>;
-        $(canvas).css({position: <span class="hljs-string">"absolute"</span>, left: left, top: top}).attr(<span class="hljs-string">"width"</span>,right-left).attr(<span class="hljs-string">"height"</span>, bottom-top);
+        $(canvas).css({
+            position: <span class="hljs-string">"absolute"</span>,
+            left: left,
+            top: top
+        }).attr(<span class="hljs-string">"width"</span>, right - left).attr(<span class="hljs-string">"height"</span>, bottom - top);
         <span class="hljs-keyword">var</span> ctx = canvas.getContext(<span class="hljs-string">'2d'</span>);
         ctx.fillStyle = <span class="hljs-string">"#000000"</span>;
         ctx.lineJoin = <span class="hljs-string">"round"</span>;
         ctx.lineCap = <span class="hljs-string">"round"</span>;
         ctx.lineWidth = <span class="hljs-number">3</span>;
-        _.each(points, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point, index)</span>{</span>
-            <span class="hljs-keyword">if</span>(points[index+<span class="hljs-number">1</span>]){
-                <span class="hljs-keyword">if</span>(index==<span class="hljs-number">0</span>) ctx.moveTo(point[<span class="hljs-number">0</span>]-left,point[<span class="hljs-number">1</span>]-top);
-                ctx.lineTo(points[index+<span class="hljs-number">1</span>][<span class="hljs-number">0</span>]-left,points[index+<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]-top);
+        _.each(points, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point, index)</span> {</span>
+            <span class="hljs-keyword">if</span> (points[index + <span class="hljs-number">1</span>]) {
+                <span class="hljs-keyword">if</span> (index == <span class="hljs-number">0</span>) ctx.moveTo(point[<span class="hljs-number">0</span>] - left, point[<span class="hljs-number">1</span>] - top);
+                ctx.lineTo(points[index + <span class="hljs-number">1</span>][<span class="hljs-number">0</span>] - left, points[index + <span class="hljs-number">1</span>][<span class="hljs-number">1</span>] - top);
             }
         });
         ctx.stroke();
@@ -333,14 +338,19 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    WebSync.registerDOMException(<span class="hljs-string">".Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span>{</span>
+            <div class="content"><div class='highlight'><pre>    WebSync.registerDOMException(<span class="hljs-string">".Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
         <span class="hljs-keyword">var</span> id = $(obj).data(<span class="hljs-string">"drawid"</span>)
         <span class="hljs-keyword">var</span> position = $(obj).position();
-        <span class="hljs-keyword">return</span> {id: id, points: self.points[id], left: position.left, top: position.top};
-    }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(json)</span>{</span>
+        <span class="hljs-keyword">return</span> {
+            id: id,
+            points: self.points[id],
+            left: position.left,
+            top: position.top
+        };
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(json)</span> {</span>
         self.points[json.id] = json.points;
-        setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-            <span class="hljs-keyword">var</span> canvas = $(<span class="hljs-string">"[data-drawid='"</span>+alphaNumeric(json.id)+<span class="hljs-string">"']"</span>);</pre></div></div>
+        setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">var</span> canvas = $(<span class="hljs-string">"[data-drawid='"</span> + alphaNumeric(json.id) + <span class="hljs-string">"']"</span>);</pre></div></div>
             
         </li>
         
@@ -370,9 +380,12 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            canvas.css({left: json.left, top: json.top});
-        },<span class="hljs-number">1</span>);
-        <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;canvas class="Drawing" data-drawid="'</span>+alphaNumeric(json.id)+<span class="hljs-string">'"&gt;&lt;/canvas&gt;'</span>;
+            <div class="content"><div class='highlight'><pre>            canvas.css({
+                left: json.left,
+                top: json.top
+            });
+        }, <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;canvas class="Drawing" data-drawid="'</span> + alphaNumeric(json.id) + <span class="hljs-string">'"&gt;&lt;/canvas&gt;'</span>;
     });</pre></div></div>
             
         </li>
@@ -388,13 +401,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Drawing"</span>);
-		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Drawing"</span>);
+            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Drawing"</span>);
+        $(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Drawing"</span>);
         $(<span class="hljs-string">".Drawing"</span>).remove();
         WebSync.unregisterDOMException(<span class="hljs-string">".drawing"</span>);
 
-	}</pre></div></div>
+    }</pre></div></div>
             
         </li>
         

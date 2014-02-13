@@ -1,16 +1,24 @@
+// WebSync: Free form drawing/note taking functionality.
 define(['websync'],function(){ var self = {};
-    $("#Insert").append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");
+
+    // Define some variables. The interval is how often the points are taken. This is probably going to be removed.
     self.interval = 50;
     self.active = false;
     self.points = {};
+
+    // Toggle button to enable drawing mode. Might be moved under the text editing tab.
+    $("#Insert").append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");
     $("#drawing_mode").click(function(){
         $(this).toggleClass("active");
         self.active = !self.active;
     });
+
+    // Bind mouse to the content container.
     $(".content_container").bind("mousedown.Drawing",function(e){
         if(self.active){
             self.drag = true;
             self.last_time = new Date();
+            // The active_id is the identifier used for each line.
             self.active_id = (new Date()).getTime().toString();
             self.points[self.active_id]=[];
             if($(e.target).attr("contenteditable")=="true"){
@@ -36,6 +44,7 @@ define(['websync'],function(){ var self = {};
             self.savePoint(e);
         }
     });
+    // Add a point to a line based on event.
     self.savePoint = function(e){
         var corner = $(".content_container").offset();
         var point = [e.pageX-corner.left-100,e.pageY-corner.top-100]
@@ -43,6 +52,7 @@ define(['websync'],function(){ var self = {};
         self.drawPoints(self.active_id, self.canvas);
         e.preventDefault();
     }
+    // Draw a line to a canvas based on a series of [x,y] coordinate pairs.
     self.drawPoints = function(id, canvas){
         var points = self.points[id];
         // Find corners of the drawing
@@ -53,7 +63,7 @@ define(['websync'],function(){ var self = {};
             if(point[1]-5 < top || !top) top = point[1]-5;
             if(point[1]+5 > bottom || !bottom) bottom = point[1]+5;
         });
-        // Clear canvas
+        // This is a hack to clear canvas.
         canvas.width = 100;
         $(canvas).css({position: "absolute", left: left, top: top}).attr("width",right-left).attr("height", bottom-top);
         var ctx = canvas.getContext('2d');
@@ -69,6 +79,7 @@ define(['websync'],function(){ var self = {};
         });
         ctx.stroke();
     }
+    // Register a DOM serialization exception. This allows us to store custom JSON instead of JSONized HTML.
     WebSync.registerDOMException(".Drawing", function(obj){
         var id = $(obj).data("drawid")
         var position = $(obj).position();
@@ -77,11 +88,14 @@ define(['websync'],function(){ var self = {};
         self.points[json.id] = json.points;
         setTimeout(function(){
             var canvas = $("[data-drawid='"+alphaNumeric(json.id)+"']");
+            // Draw the points.
             self.drawPoints(json.id, canvas[0]);
+            // Set the position of the line.
             canvas.css({left: json.left, top: json.top});
         },1);
         return '<canvas class="Drawing" data-drawid="'+alphaNumeric(json.id)+'"></canvas>';
     });
+    // Code to disable the function.
     self.disable = function(){
 		$("*").unbind(".Drawing");
 		$("*").undelegate(".Drawing");

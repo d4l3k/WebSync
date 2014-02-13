@@ -473,29 +473,7 @@
     <span class="hljs-keyword">end</span>
     error <span class="hljs-number">500</span> <span class="hljs-keyword">do</span>
         erb <span class="hljs-symbol">:error</span>, <span class="hljs-symbol">locals:</span>{<span class="hljs-symbol">error:</span> <span class="hljs-string">"500"</span>, <span class="hljs-symbol">reason:</span> <span class="hljs-string">"The server failed to handle your request."</span>}
-    <span class="hljs-keyword">end</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>get ‘/assets/<em>.css’ do
-   content_type ‘text/css’
-   assets_environment[params[:splat][0]+’.css’].to_s
-end
-get ‘/assets/</em>.js’ do
-   content_type ‘text/javascript’
-   assets_environment[params[:splat][0]+’.js’].to_s
-end</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
+    <span class="hljs-keyword">end</span>
     get <span class="hljs-string">'/'</span> <span class="hljs-keyword">do</span>
         <span class="hljs-variable">@javascripts</span> = []
         <span class="hljs-keyword">if</span> logged_in?
@@ -637,11 +615,11 @@ end</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>TODO: Split upload/download into its own external server. Right now Unoconv is blocking. Also issues may arise if multiple copies of LibreOffice are running on the same server. Should probably use a single server instance of LibreOffice</p>
 
@@ -665,11 +643,11 @@ end</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>TODO: Upload into JSON format</p>
 
@@ -733,11 +711,11 @@ end</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>‘/assets/bundle-edit.js’</p>
 

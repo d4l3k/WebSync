@@ -1,12 +1,12 @@
 // WebSync: Text Editing Plugin
 define("edit",['websync'],function(websync){ var self = {};
 	// Plugins should use a jQuery namespace for ease of use.
+
 	// Bind Example: $(document).bind("click.Tables", clickHandler);
+
 	// Unbind Example: $("*").unbind(".Tables");
-    // Function: void [plugin=TextEdit].enable();
-    // Enables the TextEdit plugin.
-    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript','insertHorizontalRule'];
-    // Add ribbon text
+
+    // Add Text menu to the ribbon.
     $(".ribbon").append('<div id="Text" class="Text container"> \
             <button id="bold" title="Bold" class="btn btn-default"><i class="fa fa-bold"></i></button> \
             <button id="italic" title="Italic" class="btn btn-default"><i class="fa fa-italic"></i></button> \
@@ -74,7 +74,9 @@ define("edit",['websync'],function(websync){ var self = {};
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
-    $("#view_mode").after(' <button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
+    // List of buttons that can be clicked in the Text menu.
+    self.text_buttons= ["bold",'italic','strikethrough','underline','justifyleft','justifycenter','justifyright','justifyfull',"removeFormat","insertorderedlist","insertunorderedlist",'superscript','subscript','insertHorizontalRule'];
+    // Bind the basic text editing commands to the buttons.
     self.text_buttons.forEach(function(elem){
         $('button#'+elem).bind("click.TextEdit",function(){
             document.execCommand(elem);
@@ -82,6 +84,8 @@ define("edit",['websync'],function(websync){ var self = {};
             $(document).trigger('selectionchange');
         });
     });
+    // Button and code to handle word/character counting.
+    $("#view_mode").after(' <button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
     var updateText = function(){
         var table = $("#word_count_info");
         var popover = table.parent().parent();
@@ -111,34 +115,24 @@ define("edit",['websync'],function(websync){ var self = {};
     }).popover({placement: "bottom", html: true, container: 'body',
         content: "<table id='word_count_info' class='table' style='margin: 0'><thead><tr><th></th><th>Document</th><th>Selection</th></tr></thead><tbody><tr><th>Words</th><td></td><td></td></tr><tr><th>Characters</th><td></td><td></td></tr><tr><th>... (no spaces)</th><td></td><td></td></tr></tbody></table>"
     }).popover('show').popover('hide');
+
+    // Text styling handlers
     $("#fontColor").change(function(e){
         document.execCommand('foreColor', false, this.value);
     });
     $("#hilightColor").change(function(e){
         document.execCommand('hiliteColor', false, this.value);
     });
+
     // Reflects text in menu at top
     $(document).bind('selectionchange.TextEdit',function(){
         if(!self._selectTimeout){
             self._selectTimeout = setTimeout(self.selectHandler,200);
         }
     });
+    // List indentation
     $(".content_well").bind("keydown.TextEdit","li",function(e){
         if(e.keyCode==9){
-            //console.log(this);
-            /*var selection = document.getSelection();
-            if(selection.type!="None" && !_.isNull(selection.baseNode)){
-                var list_index = selection.baseNode;
-                while(list_index.tagName!="LI"){
-                    list_index = list_index.parentElement;
-                }
-                var indent = parseInt($(list_index).getStyleObject().marginLeft)+(e.shiftKey ? -40 : 40);
-                if(indent<0){
-                    indent=0;
-                }
-                $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
-                e.preventDefault();
-            }*/
             if(e.shiftKey){
                 document.execCommand('outdent');
             } else {
@@ -155,15 +149,8 @@ define("edit",['websync'],function(websync){ var self = {};
         console.log(size);
         WebSync.applyCssToSelection({'font-size':size});
     });
+    // Picture, video and link insertion.
     $("#picture").click(function(){
-        /*
-        //TODO: Keep position.
-        bootbox.prompt("Enter image URL", function(result) {
-            if (result === null) {
-            } else {
-                document.execCommand("insertImage", false, url);
-            }
-        });*/
         var url = prompt("Image URL");
         document.execCommand("insertImage", false, url);
     });
@@ -190,6 +177,7 @@ define("edit",['websync'],function(websync){ var self = {};
             alert("Invalid URL");
         }
     }
+    // Helper function to convert rgba(r, g, b, a) to #RRGGBB
     self.rgb_to_hex = function(rgb){
         if(rgb == "rgba(0, 0, 0, 0)") return "#FFFFFF";
         if(rgb.indexOf('rgba')!=-1){
@@ -202,7 +190,6 @@ define("edit",['websync'],function(websync){ var self = {};
         }
         return '#'+parts.slice(1,4).join('').toUpperCase();
     }
-    // Function: void [plugin=TextEdit].disable();
     // Disables the TextEdit plugin.
     self.disable = function(){
 		var elem = $(".Text").remove();
@@ -210,7 +197,6 @@ define("edit",['websync'],function(websync){ var self = {};
 		$("*").unbind(".TextEdit");
 		$("*").undelegate(".TextEdit");
     }
-    // Function: void [plugin=TextEdit].selectHandler();
     // Handling function for displaying accurate information about text in ribbon.
     self.selectHandler = function(){
 		var style = WebSync.getCss();

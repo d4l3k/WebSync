@@ -309,15 +309,6 @@ class WebSync < Sinatra::Base
     error 500 do
         erb :error, locals:{error: "500", reason: "The server failed to handle your request."}
     end
-    #get '/assets/*.css' do
-    #    content_type 'text/css'
-    #    assets_environment[params[:splat][0]+'.css'].to_s
-    #end
-    #get '/assets/*.js' do
-    #    content_type 'text/javascript'
-    #    assets_environment[params[:splat][0]+'.js'].to_s
-    #end
-
     get '/' do
         @javascripts = []
         if logged_in?

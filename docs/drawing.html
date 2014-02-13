@@ -108,23 +108,80 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>WebSync: Free form drawing/note taking functionality.</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">var</span> self = {};
-    $(<span class="hljs-string">"#Insert"</span>).append(<span class="hljs-string">" &lt;button id='drawing_mode' class='btn btn-default Drawing' title='Draw'&gt;&lt;i class='fa fa-pencil'&gt;&lt;/i&gt;&lt;/button&gt;"</span>);
-    self.interval = <span class="hljs-number">50</span>;
+            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">var</span> self = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Define some variables. The interval is how often the points are taken. This is probably going to be removed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.interval = <span class="hljs-number">50</span>;
     self.active = <span class="hljs-literal">false</span>;
-    self.points = {};
+    self.points = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Toggle button to enable drawing mode. Might be moved under the text editing tab.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">"#Insert"</span>).append(<span class="hljs-string">" &lt;button id='drawing_mode' class='btn btn-default Drawing' title='Draw'&gt;&lt;i class='fa fa-pencil'&gt;&lt;/i&gt;&lt;/button&gt;"</span>);
     $(<span class="hljs-string">"#drawing_mode"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
         $(<span class="hljs-keyword">this</span>).toggleClass(<span class="hljs-string">"active"</span>);
         self.active = !self.active;
-    });
-    $(<span class="hljs-string">".content_container"</span>).bind(<span class="hljs-string">"mousedown.Drawing"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Bind mouse to the content container.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">".content_container"</span>).bind(<span class="hljs-string">"mousedown.Drawing"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
         <span class="hljs-keyword">if</span>(self.active){
             self.drag = <span class="hljs-literal">true</span>;
-            self.last_time = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
-            self.active_id = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getTime().toString();
+            self.last_time = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>The active_id is the identifier used for each line.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            self.active_id = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getTime().toString();
             self.points[self.active_id]=[];
             <span class="hljs-keyword">if</span>($(e.target).attr(<span class="hljs-string">"contenteditable"</span>)==<span class="hljs-string">"true"</span>){
                 self.parent = e.target;
@@ -142,11 +199,11 @@
         </li>
         
         
-        <li id="section-2">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>if(date - self.last_time &gt; self.interval){</p>
 
@@ -158,11 +215,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>}</p>
 
@@ -174,25 +231,53 @@
             self.drag = <span class="hljs-literal">false</span>;
             self.savePoint(e);
         }
-    });
-    self.savePoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Add a point to a line based on event.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.savePoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
         <span class="hljs-keyword">var</span> corner = $(<span class="hljs-string">".content_container"</span>).offset();
         <span class="hljs-keyword">var</span> point = [e.pageX-corner.left-<span class="hljs-number">100</span>,e.pageY-corner.top-<span class="hljs-number">100</span>]
         self.points[self.active_id].push(point);
         self.drawPoints(self.active_id, self.canvas);
         e.preventDefault();
-    }
-    self.drawPoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id, canvas)</span>{</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Draw a line to a canvas based on a series of [x,y] coordinate pairs.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.drawPoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id, canvas)</span>{</span>
         <span class="hljs-keyword">var</span> points = self.points[id];</pre></div></div>
             
         </li>
         
         
-        <li id="section-4">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Find corners of the drawing</p>
 
@@ -209,13 +294,13 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Clear canvas</p>
+              <p>This is a hack to clear canvas.</p>
 
             </div>
             
@@ -233,21 +318,77 @@
             }
         });
         ctx.stroke();
-    }
-    WebSync.registerDOMException(<span class="hljs-string">".Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span>{</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Register a DOM serialization exception. This allows us to store custom JSON instead of JSONized HTML.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    WebSync.registerDOMException(<span class="hljs-string">".Drawing"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span>{</span>
         <span class="hljs-keyword">var</span> id = $(obj).data(<span class="hljs-string">"drawid"</span>)
         <span class="hljs-keyword">var</span> position = $(obj).position();
         <span class="hljs-keyword">return</span> {id: id, points: self.points[id], left: position.left, top: position.top};
     }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(json)</span>{</span>
         self.points[json.id] = json.points;
         setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-            <span class="hljs-keyword">var</span> canvas = $(<span class="hljs-string">"[data-drawid='"</span>+alphaNumeric(json.id)+<span class="hljs-string">"']"</span>);
-            self.drawPoints(json.id, canvas[<span class="hljs-number">0</span>]);
-            canvas.css({left: json.left, top: json.top});
+            <span class="hljs-keyword">var</span> canvas = $(<span class="hljs-string">"[data-drawid='"</span>+alphaNumeric(json.id)+<span class="hljs-string">"']"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Draw the points.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            self.drawPoints(json.id, canvas[<span class="hljs-number">0</span>]);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Set the position of the line.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            canvas.css({left: json.left, top: json.top});
         },<span class="hljs-number">1</span>);
         <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;canvas class="Drawing" data-drawid="'</span>+alphaNumeric(json.id)+<span class="hljs-string">'"&gt;&lt;/canvas&gt;'</span>;
-    });
-    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Code to disable the function.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
 		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Drawing"</span>);
 		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Drawing"</span>);
         $(<span class="hljs-string">".Drawing"</span>).remove();
@@ -258,11 +399,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Return self so other modules can hook into this one.</p>
 

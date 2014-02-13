@@ -123,15 +123,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Plugins should use a jQuery namespace for ease of use.
-Bind Example: $(document).bind(“click.Tables”, clickHandler);
-Unbind Example: $(“*”).unbind(“.Tables”);
-Function: void [plugin=TextEdit].enable();
-Enables the TextEdit plugin.</p>
+              <p>Plugins should use a jQuery namespace for ease of use.</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    self.text_buttons= [<span class="hljs-string">"bold"</span>,<span class="hljs-string">'italic'</span>,<span class="hljs-string">'strikethrough'</span>,<span class="hljs-string">'underline'</span>,<span class="hljs-string">'justifyleft'</span>,<span class="hljs-string">'justifycenter'</span>,<span class="hljs-string">'justifyright'</span>,<span class="hljs-string">'justifyfull'</span>,<span class="hljs-string">"removeFormat"</span>,<span class="hljs-string">"insertorderedlist"</span>,<span class="hljs-string">"insertunorderedlist"</span>,<span class="hljs-string">'superscript'</span>,<span class="hljs-string">'subscript'</span>,<span class="hljs-string">'insertHorizontalRule'</span>];</pre></div></div>
             
         </li>
         
@@ -142,7 +136,33 @@ Enables the TextEdit plugin.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Add ribbon text</p>
+              <p>Bind Example: $(document).bind(“click.Tables”, clickHandler);</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Unbind Example: $(“*”).unbind(“.Tables”);</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Add Text menu to the ribbon.</p>
 
             </div>
             
@@ -212,20 +232,48 @@ Enables the TextEdit plugin.</p>
             &lt;input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"&gt;&lt;/input&gt; \
             &lt;button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default"&gt;&amp;mdash;&lt;/button&gt; \
             &lt;button id="removeFormat" title="Clear Formatting" class="btn btn-default"&gt;&lt;i class="fa fa-times"&gt;&lt;/i&gt;&lt;/button&gt; \
-        &lt;/div&gt;'</span>);
-    $(<span class="hljs-string">"#view_mode"</span>).after(<span class="hljs-string">' &lt;button id="word_count" class="Text btn btn-default"&gt;&lt;i class="fa fa-eye"&gt;&lt;/i&gt; Word Count&lt;/button&gt;'</span>);
-    self.text_buttons.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span>{</span>
+        &lt;/div&gt;'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>List of buttons that can be clicked in the Text menu.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.text_buttons= [<span class="hljs-string">"bold"</span>,<span class="hljs-string">'italic'</span>,<span class="hljs-string">'strikethrough'</span>,<span class="hljs-string">'underline'</span>,<span class="hljs-string">'justifyleft'</span>,<span class="hljs-string">'justifycenter'</span>,<span class="hljs-string">'justifyright'</span>,<span class="hljs-string">'justifyfull'</span>,<span class="hljs-string">"removeFormat"</span>,<span class="hljs-string">"insertorderedlist"</span>,<span class="hljs-string">"insertunorderedlist"</span>,<span class="hljs-string">'superscript'</span>,<span class="hljs-string">'subscript'</span>,<span class="hljs-string">'insertHorizontalRule'</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Bind the basic text editing commands to the buttons.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.text_buttons.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span>{</span>
         $(<span class="hljs-string">'button#'</span>+elem).bind(<span class="hljs-string">"click.TextEdit"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
             document.execCommand(elem);</pre></div></div>
             
         </li>
         
         
-        <li id="section-4">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>$(this).toggleClass(“active”);</p>
 
@@ -233,7 +281,22 @@ Enables the TextEdit plugin.</p>
             
             <div class="content"><div class='highlight'><pre>            $(document).trigger(<span class="hljs-string">'selectionchange'</span>);
         });
-    });
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Button and code to handle word/character counting.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">"#view_mode"</span>).after(<span class="hljs-string">' &lt;button id="word_count" class="Text btn btn-default"&gt;&lt;i class="fa fa-eye"&gt;&lt;/i&gt; Word Count&lt;/button&gt;'</span>);
     <span class="hljs-keyword">var</span> updateText = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
         <span class="hljs-keyword">var</span> table = $(<span class="hljs-string">"#word_count_info"</span>);
         <span class="hljs-keyword">var</span> popover = table.parent().parent();
@@ -262,8 +325,22 @@ Enables the TextEdit plugin.</p>
         live_update = <span class="hljs-literal">false</span>;
     }).popover({placement: <span class="hljs-string">"bottom"</span>, html: <span class="hljs-literal">true</span>, container: <span class="hljs-string">'body'</span>,
         content: <span class="hljs-string">"&lt;table id='word_count_info' class='table' style='margin: 0'&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Document&lt;/th&gt;&lt;th&gt;Selection&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;Words&lt;/th&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;Characters&lt;/th&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;... (no spaces)&lt;/th&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;"</span>
-    }).popover(<span class="hljs-string">'show'</span>).popover(<span class="hljs-string">'hide'</span>);
-    $(<span class="hljs-string">"#fontColor"</span>).change(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+    }).popover(<span class="hljs-string">'show'</span>).popover(<span class="hljs-string">'hide'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Text styling handlers</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">"#fontColor"</span>).change(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
         document.execCommand(<span class="hljs-string">'foreColor'</span>, <span class="hljs-literal">false</span>, <span class="hljs-keyword">this</span>.value);
     });
     $(<span class="hljs-string">"#hilightColor"</span>).change(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
@@ -273,11 +350,11 @@ Enables the TextEdit plugin.</p>
         </li>
         
         
-        <li id="section-5">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Reflects text in menu at top</p>
 
@@ -287,36 +364,23 @@ Enables the TextEdit plugin.</p>
         <span class="hljs-keyword">if</span>(!self._selectTimeout){
             self._selectTimeout = setTimeout(self.selectHandler,<span class="hljs-number">200</span>);
         }
-    });
-    $(<span class="hljs-string">".content_well"</span>).bind(<span class="hljs-string">"keydown.TextEdit"</span>,<span class="hljs-string">"li"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
-        <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">9</span>){</pre></div></div>
+    });</pre></div></div>
             
         </li>
         
         
-        <li id="section-6">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>console.log(this);</p>
+              <p>List indentation</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/*var selection = document.getSelection();
-            if(selection.type!="None" &amp;&amp; !_.isNull(selection.baseNode)){
-                var list_index = selection.baseNode;
-                while(list_index.tagName!="LI"){
-                    list_index = list_index.parentElement;
-                }
-                var indent = parseInt($(list_index).getStyleObject().marginLeft)+(e.shiftKey ? -40 : 40);
-                if(indent&lt;0){
-                    indent=0;
-                }
-                $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
-                e.preventDefault();
-            }*/</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">".content_well"</span>).bind(<span class="hljs-string">"keydown.TextEdit"</span>,<span class="hljs-string">"li"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">9</span>){
             <span class="hljs-keyword">if</span>(e.shiftKey){
                 document.execCommand(<span class="hljs-string">'outdent'</span>);
             } <span class="hljs-keyword">else</span> {
@@ -332,55 +396,47 @@ Enables the TextEdit plugin.</p>
         <span class="hljs-keyword">var</span> size = $(<span class="hljs-string">'#font_size'</span>).val()
         console.log(size);
         WebSync.applyCssToSelection({<span class="hljs-string">'font-size'</span>:size});
-    });
-    $(<span class="hljs-string">"#picture"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-        <span class="hljs-comment">/*
-</span></pre></div></div>
+    });</pre></div></div>
             
         </li>
         
         
-        <li id="section-7">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>TODO: Keep position.</p>
+              <p>Picture, video and link insertion.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        bootbox.prompt("Enter image URL", function(result) {
-            if (result === null) {
-            } else {
-                document.execCommand("insertImage", false, url);
-            }
-        });*/
-        var url = prompt("Image URL");
-        document.execCommand("insertImage", false, url);
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">"#picture"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> url = prompt(<span class="hljs-string">"Image URL"</span>);
+        document.execCommand(<span class="hljs-string">"insertImage"</span>, <span class="hljs-literal">false</span>, url);
     });
-    $("#createLink").click(function(){
-        var url = prompt("Hyperlink URL");
-        document.execCommand("createLink", false, url);
+    $(<span class="hljs-string">"#createLink"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> url = prompt(<span class="hljs-string">"Hyperlink URL"</span>);
+        document.execCommand(<span class="hljs-string">"createLink"</span>, <span class="hljs-literal">false</span>, url);
     });
-    $("#video").click(function(){
-        var url = prompt("Video URL (Youtube)");
-        if(url.indexOf("youtu")!=-1){
-            var youtube_id = self.youtube_parser(url);
-            console.log("Youtube id", youtube_id);
-            var html = '&lt;iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/'+youtube_id+'?origin=http://websyn.ca" height=480 width=640 frameborder="0"/&gt;'
-            document.execCommand("insertHTML", false, html);
+    $(<span class="hljs-string">"#video"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> url = prompt(<span class="hljs-string">"Video URL (Youtube)"</span>);
+        <span class="hljs-keyword">if</span>(url.indexOf(<span class="hljs-string">"youtu"</span>)!=-<span class="hljs-number">1</span>){
+            <span class="hljs-keyword">var</span> youtube_id = self.youtube_parser(url);
+            console.log(<span class="hljs-string">"Youtube id"</span>, youtube_id);
+            <span class="hljs-keyword">var</span> html = <span class="hljs-string">'&lt;iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/'</span>+youtube_id+<span class="hljs-string">'?origin=http://websyn.ca" height=480 width=640 frameborder="0"/&gt;'</span>
+            document.execCommand(<span class="hljs-string">"insertHTML"</span>, <span class="hljs-literal">false</span>, html);
         }
     });</pre></div></div>
             
         </li>
         
         
-        <li id="section-8">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Youtube REGEX from <a href="http://stackoverflow.com/a/8260383">http://stackoverflow.com/a/8260383</a> by Lasnv</p>
 
@@ -394,19 +450,33 @@ Enables the TextEdit plugin.</p>
         }<span class="hljs-keyword">else</span>{
             alert(<span class="hljs-string">"Invalid URL"</span>);
         }
-    }
-    self.rgb_to_hex = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(rgb)</span>{</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Helper function to convert rgba(r, g, b, a) to #RRGGBB</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.rgb_to_hex = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(rgb)</span>{</span>
         <span class="hljs-keyword">if</span>(rgb == <span class="hljs-string">"rgba(0, 0, 0, 0)"</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">"#FFFFFF"</span>;
         <span class="hljs-keyword">if</span>(rgb.indexOf(<span class="hljs-string">'rgba'</span>)!=-<span class="hljs-number">1</span>){</pre></div></div>
             
         </li>
         
         
-        <li id="section-9">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>return ‘#000000’;</p>
 
@@ -424,14 +494,13 @@ Enables the TextEdit plugin.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>Function: void [plugin=TextEdit].disable();
-Disables the TextEdit plugin.</p>
+              <p>Disables the TextEdit plugin.</p>
 
             </div>
             
@@ -445,14 +514,13 @@ Disables the TextEdit plugin.</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Function: void [plugin=TextEdit].selectHandler();
-Handling function for displaying accurate information about text in ribbon.</p>
+              <p>Handling function for displaying accurate information about text in ribbon.</p>
 
             </div>
             
@@ -479,11 +547,11 @@ Handling function for displaying accurate information about text in ribbon.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Sets up the list of fonts</p>
 

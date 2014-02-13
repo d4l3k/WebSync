@@ -15,7 +15,7 @@ define(['websync'], function() {
     });
 
     // Bind mouse to the content container. The timeout is to make sure that the .content_container has been added.
-    setTimeout(function(){
+    setTimeout(function() {
         $(".content_container").bind("mousedown.Drawing", function(e) {
             if (self.active) {
                 self.drag = true;

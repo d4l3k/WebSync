@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>note.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="core.html">
+                core.js
+              </a>
+            
+              
+              <a class="source" href="edit.html">
+                edit.js
+              </a>
+            
+              
+              <a class="source" href="chat.html">
+                chat.js
+              </a>
+            
+              
+              <a class="source" href="drawing.html">
+                drawing.js
+              </a>
+            
+              
+              <a class="source" href="equations.html">
+                equations.js
+              </a>
+            
+              
+              <a class="source" href="note.html">
+                note.js
+              </a>
+            
+              
+              <a class="source" href="page.html">
+                page.js
+              </a>
+            
+              
+              <a class="source" href="presentation.html">
+                presentation.js
+              </a>
+            
+              
+              <a class="source" href="resize.html">
+                resize.js
+              </a>
+            
+              
+              <a class="source" href="spreadsheet.html">
+                spreadsheet.js
+              </a>
+            
+              
+              <a class="source" href="tables.html">
+                tables.js
+              </a>
+            
+              
+              <a class="source" href="backend.html">
+                backend.js
+              </a>
+            
+              
+              <a class="source" href="main.html">
+                main.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>note.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>WebSync: Notebook layout handler</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">"/assets/note.js"</span>,[<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(websync)</span> {</span> <span class="hljs-keyword">var</span> self = {};
+    $(<span class="hljs-string">".content"</span>).hide().addClass(<span class="hljs-string">"content-note"</span>).fadeIn();
+    $(<span class="hljs-string">"body"</span>).addClass(<span class="hljs-string">"layout-note"</span>);
+    $(<span class="hljs-string">".content_well"</span>).attr(<span class="hljs-string">"style"</span>,<span class="hljs-string">"background-color: white !important; background-image:none;"</span>);
+    $(<span class="hljs-string">"body"</span>).append(<span class="hljs-string">'&lt;div id="context-menu"&gt;&lt;ul class="dropdown-menu" role="menu"&gt;&lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Rename&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Delete&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;'</span>);
+    $(<span class="hljs-string">".content"</span>).append($(<span class="hljs-string">'&lt;div id="note-well" class="content_container"&gt;&lt;/div&gt;'</span>));
+    $(<span class="hljs-string">'body'</span>).append($(<span class="hljs-string">'&lt;div id="note-nav" class="sidebar"&gt;&lt;button id="addSection" class="btn btn-default" type="button"&gt;&lt;i class="fa fa-plus"&gt;&lt;/i&gt; Section&lt;/button&gt; &lt;button id="addPage" class="btn btn-default" type="button"&gt;&lt;i class="fa fa-plus"&gt;&lt;/i&gt; Page&lt;/button&gt; &lt;button class="btn btn-default toggle-sidebar"&gt;&lt;i class="fa fa-bars fa-lg"&gt;&lt;/i&gt;&lt;/button&gt;&lt;div id="notesView" class="panel panel-default"&gt;&lt;/div&gt;&lt;/div&gt;'</span>));    
+    <span class="hljs-keyword">var</span> hidden = <span class="hljs-literal">false</span>;
+    $(<span class="hljs-string">"#note-nav .toggle-sidebar"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> pos = -<span class="hljs-number">250</span>;
+        <span class="hljs-keyword">var</span> button_pos = -<span class="hljs-number">47</span>
+        <span class="hljs-keyword">if</span>(hidden){
+            pos = <span class="hljs-number">0</span>;
+            button_pos = <span class="hljs-number">5</span>;
+        }
+        $(<span class="hljs-keyword">this</span>).animate({right: button_pos});
+        $(<span class="hljs-string">"#note-nav"</span>).animate({left: pos});
+        $(<span class="hljs-string">".content_well"</span>).animate({left: pos+<span class="hljs-number">250</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+            $(document).trigger(<span class="hljs-string">"resize"</span>);
+        });
+        hidden = !hidden;
+    });
+    self.updateNav = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> html = <span class="hljs-string">"&lt;ul class='nav nav-list'&gt;"</span>;
+        <span class="hljs-keyword">var</span> active_section = $(<span class="hljs-string">".note-section:visible"</span>)[<span class="hljs-number">0</span>];
+        <span class="hljs-keyword">var</span> active_page = $(<span class="hljs-string">".note-page:visible"</span>)[<span class="hljs-number">0</span>];
+        $(<span class="hljs-string">".note-section"</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index, section)</span>{</span>
+            <span class="hljs-keyword">var</span> sect = $(section);
+            <span class="hljs-keyword">var</span> name = (section.dataset.name||<span class="hljs-string">"Unnamed Section"</span>);
+            html += <span class="hljs-string">"&lt;li "</span>+(section==active_section ? <span class="hljs-string">"class='active2'"</span> : <span class="hljs-string">""</span> )+<span class="hljs-string">"&gt;&lt;a class='section' data-index="</span>+index+<span class="hljs-string">"&gt;"</span>+name+<span class="hljs-string">"&lt;/a&gt;&lt;ul class='nav nav-list'&gt;"</span>
+            sect.children().each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index, page)</span>{</span>
+                <span class="hljs-keyword">var</span> page_name = ($(page).children().filter(<span class="hljs-string">".note-title"</span>).text().trim() || $(page).children().filter(<span class="hljs-string">":not('.note-title')"</span>).first().text().trim() || <span class="hljs-string">"Unnamed Page"</span>); 
+                html += <span class="hljs-string">"&lt;li "</span>+(page==active_page ? <span class="hljs-string">"class='active'"</span> : <span class="hljs-string">""</span> )+<span class="hljs-string">"&gt;&lt;a class='page' data-index="</span>+index+<span class="hljs-string">"&gt;"</span>+page_name+<span class="hljs-string">"&lt;/a&gt;&lt;/li&gt;"</span>;
+            });
+            html += <span class="hljs-string">"&lt;/ul&gt;&lt;/li&gt;"</span>;
+        });
+        html+= <span class="hljs-string">"&lt;/ul&gt;"</span>;
+        <span class="hljs-keyword">var</span> nav = $(<span class="hljs-string">"#notesView"</span>).html(html);
+        <span class="hljs-keyword">var</span> selectedElem = <span class="hljs-literal">null</span>;
+        $(<span class="hljs-string">"#notesView a"</span>).contextmenu({
+            target: <span class="hljs-string">"#context-menu"</span>,
+            before: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, element)</span>{</span>
+                console.log(e,element);
+                <span class="hljs-keyword">if</span>($(element).hasClass(<span class="hljs-string">"page"</span>)){
+                    $(<span class="hljs-string">"#context-menu li:contains('Rename')"</span>).hide();
+                } <span class="hljs-keyword">else</span> {
+                    $(<span class="hljs-string">"#context-menu li:contains('Rename')"</span>).show();
+                }
+                selectedElem = element[<span class="hljs-number">0</span>];
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            },
+            onItem: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, element)</span>{</span>
+                <span class="hljs-keyword">var</span> op = element[<span class="hljs-number">0</span>].innerText;
+                <span class="hljs-keyword">var</span> target = <span class="hljs-literal">null</span>;
+                <span class="hljs-keyword">if</span>($(selectedElem).hasClass(<span class="hljs-string">"page"</span>)){
+                    <span class="hljs-keyword">var</span> page = $(selectedElem).data().index;
+                    <span class="hljs-keyword">var</span> section = $(selectedElem).parent().parent().parent().children().first().data().index;
+                    target = $(<span class="hljs-string">".note-section"</span>).eq(section).children().eq(page);
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>($(selectedElem).hasClass(<span class="hljs-string">"section"</span>)){
+                    <span class="hljs-keyword">var</span> section = $(selectedElem).data().index;
+                    target = $(<span class="hljs-string">".note-section"</span>).eq(section);
+                }
+                <span class="hljs-keyword">if</span>(op == <span class="hljs-string">"Delete"</span>){
+                    target.remove();
+                    self.updateNav();
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(op == <span class="hljs-string">"Rename"</span>){
+                    <span class="hljs-keyword">var</span> finish_rename =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Enter or Escape</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span>(!e.keyCode || e.keyCode == <span class="hljs-number">13</span> || e.keyCode == <span class="hljs-number">27</span>){
+                            e.preventDefault();
+                            $(selectedElem).unbind(<span class="hljs-string">"blur.Note"</span>).unbind(<span class="hljs-string">"keydown.Note"</span>);
+                            target[<span class="hljs-number">0</span>].dataset.name = $(selectedElem).text();
+                            self.updateNav();
+                        }
+                    }
+                    $(selectedElem).attr(<span class="hljs-string">"contenteditable"</span>,<span class="hljs-literal">true</span>).focus().bind(<span class="hljs-string">"blur.Note"</span>, finish_rename).bind(<span class="hljs-string">"keydown"</span>, finish_rename);
+                }
+            }
+        });
+    }
+    self.deselectNoteBubble = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">"#note-well .note-page section"</span>).attr(<span class="hljs-string">"contenteditable"</span>,<span class="hljs-literal">null</span>).filter(<span class="hljs-string">":not('.note-title')"</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index, section)</span>{</span>
+            <span class="hljs-keyword">if</span>(section.innerText.trim()==<span class="hljs-string">""</span>){
+                $(section).remove();
+            }
+        });
+        self.updateNav();
+    }
+    self.switchToSection = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(section)</span>{</span>
+        $(<span class="hljs-string">".note-section"</span>).hide();
+        $(<span class="hljs-string">".note-section"</span>).eq(section).show();
+    }
+    self.switchToPage = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(section, page)</span>{</span>
+        self.switchToSection(section);
+        $(<span class="hljs-string">".note-page"</span>).hide();
+        $(<span class="hljs-string">".note-section"</span>).eq(section).children().eq(page).show();
+        self.updateNav();
+    }
+    <span class="hljs-keyword">if</span>(!WebSyncData.body){
+        WebSyncData.body = [];
+    }
+    WebSync.toJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        WebSyncData.body = DOMToJSON($(<span class="hljs-string">"#note-well"</span>).get(<span class="hljs-number">0</span>).childNodes);
+    }
+    WebSync.fromJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(patch)</span> {</span>
+        console.log(<span class="hljs-string">"FROM JSON: "</span>,patch);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>if(!patch){
+Fallback method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            $(<span class="hljs-string">".content #note-well"</span>).get(<span class="hljs-number">0</span>).innerHTML=JSONToDOM(WebSyncData.body);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>} else {
+   WebSync.applyPatchToDOM($(“.content #note-well”).get(0),patch.body);
+}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        self.updateNav();
+    }
+    $(document).on(<span class="hljs-string">"modules_loaded"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">if</span>(_.isEmpty(WebSyncData.body)){
+            $(<span class="hljs-string">"#note-well"</span>).append(<span class="hljs-string">"&lt;div class='note-section'&gt;&lt;div class='note-page'&gt;&lt;section class='note-title frozen'&gt;&lt;/section&gt;&lt;/div&gt;"</span>);
+        }
+        <span class="hljs-keyword">else</span> {
+            WebSync.fromJSON();
+        }
+        NProgress.done();
+    });
+    $(<span class="hljs-string">".content_well"</span>).children().bind(<span class="hljs-string">"mousedown selectstart"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span> e.stopPropagation(); });
+    $(<span class="hljs-string">"#note-well"</span>).on(<span class="hljs-string">"click"</span>,<span class="hljs-string">".note-page section"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        self.deselectNoteBubble();
+        $(e.currentTarget).attr(<span class="hljs-string">"contenteditable"</span>,<span class="hljs-literal">true</span>);
+        e.stopPropagation();
+    });
+    $(<span class="hljs-string">"#addSection"</span>).on(<span class="hljs-string">"click"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        self.deselectNoteBubble();
+        $(<span class="hljs-string">".note-section"</span>).hide();
+        $(<span class="hljs-string">"#note-well"</span>).append(<span class="hljs-string">"&lt;div class='note-section'&gt;&lt;div class='note-page'&gt;&lt;section class='note-title frozen'&gt;&lt;/section&gt;&lt;/div&gt;"</span>);
+        self.updateNav();
+    });
+    $(<span class="hljs-string">"#addPage"</span>).on(<span class="hljs-string">"click"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        self.deselectNoteBubble();
+        $(<span class="hljs-string">".note-page"</span>).hide();
+        $(<span class="hljs-string">".note-section:visible"</span>).eq(<span class="hljs-number">0</span>).append(<span class="hljs-string">"&lt;div class='note-page'&gt;&lt;section class='note-title frozen'&gt;&lt;/section&gt;"</span>);
+        self.updateNav();
+    });
+    $(<span class="hljs-string">"#note-well"</span>).on(<span class="hljs-string">"click"</span>,<span class="hljs-string">".note-page"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        console.log(e);
+        self.deselectNoteBubble();
+        <span class="hljs-keyword">var</span> page = e.currentTarget;
+        <span class="hljs-keyword">var</span> note = $(<span class="hljs-string">"&lt;section&gt;&lt;/section"</span>)
+        $(page).append(note);
+        note.attr(<span class="hljs-string">"contenteditable"</span>,<span class="hljs-literal">true</span>).focus();
+        note.css({left:e.offsetX,top:e.offsetY});
+    });
+    $(<span class="hljs-string">"#notesView"</span>).on(<span class="hljs-string">"click"</span>,<span class="hljs-string">".section"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">var</span> section = e.currentTarget.dataset.index;
+        self.switchToPage(section, <span class="hljs-number">0</span>);
+    }).on(<span class="hljs-string">"click"</span>, <span class="hljs-string">".page"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">var</span> section = <span class="hljs-built_in">parseInt</span>(e.currentTarget.parentElement.parentElement.parentElement.childNodes[<span class="hljs-number">0</span>].dataset.index);
+        <span class="hljs-keyword">var</span> page = e.currentTarget.dataset.index;
+        self.switchToPage(section,page);
+    });
+    <span class="hljs-keyword">return</span> self;
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

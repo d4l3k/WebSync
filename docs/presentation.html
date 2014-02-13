@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>presentation.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="core.html">
+                core.js
+              </a>
+            
+              
+              <a class="source" href="edit.html">
+                edit.js
+              </a>
+            
+              
+              <a class="source" href="chat.html">
+                chat.js
+              </a>
+            
+              
+              <a class="source" href="drawing.html">
+                drawing.js
+              </a>
+            
+              
+              <a class="source" href="equations.html">
+                equations.js
+              </a>
+            
+              
+              <a class="source" href="note.html">
+                note.js
+              </a>
+            
+              
+              <a class="source" href="page.html">
+                page.js
+              </a>
+            
+              
+              <a class="source" href="presentation.html">
+                presentation.js
+              </a>
+            
+              
+              <a class="source" href="resize.html">
+                resize.js
+              </a>
+            
+              
+              <a class="source" href="spreadsheet.html">
+                spreadsheet.js
+              </a>
+            
+              
+              <a class="source" href="tables.html">
+                tables.js
+              </a>
+            
+              
+              <a class="source" href="backend.html">
+                backend.js
+              </a>
+            
+              
+              <a class="source" href="main.html">
+                main.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>presentation.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>WebSync: Page layout handler</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">"/assets/presentation.js"</span>,[<span class="hljs-string">'websync'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(websync)</span> {</span> <span class="hljs-keyword">var</span> self = {};
+    $(<span class="hljs-string">".content"</span>).hide().fadeIn();
+    $(<span class="hljs-string">"body"</span>).addClass(<span class="hljs-string">"layout-presentation"</span>);
+    $(<span class="hljs-string">".content"</span>).append($(<span class="hljs-string">'&lt;div id="slides" class="content_container"&gt;&lt;/div&gt;'</span>));
+    $(<span class="hljs-string">'body'</span>).append($(<span class="hljs-string">'&lt;div id="presentation-nav" class="sidebar"&gt;&lt;button id="addSlide" class="btn btn-default" type="button"&gt;&lt;i class="fa fa-plus fa-lg"&gt;&lt;/i&gt;&lt;/button&gt; &lt;button id="remSlide" class="btn btn-danger" type="button"&gt;&lt;i class="fa fa-lg fa-trash-o"&gt;&lt;/i&gt;&lt;/button&gt; &lt;button class="btn btn-default toggle-sidebar"&gt;&lt;i class="fa fa-bars fa-lg"&gt;&lt;/i&gt;&lt;/button&gt;&lt;div id="slideView" class="slideWell panel panel-default"&gt;&lt;/div&gt;&lt;/div&gt;'</span>));
+    $(<span class="hljs-string">'#presentation-nav'</span>).css({left: <span class="hljs-number">0</span>});
+    $(<span class="hljs-string">"#addSlide"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">".slide.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+        $(<span class="hljs-string">"&lt;div class='slide active'&gt;&lt;/div&gt;"</span>).appendTo($(<span class="hljs-string">'#slides'</span>));
+        self.updateMenu();
+    });
+    <span class="hljs-keyword">var</span> hidden = <span class="hljs-literal">false</span>;
+    $(<span class="hljs-string">"#presentation-nav .toggle-sidebar"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> pos = -<span class="hljs-number">250</span>;
+        <span class="hljs-keyword">var</span> button_pos = -<span class="hljs-number">47</span>
+        <span class="hljs-keyword">if</span>(hidden){
+            pos = <span class="hljs-number">0</span>;
+            button_pos = <span class="hljs-number">5</span>;
+        }
+        $(<span class="hljs-keyword">this</span>).animate({right: button_pos});
+        $(<span class="hljs-string">"#presentation-nav"</span>).animate({left: pos});
+        $(<span class="hljs-string">".content_well"</span>).animate({left: pos+<span class="hljs-number">250</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+            $(document).trigger(<span class="hljs-string">"resize"</span>);
+        });
+        hidden = !hidden;
+    });
+    $(<span class="hljs-string">"#remSlide"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> prev = $(<span class="hljs-string">".slide.active"</span>).prev();
+        <span class="hljs-keyword">if</span>(prev==[]){
+            prev = $(<span class="hljs-string">".slide.active"</span>).next();
+        }
+        $(<span class="hljs-string">".slide.active"</span>).remove();
+        prev.addClass(<span class="hljs-string">"active"</span>);
+        self.updateMenu();
+    });
+    <span class="hljs-keyword">if</span>(!WebSyncData.body){
+        WebSyncData.body = [];
+    }
+    WebSync.toJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+		WebSyncData.body = DOMToJSON($(<span class="hljs-string">"#slides"</span>).get(<span class="hljs-number">0</span>).childNodes);
+        setTimeout(self.updateMenu,<span class="hljs-number">50</span>);
+    }
+    WebSync.fromJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">".content_well #slides"</span>).get(<span class="hljs-number">0</span>).innerHTML=JSONToDOM(WebSyncData.body);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>TODO: Get rid of the cause of this patch.
+$(“.slide”).appendTo($(“#slides”));</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span>(WebSyncAuth.view_op==<span class="hljs-string">'edit'</span>){
+            $(<span class="hljs-string">"#slides .slide"</span>).attr(<span class="hljs-string">"contenteditable"</span>,<span class="hljs-literal">true</span>);
+        }
+        setTimeout(self.updateScale,<span class="hljs-number">200</span>);
+    }
+    $(<span class="hljs-string">"#presentation-nav #slideView"</span>).delegate(<span class="hljs-string">".slidePreview"</span>,<span class="hljs-string">"click"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">".slide.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+        $(<span class="hljs-string">".slidePreview.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+        $(<span class="hljs-keyword">this</span>).addClass(<span class="hljs-string">"active"</span>);
+        $($(<span class="hljs-string">".slide"</span>).get($(<span class="hljs-keyword">this</span>).data().index)).addClass(<span class="hljs-string">"active"</span>);
+    });
+    $(document).on(<span class="hljs-string">"diffed.Presentation"</span>, self.updateMenu);
+    self.updateMenu = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">"#slideView"</span>).html(<span class="hljs-string">""</span>);
+        $(<span class="hljs-string">".slide"</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index, slide)</span>{</span>
+            $(<span class="hljs-string">"&lt;div class='slidePreview "</span>+($(slide).hasClass(<span class="hljs-string">"active"</span>) ? <span class="hljs-string">"active"</span> : <span class="hljs-string">""</span>) +<span class="hljs-string">"'&gt;&lt;span class='slide'&gt;"</span>+$(slide).html()+<span class="hljs-string">"&lt;/span&gt;&lt;/div&gt;"</span>).attr(<span class="hljs-string">"style"</span>,$(slide).attr(<span class="hljs-string">"style"</span>)).appendTo($(<span class="hljs-string">"#slideView"</span>)).data({index:index});
+        });
+    };
+    self.renderElem = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem, attach)</span>{</span>
+        <span class="hljs-keyword">var</span> doc = document.implementation.createHTMLDocument(<span class="hljs-string">""</span>);
+        doc.write($(elem).html());
+        doc.documentElement.setAttribute(<span class="hljs-string">"xmlns"</span>, doc.documentElement.namespaceURI);
+        html = (<span class="hljs-keyword">new</span> XMLSerializer).serializeToString(doc);
+        console.log(html);
+        <span class="hljs-keyword">var</span> canvas = document.createElement(<span class="hljs-string">"canvas"</span>)
+        canvas.setAttribute(<span class="hljs-string">"width"</span>, $(elem).width());
+        canvas.setAttribute(<span class="hljs-string">"height"</span>, $(elem).height());
+        <span class="hljs-keyword">var</span> ctx = canvas.getContext(<span class="hljs-string">"2d"</span>);
+        <span class="hljs-keyword">var</span> data = <span class="hljs-string">"&lt;svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'&gt;"</span> +
+                     <span class="hljs-string">"&lt;foreignObject width='100%' height='100%'&gt;"</span> +
+                        html
+                     <span class="hljs-string">"&lt;/foreignObject&gt;"</span> +
+                   <span class="hljs-string">"&lt;/svg&gt;"</span>;
+        <span class="hljs-keyword">var</span> DOMURL = window.URL || window.webkitURL || window;
+        <span class="hljs-keyword">var</span> img = <span class="hljs-keyword">new</span> Image();
+        <span class="hljs-keyword">var</span> svg = <span class="hljs-keyword">new</span> Blob([data], {type: <span class="hljs-string">"image/svg+xml;charset=utf-8"</span>});
+        <span class="hljs-keyword">var</span> url = DOMURL.createObjectURL(svg);
+        console.log(url);
+        img.onload = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            ctx.drawImage(img, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>DOMURL.revokeObjectURL(url);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        };
+        img.src = url;
+        $(attach).append(img);
+    }
+	$(<span class="hljs-string">".content_well"</span>).children().bind(<span class="hljs-string">"mousedown selectstart"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span> e.stopPropagation(); });
+    $(document).keydown(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">if</span>(WebSyncAuth.view_op==<span class="hljs-string">"view"</span>){
+            <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">39</span>||e.keyCode==<span class="hljs-number">32</span>||e.keyCode==<span class="hljs-number">40</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Move forward a slide</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">var</span> cur_slide = $(<span class="hljs-string">".slidePreview.active"</span>).data().index;
+                <span class="hljs-keyword">var</span> next_slide = cur_slide+<span class="hljs-number">1</span>;
+                <span class="hljs-keyword">var</span> slide_num = $(<span class="hljs-string">"#slides .slide"</span>).length;
+                <span class="hljs-keyword">if</span>(next_slide&lt;slide_num){
+                    $(<span class="hljs-string">".slide.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+                    $(<span class="hljs-string">".slidePreview.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+                    $($(<span class="hljs-string">"#slides .slide"</span>).get(next_slide)).addClass(<span class="hljs-string">"active"</span>);
+                    $($(<span class="hljs-string">".slidePreview"</span>).get(next_slide)).addClass(<span class="hljs-string">"active"</span>);
+                }
+                e.preventDefault();
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">37</span>||e.keyCode==<span class="hljs-number">38</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Move back a slide</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">var</span> cur_slide = $(<span class="hljs-string">".slidePreview.active"</span>).data().index;
+                <span class="hljs-keyword">var</span> next_slide = cur_slide-<span class="hljs-number">1</span>;
+                <span class="hljs-keyword">if</span>(next_slide&gt;=<span class="hljs-number">0</span>){
+                    $(<span class="hljs-string">".slide.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+                    $(<span class="hljs-string">".slidePreview.active"</span>).removeClass(<span class="hljs-string">'active'</span>);
+                    $($(<span class="hljs-string">"#slides .slide"</span>).get(next_slide)).addClass(<span class="hljs-string">"active"</span>);
+                    $($(<span class="hljs-string">".slidePreview"</span>).get(next_slide)).addClass(<span class="hljs-string">"active"</span>);
+                }
+                e.preventDefault();
+            }
+        }
+    });
+    self.updateScale = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> well_rect = $(<span class="hljs-string">".content_well"</span>).get(<span class="hljs-number">0</span>).getBoundingClientRect();
+        <span class="hljs-keyword">var</span> content_rect = $(<span class="hljs-string">".content_container .slide.active"</span>);
+        <span class="hljs-keyword">var</span> width_scale = well_rect.width/(content_rect.width()+<span class="hljs-number">80</span>);
+        <span class="hljs-keyword">var</span> height_scale = well_rect.height/(content_rect.height()+<span class="hljs-number">65</span>);
+        <span class="hljs-keyword">var</span> zoom = (width_scale&gt;height_scale)*height_scale + (width_scale&lt;=height_scale)*width_scale;
+        WebSync.setZoom(zoom);
+    }
+    $(window).bind(<span class="hljs-string">"resize"</span>,self.updateScale);
+    $(document).on(<span class="hljs-string">"modules_loaded"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        WebSync.fromJSON();
+        $(window).resize();
+        NProgress.done();
+    });
+    <span class="hljs-keyword">return</span> self;
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

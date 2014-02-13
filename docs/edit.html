@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>edit.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="core.html">
+                core.js
+              </a>
+            
+              
+              <a class="source" href="edit.html">
+                edit.js
+              </a>
+            
+              
+              <a class="source" href="chat.html">
+                chat.js
+              </a>
+            
+              
+              <a class="source" href="drawing.html">
+                drawing.js
+              </a>
+            
+              
+              <a class="source" href="equations.html">
+                equations.js
+              </a>
+            
+              
+              <a class="source" href="note.html">
+                note.js
+              </a>
+            
+              
+              <a class="source" href="page.html">
+                page.js
+              </a>
+            
+              
+              <a class="source" href="presentation.html">
+                presentation.js
+              </a>
+            
+              
+              <a class="source" href="resize.html">
+                resize.js
+              </a>
+            
+              
+              <a class="source" href="spreadsheet.html">
+                spreadsheet.js
+              </a>
+            
+              
+              <a class="source" href="tables.html">
+                tables.js
+              </a>
+            
+              
+              <a class="source" href="backend.html">
+                backend.js
+              </a>
+            
+              
+              <a class="source" href="main.html">
+                main.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>edit.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>WebSync: Text Editing Plugin</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>define(<span class="hljs-string">"edit"</span>,[<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(websync)</span>{</span> <span class="hljs-keyword">var</span> self = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Plugins should use a jQuery namespace for ease of use.
+Bind Example: $(document).bind(“click.Tables”, clickHandler);
+Unbind Example: $(“*”).unbind(“.Tables”);
+Function: void [plugin=TextEdit].enable();
+Enables the TextEdit plugin.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.text_buttons= [<span class="hljs-string">"bold"</span>,<span class="hljs-string">'italic'</span>,<span class="hljs-string">'strikethrough'</span>,<span class="hljs-string">'underline'</span>,<span class="hljs-string">'justifyleft'</span>,<span class="hljs-string">'justifycenter'</span>,<span class="hljs-string">'justifyright'</span>,<span class="hljs-string">'justifyfull'</span>,<span class="hljs-string">"removeFormat"</span>,<span class="hljs-string">"insertorderedlist"</span>,<span class="hljs-string">"insertunorderedlist"</span>,<span class="hljs-string">'superscript'</span>,<span class="hljs-string">'subscript'</span>,<span class="hljs-string">'insertHorizontalRule'</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Add ribbon text</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">".ribbon"</span>).append(<span class="hljs-string">'&lt;div id="Text" class="Text container"&gt; \
+            &lt;button id="bold" title="Bold" class="btn btn-default"&gt;&lt;i class="fa fa-bold"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="italic" title="Italic" class="btn btn-default"&gt;&lt;i class="fa fa-italic"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="strikethrough" title="Strikethrough" class="btn btn-default"&gt;&lt;i class="fa fa-strikethrough"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="underline" title="Underline" class="btn btn-default"&gt;&lt;i class="fa fa-underline"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="createLink" title="Hyperlink" class="btn btn-default"&gt;&lt;i class="fa fa-link"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;select id="font" title="Font" class="form-control ribbon_button"&gt; \
+            &lt;/select&gt; \
+            &lt;select id="font_size" title="Font Size" class="form-control ribbon_button"&gt; \
+                &lt;option&gt;8pt&lt;/option&gt; \
+                &lt;option&gt;9pt&lt;/option&gt; \
+                &lt;option&gt;10pt&lt;/option&gt; \
+                &lt;option&gt;11pt&lt;/option&gt; \
+                &lt;option&gt;12pt&lt;/option&gt; \
+                &lt;option&gt;13pt&lt;/option&gt; \
+                &lt;option&gt;14pt&lt;/option&gt; \
+                &lt;option&gt;15pt&lt;/option&gt; \
+                &lt;option&gt;16pt&lt;/option&gt; \
+                &lt;option&gt;17pt&lt;/option&gt; \
+                &lt;option&gt;18pt&lt;/option&gt; \
+                &lt;option&gt;19pt&lt;/option&gt; \
+                &lt;option&gt;20pt&lt;/option&gt; \
+                &lt;option&gt;21pt&lt;/option&gt; \
+                &lt;option&gt;22pt&lt;/option&gt; \
+                &lt;option&gt;23pt&lt;/option&gt; \
+                &lt;option&gt;24pt&lt;/option&gt; \
+                &lt;option&gt;25pt&lt;/option&gt; \
+                &lt;option&gt;26pt&lt;/option&gt; \
+                &lt;option&gt;27pt&lt;/option&gt; \
+                &lt;option&gt;28pt&lt;/option&gt; \
+                &lt;option&gt;29pt&lt;/option&gt; \
+                &lt;option&gt;30pt&lt;/option&gt; \
+                &lt;option&gt;31pt&lt;/option&gt; \
+                &lt;option&gt;32pt&lt;/option&gt; \
+                &lt;option&gt;33pt&lt;/option&gt; \
+                &lt;option&gt;34pt&lt;/option&gt; \
+                &lt;option&gt;35pt&lt;/option&gt; \
+                &lt;option&gt;36pt&lt;/option&gt; \
+                &lt;option&gt;37pt&lt;/option&gt; \
+                &lt;option&gt;38pt&lt;/option&gt; \
+                &lt;option&gt;39pt&lt;/option&gt; \
+                &lt;option&gt;40pt&lt;/option&gt; \
+                &lt;option&gt;41pt&lt;/option&gt; \
+                &lt;option&gt;42pt&lt;/option&gt; \
+                &lt;option&gt;43pt&lt;/option&gt; \
+                &lt;option&gt;44pt&lt;/option&gt; \
+                &lt;option&gt;45pt&lt;/option&gt; \
+                &lt;option&gt;46pt&lt;/option&gt; \
+                &lt;option&gt;47pt&lt;/option&gt; \
+                &lt;option&gt;48pt&lt;/option&gt; \
+                &lt;option&gt;72pt&lt;/option&gt; \
+            &lt;/select&gt; \
+            &lt;div class="btn-group"&gt; \
+                &lt;button id="justifyleft" title="Justify Left" class="btn btn-default"&gt;&lt;i class="fa fa-align-left"&gt;&lt;/i&gt;&lt;/button&gt; \
+                &lt;button id="justifycenter" title="Justify Center" class="btn btn-default"&gt;&lt;i class="fa fa-align-center"&gt;&lt;/i&gt;&lt;/button&gt; \
+                &lt;button id="justifyright" title="Justify Right" class="btn btn-default"&gt;&lt;i class="fa fa-align-right"&gt;&lt;/i&gt;&lt;/button&gt; \
+                &lt;button id="justifyfull" title="Justify Full" class="btn btn-default"&gt;&lt;i class="fa fa-align-justify"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;/div&gt; \
+            &lt;button id="insertunorderedlist" title="Unordered List" class="btn btn-default"&gt;&lt;i class="fa fa-list-ul"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="insertorderedlist" title="Ordered List" class="btn btn-default"&gt;&lt;i class="fa fa-list-ol"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="superscript" title="Superscript" class="btn btn-default"&gt;&lt;i class="fa fa-superscript"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;button id="subscript" title="Subscript" class="btn btn-default"&gt;&lt;i class="fa fa-subscript"&gt;&lt;/i&gt;&lt;/button&gt; \
+            &lt;input id="fontColor" title="Font Color" class="form-control" type="color"&gt;&lt;/input&gt; \
+            &lt;input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"&gt;&lt;/input&gt; \
+            &lt;button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default"&gt;&amp;mdash;&lt;/button&gt; \
+            &lt;button id="removeFormat" title="Clear Formatting" class="btn btn-default"&gt;&lt;i class="fa fa-times"&gt;&lt;/i&gt;&lt;/button&gt; \
+        &lt;/div&gt;'</span>);
+    $(<span class="hljs-string">"#view_mode"</span>).after(<span class="hljs-string">' &lt;button id="word_count" class="Text btn btn-default"&gt;&lt;i class="fa fa-eye"&gt;&lt;/i&gt; Word Count&lt;/button&gt;'</span>);
+    self.text_buttons.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span>{</span>
+        $(<span class="hljs-string">'button#'</span>+elem).bind(<span class="hljs-string">"click.TextEdit"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+            document.execCommand(elem);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>$(this).toggleClass(“active”);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            $(document).trigger(<span class="hljs-string">'selectionchange'</span>);
+        });
+    });
+    <span class="hljs-keyword">var</span> updateText = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> table = $(<span class="hljs-string">"#word_count_info"</span>);
+        <span class="hljs-keyword">var</span> popover = table.parent().parent();
+        popover.css({<span class="hljs-string">"max-width"</span>: <span class="hljs-number">500</span>, <span class="hljs-string">"z-index"</span>: <span class="hljs-number">10000</span>});
+        table.parent().css({padding: <span class="hljs-number">0</span>});
+        popover.children(<span class="hljs-string">".popover-content"</span>).html();
+        <span class="hljs-keyword">var</span> text = $(<span class="hljs-string">".content_container"</span>).text();
+        <span class="hljs-keyword">var</span> seltext = rangy.getSelection().toString();;
+        table.find(<span class="hljs-string">"tr"</span>).eq(<span class="hljs-number">1</span>).find(<span class="hljs-string">"td"</span>).eq(<span class="hljs-number">0</span>).text(text.split(<span class="hljs-regexp">/\s+/</span>).length)
+        table.find(<span class="hljs-string">"tr"</span>).eq(<span class="hljs-number">1</span>).find(<span class="hljs-string">"td"</span>).eq(<span class="hljs-number">1</span>).text(seltext == <span class="hljs-string">""</span> ? <span class="hljs-number">0</span> : seltext.split(<span class="hljs-regexp">/\s+/</span>).length)
+        table.find(<span class="hljs-string">"tr"</span>).eq(<span class="hljs-number">2</span>).find(<span class="hljs-string">"td"</span>).eq(<span class="hljs-number">0</span>).text(text.length)
+        table.find(<span class="hljs-string">"tr"</span>).eq(<span class="hljs-number">2</span>).find(<span class="hljs-string">"td"</span>).eq(<span class="hljs-number">1</span>).text(seltext.length)
+        table.find(<span class="hljs-string">"tr"</span>).eq(<span class="hljs-number">3</span>).find(<span class="hljs-string">"td"</span>).eq(<span class="hljs-number">0</span>).text(text.split(<span class="hljs-string">" "</span>).join(<span class="hljs-string">""</span>).length)
+        table.find(<span class="hljs-string">"tr"</span>).eq(<span class="hljs-number">3</span>).find(<span class="hljs-string">"td"</span>).eq(<span class="hljs-number">1</span>).text(seltext.split(<span class="hljs-string">" "</span>).join(<span class="hljs-string">""</span>).length)
+    }
+    <span class="hljs-keyword">var</span> live_update = <span class="hljs-literal">false</span>;
+    $(document).on(<span class="hljs-string">"selectionchange.Text"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">if</span>(live_update){
+            updateText();
+        }
+    });
+    $(<span class="hljs-string">"#word_count"</span>).on(<span class="hljs-string">'shown.bs.popover'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        updateText();
+        live_update = <span class="hljs-literal">true</span>;
+    }).on(<span class="hljs-string">'hide.bs.popover'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        live_update = <span class="hljs-literal">false</span>;
+    }).popover({placement: <span class="hljs-string">"bottom"</span>, html: <span class="hljs-literal">true</span>, container: <span class="hljs-string">'body'</span>,
+        content: <span class="hljs-string">"&lt;table id='word_count_info' class='table' style='margin: 0'&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Document&lt;/th&gt;&lt;th&gt;Selection&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;Words&lt;/th&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;Characters&lt;/th&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;... (no spaces)&lt;/th&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;"</span>
+    }).popover(<span class="hljs-string">'show'</span>).popover(<span class="hljs-string">'hide'</span>);
+    $(<span class="hljs-string">"#fontColor"</span>).change(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        document.execCommand(<span class="hljs-string">'foreColor'</span>, <span class="hljs-literal">false</span>, <span class="hljs-keyword">this</span>.value);
+    });
+    $(<span class="hljs-string">"#hilightColor"</span>).change(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        document.execCommand(<span class="hljs-string">'hiliteColor'</span>, <span class="hljs-literal">false</span>, <span class="hljs-keyword">this</span>.value);
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Reflects text in menu at top</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(document).bind(<span class="hljs-string">'selectionchange.TextEdit'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">if</span>(!self._selectTimeout){
+            self._selectTimeout = setTimeout(self.selectHandler,<span class="hljs-number">200</span>);
+        }
+    });
+    $(<span class="hljs-string">".content_well"</span>).bind(<span class="hljs-string">"keydown.TextEdit"</span>,<span class="hljs-string">"li"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">if</span>(e.keyCode==<span class="hljs-number">9</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>console.log(this);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/*var selection = document.getSelection();
+            if(selection.type!="None" &amp;&amp; !_.isNull(selection.baseNode)){
+                var list_index = selection.baseNode;
+                while(list_index.tagName!="LI"){
+                    list_index = list_index.parentElement;
+                }
+                var indent = parseInt($(list_index).getStyleObject().marginLeft)+(e.shiftKey ? -40 : 40);
+                if(indent&lt;0){
+                    indent=0;
+                }
+                $(list_index).animate({marginLeft: indent+"px"},{duration:200,queue:true});
+                e.preventDefault();
+            }*/</span>
+            <span class="hljs-keyword">if</span>(e.shiftKey){
+                document.execCommand(<span class="hljs-string">'outdent'</span>);
+            } <span class="hljs-keyword">else</span> {
+                document.execCommand(<span class="hljs-string">'indent'</span>);
+            }
+            e.preventDefault();
+        }
+    });
+    $(<span class="hljs-string">'#font'</span>).bind(<span class="hljs-string">"change.TextEdit"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        document.execCommand(<span class="hljs-string">'fontname'</span>,<span class="hljs-literal">false</span>,$(<span class="hljs-string">'#font'</span>).val());
+    });
+    $(<span class="hljs-string">'#font_size'</span>).change(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> size = $(<span class="hljs-string">'#font_size'</span>).val()
+        console.log(size);
+        WebSync.applyCssToSelection({<span class="hljs-string">'font-size'</span>:size});
+    });
+    $(<span class="hljs-string">"#picture"</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-comment">/*
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>TODO: Keep position.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        bootbox.prompt("Enter image URL", function(result) {
+            if (result === null) {
+            } else {
+                document.execCommand("insertImage", false, url);
+            }
+        });*/
+        var url = prompt("Image URL");
+        document.execCommand("insertImage", false, url);
+    });
+    $("#createLink").click(function(){
+        var url = prompt("Hyperlink URL");
+        document.execCommand("createLink", false, url);
+    });
+    $("#video").click(function(){
+        var url = prompt("Video URL (Youtube)");
+        if(url.indexOf("youtu")!=-1){
+            var youtube_id = self.youtube_parser(url);
+            console.log("Youtube id", youtube_id);
+            var html = '&lt;iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/'+youtube_id+'?origin=http://websyn.ca" height=480 width=640 frameborder="0"/&gt;'
+            document.execCommand("insertHTML", false, html);
+        }
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Youtube REGEX from <a href="http://stackoverflow.com/a/8260383">http://stackoverflow.com/a/8260383</a> by Lasnv</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.youtube_parser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(url)</span>{</span>
+        <span class="hljs-keyword">var</span> regExp = <span class="hljs-regexp">/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&amp;v=)([^#\&amp;\?]*).*/</span>;
+        <span class="hljs-keyword">var</span> match = url.match(regExp);
+        <span class="hljs-keyword">if</span> (match&amp;&amp;match[<span class="hljs-number">2</span>].length==<span class="hljs-number">11</span>){
+            <span class="hljs-keyword">return</span> match[<span class="hljs-number">2</span>];
+        }<span class="hljs-keyword">else</span>{
+            alert(<span class="hljs-string">"Invalid URL"</span>);
+        }
+    }
+    self.rgb_to_hex = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(rgb)</span>{</span>
+        <span class="hljs-keyword">if</span>(rgb == <span class="hljs-string">"rgba(0, 0, 0, 0)"</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">"#FFFFFF"</span>;
+        <span class="hljs-keyword">if</span>(rgb.indexOf(<span class="hljs-string">'rgba'</span>)!=-<span class="hljs-number">1</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>return ‘#000000’;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        }
+        <span class="hljs-keyword">var</span> parts = rgb.match(<span class="hljs-regexp">/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(1|0|0?\.d+))?\)$/</span>);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">3</span>; ++i) {
+            parts[i] = <span class="hljs-built_in">parseInt</span>(parts[i]).toString(<span class="hljs-number">16</span>);
+            <span class="hljs-keyword">if</span> (parts[i].length == <span class="hljs-number">1</span>) parts[i] = <span class="hljs-string">'0'</span> + parts[i];
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'#'</span>+parts.slice(<span class="hljs-number">1</span>,<span class="hljs-number">4</span>).join(<span class="hljs-string">''</span>).toUpperCase();
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Function: void [plugin=TextEdit].disable();
+Disables the TextEdit plugin.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+		<span class="hljs-keyword">var</span> elem = $(<span class="hljs-string">".Text"</span>).remove();
+		WebSync.updateRibbon();
+		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".TextEdit"</span>);
+		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".TextEdit"</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Function: void [plugin=TextEdit].selectHandler();
+Handling function for displaying accurate information about text in ribbon.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.selectHandler = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+		<span class="hljs-keyword">var</span> style = WebSync.getCss();
+		$(<span class="hljs-string">"#fontColor"</span>)[<span class="hljs-number">0</span>].value = self.rgb_to_hex(style.color);
+        $(<span class="hljs-string">"#hilightColor"</span>)[<span class="hljs-number">0</span>].value = self.rgb_to_hex(style.backgroundColor);
+        $(<span class="hljs-string">'#font_size'</span>).val(<span class="hljs-built_in">Math</span>.round(<span class="hljs-built_in">parseInt</span>(style.fontSize)*(<span class="hljs-number">0.75</span>))+<span class="hljs-string">"pt"</span>);
+
+		self.text_buttons.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span>{</span>
+			<span class="hljs-keyword">var</span> button = $(<span class="hljs-string">'button#'</span>+elem)
+			<span class="hljs-keyword">if</span>(document.queryCommandState(elem)){
+				button.addClass(<span class="hljs-string">"active"</span>);
+			}
+			<span class="hljs-keyword">else</span> {
+				button.removeClass(<span class="hljs-string">'active'</span>);
+			}
+		});
+		$(<span class="hljs-string">'#font'</span>).val(capitaliseFirstLetter(document.queryCommandValue(<span class="hljs-string">'fontname'</span>).split(<span class="hljs-string">","</span>)[<span class="hljs-number">0</span>].split(<span class="hljs-string">"'"</span>).join(<span class="hljs-string">""</span>)));
+		clearTimeout(self._selectTimeout);
+		self._selectTimeout = <span class="hljs-literal">null</span>;
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Sets up the list of fonts</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> fonts = [<span class="hljs-string">"Cursive"</span>,<span class="hljs-string">"Monospace"</span>,<span class="hljs-string">"Serif"</span>,<span class="hljs-string">"Sans-serif"</span>,<span class="hljs-string">"Fantasy"</span>,<span class="hljs-string">"Arial"</span>,<span class="hljs-string">"Arial Black"</span>,<span class="hljs-string">"Arial Narrow"</span>,<span class="hljs-string">"Arial Rounded MT Bold"</span>,<span class="hljs-string">"Bookman Old Style"</span>,<span class="hljs-string">"Bradley Hand ITC"</span>,<span class="hljs-string">"Century"</span>,<span class="hljs-string">"Century Gothic"</span>,<span class="hljs-string">"Comic Sans MS"</span>,<span class="hljs-string">"Droid Sans"</span>,<span class="hljs-string">"Courier"</span>,<span class="hljs-string">"Courier New"</span>,<span class="hljs-string">"Georgia"</span>,<span class="hljs-string">"Gentium"</span>,<span class="hljs-string">"Impact"</span>,<span class="hljs-string">"King"</span>,<span class="hljs-string">"Lucida Console"</span>,<span class="hljs-string">"Lalit"</span>,<span class="hljs-string">"Modena"</span>,<span class="hljs-string">"Monotype Corsiva"</span>,<span class="hljs-string">"Papyrus"</span>,<span class="hljs-string">"TeX"</span>,<span class="hljs-string">"Times"</span>,<span class="hljs-string">"Times New Roman"</span>,<span class="hljs-string">"Trebuchet MS"</span>,<span class="hljs-string">"Tahoma"</span>,<span class="hljs-string">"Verdana"</span>,<span class="hljs-string">"Verona"</span>,<span class="hljs-string">'Helvetica'</span>,<span class="hljs-string">'Segoe'</span>,<span class="hljs-string">'Open Sans'</span>];
+    <span class="hljs-keyword">var</span> d = <span class="hljs-keyword">new</span> Detector();
+    <span class="hljs-keyword">var</span> font_list = [];
+    fonts = fonts.sort(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a,b)</span>{</span>
+        <span class="hljs-keyword">if</span>(a&lt;b) <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(a&gt;b) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    });
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; fonts.length; i++) {
+        <span class="hljs-keyword">var</span> result = d.detect(fonts[i]);
+        <span class="hljs-keyword">if</span>(result){
+            font_list.push(<span class="hljs-string">"&lt;option&gt;"</span>+fonts[i]+<span class="hljs-string">"&lt;/option&gt;"</span>);
+        }
+    }
+    $(<span class="hljs-string">'#font'</span>).html(font_list.join(<span class="hljs-string">"\n"</span>));
+    WebSync.updateRibbon();
+    <span class="hljs-keyword">return</span> self;
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

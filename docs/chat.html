@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>chat.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="core.html">
+                core.js
+              </a>
+            
+              
+              <a class="source" href="edit.html">
+                edit.js
+              </a>
+            
+              
+              <a class="source" href="chat.html">
+                chat.js
+              </a>
+            
+              
+              <a class="source" href="drawing.html">
+                drawing.js
+              </a>
+            
+              
+              <a class="source" href="equations.html">
+                equations.js
+              </a>
+            
+              
+              <a class="source" href="note.html">
+                note.js
+              </a>
+            
+              
+              <a class="source" href="page.html">
+                page.js
+              </a>
+            
+              
+              <a class="source" href="presentation.html">
+                presentation.js
+              </a>
+            
+              
+              <a class="source" href="resize.html">
+                resize.js
+              </a>
+            
+              
+              <a class="source" href="spreadsheet.html">
+                spreadsheet.js
+              </a>
+            
+              
+              <a class="source" href="tables.html">
+                tables.js
+              </a>
+            
+              
+              <a class="source" href="backend.html">
+                backend.js
+              </a>
+            
+              
+              <a class="source" href="main.html">
+                main.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>chat.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>WebSync: Chat Plugin
+WebSync uses RequireJS for modules.
+define( [pluginName], [requiredModules], definition);
+pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it’s being required as.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>define([<span class="hljs-string">'websync'</span>],<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edit,websink)</span>{</span> <span class="hljs-keyword">var</span> self = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Save all variables and information to the self object.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Plugins should use a jQuery namespace for ease of use.
+Bind Example: $(document).bind(“click.Tables”, clickHandler);
+Unbind Example: $(“*”).unbind(“.Tables”);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.open = <span class="hljs-literal">false</span>;
+    $(<span class="hljs-string">'body'</span>).append($(<span class="hljs-string">'&lt;div id="chat" class="sidebar"&gt;&lt;div id="user_list"&gt;&lt;/div&gt;&lt;div id="chat_well" class="panel panel-default"&gt;&lt;/div&gt;&lt;div class="chat_input input-group"&gt;&lt;input class="form-control" id="appendedInputButton" type="text" &gt;&lt;span class="input-group-btn"&gt;&lt;button id="msg_btn" class="btn btn-default" type="button"&gt;Send&lt;/button&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;'</span>));
+    $(<span class="hljs-string">'#settings'</span>).prepend($(<span class="hljs-string">'&lt;li&gt;&lt;a id="chat_btn" title="Chat"&gt;&lt;i class="fa fa-comment fa-lg"&gt;&lt;/i&gt; &lt;span id="user_count" class="badge"&gt;1&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;'</span>));
+    $(<span class="hljs-string">"#chat"</span>).css({right:-<span class="hljs-number">252</span>});
+    $(<span class="hljs-string">"#chat img"</span>).tooltip();
+    $(document).bind(<span class="hljs-string">'client_load.Chat'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e,data)</span>{</span>
+        console.log(<span class="hljs-string">"Client_load"</span>,data);
+        <span class="hljs-keyword">var</span> client = data.client;
+        <span class="hljs-keyword">var</span> client_dom = $(<span class="hljs-string">"#client_"</span>+client);
+        <span class="hljs-keyword">var</span> user = WebSync.clients[client];
+        <span class="hljs-keyword">var</span> user_info = WebSync.users[user.id];
+        <span class="hljs-keyword">if</span>(client_dom.length&gt;<span class="hljs-number">0</span>){
+            <span class="hljs-keyword">if</span>(user_info.displayName){
+                <span class="hljs-keyword">var</span> display_name = user_info.displayName +<span class="hljs-string">' ('</span>+user.email+<span class="hljs-string">')'</span>;
+                client_dom.children().attr(<span class="hljs-string">'data-original-title'</span>,_.escape(display_name));
+            }
+        } <span class="hljs-keyword">else</span> {
+            self.addUser(client);
+        }
+        self.updateUserList();
+    });
+    $(<span class="hljs-string">"#msg_btn"</span>).bind(<span class="hljs-string">'click.Chat'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        self.msg();
+    });
+    $(<span class="hljs-string">".chat_input input"</span>).bind(<span class="hljs-string">'keypress.Chat'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        <span class="hljs-keyword">if</span>(e.which==<span class="hljs-number">13</span>){
+            self.msg();
+        }
+    });
+    $(document).bind(<span class="hljs-string">"client_event_chat_msg.Chat"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e,data)</span>{</span>
+        self.clientMsg(data.from,data.data);
+    });
+    self.msg = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> msg = $(<span class="hljs-string">".chat_input input"</span>).val();
+        <span class="hljs-keyword">if</span>(msg.length&gt;<span class="hljs-number">0</span>){
+            WebSync.broadcastEvent(<span class="hljs-string">'chat_msg'</span>,msg);
+            self.clientMsg(WebSyncAuth.id,msg);
+            $(<span class="hljs-string">".chat_input input"</span>).val(<span class="hljs-string">""</span>);
+        }
+    }
+    self.addUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(client)</span>{</span>
+        <span class="hljs-keyword">var</span> user = WebSync.clients[client];
+        <span class="hljs-keyword">var</span> user_info = WebSync.users[user.id];
+        <span class="hljs-keyword">var</span> display_name = user_info.displayName;
+        <span class="hljs-keyword">if</span>(!display_name)
+            display_name = user.email;
+        <span class="hljs-keyword">else</span> 
+            display_name += <span class="hljs-string">' ('</span>+user.email+<span class="hljs-string">')'</span>
+        display_name = _.escape(display_name);
+        console.log(user);
+        <span class="hljs-keyword">var</span> style = user.email == <span class="hljs-string">"anon@websyn.ca"</span> ? <span class="hljs-string">"mm"</span> : <span class="hljs-string">"retro"</span>;
+        $(<span class="hljs-string">"#user_list"</span>).append(<span class="hljs-string">'&lt;a target="_blank" id="client_'</span>+client+<span class="hljs-string">'" href="https://secure.gravatar.com/'</span>+user.id+<span class="hljs-string">'"&gt;&lt;img data-toggle="tooltip" data-placement="bottom" title="'</span>+display_name+<span class="hljs-string">'" src="https://secure.gravatar.com/avatar/'</span>+user.id+<span class="hljs-string">'?size=38&amp;d='</span>+style+<span class="hljs-string">'"&gt;&lt;/img&gt;&lt;/a&gt;'</span>).children().last().children().tooltip();
+    }
+    $(document).bind(<span class="hljs-string">'client_leave.Chat'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e,data)</span>{</span>
+        console.log(<span class="hljs-string">"Client leaving"</span>,data);
+        $(<span class="hljs-string">"#client_"</span>+data.client).remove();
+        self.updateUserList();
+    });
+    $(document).bind(<span class="hljs-string">'noconnection.Chat'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">"#user_list"</span>).empty();
+        self.updateUserList();
+    });
+    self.updateUserList = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        $(<span class="hljs-string">"#user_count"</span>).text(_.size(WebSync.clients));
+        $(<span class="hljs-string">"#chat_well"</span>).css({top: $(<span class="hljs-string">"#user_list"</span>).height()-<span class="hljs-number">5</span>});
+    },<span class="hljs-number">100</span>);};
+    self.clientMsg = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(client, msg)</span>{</span>
+        <span class="hljs-keyword">var</span> user = WebSync.clients[client];
+        <span class="hljs-keyword">var</span> user_info = WebSync.users[user.id];
+        <span class="hljs-keyword">var</span> display_name = user_info.displayName;
+        <span class="hljs-keyword">if</span>(!display_name){
+            display_name = user.email;
+        }
+        display_name = _.escape(display_name);
+        <span class="hljs-keyword">var</span> style = user.email == <span class="hljs-string">"anon@websyn.ca"</span> ? <span class="hljs-string">"mm"</span> : <span class="hljs-string">"retro"</span>;
+        $(<span class="hljs-string">"#chat_well"</span>).append(<span class="hljs-string">'&lt;p&gt;&lt;a target="_blank" href="https://secure.gravatar.com/'</span>+user.id+<span class="hljs-string">'"&gt;&lt;img src="https://secure.gravatar.com/avatar/'</span>+user.id+<span class="hljs-string">'?size=38&amp;d='</span>+style+<span class="hljs-string">'"&gt;&lt;/img&gt;&lt;span&gt;'</span>+display_name+<span class="hljs-string">':&lt;/span&gt;&lt;/a&gt; '</span>+_.escape(msg)+<span class="hljs-string">'&lt;/p&gt;'</span>);
+        <span class="hljs-keyword">if</span>(!self.open){
+            $(<span class="hljs-string">"#user_count"</span>).addClass(<span class="hljs-string">"badge-pulse"</span>);
+        }
+        $(<span class="hljs-string">"#chat_well"</span>).animate({scrollTop:$(<span class="hljs-string">"#chat_well"</span>).get(<span class="hljs-number">0</span>).scrollHeight},<span class="hljs-number">200</span>);
+    }
+    self.toggle = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        self.resize();
+        $(<span class="hljs-string">"#chat_btn"</span>).parent().toggleClass(<span class="hljs-string">"active"</span>);
+        <span class="hljs-keyword">if</span>(self.open){
+            $(<span class="hljs-string">"#chat"</span>).animate({right:-<span class="hljs-number">250</span>},<span class="hljs-number">200</span>);
+            $(<span class="hljs-string">".content_well"</span>).animate({right: <span class="hljs-number">0</span>},<span class="hljs-number">200</span>);
+            self.open=<span class="hljs-literal">false</span>;
+        } <span class="hljs-keyword">else</span> {
+            $(<span class="hljs-string">"#chat"</span>).animate({right:<span class="hljs-number">0</span>},<span class="hljs-number">200</span>);
+            $(<span class="hljs-string">'.content_well'</span>).animate({right:<span class="hljs-number">250</span>},<span class="hljs-number">200</span>);
+            $(<span class="hljs-string">"#user_count"</span>).removeClass(<span class="hljs-string">"badge-pulse"</span>);
+            self.open = <span class="hljs-literal">true</span>;
+            self.resize();
+        }
+    }
+    $(<span class="hljs-string">"#chat_btn"</span>).bind(<span class="hljs-string">"click.Chat"</span>,self.toggle);
+    self.resize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+        $(<span class="hljs-string">"#chat"</span>).height(window.innerHeight-$(<span class="hljs-string">".content_well"</span>).position().top)
+    }
+    self.resize();
+    $(window).bind(<span class="hljs-string">'resize.Chat'</span>,self.resize);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Function: void [plugin=chat].disable();
+Disables the plugin. This has to be set for possible plugin unloading.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	self.disable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+		$(<span class="hljs-string">"#chat"</span>).remove();
+        $(<span class="hljs-string">"#chat_btn"</span>).remove();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Reset content_well width;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $(<span class="hljs-string">'.content_well'</span>).get(<span class="hljs-number">0</span>).style.width=<span class="hljs-literal">null</span>;
+		$(<span class="hljs-string">"*"</span>).unbind(<span class="hljs-string">".Chat"</span>);
+		$(<span class="hljs-string">"*"</span>).undelegate(<span class="hljs-string">".Chat"</span>);
+	}
+    $.each(WebSync.clients,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(k, v)</span>{</span>
+        self.addUser(k);
+        self.updateUserList();
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Return self so other modules can hook into this one.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> self;
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

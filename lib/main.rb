@@ -333,6 +333,16 @@ class WebSync < Sinatra::Base
             erb :documentation
         end
     end
+    get '/documentation/:file.:ext' do
+        cache do
+            file = "docs/#{params[:file]}.html"
+            if Dir.glob("docs/*.html").include? file
+                File.read file
+            else
+                halt 404
+            end
+        end
+    end
     get '/admin' do
         admin_required
         erb :admin

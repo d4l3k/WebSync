@@ -1,16 +1,11 @@
-<style>
-html {
-    margin: 0 !important;
-}
-ol.linenums {
-    margin-left: 50px;
-}
-.docu {
-    margin: 20px;
-    margin-top: 60px;
-}
-</style>
-<div class='docu'>
-<a href="/" class="btn btn-large pull-right btn-primary">Return Home</a>
-<%= File.read 'public/doc_gen.html' %>
+<div class="container">
+    <h1>Documentation</h1>
+    WebSync uses Docco to automatically generate nicely formatted annotated source. Documentation currently is spotty.
+    <ul>
+        <% Dir.glob("docs/*.html").each do |doc| 
+            doc = doc.split("/")[1].split(".html")[0]
+        %>
+            <li><a href="/documentation/<%= doc %>.html"><%= doc %></a></li>
+        <% end %>
+    </ul>
 </div>

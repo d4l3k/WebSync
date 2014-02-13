@@ -22,6 +22,7 @@ describe "Complete Test" do
         # Create Document
         driver.find_element(:css, ".btn-group button").click
         driver.find_element(:css, ".btn-group.open .dropdown-menu a").click
+        sleep 1
         assert User.all(email: 'test@websyn.ca').documents.length == 1
         sleep 2
         # Test title

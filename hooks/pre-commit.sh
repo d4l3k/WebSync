@@ -1,2 +1,1 @@
-rake documentation
-git add docs/*
+rake beautify

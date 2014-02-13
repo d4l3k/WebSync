@@ -123,6 +123,7 @@ GEM
     raindrops (0.12.0)
     rake (10.1.1)
     redis (3.0.7)
+    ruby-beautify (0.92.2)
     rubysl (2.0.15)
       rubysl-abbrev (~> 2.0)
       rubysl-base64 (~> 2.0)
@@ -382,6 +383,7 @@ DEPENDENCIES
   racksh
   radix62
   redis
+  ruby-beautify
   rubysl
   sass
   selenium-webdriver

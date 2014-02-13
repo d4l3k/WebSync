@@ -156,29 +156,6 @@ class WebSync < Sinatra::Base
                return '<a href="/login" title="Sign In"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> Sign In</span></a>'
             end
         end
-=begin
-        def is_cached
-            if ENV["RACK_ENV"]=="development"
-                return
-            end
-            tag = "url:#{request.url}"
-            page = $redis.get(tag)
-            if page and !logged_in?
-              etag Digest::SHA1.hexdigest(page)
-              ttl = $redis.ttl(tag)
-              response.header['redis-ttl'] = ttl.to_s
-              response.header['redis'] = 'HIT'
-              return page
-            end
-        end
-        def set_cache(page, time: 3600)
-            etag Digest::SHA1.hexdigest(page)
-            tag = "url:#{request.url}"
-            response.header['redis'] = 'MISS'
-            $redis.setex(tag, time, page) if !logged_in?
-            return page
-        end
-=end
         def cache time: 3600, &block
             if ENV["RACK_ENV"]=="development"
                 return yield

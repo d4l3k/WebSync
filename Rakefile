@@ -15,7 +15,7 @@ module AssetPipeline
         namespace :assets do
           desc "Precompile assets"
           task :precompile do
-             Rake::Task["db:migrate"].invoke
+             Rake::Task["documentation"].invoke
             environment = app.sprockets
             manifest = Sprockets::Manifest.new(environment.index, app.assets_path)
             manifest.compile(app.assets_precompile)

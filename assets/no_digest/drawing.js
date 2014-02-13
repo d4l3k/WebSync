@@ -14,37 +14,39 @@ define(['websync'], function() {
         self.active = !self.active;
     });
 
-    // Bind mouse to the content container.
-    $(".content_container").bind("mousedown.Drawing", function(e) {
-        if (self.active) {
-            self.drag = true;
-            self.last_time = new Date();
-            // The active_id is the identifier used for each line.
-            self.active_id = (new Date()).getTime().toString();
-            self.points[self.active_id] = [];
-            if ($(e.target).attr("contenteditable") == "true") {
-                self.parent = e.target;
-            } else {
-                self.parent = $(e.target).parents("[contenteditable=true]");
+    // Bind mouse to the content container. The timeout is to make sure that the .content_container has been added.
+    setTimeout(function(){
+        $(".content_container").bind("mousedown.Drawing", function(e) {
+            if (self.active) {
+                self.drag = true;
+                self.last_time = new Date();
+                // The active_id is the identifier used for each line.
+                self.active_id = (new Date()).getTime().toString();
+                self.points[self.active_id] = [];
+                if ($(e.target).attr("contenteditable") == "true") {
+                    self.parent = e.target;
+                } else {
+                    self.parent = $(e.target).parents("[contenteditable=true]");
+                }
+                self.canvas = document.createElement("canvas");
+                $(self.canvas).addClass("Drawing").data("drawid", self.active_id).prependTo(self.parent);
+                self.savePoint(e);
             }
-            self.canvas = document.createElement("canvas");
-            $(self.canvas).addClass("Drawing").data("drawid", self.active_id).prependTo(self.parent);
-            self.savePoint(e);
-        }
-    }).bind("mousemove.Drawing", function(e) {
-        if (self.active && self.drag) {
-            var date = new Date();
-            //if(date - self.last_time > self.interval){
-            self.savePoint(e);
-            self.last_time = date;
-            //}
-        }
-    }).bind("mouseup.Drawing", function(e) {
-        if (self.active && self.drag) {
-            self.drag = false;
-            self.savePoint(e);
-        }
-    });
+        }).bind("mousemove.Drawing", function(e) {
+            if (self.active && self.drag) {
+                var date = new Date();
+                //if(date - self.last_time > self.interval){
+                self.savePoint(e);
+                self.last_time = date;
+                //}
+            }
+        }).bind("mouseup.Drawing", function(e) {
+            if (self.active && self.drag) {
+                self.drag = false;
+                self.savePoint(e);
+            }
+        });
+    }, 100);
     // Add a point to a line based on event.
     self.savePoint = function(e) {
         var corner = $(".content_container").offset();

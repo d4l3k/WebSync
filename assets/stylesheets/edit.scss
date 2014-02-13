@@ -1,57 +1,17 @@
 $blue: #08c;
  @mixin ex($key, $val) {
-    -moz-# {
-        $key
-    }
-    : $val;
-    -o-# {
-        $key
-    }
-    : $val;
-    -ms-# {
-        $key
-    }
-    : $val;
-    -webkit-# {
-        $key
-    }
-    : $val;
-    # {
-        $key
-    }
-    : $val;
+    -moz-#{$key}: $val;
+    -o-#{$key}: $val;
+    -ms-#{$key}: $val;
+    -webkit-#{$key}: $val;
+    #{$key}: $val;
 }
 @mixin keyframes($name) {
-    @-moz-keyframes # {
-        $name
-    }
-    {
-        @content;
-    }
-    @-o-keyframes # {
-        $name
-    }
-    {
-        @content;
-    }
-    @-webkit-keyframes # {
-        $name
-    }
-    {
-        @content;
-    }
-    @-ms-keyframes # {
-        $name
-    }
-    {
-        @content;
-    }
-    @keyframes # {
-        $name
-    }
-    {
-        @content;
-    }
+    @-moz-keyframes #{$name}{@content;}
+    @-o-keyframes #{$name}{@content;}
+    @-webkit-keyframes #{$name}{@content;}
+    @-ms-keyframes #{$name}{@content;}
+    @keyframes #{$name}{@content;}
 }
 body,
 html {
@@ -81,7 +41,7 @@ body .mathquill-rendered-math {
     border: none;
     &.empty {
         border: 1px solid #aaa;
-        &: before {
+        &:before {
             content: "equation";
             font-size: 8pt;
             color: #aaa;
@@ -243,7 +203,7 @@ nav .settings-popup {
     background-image: -webkit-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
     background-image: -ms-linear-gradient(bottom, #C0C0C0 0%, #F0F0F0 100%);
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #C0C0C0), color-stop(1, #F0F0F0));
-    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#C0C0C0');
     background-attachment: fixed;
     position: absolute;
     left: 0;
@@ -426,7 +386,7 @@ a#name {
     margin-bottom: -5px;
     white-space: nowrap;
     display: inline-block;
-    &: focus {
+    &:focus {
         max-width: initial;
         //background-color: #777;
         text-overflow: clip;
@@ -546,7 +506,7 @@ a#name {
         overflow-y: visible;
         max-width: 1170px;
         width: 100%;
-        & >: last-child {
+        & >:last-child {
             margin-right: 5px;
         }
         white-space: nowrap;
@@ -743,7 +703,7 @@ nav.navbar {
                 line-height: 10pt;
                 word-wrap: break-word;
                 min-height: 35px;
-                &: last-child {
+                &:last-child {
                     border-bottom: none;
                 }
             }

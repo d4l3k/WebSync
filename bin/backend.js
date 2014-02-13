@@ -232,7 +232,7 @@ wss.on('connection', function(ws) {
                                 postgres.query("SELECT id FROM changes WHERE document_id=$1 ORDER BY time DESC LIMIT 1;",[doc_id]).on("row",function(row){
                                     id = row.id;
                                 }).on('end',function(){
-                                    postgres.query("INSERT INTO changes (time, patch, document_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)",[doc_id,data.patch,new Date(),user_email, id]);
+                                    postgres.query("INSERT INTO changes (time, patch, document_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)",[doc_id,JSON.stringify(data.patch),new Date(),user_email, id]);
                                 });
                                 redis.publish("doc:"+doc_id,JSON.stringify({type:'client_bounce',client:client_id,data:message}));
                             } catch (e) {

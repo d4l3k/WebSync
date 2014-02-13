@@ -253,7 +253,7 @@ define('websync',{
             else if(data.type=='diff_list'){
                 WebSync.patches = data.patches;
                 _.each(WebSync.patches, function(patch){
-                    var row = $("<tr><td></td><td></td><td></td><td ><button class='btn btn-warning'>Revert To</button></td></tr>");
+                    var row = $("<tr><td></td><td></td><td></td><td><button class='btn btn-warning' data-id='"+patch.id+"'>Revert To</button></td></tr>");
                     var children = row.children();
                     children.get(0).innerText = patch.time;
                     children.get(1).innerText = patch.patch;
@@ -391,18 +391,24 @@ define('websync',{
 			$($("#settingsBtn").get(0).parentElement).toggleClass("active");
             $(".settings-popup").toggle();
         });
-        $(".settings-popup #diffs").delegate('button','click',function(){
+        $(".settings-popup #diffs").delegate('button','click',function(e){
             console.log(this);
             var patches = [];
             var c_div = this.parentElement.parentElement;
-            while((c_div=c_div.nextSibling)!=null){
-                var patch = c_div.children[1].innerText.replace(/^{/,"[").replace(/}$/,"]");
-                patches.push(JSON.parse(patch));
+            var id = parseInt($(this).data("id"));
+            // TODO: Tree based patches.
+            for(var i=0;i<WebSync.patches.length;i++){
+                patches.push(WebSync.patches[i]);
+                if(WebSync.patches[i].id==id){
+                    i = WebSync.patches.length;
+                }
             }
+            console.log(patches.length);
             var new_body = {body:[]};
-            for(var i=(patches.length)-1;i>=0;i--){
-                jsonpatch.apply(new_body,patches[i]);
-            }
+            _.each(patches, function(patch){
+                jsonpatch.apply(new_body,JSON.parse(patch.patch));
+            });
+            console.log(new_body);
             _.each(WebSyncData,function(v,k){
                 delete WebSyncData[k];
             });

@@ -76,7 +76,17 @@ task :beautify do
     #system("css-beautify -r assets/stylesheets/*.scss")
 end
 task :documentation do
-    system("docco assets/javascripts/{edit,core}.js assets/no_digest/*.js lib/*.rb bin/backend.js")
+    files = %w(
+        assets/javascripts/{edit,core}.js
+        assets/no_digest/*.js
+        lib/*.rb
+        bin/backend.js
+        )
+    paths = []
+    files.each do |file|
+        paths += Dir.glob(file)
+    end
+    system("docco #{files.join " "}")
 end
 task :hooks do
     system("ln -s ../../hooks/pre-commit.sh .git/hooks/pre-commit")

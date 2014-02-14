@@ -1,9 +1,12 @@
-WebSync [![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync) 
-============
+# ![WebSync](https://github.com/d4l3k/WebSync/raw/master/public/img/logo-github.png)
 WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive.
+
+[![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync)
 
 Features
 ----
+[WebSyn.ca](https://websyn.ca) has a nice list of features. These might be incomplete:
+
 * Persistent JSON object synced between clients
 * Notebook, Document, Spreadsheet, and Presentation editing and viewing.
 * Tables
@@ -18,21 +21,22 @@ Features
 
 TODO
 ----
-WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing GitHub issues, but you can just look at those instead.
+WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing the [GitHub issues](https://github.com/d4l3k/WebSync/issues), and you can just look at those instead.
 
 Dependencies
 ----
 * WebSync requires Ruby, and Node.JS
 * WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities.
 * Libre Office, unoconv and poppler is required for file upload & download.
+* You probably need Java for the Closure javascript compressor (send me a message if it works without it).
 
-[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync works with Ruby 2.0.0 and should work with 1.9.3. At this time 2.1.0 doesn't work due to a Rice compilation error.
+[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync has been tested with MRI Ruby 2.0.0. At this time 2.1.0 doesn't work due to a Rice compilation error, but hopefully will be supported sometime in the future.
 
 The Ruby dependencies need Bundler and you can install it by running `gem install bundler` and then `bundle` inside the WebSync directory to download the dependencies.
 
 To install the Node.JS dependencies, just run `npm install`.
 
-Some things (like databases) can be configured in "config.json" but a majority still require source changes.
+Some things (like databases and initial javascript assets) can be configured in "config.json" but a majority still require source changes.
 
 Launching
 ----
@@ -41,7 +45,6 @@ Once the dependencies are installed and running, you should be able to run a dev
 rackup
 ./backend.js
 ```
-
 This launches the main site on port 9292 and the web socket server on 4568.
 
 To add an admin type:

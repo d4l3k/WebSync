@@ -3,8 +3,7 @@ WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive
 
 [![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync)
 
-Features
-----
+# Features
 [WebSyn.ca](https://websyn.ca) has a nice list of features. These might be incomplete:
 
 * Persistent JSON object synced between clients
@@ -19,12 +18,8 @@ Features
 * Document sharing
 * Open source
 
-TODO
-----
-WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing the [GitHub issues](https://github.com/d4l3k/WebSync/issues) and you can just look at those instead.
 
-Dependencies
-----
+# Dependencies
 * WebSync requires Ruby, and Node.JS
 * WebSync uses PostgreSQL for datastorage and redis for temporary data & pub/sub capabilities.
 * Libre Office, unoconv and poppler is required for file upload & download.
@@ -38,8 +33,7 @@ To install the Node.JS dependencies, just run `npm install`.
 
 Some things (like databases and initial javascript assets) can be configured in "config.json" but a majority still require source changes.
 
-Launching
-----
+# Development Instance
 Once the dependencies are installed and running, you should be able to run a development server by running:
 ```
 rackup
@@ -57,9 +51,8 @@ rake "admin:remove[sample@sample.com]"
 ```
 
 Once the site is running you need to go into the admin panel and configure the script groups. Most of these are preconfigured from `config.json`
-
-Docker Production
-----
+# Production
+## Docker
 The easiest way to run WebSync (and most secure) is in [Docker](http://www.docker.io/). The first step is to install that by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src), butall of my manual installs on Arch Linux have worked just fine. The Docker image on Digital Ocean is out of date.
 
 Second, modify `WebSync/config/personal-docker/config.json` with the production database information. The WebSync container does not include any databases. You need to configure Redis and PostgreSQL seperately.
@@ -77,9 +70,7 @@ Or, enter an interactive shell by running:
 sudo ./run.sh bash
 ```
 
-Manual Production
-----
-
+## Manual
 The production environment is currently setup for use with https://websyn.ca but should be fairly straight forward to setup with anything else.
 
 In production, WebSync loads static asset files and documentation. These need to be compiled by running the following. Warning: This may take a long time.
@@ -91,15 +82,7 @@ To clean them up:
 rake assets:clean
 ```
 ### Front End
-You have two options for the front end, Thin and Unicorn.
-
-##### Thin
-The configuration for the front end is located in `thin.yaml` and by default launches 4 workers on ports 3000-3003. NOTE: There is no built in load balancer for the front end. You should use something like haproxy or nginx to balance between the worker threads.
-
-You can launch the front end by running:
-```
-thin start -C config/thin.yaml
-```
+You have two options for the front end, Unicorn and Thin.
 
 ##### Unicorn
 The WebSync Docker container uses Unicorn because it's faster and uses Unix sockets so there is only one exposed port.
@@ -107,6 +90,14 @@ The WebSync Docker container uses Unicorn because it's faster and uses Unix sock
 You can launch Unicorn on port 4569 by running:
 ```
 unicorn -c config/unicorn.rb
+```
+
+##### Thin
+The configuration for the front end is located in `thin.yaml` and by default launches 4 workers on ports 3000-3003. NOTE: There is no built in load balancer for the front end. You should use something like haproxy or nginx to balance between the worker threads.
+
+You can launch the front end by running:
+```
+thin start -C config/thin.yaml
 ```
 
 ### Backend
@@ -119,9 +110,13 @@ which launches four worker threads that all listen on port 4568.
 If you want to avoid pm2, you can just run `./backend.js` or `node backend.js` to get a single worker on port 4568.
 
 
-Contribution / Source Documentation
-----
+# Contribution
 
+## TODO
+WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing the [GitHub issues](https://github.com/d4l3k/WebSync/issues) and you can just look at those instead.
+
+
+## Source Documentation
 [WebSync Annotated Source Documentation](https://websyn.ca/documentation)
 
 WebSync uses Docco to automatically generate nicely formatted annotated source, but some of the code isn't that nicely documented. It would be great if you helped out with that. 

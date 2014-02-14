@@ -1,11 +1,44 @@
 <div class="container">
-    <h1>Documentation</h1>
+    <div class="page-header"><h1>Documentation</h1></div>
     WebSync uses Docco to automatically generate nicely formatted annotated source. Documentation currently is spotty.
-    <ul>
-        <% Dir.glob("docs/*.html").each do |doc| 
-            doc = doc.split("/")[1].split(".html")[0]
-        %>
-            <li><a href="/documentation/<%= doc %>.html"><%= doc %></a></li>
-        <% end %>
-    </ul>
+<br>
+<br>
+    <%
+    groups = { 
+        "Client Side" => {
+            description: "These are the javascript files that power the front end on the client side.",
+            files: %w(assets/javascripts/{core,edit}.js assets/no_digest/*.js)
+        },
+        "Server Side" => {
+            description: "These are the files that are on the backend.",
+            files: %w(bin/backend.js lib/*.rb)
+        }
+    }
+    groups.each do |name, group|
+        files = []
+        group[:files].each do |file|
+            files += Dir.glob(file)
+        end
+    %>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <%= name %>
+            </div>
+            <div class="panel-body">
+                <%= group[:description] %>
+            </div>
+            <div class="panel-footer">
+                <ul class="list-inline">
+                    <% 
+                    files.each do |file| 
+                        if File.exists? file
+                            doc = file.split("/").last
+                    %>
+                        <li><a class="" href="/documentation/<%= doc %>"><%= file %></a></li>
+                    <%  end
+                    end %>
+                </ul>
+            </div>
+        </div>
+    <% end %>
 </div>

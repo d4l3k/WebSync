@@ -1,6 +1,5 @@
 //= require bootstrap-contextmenu.js
 //= require bootstrapSwitch.js
-//= require bootbox.min.js
 //= require bootstrap-slider.js
 //= require jquery.computedstyles.js
 //= require rangy-core.js

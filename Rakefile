@@ -75,7 +75,6 @@ task :beautify do
     files = %w(
         assets/javascripts/{edit,core}.js
         assets/no_digest/*.js
-        lib/*.rb
         bin/backend.js
         )
     paths = []

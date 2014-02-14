@@ -1,4 +1,7 @@
 <div class="container">
     <div class="page-header"><h1>User Management</h1></div>
     Sorry that there isn't anything here, but it's a rather low priority. My advice is to try using <code>racksh</code> in console on your production server and get familiar with manipulating DataMapper objects. Users are in a model called <code>User</code>.
+    <pre>user = User.get("rice@outerearth.net")
+user.password = "Password1"
+user.save</pre>
 </div>

@@ -14,8 +14,8 @@ define(['websync'], function() {
         self.active = !self.active;
     });
 
-    // Bind mouse to the content container. The timeout is to make sure that the .content_container has been added.
-    setTimeout(function() {
+    // Bind mouse to the content container. This waits to make sure that the .content_container has been added (happens in the layout plugin).
+    $(document).on("modules_loaded", function() {
         $(".content_container").bind("mousedown.Drawing", function(e) {
             if (self.active) {
                 self.drag = true;
@@ -46,11 +46,16 @@ define(['websync'], function() {
                 self.savePoint(e);
             }
         });
-    }, 100);
+    });
     // Add a point to a line based on event.
     self.savePoint = function(e) {
-        var corner = $(".content_container").offset();
-        var point = [e.pageX - corner.left - 100, e.pageY - corner.top - 100]
+        var relative_to = $(self.parent);
+        var position = relative_to.css("position");
+        if(position != "absolute" && position != "relative"){
+            relative_to = $(".content_container")
+        }
+        var corner = relative_to.offset();
+        var point = [e.pageX - corner.left, e.pageY - corner.top]
         self.points[self.active_id].push(point);
         self.drawPoints(self.active_id, self.canvas);
         e.preventDefault();

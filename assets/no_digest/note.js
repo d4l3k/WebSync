@@ -86,14 +86,16 @@ define("/assets/note.js", ['websync'], function(websync) {
             }
         });
     }
+    // Check for empty notes to remove.
     self.deselectNoteBubble = function() {
         $("#note-well .note-page section").attr("contenteditable", null).filter(":not('.note-title')").each(function(index, section) {
-            if (section.innerText.trim() == "") {
+            if (section.innerText.trim() == "" && $(section).find("img, canvas").length == 0) {
                 $(section).remove();
             }
         });
         self.updateNav();
     }
+    // Navigation helpers
     self.switchToSection = function(section) {
         $(".note-section").hide();
         $(".note-section").eq(section).show();
@@ -104,6 +106,7 @@ define("/assets/note.js", ['websync'], function(websync) {
         $(".note-section").eq(section).children().eq(page).show();
         self.updateNav();
     }
+    // Data storage
     if (!WebSyncData.body) {
         WebSyncData.body = [];
     }
@@ -123,6 +126,7 @@ define("/assets/note.js", ['websync'], function(websync) {
     $(document).on("modules_loaded", function() {
         if (_.isEmpty(WebSyncData.body)) {
             $("#note-well").append("<div class='note-section'><div class='note-page'><section class='note-title frozen'></section></div>");
+            self.updateNav();
         } else {
             WebSync.fromJSON();
         }

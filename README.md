@@ -51,6 +51,7 @@ rake "admin:remove[sample@sample.com]"
 ```
 
 Once the site is running you need to go into the admin panel and configure the script groups. Most of these are preconfigured from `config.json`
+
 # Production
 ## Docker
 The easiest way to run WebSync (and most secure) is in [Docker](http://www.docker.io/). The first step is to install that by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src), butall of my manual installs on Arch Linux have worked just fine. The Docker image on Digital Ocean is out of date.
@@ -110,7 +111,7 @@ which launches four worker threads that all listen on port 4568.
 If you want to avoid pm2, you can just run `./backend.js` or `node backend.js` to get a single worker on port 4568.
 
 
-# Contribution
+# Contributing
 
 ## TODO
 WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing the [GitHub issues](https://github.com/d4l3k/WebSync/issues) and you can just look at those instead.

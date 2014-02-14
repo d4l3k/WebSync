@@ -145,7 +145,7 @@ class WebSync < Sinatra::Base
             false
         end
         def logout
-            $redis.del "userhash:#{session['userhash']}"
+           $redis.del "userhash:#{session['userhash']}"
             session['userhash']=nil
             session['user']=nil
         end

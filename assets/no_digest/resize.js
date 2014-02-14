@@ -11,11 +11,15 @@ define(['websync'], function() {
             self.resizeOn(tmp);
         }
     });
-    $(".content_container").delegate("img, iframe, table, .note-page section, canvas", "click.Resize", function(e) {
-        if (WebSyncAuth.view_op == "edit") {
-            self.resizeOn(this);
-            e.stopPropagation();
-        }
+
+    // Bind mouse to the content container. This waits to make sure that the .content_container has been added (happens in the layout plugin).
+    $(document).on("modules_loaded", function() {
+        $(".content_container").delegate("img, iframe, table, .note-page section, canvas", "click.Resize", function(e) {
+            if (WebSyncAuth.view_op == "edit") {
+                self.resizeOn(this);
+                e.stopPropagation();
+            }
+        });
     });
     $(".content").bind("click.Resize", function() {
         self.resizeOff();
@@ -117,6 +121,10 @@ define(['websync'], function() {
         });
         $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").offset({
             left: offset.left + $(self.active).outerWidth() * WebSync.zoom / 2 - 4
+        });
+        $(".Resize.handle.top.left.dragable").offset({
+            left: offset.left - 8,
+            top: offset.top - 8
         });
     }
     $(document).on("zoom.Resize", self.updateHandles);

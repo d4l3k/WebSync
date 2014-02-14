@@ -3,7 +3,11 @@
     <div>
         <div>
             <div class="carousel-caption">
-                <h1>That's <%= defined?(error) ? "a #{error}" : "an" %> error, Harry!</h1>
+                <% if rand(2)==1 %>
+                    <h1>That's <%= defined?(error) ? "a #{error}" : "an" %> error, Harry!</h1>
+                <% else %>
+                    <h1>I'm afraid that's <%= defined?(error) ? "a #{error}" : "an" %> error, Dave.</h1>
+                <% end %>
                 <p class="lead">
                     <% if defined?(reason) %>
                         Error: <%= reason %><br>

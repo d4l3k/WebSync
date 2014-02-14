@@ -21,7 +21,7 @@ Features
 
 TODO
 ----
-WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing the [GitHub issues](https://github.com/d4l3k/WebSync/issues), and you can just look at those instead.
+WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO is just a nice way of organizing the [GitHub issues](https://github.com/d4l3k/WebSync/issues) and you can just look at those instead.
 
 Dependencies
 ----
@@ -77,12 +77,12 @@ Or, enter an interactive shell by running:
 sudo ./run.sh bash
 ```
 
-Normal Production
+Manual Production
 ----
 
 The production environment is currently setup for use with https://websyn.ca but should be fairly straight forward to setup with anything else.
 
-In production, WebSync loads static asset files. These need to be compiled by running:
+In production, WebSync loads static asset files and documentation. These need to be compiled by running the following. Warning: This may take a long time.
 ```
 rake assets:precompile
 ```
@@ -90,14 +90,26 @@ To clean them up:
 ```
 rake assets:clean
 ```
+### Front End
+You have two options for the front end, Thin and Unicorn.
 
+##### Thin
 The configuration for the front end is located in `thin.yaml` and by default launches 4 workers on ports 3000-3003. NOTE: There is no built in load balancer for the front end. You should use something like haproxy or nginx to balance between the worker threads.
 
 You can launch the front end by running:
 ```
-thin start -C thin.yaml
+thin start -C config/thin.yaml
 ```
 
+##### Unicorn
+The WebSync Docker container uses Unicorn because it's faster and uses Unix sockets so there is only one exposed port.
+
+You can launch Unicorn on port 4569 by running:
+```
+unicorn -c config/unicorn.rb
+```
+
+### Backend
 For the backend, it's recommended you install [pm2](https://github.com/Unitech/pm2) (`npm install -g pm2`) and run the command:
 ```
 pm2 start backend.js -i 4

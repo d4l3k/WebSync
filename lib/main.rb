@@ -315,6 +315,10 @@ class WebSync < Sinatra::Base
         admin_required
         erb :admin
     end
+    get '/admin/users' do
+        admin_required
+        erb :admin_users
+    end
     get '/admin/assets' do
         admin_required
         erb :admin_assets

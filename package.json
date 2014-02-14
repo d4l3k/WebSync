@@ -8,7 +8,9 @@
     "MD5": "~1.0.3",
     "ws": "~0.4.31",
     "fast-json-patch": "~0.3.6",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "docco": "~0.6.3",
+    "js-beautify": "~1.4.2"
   },
   "repository": {
     "type": "git",

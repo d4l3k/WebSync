@@ -57,24 +57,22 @@ Once the site is running you need to go into the admin panel and configure the s
 
 Docker Production
 ----
-The easiest way to run WebSync (and most secure) is in [Docker](http://www.docker.io/). The first step is to install that by following the instructions on Docker's site.
+The easiest way to run WebSync (and most secure) is in [Docker](http://www.docker.io/). The first step is to install that by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src), butall of my manual installs on Arch Linux have worked just fine. The Docker image on Digital Ocean is out of date.
 
 Second, modify `WebSync/config/personal-docker/config.json` with the production database information. The WebSync container does not include any databases. You need to configure Redis and PostgreSQL seperately.
 
-Then you need to build the docker container with your changes:
+Then you need to build the docker container with your changes. There are a few helper scripts in the `personal-docker` folder. To pull the `d4l3k/WebSync:latest` image and build your configuration:
 ```
-sudo docker build -t websyncpersonal .
+sudo ./build.sh
 ```
 You can then launch WebSync by running:
 ```
-sudo docker run -i -p 4567:4567 -p 4568:4568 -t websyncpersonal websync-start
+sudo ./run.sh websync-start
 ```
 Or, enter an interactive shell by running:
 ```
-sudo docker run -i -p 4567:4567 -p 4568:4568 -t websyncpersonal /bin/bash
+sudo ./run.sh bash
 ```
-
-The `-p 4567:4567 -p 4568:4568` is the mapping between the containers ports and the servers external ports.
 
 Normal Production
 ----
@@ -106,10 +104,14 @@ which launches four worker threads that all listen on port 4568.
 If you want to avoid pm2, you can just run `./backend.js` or `node backend.js` to get a single worker on port 4568.
 
 
-Documentation
+Contribution / Source Documentation
 ----
 
-Some incomplete javascript documentation is available by running "./doc.rb" and viewing the file "public/doc_gen.html". This is also available at http://<WebSync URL>/documentation
+[WebSync Annotated Source Documentation](https://websyn.ca/documentation)
+
+WebSync uses Docco to automatically generate nicely formatted annotated source, but some of the code isn't that nicely documented. It would be great if you helped out with that. 
+
+To generate the documentation you can run `rake documentation` or `rake assets:precompile`. Every WebSync server has the documentation available at `http://<server>:<port>/documentation`, assuming it has been generated. All production servers will have the documentation.
 
 
 License

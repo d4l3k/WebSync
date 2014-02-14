@@ -51,7 +51,7 @@ define(['websync'], function() {
     self.savePoint = function(e) {
         var relative_to = $(self.parent);
         var position = relative_to.css("position");
-        if(position != "absolute" && position != "relative"){
+        if (position != "absolute" && position != "relative") {
             relative_to = $(".content_container")
         }
         var corner = relative_to.offset();
@@ -121,7 +121,6 @@ define(['websync'], function() {
         $("*").undelegate(".Drawing");
         $(".Drawing").remove();
         WebSync.unregisterDOMException(".drawing");
-
     }
     // Return self so other modules can hook into this one.
     return self;

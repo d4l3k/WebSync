@@ -1,23 +1,19 @@
 <div class="container">
-    
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Upload a File</h3>
+    <div class="page-header">
+        <h1>Upload a File</h1>
     </div>
-    <div class="panel-body">
-        Supports most document formats that LibreOffice can read. Depending on the type of file you may get mixed results.
-        <form class="form-horizontal" action='upload' enctype="multipart/form-data" method='post'>
-          <div class="form-group">
-            <label class="control-label col-sm-2" for="file">File</label>
-            <div class="fileupload fileupload-new col-sm-10" data-provides="fileupload">
-                <input name='file' type="file" />
+    <p>Supports most document formats that LibreOffice can read. Depending on the type of file you may get mixed results.</p>
+    <form class="form-horizontal" action='upload' enctype="multipart/form-data" method='post'>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="file">File</label>
+        <div class="fileupload fileupload-new col-sm-10" data-provides="fileupload">
+            <input name='file' type="file" />
+        </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Upload</button>
             </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>

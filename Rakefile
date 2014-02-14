@@ -81,7 +81,7 @@ task :beautify do
     files.each do |file|
         paths += Dir.glob(file)
     end
-    system("js-beautify -r #{files.join " "}")
+    system("js-beautify -r #{paths.join " "}")
     #system("css-beautify -r assets/stylesheets/*.scss")
 end
 task :documentation do
@@ -95,7 +95,7 @@ task :documentation do
     files.each do |file|
         paths += Dir.glob(file)
     end
-    system("docco #{files.join " "}")
+    system("docco #{paths.join " "}")
 end
 task :hooks do
     system("ln -s ../../hooks/pre-commit.sh .git/hooks/pre-commit")

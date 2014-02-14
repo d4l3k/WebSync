@@ -98,5 +98,11 @@ task :documentation do
     system("docco #{paths.join " "}")
 end
 task :hooks do
-    system("ln -s ../../hooks/pre-commit.sh .git/hooks/pre-commit")
+    %w(pre-commit pre-push).each do |hook|
+        unless File.exists? ".git/hooks/#{ hook }"
+            system("ln -s ../../hooks/#{ hook }.sh .git/hooks/#{ hook }")
+        else
+            puts "Warning: #{hook} already exists."
+        end
+    end
 end

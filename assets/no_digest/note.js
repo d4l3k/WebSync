@@ -89,7 +89,7 @@ define("/assets/note.js", ['websync'], function(websync) {
     // Check for empty notes to remove.
     self.deselectNoteBubble = function() {
         $("#note-well .note-page section").attr("contenteditable", null).filter(":not('.note-title')").each(function(index, section) {
-            if (section.innerText.trim() == "" && $(section).find("img, canvas").length == 0) {
+            if ($(section).text().trim() == "" && $(section).find("img, canvas").length == 0) {
                 $(section).remove();
             }
         });

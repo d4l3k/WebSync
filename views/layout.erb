@@ -5,6 +5,10 @@
         <title>WebSyn.ca</title>
         <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <%= stylesheet_tag 'default' %>
+        <% if logged_in? 
+            theme = current_user.theme%>
+            <%= theme.nil? ? "" : stylesheet_tag(theme.location) %>
+        <% end %>
         <% if defined?(edit)&&edit %>
             <script type="text/javascript">
             // Variable: object WebSyncAuth;
@@ -59,9 +63,9 @@
             <li>
                 <a href="/documentation" title="Documentation"><i class="fa fa-code fa-lg"></i></a>
             </li>
-            <% if admin? %>
+            <% if logged_in? %>
                 <li>
-                    <a href="/admin" title="Admin Control Panel"><i class="fa fa-cog fa-lg"></i></a>
+                    <a href="/settings" title="Settings"><i class="fa fa-cog fa-lg"></i></a>
                 </li>
             <% end %>
             <li>

@@ -32,11 +32,18 @@ class User
     has n, :documents, 'Document', :through => :permissions
     has n, :changes
     property :config, Json, :default=>{}
+    belongs_to :theme, required: false
     def config_set key, value
         n_config = config.dup
         n_config[key]=value
         self.config= n_config
     end
+end
+class Theme
+    include DataMapper::Resource
+    property :name, String, key: true
+    property :location, String
+    has n, :users
 end
 class Permission
     include DataMapper::Resource
@@ -107,5 +114,12 @@ if AssetGroup.count == 0
             end
         end
         puts " :: Creating: #{g.name}, Success: #{g.save}"
+    end
+end
+if Theme.count == 0
+    puts "[DATABASE] Creating defaut themes."
+    $config["default_themes"].each do |theme|
+        a = Theme.create(name: theme["name"], location: theme["stylesheet_tag"])
+        puts " :: Creating: #{theme["name"]}, Success: #{a.save}"
     end
 end

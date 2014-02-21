@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="page-header"><h1>
+        User Settings
+        <% if admin? %>
+            <a class="btn btn-danger pull-right" href="/admin">Admin Panel</a>
+        <% end %>
+    </h1></div>
+    <form role="form" method="post">
+        <div class="form-group">
+            <label for="theme">Theme</label>
+            <select class="form-control" name="theme" id="theme">
+                <% theme = current_user.theme %>
+                <option <%= theme.nil? ? "selected" : "" %>>None</option>
+                <% Theme.all.each do |a_theme| %>
+                    <option <%= theme == a_theme ? "selected" : "" %>><%= a_theme.name %></option>
+                <% end %>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-default">Save Settings</button>
+    </form>
+</div>

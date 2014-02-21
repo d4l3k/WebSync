@@ -311,6 +311,15 @@ class WebSync < Sinatra::Base
             end
         end
     end
+    get '/settings' do
+        login_required
+        erb :settings
+    end
+    post '/settings' do
+        login_required
+        current_user.update(theme: Theme.get(params["theme"]))
+        erb :settings
+    end
     get '/admin' do
         admin_required
         erb :admin

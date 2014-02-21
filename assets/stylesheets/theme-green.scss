@@ -1,0 +1,7 @@
+$title-bg: #0E6C00;//darken(#6db634, 6%);
+$title-bold: white;
+$title-sub: rgba($title-bold, 0.8);
+$title-hover: $title-bold;
+$title-hover-bg: darken($title-bg, 2%);
+
+@import "base-theme.scss"

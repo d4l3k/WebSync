@@ -76,6 +76,8 @@ task :beautify do
         assets/javascripts/{edit,core}.js
         assets/no_digest/*.js
         bin/backend.js
+        config.json
+        package.json
         )
     paths = []
     files.each do |file|

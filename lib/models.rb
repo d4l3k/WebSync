@@ -13,6 +13,7 @@ class Document
     property :visibility,       String,     :default=>"private"
     property :default_level,    String,     :default=>"viewer"
     property :config,           Json,       :default=>{}
+    property :deleted,          Boolean,    :default=>false
     has n, :assets, :through => Resource
     has n, :changes
     has n, :permissions

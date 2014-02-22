@@ -19,11 +19,11 @@ body {
     }
 }
 footer {
-    background-color: #f7f7f9;
-    border-top: 1px solid #e1e1e8;
     width: 100%;
-    padding-top: 15px;
-    .row {}
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
 }
 .row {
     margin: 0 !important;
@@ -66,9 +66,10 @@ nav + .container {
     }
 }
 .container-fluid.promo {
-    background-color: #f1f1f1;
-    //border-bottom: 1px solid #e1e1e8;
     margin-top: -15px;
+    h3 {
+        margin-top: 0;
+    }
     .row {
         max-width: 1500px;
         margin: 0 auto !important;
@@ -77,6 +78,9 @@ nav + .container {
             margin-top: -5px;
         }
     }
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
     padding-bottom: 15px;
 }
 .centered_alert {

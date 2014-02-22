@@ -201,7 +201,6 @@ class WebSync < Sinatra::Base
         Bundler.require(:development)
         set :assets_debug, true
         use PryRescue::Rack
-        # Bypass a bug. Works correctly in production.
     end
 
     configure :production do
@@ -296,6 +295,10 @@ class WebSync < Sinatra::Base
             end
         end
     end
+    get '/deleted' do
+        login_required
+        erb :deleted
+    end
     get '/documentation' do
         cache do
             erb :documentation
@@ -317,7 +320,20 @@ class WebSync < Sinatra::Base
     end
     post '/settings' do
         login_required
-        current_user.update(theme: Theme.get(params["theme"]))
+        user = current_user
+        user.theme = Theme.get(params["theme"])
+        if params["new_password"]!=""
+            if user.password == params["cur_password"]
+                if params["new_password"] == params["rep_new_password"]
+                    user.password = params["new_password"]
+                else
+                    # TODO: Rack flash passwords don't match.
+                end
+            else
+                # TODO: Rack flash incorrect pass.
+            end
+        end
+        user.save
         erb :settings
     end
     get '/admin' do
@@ -491,6 +507,15 @@ class WebSync < Sinatra::Base
         MultiJson.dump(doc.body)
     end
     get '/:doc/delete' do
+        doc_id, doc = document_auth
+        if doc.permissions(level: "owner").user[0]==current_user
+            doc.update(deleted: true)
+        else
+            halt 403
+        end
+        redirect '/'
+    end
+    get '/:doc/destroy' do
         doc_id, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             doc.destroy!

@@ -97,5 +97,15 @@
                 "Resize"
             ]
         }
-    ]
+    ],
+    "default_themes": [{
+        "name": "Green",
+        "stylesheet_tag": "theme-green"
+    }, {
+        "name": "Purple",
+        "stylesheet_tag": "theme-purple"
+    }, {
+        "name": "Blue",
+        "stylesheet_tag": "theme-blue"
+    }]
 }

@@ -5,33 +5,41 @@
             <a class="btn btn-danger pull-right" href="/admin">Admin Panel</a>
         <% end %>
     </h1></div>
-    <form role="form" method="post">
-        <div class="page-header"><h3>General</h3></div>
-        <div class="form-group">
-            <label for="theme">Theme</label>
-            <select class="form-control" name="theme" id="theme">
-                <% theme = current_user.theme %>
-                <option <%= theme.nil? ? "selected" : "" %>>None</option>
-                <% Theme.all.each do |a_theme| %>
-                    <option <%= theme == a_theme ? "selected" : "" %>><%= a_theme.name %></option>
-                <% end %>
-            </select>
+    <div class="row">
+        <div class="col-sm-9">
+            <form role="form" method="post">
+                <div class="page-header"><h3>General</h3></div>
+                <div class="form-group">
+                    <label for="theme">Theme</label>
+                    <select class="form-control" name="theme" id="theme">
+                        <% theme = current_user.theme %>
+                        <option <%= theme.nil? ? "selected" : "" %>>None</option>
+                        <% Theme.all.each do |a_theme| %>
+                            <option <%= theme == a_theme ? "selected" : "" %>><%= a_theme.name %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-default">Save Settings</button>
+                <div class="page-header"><h3>Password</h3></div>
+                <p>A strong password is recommended but not enforced.</p>
+                <div class="form-group">
+                    <label for="new_pass">New Password</label>
+                    <input id="new_pass" name="new_password" type="password" class="form-control"></input>
+                </div>
+                <div class="form-group">
+                    <label for="rnew_pass">Repeat Password</label>
+                    <input id="rnew_pass" name="rep_new_password" type="password" class="form-control"></input>
+                </div>
+                <div class="form-group">
+                    <label for="cur_pass">Current Password</label>
+                    <input id="cur_pass" name="cur_password" type="password" class="form-control"></input>
+                </div>
+                <button type="submit" class="btn btn-default">Save Settings</button>
+            </form>
         </div>
-        <button type="submit" class="btn btn-default">Save Settings</button>
-        <div class="page-header"><h3>Password</h3></div>
-        <p>A strong password is recommended but not enforced.</p>
-        <div class="form-group">
-            <label for="new_pass">New Password</label>
-            <input id="new_pass" name="new_password" type="password" class="form-control"></input>
+        <div class="col-sm-3 hidden-xs">
+            <img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(current_user.email) %>?d=retro&size=260" class="img-circle" style="width: 100%">
+            <center><h3>You</h3></center>
         </div>
-        <div class="form-group">
-            <label for="rnew_pass">Repeat Password</label>
-            <input id="rnew_pass" name="rep_new_password" type="password" class="form-control"></input>
-        </div>
-        <div class="form-group">
-            <label for="cur_pass">Current Password</label>
-            <input id="cur_pass" name="cur_password" type="password" class="form-control"></input>
-        </div>
-        <button type="submit" class="btn btn-default">Save Settings</button>
-    </form>
+    </div>
 </div>

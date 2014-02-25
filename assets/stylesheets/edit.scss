@@ -58,8 +58,15 @@ body .mathquill-rendered-math {
     }
 }
 .noedit {
-    .content_well, .ribbon, #note-nav, #name {
+    .content_well, #name {
         pointer-events: none;
+        .return_edit {
+            pointer-events: all;
+        }
+    }
+    [href="delete"], .ribbon .container:not(#File) *, .sidebar:not(#chat) .btn:not(.toggle-sidebar)  {
+        pointer-events: none;
+        opacity: 0.5;
     }
     #settingsBtn {
         display: none;

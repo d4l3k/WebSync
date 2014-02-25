@@ -791,7 +791,9 @@ define('websync', {
     updateOrigin: function() {
         var container = $(".content_container");
         if (container.width() > container.parent().width() || container.parent().get(0) && container.parent().get(0).scrollWidth - 2 > container.parent().width()) {
-            container.addClass("left").css({"margin-left": "initial"});
+            container.addClass("left").css({
+                "margin-left": "initial"
+            });
             // TODO: Center zoomed out
             /*var side = container.parent().width() - container.width()*WebSync.zoom;
             if(side > 0){

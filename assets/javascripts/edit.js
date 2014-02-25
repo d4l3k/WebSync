@@ -174,7 +174,7 @@ define("edit", ['websync'], function(websync) {
             }
             if (command) e.preventDefault();
         }
-        if(e.ctrlKey && e.keyCode == 83) { // S
+        if (e.ctrlKey && e.keyCode == 83) { // S
             WebSync.info("<b>Saved</b> WebSync automatically saves your changes.");
             $("#ribbon_buttons a:contains(File)").click()
             $("#File .btn-group button").click();

@@ -13,12 +13,12 @@ define(['websync'], function() {
         elem.dataset.latex = $(elem).text();
         elem.dataset.search_children = false;
         $(elem).mathquill('editable');
-        setTimeout(function(){
+        setTimeout(function() {
             $(elem).find("textarea").focus();
         }, 1);
     }
-    $(document).bind("keydown.Equations", function(e){
-        if(e.keyCode==70 && e.shiftKey && e.ctrlKey){
+    $(document).bind("keydown.Equations", function(e) {
+        if (e.keyCode == 70 && e.shiftKey && e.ctrlKey) {
             self.insertEquation();
         }
     });

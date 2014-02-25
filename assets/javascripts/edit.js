@@ -149,30 +149,36 @@ define("edit", ['websync'], function(websync) {
             }
             e.preventDefault();
         }
-        if (e.shiftKey && e.ctrlKey){
+        if (e.shiftKey && e.ctrlKey) {
             var command = true;
-            if(e.keyCode== 54){ // Key 6
+            if (e.keyCode == 54) { // Key 6
                 document.execCommand("superscript")
-            } else if(e.keyCode== 55){ // Key 7
+            } else if (e.keyCode == 55) { // Key 7
                 document.execCommand("insertunorderedlist")
-            } else if(e.keyCode == 56){ // Key 8
+            } else if (e.keyCode == 56) { // Key 8
                 document.execCommand("insertorderedlist")
-            } else if(e.keyCode == 69){ // E
+            } else if (e.keyCode == 69) { // E
                 document.execCommand("justifycenter")
-            } else if(e.keyCode == 74){ // J
+            } else if (e.keyCode == 74) { // J
                 document.execCommand("justifyfull")
-            } else if(e.keyCode == 76){ // L
+            } else if (e.keyCode == 76) { // L
                 document.execCommand("justifyleft")
-            } else if(e.keyCode == 82){ // R
+            } else if (e.keyCode == 82) { // R
                 document.execCommand("justifyright")
-            } else if(e.keyCode == 189){ // -
+            } else if (e.keyCode == 189) { // -
                 document.execCommand("subscript")
-            } else if(e.keyCode == 220){ // \
+            } else if (e.keyCode == 220) { // \
                 document.execCommand("removeFormat")
             } else {
                 command = false;
             }
-            if(command) e.preventDefault();
+            if (command) e.preventDefault();
+        }
+        if(e.ctrlKey && e.keyCode == 83) { // S
+            WebSync.info("<b>Saved</b> WebSync automatically saves your changes.");
+            $("#ribbon_buttons a:contains(File)").click()
+            $("#File .btn-group button").click();
+            e.preventDefault();
         }
     });
     $('#font').bind("change.TextEdit", function() {

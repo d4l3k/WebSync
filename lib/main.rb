@@ -515,6 +515,15 @@ class WebSync < Sinatra::Base
         end
         redirect '/'
     end
+    get '/:doc/undelete' do
+        doc_id, doc = document_auth
+        if doc.permissions(level: "owner").user[0]==current_user
+            doc.update(deleted: false)
+        else
+            halt 403
+        end
+        redirect '/'
+    end
     get '/:doc/destroy' do
         doc_id, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user

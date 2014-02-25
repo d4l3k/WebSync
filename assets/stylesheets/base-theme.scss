@@ -1,3 +1,9 @@
+$title-bg: #222222 !default;
+$title-bold: white !default;
+$title-sub: rgba($title-bold, 0.8) !default;
+$title-hover: $title-bold !default;
+$title-hover-bg: darken($title-bg, 2%) !default;
+
 .navbar-inverse {
     background: $title-bg;
     border: darken($title-bg, 10%);

@@ -167,8 +167,9 @@ body > .container-fluid {
     }
 }
 .table-click {
-    a.btn {
-        margin: -8px -4px;
+    td.actions {
+        white-space: nowrap;
+        padding: 5px;
     }
 }
 .ribbon-opt li.active a,

@@ -49,11 +49,12 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent" }
                 <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : h(doc.permissions(level: "owner").user[0].email) %></td>
                 <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
                 <% if doc.permissions(level: "owner").user[0]==current_user %>
-                    <td>
+                    <td class="actions">
                         <% if options[:deleted] %>
-                            <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="icon-trash "></i> Obliterate</a>
+                            <a href="/<%= doc.id.encode62 %>/undelete" class="btn btn-default">Restore</a>
+                            <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i> Obliterate</a>
                         <% else %>
-                            <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="icon-trash "></i> Delete</a>
+                            <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
                         <% end %>
                     </td>
                 <% end %>

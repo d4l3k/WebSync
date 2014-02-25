@@ -81,23 +81,7 @@ define('websync', {
                 // Load scripts from server.
                 require(data.js);
             } else if (data.type == 'data_patch') {
-                // Get start selection.
-                var sel = getSelection();
-                var range, startText, startOffset, endText, endOffset;
-                if (sel.rangeCount > 0) {
-                    range = sel.getRangeAt(0);
-                    startText = range.startContainer.nodeValue;
-                    startOffset = range.startOffset;
-                    endText = range.endContainer.nodeValue;
-                    endOffset = range.endOffset;
-                }
-                WebSync.tmp.range = {
-                    active: (sel.rangeCount > 0),
-                    startText: startText,
-                    startOffset: startOffset,
-                    endText: endText,
-                    endOffset: endOffset
-                }
+                WebSync.tmp.range = WebSync.selectionSave();
                 $(document).trigger("data_patch", {
                     patch: data.patch
                 });
@@ -109,41 +93,7 @@ define('websync', {
                 if (WebSync.fromJSON) {
                     WebSync.fromJSON(data.patch);
                 }
-                sel = WebSync.tmp.range;
-                if (sel.active) {
-                    // Find all #text nodes.
-                    var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
-                        return this.nodeType == 3;
-                    });
-                    var startText = sel.startText,
-                        startOffset = sel.startOffset,
-                        endText = sel.endText,
-                        endOffset = sel.endOffset;
-                    var startNode = {};
-                    var endNode = {};
-                    console.log(text_nodes);
-                    var startNodeDist = 99999;
-                    var endNodeDist = 99999;
-                    // Locate the start & end #text nodes based on a Levenstein string distance.
-                    text_nodes.each(function(index, node) {
-                        var dist = levenshteinenator(node.nodeValue, startText);
-                        if (dist < startNodeDist) {
-                            startNode = node;
-                            startNodeDist = dist;
-                        }
-                        dist = levenshteinenator(node.nodeValue, endText);
-                        if (dist < endNodeDist) {
-                            endNode = node;
-                            endNodeDist = dist;
-                        }
-                    });
-                    // Update the text range.
-                    var range = document.createRange();
-                    range.setStart(startNode, startOffset);
-                    range.setEnd(endNode, endOffset);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
+                WebSync.selectionRestore(WebSync.tmp.range);
             } else if (data.type == "name_update") {
                 $("#name").text(data.name);
             } else if (data.type == 'ping') {
@@ -294,6 +244,61 @@ define('websync', {
         }
 
     },
+    selectionSave: function(){
+        // Get start selection.
+        var sel = getSelection();
+        var range, startText, startOffset, endText, endOffset;
+        if (sel.rangeCount > 0) {
+            range = sel.getRangeAt(0);
+            startText = range.startContainer.nodeValue;
+            startOffset = range.startOffset;
+            endText = range.endContainer.nodeValue;
+            endOffset = range.endOffset;
+        }
+        return {
+            active: (sel.rangeCount > 0),
+            startText: startText,
+            startOffset: startOffset,
+            endText: endText,
+            endOffset: endOffset
+        }
+    },
+    selectionRestore: function(sel){
+        if (sel.active) {
+            // Find all #text nodes.
+            var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
+                return this.nodeType == 3;
+            });
+            var startText = sel.startText,
+                startOffset = sel.startOffset,
+                endText = sel.endText,
+                endOffset = sel.endOffset;
+            var startNode = {};
+            var endNode = {};
+            console.log(text_nodes);
+            var startNodeDist = 99999;
+            var endNodeDist = 99999;
+            // Locate the start & end #text nodes based on a Levenstein string distance.
+            text_nodes.each(function(index, node) {
+                var dist = levenshteinenator(node.nodeValue, startText);
+                if (dist < startNodeDist) {
+                    startNode = node;
+                    startNodeDist = dist;
+                }
+                dist = levenshteinenator(node.nodeValue, endText);
+                if (dist < endNodeDist) {
+                    endNode = node;
+                    endNodeDist = dist;
+                }
+            });
+            // Update the text range.
+            var range = document.createRange();
+            range.setStart(startNode, startOffset);
+            range.setEnd(endNode, endOffset);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+        }
+    }
     broadcastEvent: function(event, data) {
         WebSync.connection.sendJSON({
             type: 'client_event',

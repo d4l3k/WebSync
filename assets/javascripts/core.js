@@ -244,7 +244,7 @@ define('websync', {
         }
 
     },
-    selectionSave: function(){
+    selectionSave: function() {
         // Get start selection.
         var sel = getSelection();
         var range, startText, startOffset, endText, endOffset;
@@ -263,7 +263,7 @@ define('websync', {
             endOffset: endOffset
         }
     },
-    selectionRestore: function(sel){
+    selectionRestore: function(sel) {
         if (sel.active) {
             // Find all #text nodes.
             var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
@@ -298,7 +298,7 @@ define('websync', {
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
         }
-    }
+    },
     broadcastEvent: function(event, data) {
         WebSync.connection.sendJSON({
             type: 'client_event',
@@ -449,6 +449,9 @@ define('websync', {
                 }
             }
         });
+        if (WebSyncAuth.access == "viewer") {
+            $("body").addClass("noedit");
+        }
         WebSync.urlChange();
         $(window).bind("popstate", function(e) {
             WebSync.urlChange();

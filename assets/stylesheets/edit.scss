@@ -57,6 +57,14 @@ body .mathquill-rendered-math {
         white-space: nowrap;
     }
 }
+.noedit {
+    .content_well, .ribbon, #note-nav, #name {
+        pointer-events: none;
+    }
+    #settingsBtn {
+        display: none;
+    }
+}
 .menu {
     width: 100%;
     .dropdown-menu {

@@ -9,10 +9,10 @@ define("edit", ['websync'], function(websync) {
 
     // Add Text menu to the ribbon.
     $(".ribbon").append('<div id="Text" class="Text container"> \
-            <button id="bold" title="Bold" class="btn btn-default"><i class="fa fa-bold"></i></button> \
-            <button id="italic" title="Italic" class="btn btn-default"><i class="fa fa-italic"></i></button> \
+            <button id="bold" title="Bold (Ctrl-B)" class="btn btn-default"><i class="fa fa-bold"></i></button> \
+            <button id="italic" title="Italic (Ctrl-I)" class="btn btn-default"><i class="fa fa-italic"></i></button> \
             <button id="strikethrough" title="Strikethrough" class="btn btn-default"><i class="fa fa-strikethrough"></i></button> \
-            <button id="underline" title="Underline" class="btn btn-default"><i class="fa fa-underline"></i></button> \
+            <button id="underline" title="Underline (Ctrl-U)" class="btn btn-default"><i class="fa fa-underline"></i></button> \
             <button id="createLink" title="Hyperlink" class="btn btn-default"><i class="fa fa-link"></i></button> \
             <select id="font" title="Font" class="form-control ribbon_button"> \
             </select> \
@@ -61,19 +61,19 @@ define("edit", ['websync'], function(websync) {
                 <option>72pt</option> \
             </select> \
             <div class="btn-group"> \
-                <button id="justifyleft" title="Justify Left" class="btn btn-default"><i class="fa fa-align-left"></i></button> \
-                <button id="justifycenter" title="Justify Center" class="btn btn-default"><i class="fa fa-align-center"></i></button> \
-                <button id="justifyright" title="Justify Right" class="btn btn-default"><i class="fa fa-align-right"></i></button> \
-                <button id="justifyfull" title="Justify Full" class="btn btn-default"><i class="fa fa-align-justify"></i></button> \
+                <button id="justifyleft" title="Justify Left (Ctrl-Shift-L)" class="btn btn-default"><i class="fa fa-align-left"></i></button> \
+                <button id="justifycenter" title="Justify Center (Ctrl-Shift-E)" class="btn btn-default"><i class="fa fa-align-center"></i></button> \
+                <button id="justifyright" title="Justify Right (Ctrl-Shift-R)" class="btn btn-default"><i class="fa fa-align-right"></i></button> \
+                <button id="justifyfull" title="Justify Full (Ctrl-Shift-J)" class="btn btn-default"><i class="fa fa-align-justify"></i></button> \
             </div> \
-            <button id="insertunorderedlist" title="Unordered List" class="btn btn-default"><i class="fa fa-list-ul"></i></button> \
-            <button id="insertorderedlist" title="Ordered List" class="btn btn-default"><i class="fa fa-list-ol"></i></button> \
-            <button id="superscript" title="Superscript" class="btn btn-default"><i class="fa fa-superscript"></i></button> \
-            <button id="subscript" title="Subscript" class="btn btn-default"><i class="fa fa-subscript"></i></button> \
+            <button id="insertunorderedlist" title="Unordered List (Ctrl-Shift-7)" class="btn btn-default"><i class="fa fa-list-ul"></i></button> \
+            <button id="insertorderedlist" title="Ordered List (Ctrl-Shift-8)" class="btn btn-default"><i class="fa fa-list-ol"></i></button> \
+            <button id="superscript" title="Superscript (Ctrl-Shift-^)" class="btn btn-default"><i class="fa fa-superscript"></i></button> \
+            <button id="subscript" title="Subscript (Ctrl-Shift-_)" class="btn btn-default"><i class="fa fa-subscript"></i></button> \
             <input id="fontColor" title="Font Color" class="form-control" type="color"></input> \
             <input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"></input> \
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
-            <button id="removeFormat" title="Clear Formatting" class="btn btn-default"><i class="fa fa-times"></i></button> \
+            <button id="removeFormat" title="Clear Formatting (Ctrl-Shift-\\)" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
     // List of buttons that can be clicked in the Text menu.
     self.text_buttons = ["bold", 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', "removeFormat", "insertorderedlist", "insertunorderedlist", 'superscript', 'subscript', 'insertHorizontalRule'];
@@ -148,6 +148,31 @@ define("edit", ['websync'], function(websync) {
                 document.execCommand('indent');
             }
             e.preventDefault();
+        }
+        if (e.shiftKey && e.ctrlKey){
+            var command = true;
+            if(e.keyCode== 54){ // Key 6
+                document.execCommand("superscript")
+            } else if(e.keyCode== 55){ // Key 7
+                document.execCommand("insertunorderedlist")
+            } else if(e.keyCode == 56){ // Key 8
+                document.execCommand("insertorderedlist")
+            } else if(e.keyCode == 69){ // E
+                document.execCommand("justifycenter")
+            } else if(e.keyCode == 74){ // J
+                document.execCommand("justifyfull")
+            } else if(e.keyCode == 76){ // L
+                document.execCommand("justifyleft")
+            } else if(e.keyCode == 82){ // R
+                document.execCommand("justifyright")
+            } else if(e.keyCode == 189){ // -
+                document.execCommand("subscript")
+            } else if(e.keyCode == 220){ // \
+                document.execCommand("removeFormat")
+            } else {
+                command = false;
+            }
+            if(command) e.preventDefault();
         }
     });
     $('#font').bind("change.TextEdit", function() {

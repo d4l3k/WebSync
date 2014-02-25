@@ -443,7 +443,7 @@ define('websync', {
                     WebSync.menuVisible = true;
                 } else if (e.pageY > 85 && WebSync.menuVisible) {
                     $("nav").animate({
-                        top: -95
+                        top: -96
                     }, 200);
                     WebSync.menuVisible = false;
                 }
@@ -610,7 +610,7 @@ define('websync', {
             $("#zoom_level").data("slider").setValue(120);
             $("#zoom_level").trigger("slide");
             $("nav").animate({
-                top: -95
+                top: -96
             }, 200);
             $(".content_well").animate({
                 top: 0
@@ -621,7 +621,7 @@ define('websync', {
             if (!dontPush)
                 window.history.pushState("", "WebSync - Presentation Mode", "view");
             $("nav").animate({
-                top: -95
+                top: -96
             }, 200);
             $(".content_well, .sidebar").animate({
                 top: 0

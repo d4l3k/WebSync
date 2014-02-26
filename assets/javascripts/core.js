@@ -638,7 +638,7 @@ define('websync', {
                 top: 0
             }, 200);
             $(".content_well, .sidebar").animate({
-                top: 94
+                top: 96
             }, 200);
         }
         $(document).trigger("viewmode");

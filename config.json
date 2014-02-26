@@ -45,6 +45,10 @@
         "name": "Drawing",
         "description": "Allows you to draw arbitrary shapes.",
         "url": "/assets/drawing.js"
+    },{
+        "name": "Awesome",
+        "description": "Awesome presentation layout.",
+        "url": "/assets/awesome.js"
     }],
     "default_asset_groups": [{
         "name": "Document",
@@ -85,6 +89,17 @@
             "Tables",
             "Chat",
             "Note Layout",
+            "Equations",
+            "Drawing",
+            "Resize"
+        ]
+    }, {
+        "name": "Awe",
+        "description": "Format similar to Prezi but in 3D.",
+        "assets": [
+            "Tables",
+            "Chat",
+            "Awesome",
             "Equations",
             "Drawing",
             "Resize"

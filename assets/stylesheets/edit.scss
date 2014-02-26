@@ -57,6 +57,18 @@ body .mathquill-rendered-math {
         white-space: nowrap;
     }
 }
+.content-awesome {
+    overflow: hidden;
+    .content_container {
+        margin: 0;
+        padding: 0;
+        & > canvas {
+            display: block;
+            margin: 0;
+            background-color: transparent;
+        }
+    }
+}
 .noedit {
     .content_well, #name {
         pointer-events: none;

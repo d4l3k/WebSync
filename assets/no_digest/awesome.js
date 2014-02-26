@@ -16,7 +16,10 @@ define(['websync'], function(websync) {
         });
         $(".content_container").append(self.renderer.domElement);
         self.css_renderer = new THREE.CSS3DRenderer();
-        $(self.css_renderer.domElement).css({top: 0, position: 'absolute'});
+        $(self.css_renderer.domElement).css({
+            top: 0,
+            position: 'absolute'
+        });
         $(".content_container").prepend(self.css_renderer.domElement);
 
         function resize() {
@@ -24,7 +27,7 @@ define(['websync'], function(websync) {
                 height = window.innerHeight - 96,
                 aspect = width / height;
             self.renderer.setSize(width, height);
-            self.css_renderer.setSize( width, height );
+            self.css_renderer.setSize(width, height);
             self.camera.aspect = aspect;
             self.camera.updateProjectionMatrix();
         }
@@ -49,11 +52,11 @@ define(['websync'], function(websync) {
         self.camera.position.z = 5;
 
         // Css Renderer
-        var element = document.createElement( 'img' );
+        var element = document.createElement('img');
         element.src = 'https://secure.gravatar.com/avatar/b280c8b6b26d1ec3d2fcd45f5c56053f?size=500';
 
-        self.cssObject = new THREE.CSS3DObject( element );
-        self.cssObject.scale = new THREE.Vector3(0.002,0.002,0.002);
+        self.cssObject = new THREE.CSS3DObject(element);
+        self.cssObject.scale = new THREE.Vector3(0.002, 0.002, 0.002);
         self.cssObject.position.y = 1;
         //self.cssObject.position = planeMesh.position;
         //self.cssObject.rotation = planeMesh.rotation;
@@ -70,15 +73,15 @@ define(['websync'], function(websync) {
     self.render = function() {
         var td = 1.0;
         var c_time = new Date();
-        if(self.lastRender){
-            td = (c_time-self.lastRender)/(16.66667)
+        if (self.lastRender) {
+            td = (c_time - self.lastRender) / (16.66667)
         }
         self.lastRender = c_time;
         self.cube.rotation.y += 0.05 * td;
         t += 0.05 * td;
         self.cssObject.rotation.z -= 0.05 * td;
-        self.cssObject.position.x = Math.sin(t)*2;
-        self.cssObject.position.y = Math.cos(t)*2;
+        self.cssObject.position.x = Math.sin(t) * 2;
+        self.cssObject.position.y = Math.cos(t) * 2;
         requestAnimationFrame(self.render);
         self.renderer.render(self.scene, self.camera);
         self.css_renderer.render(self.css_scene, self.camera);

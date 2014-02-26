@@ -63,6 +63,7 @@ body .mathquill-rendered-math {
         margin: 0;
         padding: 0;
         & > canvas {
+            position: absolute;
             display: block;
             margin: 0;
             background-color: transparent;

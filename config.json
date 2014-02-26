@@ -45,7 +45,7 @@
         "name": "Drawing",
         "description": "Allows you to draw arbitrary shapes.",
         "url": "/assets/drawing.js"
-    },{
+    }, {
         "name": "Awesome",
         "description": "Awesome presentation layout.",
         "url": "/assets/awesome.js"

@@ -63,10 +63,33 @@ body .mathquill-rendered-math {
         margin: 0;
         padding: 0;
         & > canvas {
+            pointer-events: none;
             position: absolute;
             display: block;
             margin: 0;
             background-color: transparent;
+        }
+        .awesome-slide {
+            background-color: white;
+            padding: 10px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 8.27in;
+            width: 11in;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 32pt;
+            line-height: 1.15;
+            -user-modify: read-write;
+            -moz-user-modify: read-write;
+            -webkit-user-modify: read-write;
+            word-wrap: break-word;
+            overflow-wrap: break-work;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            -moz-hyphens: auto;
+            -ms-hyphens: auto;
         }
     }
 }

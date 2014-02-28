@@ -123,6 +123,20 @@ define('websync', {
                     html += "</tr>";
                 });
                 users.html(html);
+            } else if (data.type == "blobs"){
+                console.log(data);
+                var table = $("#blobs tbody");
+                var html = "";
+                _.each(data.resources,function(resource){
+                    html += "<tr>";
+                    html += "<td><a href='assets/"+escape(resource.name)+"'>" + resource.name + "</a></td>";
+                    html += "<td>" + resource.type + "</td>";
+                    html += "<td>" + resource.edit_time + "</td>";
+                    html += "<td>" + WebSync.byteLengthPretty(resource.octet_length) + "</td>";
+                    html += "</tr>";
+                });
+                table.html(html);
+                WebSync.info("Toast");
             } else if (data.type == 'config') {
                 if (data.action == 'get') {
                     var callback = WebSync._config_callbacks[data.id]
@@ -244,6 +258,22 @@ define('websync', {
         }
 
     },
+    // This function is used to output byte lengths in a more human understandable format.
+    byteLengthPretty: function(length){
+        var UNITS = ["B", "KB", "MB", "GB", "TB"];
+        var exponent = 0;
+        if(length >= 1000){
+            var max_exp = UNITS.length;
+            exponent = Math.floor(Math.log( length)/Math.log(1000));
+            if(exponent > max_exp){
+                exponent = max_exp;
+            }
+            length /= Math.pow(1000, exponent);
+        }
+        var fix = 0;
+        if(Math.floor(length) != length) fix = 1;
+        return length.toFixed(fix)+" "+UNITS[exponent];
+    },
     selectionSave: function() {
         // Get start selection.
         var sel = getSelection();
@@ -348,6 +378,11 @@ define('websync', {
         $("#settingsBtn, [href='#permissions']").click(function() {
             WebSync.connection.sendJSON({
                 type: "permission_info"
+            });
+        });
+        $("#settingsBtn, [href='#blobs']").click(function() {
+            WebSync.connection.sendJSON({
+                type: "blob_info"
             });
         });
         $("#user_perms").delegate("select", "change", function(e) {

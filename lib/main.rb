@@ -499,18 +499,29 @@ class WebSync < Sinatra::Base
         end
         doc_id, doc = document_auth
         file = Tempfile.new('websync-export')
+        file.sync = true
         file.write( json_to_html( doc.body['body'] ) )
+        file.flush
         file.close
-        system("unoconv","-f", params[:format], file.path)
-        if $?.to_i==0
-            export_file = file.path+"."+params[:format]
-            response.headers['content_type'] = `file --mime -b export_file`.split(';')[0]
-            attachment(doc.name+'.'+params[:format])
-            response.write(File.read(export_file))
-        else
-            halt 500
+        status = false
+        tries = 0
+        content_type 'application/octet-stream'
+        attachment(doc.name+'.'+params[:format])
+        stream do |out|
+            system "unoconv -f #{params[:format]} -vvv '#{file.path}'"
+            #system("unoconv","-f", params[:format], "-vvv", file.path)
+
+            puts "STATUS: #{$?}"
+            if $?.to_i == 0
+                export_file = file.path+"."+params[:format]
+                #response.headers['content_type'] = `file --mime -b #{export_file}`.split(';')[0]
+                #send_file export_file
+                out << File.read(export_file)
+            else
+                halt 500
+            end
+            file.unlink
         end
-        file.unlink
     end
     get '/:doc/json' do
         doc_id, doc = document_auth

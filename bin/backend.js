@@ -199,26 +199,24 @@ fs.readFile('./config.json', function(err, buffer) {
                                     });
                                 });
                         } else if (data.type == "share") {
-                            userAuth(function(auth) {
-                                if (auth == "owner") {
-                                    console.log("1");
-                                    postgres.query("DELETE FROM permissions WHERE document_id = $1 AND user_email = $2", [doc_id, data.email])
-                                        .on("error", function(err) {
-                                            console.log("2");
-                                        })
-                                        .on("end", function() {
-                                            if (data.level != "delete") {
-                                                console.log("3");
-                                                postgres.query("INSERT INTO permissions (user_email, document_id, level) VALUES ($2, $1, $3)", [doc_id, data.email, data.level]);
-                                            }
-                                        });
-                                } else {
-                                    ws.sendJSON({
-                                        type: "error",
-                                        reason: "Invalid permissions."
+                            if (auth_level == "owner") {
+                                console.log("1");
+                                postgres.query("DELETE FROM permissions WHERE document_id = $1 AND user_email = $2", [doc_id, data.email])
+                                    .on("error", function(err) {
+                                        console.log("2");
+                                    })
+                                    .on("end", function() {
+                                        if (data.level != "delete") {
+                                            console.log("3");
+                                            postgres.query("INSERT INTO permissions (user_email, document_id, level) VALUES ($2, $1, $3)", [doc_id, data.email, data.level]);
+                                        }
                                     });
-                                }
-                            });
+                            } else {
+                                ws.sendJSON({
+                                    type: "error",
+                                    reason: "Invalid permissions."
+                                });
+                            }
                         } else if (data.type == "permission_info") {
                             if (auth_level == "editor" || auth_level == "owner") {
                                 var perms;
@@ -237,6 +235,25 @@ fs.readFile('./config.json', function(err, buffer) {
                                                     type: "permissions"
                                                 }, perms));
                                             });
+                                    });
+                            } else {
+                                ws.sendJSON({
+                                    type: "error",
+                                    reason: "invalid permissions."
+                                });
+                            }
+                        } else if (data.type == "blob_info") {
+                            if (editor) {
+                                var resources = []
+                                postgres.query("SELECT name, edit_time, create_time, type, octet_length(data) FROM blobs WHERE document_id = $1", [doc_id])
+                                    .on("row", function(row) {
+                                        resources.push(row);
+                                    })
+                                    .on("end", function() {
+                                        ws.sendJSON({
+                                            type: "blobs",
+                                            resources: resources
+                                        });
                                     });
                             } else {
                                 ws.sendJSON({

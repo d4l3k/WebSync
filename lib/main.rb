@@ -160,7 +160,7 @@ class WebSync < Sinatra::Base
             if ENV["RACK_ENV"]=="development"
                 return yield
             end
-            tag = "url:#{request.url}"
+            tag = "url:#{request.path}"
             page = $redis.get(tag)
             if page
                 etag Digest::SHA1.hexdigest(page)
@@ -245,12 +245,7 @@ class WebSync < Sinatra::Base
     end
     get '/login' do
         if !logged_in?
-            # Cache the page if there is no URL redirect after login.
-            if request.query_string == ""
-                cache do
-                    erb :login
-                end
-            else
+            cache do
                 erb :login
             end
         else
@@ -560,22 +555,25 @@ class WebSync < Sinatra::Base
         pass unless parts.length >=3
         doc = parts[1]
         op = parts[2]
+        halt 400 unless ["edit","view","upload","assets"].include? parts[2]
         if op == "upload"
             redirect "/#{doc}/edit"
         end
         doc_id, doc = document_auth doc
         if parts.length > 3
             if parts[2] == "assets"
-                file = URI.unescape(parts[3..-1].join("/"))
-                resp = $postgres.exec_prepared('get_blob', [file,  doc_id], 1)
-                if resp.to_a.length == 1
-                    content_type resp[0]["type"]
-                    #content_type "application/octet-stream"
-                    response.write resp[0]["data"]
-                    return
-                    #return response[0]["data"]
-                else
-                    halt 404
+                cache do
+                    file = URI.unescape(parts[3..-1].join("/"))
+                    resp = $postgres.exec_prepared('get_blob', [file,  doc_id], 1)
+                    if resp.to_a.length == 1
+                        content_type resp[0]["type"]
+                        #content_type "application/octet-stream"
+                        response.write resp[0]["data"]
+                        return
+                        #return response[0]["data"]
+                    else
+                        halt 404
+                    end
                 end
             end
         end
@@ -602,6 +600,7 @@ class WebSync < Sinatra::Base
             else
                 response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, DateTime.now, doc_id])
             end
+            $redis.del "url:/#{doc_id.encode62}/assets/#{URI.encode(file[:filename])}"
         end
     end
 end

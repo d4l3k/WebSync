@@ -195,6 +195,17 @@ class WebSync < Sinatra::Base
             end
             return doc_id, doc
         end
+        def editor! doc
+            if doc.default_level == "owner" or doc.default_level == "editor"
+                return
+            else
+                perm = doc.permissions(user: current_user)
+                if perm.length > 0 && (perm[0].level == "owner" or perm[0].level == "editor")
+                    return
+                end
+            end
+            halt 403
+        end
     end
 
     configure :development do
@@ -535,10 +546,28 @@ class WebSync < Sinatra::Base
     end
     get // do
         parts = request.path_info.split("/")
-        pass unless parts.length == 3
+        pass unless parts.length >=3
         doc = parts[1]
         op = parts[2]
+        if op == "upload"
+            redirect "/#{doc}/edit"
+        end
         doc_id, doc = document_auth doc
+        if parts.length > 3
+            if parts[2] == "assets"
+                file = URI.unescape(parts[3..-1].join("/"))
+                resp = $postgres.exec_prepared('get_blob', [file,  doc_id], 1)
+                if resp.to_a.length == 1
+                    content_type resp[0]["type"]
+                    #content_type "application/octet-stream"
+                    response.write resp[0]["data"]
+                    return
+                    #return response[0]["data"]
+                else
+                    halt 404
+                end
+            end
+        end
         @javascripts = [
             #'/assets/bundle-edit.js'
         ]
@@ -552,5 +581,16 @@ class WebSync < Sinatra::Base
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
         erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op, access: access}
+    end
+    post "/:doc/upload" do
+        doc_id, doc = document_auth
+        editor! doc
+        params["files"].each do |file|
+            if doc.blobs(name: file[:filename])[0]
+                response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, file[:filename],  doc_id])
+            else
+                response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, DateTime.now, doc_id])
+            end
+        end
     end
 end

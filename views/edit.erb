@@ -30,8 +30,9 @@
                     <ul class="nav tab-nav nav-pills">
                         <li class="active" ><a href="#permissions" data-toggle="tab">Permissions</a></li>
                         <li><a href="#config" data-toggle="tab">Config</a></li>
-                        <li><a href="#assets" data-toggle="tab">Assets</a></li>
+                        <li><a href="#blobs" data-toggle="tab">Resources</a></li>
                         <li><a href="#diffs" data-toggle="tab">Changes</a></li>
+                        <li><a href="#assets" data-toggle="tab">Javascript Libraries</a></li>
                     </ul>
                     <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
                         <div class="tab-content">
@@ -92,6 +93,30 @@
                                             </tbody>
                                         </table>
                                         <div class="input-group"><input class="form-control" placeholder="Email" type="text" id="share_email"><span class="input-group-btn"><button id="share_with" class="btn btn-default" type="button">Share</button></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="blobs">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h3>Upload Resources</h3>
+                                        <form action="upload" method="post" enctype="multipart/form-data">
+                                            <input type="file" name="files[]" id="file_input" class="form-control" multiple /><input type="submit" name="submit" class="form-control" value="Upload">
+                                        </form>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3>Resource List</h3>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Path</th>
+                                                    <th>Edit Time</th>
+                                                    <th>Create Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

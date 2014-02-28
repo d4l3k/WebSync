@@ -3,6 +3,13 @@
 # Ease of use connection to the redis server.
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
+bits = URI.parse('postgres://'+$config['postgres'])
+$postgres = PG.connect({host: bits.host, dbname: bits.path[1..-1], user: bits.user, password: bits.password})
+$postgres.prepare("insert_blob", "INSERT INTO blobs (name, data, type, edit_time, create_time, document_id) VALUES ($1, $2, $3, $4, $5, $6)")
+$postgres.prepare("update_blob", "UPDATE blobs SET data = $1, type = $2, edit_time = $3 WHERE name = $4 AND document_id = $5")
+$postgres.prepare("get_blob", "SELECT data::bytea, type::text FROM blobs WHERE name::text = $1 AND document_id::int = $2 LIMIT 1")
+$postgres.prepare("document_blobs_size", "SELECT octet_length(data) FROM blobs WHERE document_id=$1")
+$postgres.prepare("document_size", "SELECT octet_length(body) FROM documents WHERE id=$1 LIMIT 1")
 class Document
     include DataMapper::Resource
     property :id,               Serial
@@ -18,11 +25,89 @@ class Document
     has n, :changes
     has n, :permissions
     has n, :users, 'User', :through => :permissions
+    has n, :blobs
     def config_set key, value
         n_config = config.dup
         n_config[key]=value
         self.config= n_config
     end
+    def size
+        size = 0
+        size += $postgres.exec_prepared('document_size', [self.id])[0]["octet_length"].to_i
+        $postgres.exec_prepared('document_blobs_size', [self.id]).each do |doc|
+            size += doc["octet_length"].to_i
+        end
+        size
+    end
+    UNITS = %W(B KB MB GB TB).freeze
+    def as_size
+        number = self.size
+        if number.to_i < 1000
+            exponent = 0
+        else
+            max_exp  = UNITS.size - 1
+            exponent = ( Math.log( number ) / Math.log( 1000 ) ).to_i # convert to base
+            exponent = max_exp if exponent > max_exp # we need this to avoid overflow for the highest unit
+            number  /= 1000 ** exponent
+        end
+       "#{number} #{UNITS[ exponent ]}"
+    end
+end
+module DataMapper
+  class Property
+    class BetterBlob < Object
+
+      # Returns maximum property length (if applicable).
+      # This usually only makes sense when property is of
+      # type Range or custom
+      #
+      # @return [Integer, nil]
+      #   the maximum length of this property
+      #
+      # @api semipublic
+
+        def load(value)
+          super.dup.force_encoding("BINARY") unless value.nil?
+        end
+
+        def dump(value)
+          value.dup.force_encoding("BINARY") unless value.nil?
+        rescue
+          value
+        end
+     end
+  end # class Property
+  module Migrations
+    module PostgresAdapter
+      module ClassMethods
+        # Types for PostgreSQL databases.
+        #
+        # @return [Hash] types for PostgreSQL databases.
+        #
+        # @api private
+        def type_map
+          precision = Property::Numeric.precision
+          scale     = Property::Decimal.scale
+
+          super.merge(
+            Property::BetterBlob => { :primitive => 'BYTEA'                                                      },
+            Property::Binary => { :primitive => 'BYTEA'                                                      },
+            BigDecimal       => { :primitive => 'NUMERIC',          :precision => precision, :scale => scale },
+            Float            => { :primitive => 'DOUBLE PRECISION'                                           }
+          ).freeze
+        end
+      end
+    end
+  end
+end # module DataMapper
+class Blob
+    include DataMapper::Resource
+    property :name, Text, key: true
+    property :data, DataMapper::Property::BetterBlob, lazy: true # Under 10 MB
+    property :type, Text
+    property :edit_time, DateTime
+    property :create_time, DateTime
+    belongs_to :document, key: true
 end
 class User
     include DataMapper::Resource

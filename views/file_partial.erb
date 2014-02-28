@@ -2,7 +2,7 @@
 user ||= current_user
 
 sort = "recent"
-sort_modes = %w(owner name recent)
+sort_modes = %w(owner name recent, size)
 invert = false
 request.params.each do |k, v|
     if sort_modes.include? k
@@ -22,8 +22,16 @@ options[:deleted] ||= false
 docs = Document.all({visibility: "public"}.merge(options)) if defined?(shared) and shared
 docs ||= user.documents options
 
+docs = docs.sort do |a,b|
+    if invert
+        a.size <=> b.size
+    else
+        b.size <=> a.size
+    end
+end if sort=="size"
 
-headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent" }
+
+headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent", "Size" => "size" }
 
 %>
 <table class="table table-bordered table-hover table-click">
@@ -48,6 +56,7 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent" }
                 <td><a href="/<%= doc.id.encode62 %>/edit"><%= h(doc.name) %></a></td>
                 <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : h(doc.permissions(level: "owner").user[0].email) %></td>
                 <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
+                <td><%= doc.as_size %></td>
                 <% if doc.permissions(level: "owner").user[0]==current_user %>
                     <td class="actions">
                         <% if options[:deleted] %>

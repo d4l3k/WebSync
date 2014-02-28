@@ -60,6 +60,7 @@ body .mathquill-rendered-math {
 .content-awesome {
     overflow: hidden;
     .content_container {
+        height: 100%;
         margin: 0;
         padding: 0;
         & > canvas {

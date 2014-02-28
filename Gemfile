@@ -15,6 +15,7 @@ gem 'sinatra', :require=>'sinatra/base'
 gem 'nokogiri'
 gem 'multi_json'
 gem 'radix62'
+gem 'pg'
 gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeline.git', :require=>'sinatra/asset_pipeline'
 group :development do
     gem 'thin'

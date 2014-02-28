@@ -36,6 +36,14 @@
         <% end %>
 	</head>
 	<body class="<%= (defined?(op) && op)=="view" ? "view" : "edit" %>">
+    <div class="flash">
+        <% flash.each do |type, message| %>
+            <div class="alert alert-<%= type.to_s %> alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <%= message %>
+            </div>
+        <% end %>
+    </div>
         <% if !(defined?(no_menu)&&no_menu) %>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -77,6 +85,15 @@
 </nav>
         <% end %>
 		<%= yield %>
+        <% if !(defined?(no_menu)&&no_menu) %>
+            <footer>
+                <div class="container">
+                    <p>
+                        Copyright © 2014 Tristan Rice. WebSync is licensed under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.
+                    </p>
+                </div>
+            </footer>
+        <% end %>
 	</body>
     <%= javascript_tag 'bundle-norm' %>
     <%= (defined?(edit)&&edit) ? javascript_tag('bundle-edit') : "" %>

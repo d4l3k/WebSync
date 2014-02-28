@@ -19,14 +19,29 @@ body {
     }
 }
 footer {
-    width: 100%;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    border-radius: 0;
+    color: #777;
+    padding-top: 40px;
+    padding-bottom: 30px;
+    border-top: 1px solid #e5e5e5;
+    p {
+        text-align: center;
+    }
 }
 .row {
     margin: 0 !important;
+}
+.flash {
+    position: absolute;
+    top: 10px;
+    text-align: center;
+    width: 100%;
+    z-index: 10000;
+    pointer-events: none;
+    .alert {
+        display: inline-block;
+        pointer-events: all;
+        margin-bottom: 10px;
+    }
 }
 .feature-head {
     text-align: center;

@@ -103,7 +103,7 @@ define(['websync'], function(websync) {
 
         // Helicopter
         var loader = new THREE.OBJMTLLoader();
-        loader.load('/uh60/uh60.obj', '/uh60/uh60.mtl', function(object) {
+        loader.load('assets/uh60.obj', 'assets/uh60.mtl', function(object) {
             object.position.z = 200;
             object.rotation.x = Math.PI / 2
             object.rotation.y = Math.PI;

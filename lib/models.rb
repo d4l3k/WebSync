@@ -48,9 +48,9 @@ class Document
             max_exp  = UNITS.size - 1
             exponent = ( Math.log( number ) / Math.log( 1000 ) ).to_i # convert to base
             exponent = max_exp if exponent > max_exp # we need this to avoid overflow for the highest unit
-            number  /= 1000 ** exponent
+            number  /= 1000.0 ** exponent
         end
-       "#{number} #{UNITS[ exponent ]}"
+       "#{number.round(1)} #{UNITS[ exponent ]}"
     end
 end
 module DataMapper

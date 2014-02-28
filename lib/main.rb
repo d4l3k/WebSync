@@ -83,7 +83,7 @@ def html_to_json html
 end
 
 class WebSync < Sinatra::Base
-    #register Sinatra::Synchrony
+    register Sinatra::Flash
     use Rack::Logger
     helpers do
         def h(text)
@@ -260,6 +260,7 @@ class WebSync < Sinatra::Base
         if authenticate params[:email],params[:password]
             redirect redirect_loc
         else
+            flash[:danger]="<strong>Error!</strong> Incorrect username or password."
             redirect "/login?#{redirect_loc}"
         end
     end
@@ -270,6 +271,7 @@ class WebSync < Sinatra::Base
         if register params[:email],params[:password]
             redirect '/'
         else
+            flash[:danger]="<strong>Error!</strong> Failed to register. Account might already exist?"
             redirect '/login'
         end
     end
@@ -527,6 +529,7 @@ class WebSync < Sinatra::Base
         doc_id, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             doc.update(deleted: true)
+            flash[:danger] = "Document moved to trash."
         else
             halt 403
         end
@@ -536,6 +539,7 @@ class WebSync < Sinatra::Base
         doc_id, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             doc.update(deleted: false)
+            flash[:success] = "Document restored."
         else
             halt 403
         end
@@ -544,11 +548,25 @@ class WebSync < Sinatra::Base
     get '/:doc/destroy' do
         doc_id, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
-            doc.destroy!
+            erb :destroy, locals: {doc: doc}
         else
             halt 403
         end
-        redirect '/'
+    end
+    post '/:doc/destroy' do
+        doc_id, doc = document_auth
+        if doc.permissions(level: "owner").user[0]==current_user
+            if current_user.password == params[:password]
+                doc.destroy!
+                flash[:danger] = "Document erased."
+                redirect '/'
+            else
+                flash[:danger] = "<strong>Error!</strong> Incorrect password."
+                redirect "/#{doc_id.encode62}/destroy"
+            end
+        else
+            halt 403
+        end
     end
     get // do
         parts = request.path_info.split("/")

@@ -53,7 +53,7 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent", 
     <tbody>
         <% docs.each do |doc| %>
             <tr>
-                <td><a href="/<%= doc.id.encode62 %>/edit"><%= h(doc.name) %></a></td>
+                <td><a href="/<%= doc.id.encode62 %>/edit"><%= doc.name.length > 0 ? h(doc.name) : "<i>Unnamed File</i>" %></a></td>
                 <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : h(doc.permissions(level: "owner").user[0].email) %></td>
                 <td><%= doc.last_edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>
                 <td><%= doc.as_size %></td>

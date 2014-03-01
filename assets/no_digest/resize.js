@@ -27,14 +27,18 @@ define(['websync'], function() {
     $(".content").delegate(".Resize.handle", "click.Resize", function(e) {
         e.stopPropagation();
     });
-    $(".content").delegate(".Resize.handle.dragable", "mousedown.Resize", function(e) {
-        console.log(e);
+    $(".content").delegate(".Resize.handle.dragable i.fa-arrows", "mousedown.Resize", function(e) {
         self.drag = true;
         self.origMove = $(self.active).position();
         self.origMouse = {
             left: e.pageX,
             top: e.pageY
         };
+        e.preventDefault();
+    });
+    $(".content").delegate(".Resize.handle.dragable i.fa-trash-o", "mousedown.Resize", function(e) {
+        $(self.active).remove();
+        self.resizeOff();
         e.preventDefault();
     });
     $(".content").delegate(".Resize.handle.bottom", "mousedown.Resize", function(e) {
@@ -90,7 +94,7 @@ define(['websync'], function() {
         self.resizeOff();
         self.active = elem;
         // Add handle DIVs
-        $(".content").append('<div class="Resize handle top left' + ($(elem).css("position") == "absolute" ? " dragable\"><i class='fa fa-arrows'></i>" : "\">") + '</div>');
+        $(".content").append('<div class="Resize handle top left' + ($(elem).css("position") == "absolute" ? " dragable\"><i class='fa fa-arrows'></i><i class='fa fa-trash-o'></i>" : "\">") + '</div>');
         $(".content").append('<div class="Resize handle top middle"></div>');
         $(".content").append('<div class="Resize handle top right"></div>');
         $(".content").append('<div class="Resize handle right middle"></div>');

@@ -75,6 +75,45 @@ define("edit", ['websync'], function(websync) {
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting (Ctrl-Shift-\\)" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
+        $('body').append('<div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+  <div class="modal-dialog"> \
+    <div class="modal-content"> \
+      <div class="modal-header"> \
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> \
+        <h4 class="modal-title">Insert Image</h4> \
+      </div> \
+      <div class="modal-body"> \
+        <h3>Insert Image from URL</h3> \
+        <p>This does not upload the file to the server. Viewers will pull it directly from the specified URL.</p> \
+        <input type="text" id="image_url" class="form-control"/> \
+        <h3>Upload Image</h3> \
+        <input type="file" name="files[]" accept="image/*" id="file_input" class="form-control" /> \
+      </div> \
+      <div class="modal-footer"> \
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> \
+        <button type="button" id="insert_image" class="btn btn-primary">Insert</button> \
+      </div> \
+    </div> \
+  </div> \
+</div><div class="modal fade" id="youtube_modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+  <div class="modal-dialog"> \
+    <div class="modal-content"> \
+      <div class="modal-header"> \
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> \
+        <h4 class="modal-title">Insert YouTube Video</h4> \
+      </div> \
+      <div class="modal-body"> \
+        <p>Enter the youtube URL:</p> \
+        <input type="text" id="youtube_url" class="form-control"/> \
+        <div id="youtube-preview"></div> \
+      </div> \
+      <div class="modal-footer"> \
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> \
+        <button type="button" id="insert_video" class="btn btn-primary">Insert</button> \
+      </div> \
+    </div> \
+  </div> \
+</div>');
     // List of buttons that can be clicked in the Text menu.
     self.text_buttons = ["bold", 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', "removeFormat", "insertorderedlist", "insertunorderedlist", 'superscript', 'subscript', 'insertHorizontalRule'];
     // Bind the basic text editing commands to the buttons.
@@ -193,21 +232,49 @@ define("edit", ['websync'], function(websync) {
     });
     // Picture, video and link insertion.
     $("#picture").click(function() {
-        var url = prompt("Image URL");
-        document.execCommand("insertImage", false, url);
+        self.selection = WebSync.selectionSave();
+        $("#image_modal").modal();
+    });
+    $("#insert_image").click(function() {
+        var url = $("#image_modal input[type=text]").val();
+        if(url.length > 0){
+            $("#image_modal").modal("hide");
+            WebSync.selectionRestore(self.selection);
+            delete self.selection;
+            $("#image_modal input[type=text]").val("")
+            document.execCommand("insertImage", false, url);
+        }
     });
     $("#createLink").click(function() {
         var url = prompt("Hyperlink URL");
         document.execCommand("createLink", false, url);
     });
     $("#video").click(function() {
-        var url = prompt("Video URL (Youtube)");
+        self.selection = WebSync.selectionSave();
+        $("#youtube_modal").modal();
+        /*var url = prompt("Video URL (Youtube)");
         if (url.indexOf("youtu") != -1) {
             var youtube_id = self.youtube_parser(url);
             console.log("Youtube id", youtube_id);
             var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
             document.execCommand("insertHTML", false, html);
-        }
+        }*/
+    });
+    $("#youtube_modal input").change(function(){
+        var url = $("#youtube_modal input").val()
+        var youtube_id = self.youtube_parser(url);
+        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
+        $("#youtube_modal #youtube-preview").html(html);
+    });
+    $("#insert_youtube").click(function(){
+        $("#youtube_modal").modal("hide");
+        WebSync.selectionRestore(self.selection);
+        delete self.selection;
+        var url = $("#youtube_modal input").val();
+        $("#youtube_modal input").val("");
+        var youtube_id = self.youtube_parser(url);
+        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
+        document.execCommand("insertHTML", false, html);
     });
     // Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
     self.youtube_parser = function(url) {

@@ -136,7 +136,6 @@ define('websync', {
                     html += "</tr>";
                 });
                 table.html(html);
-                WebSync.info("Toast");
             } else if (data.type == 'config') {
                 if (data.action == 'get') {
                     var callback = WebSync._config_callbacks[data.id]
@@ -309,18 +308,22 @@ define('websync', {
             var startNodeDist = 99999;
             var endNodeDist = 99999;
             // Locate the start & end #text nodes based on a Levenstein string distance.
-            text_nodes.each(function(index, node) {
-                var dist = levenshteinenator(node.nodeValue, startText);
-                if (dist < startNodeDist) {
-                    startNode = node;
-                    startNodeDist = dist;
-                }
-                dist = levenshteinenator(node.nodeValue, endText);
-                if (dist < endNodeDist) {
-                    endNode = node;
-                    endNodeDist = dist;
-                }
-            });
+            if(startText){
+                text_nodes.each(function(index, node) {
+                    var dist = levenshteinenator(node.nodeValue, startText);
+                    if (dist < startNodeDist) {
+                        startNode = node;
+                        startNodeDist = dist;
+                    }
+                    dist = levenshteinenator(node.nodeValue, endText);
+                    if (dist < endNodeDist) {
+                        endNode = node;
+                        endNodeDist = dist;
+                    }
+                });
+            } else {
+                startNode = endNode = $(".content [contenteditable]")[0];
+            }
             // Update the text range.
             var range = document.createRange();
             range.setStart(startNode, startOffset);

@@ -808,12 +808,22 @@ nav.navbar {
     z-index: 910;
     &.top.left.dragable {
         height: 16px;
-        width: 16px;
+        width: 30px;
         margin: -8px;
         line-height: 14px;
-        cursor: move;
+        cursor: initial;
         i {
             line-height: 14px;
+            display: inline-block;
+            width: 14px;
+            text-align: center;
+            &.fa-arrows {
+                cursor: move;
+            }
+            &:hover{
+                background-color: black;
+                color: white;
+            }
         }
     }
     &.top.left {

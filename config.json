@@ -114,5 +114,8 @@
     }, {
         "name": "Blue",
         "stylesheet_tag": "theme-blue"
+    }, {
+        "name": "Dark",
+        "stylesheet_tag": "theme-dark"
     }]
 }

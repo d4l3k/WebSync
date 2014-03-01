@@ -69,12 +69,12 @@ task :time, :email do |task, args|
     puts "Number of Commits: #{commits}, Hours: #{time/60.0}"
 end
 task :loc do
-    system("cloc lib Gemfile Rakefile config.ru views assets/stylesheets/{main,edit}.scss bin --force-lang=html,erb --force-lang=ruby,Rakefile assets/js/digest/{edit,core,bundle-edit,bundle-norm}.js assets/js/src config.json Dockerfile config spec")
+    system("cloc lib/* Gemfile Rakefile config.ru views/* assets/css/{main,edit}.scss bin/* --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src config.json Dockerfile config spec/* hooks/*")
 end
 task :beautify do
     files = %w(
-        assets/js/digest/{edit,core}.js
-        assets/js/src/*.js
+        assets/digest/{edit,core}.js
+        assets/src/*.js
         bin/backend.js
         config.json
         package.json
@@ -88,8 +88,8 @@ task :beautify do
 end
 task :documentation do
     files = %w(
-        assets/js/digest/{edit,core}.js
-        assets/js/src/*.js
+        assets/digest/{edit,core}.js
+        assets/src/*.js
         lib/*.rb
         bin/backend.js
         )

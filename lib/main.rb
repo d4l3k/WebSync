@@ -5,19 +5,6 @@ Bundler.require(:default)
 require 'tempfile'
 require 'digest/md5'
 $config = MultiJson.load(File.open('./config.json').read)
-# Monkey patched Redis for easy caching.
-class Redis
-  def cache(key, expire=nil)
-    if (value = get(key)).nil?
-      value = yield(self)
-      set(key, value)
-      expire(key, expire) if expire
-      value
-    else
-      value
-    end
-  end
-end
 if not ENV.key? "CONFIGMODE"
     require './lib/models'
 end
@@ -207,7 +194,13 @@ class WebSync < Sinatra::Base
             halt 403
         end
     end
-
+    configure do
+        register Sinatra::AssetPipeline
+        sprockets.append_path File.join(root, 'assets', 'css')
+        sprockets.append_path File.join(root, 'assets', 'digest')
+        sprockets.append_path File.join(root, 'assets', 'src')
+        sprockets.append_path File.join(root, 'assets', 'lib')
+    end
     configure :development do
         Bundler.require(:development)
         set :assets_debug, true
@@ -219,7 +212,7 @@ class WebSync < Sinatra::Base
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
         set :assets_precompile, %w(default.css edit.css edit.scss bundle-norm.js bundle-edit.js theme-*.scss) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
-        no_digest = Dir.glob(File.join(root, 'assets', 'no_digest', "*.js")).map{|f| f.split("/").last}
+        no_digest = Dir.glob(File.join(root, 'assets', 'js', '{src,lib}', "*.js")).map{|f| f.split("/").last}
         set :assets_precompile_no_digest, no_digest
     end
     configure do
@@ -229,14 +222,9 @@ class WebSync < Sinatra::Base
         enable :sessions
         set :session_secret, $config['session_secret']
         set :server, 'thin'
-        set :sockets, []
         disable :show_exceptions
         disable :raise_errors
         set :template_engine, :erb
-        register Sinatra::AssetPipeline
-        sprockets.append_path File.join(root, 'assets', 'stylesheets')
-        sprockets.append_path File.join(root, 'assets', 'javascripts')
-        sprockets.append_path File.join(root, 'assets', 'no_digest')
     end
     get '/public' do
         cache time: 30 do

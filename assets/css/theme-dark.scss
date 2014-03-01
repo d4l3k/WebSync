@@ -1,0 +1,40 @@
+body {
+    background-color: #111;
+    color: white;
+    footer, .navbar-inverse {
+        border-color: #444 !important;
+    }
+    table {
+        *, & { 
+            border-color: #444 !important;
+        }
+        &.table.table-hover tr:hover >td {
+            background-color: #333;
+        }
+    }
+    .nav a {
+        color: white !important;
+    }
+    .btn-default, .form-control {
+        background-color: #333 !important;
+        color: white;
+        border-color: #444;
+    }
+    .ribbon, .popover, .panel, .sidebar {
+        background-color: #111;
+        color: white;
+        border-color: #444;
+    }
+    .content_well, .popover-title, .arrow, .panel-heading, .panel-footer {
+        background-color: #222 !important;
+        border-color: #444;
+        color: white !important;
+        background-image: none;
+        & section {
+            background-color: black !important;
+        }
+    }
+    .carousel-inner > .item.active {
+        background-color: rgba(0,0,0,0.5);
+    }
+}

@@ -75,7 +75,7 @@ define("edit", ['websync'], function(websync) {
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
             <button id="removeFormat" title="Clear Formatting (Ctrl-Shift-\\)" class="btn btn-default"><i class="fa fa-times"></i></button> \
         </div>');
-        $('body').append('<div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+    $('body').append('<div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-hidden="true"> \
   <div class="modal-dialog"> \
     <div class="modal-content"> \
       <div class="modal-header"> \
@@ -237,7 +237,7 @@ define("edit", ['websync'], function(websync) {
     });
     $("#insert_image").click(function() {
         var url = $("#image_modal input[type=text]").val();
-        if(url.length > 0){
+        if (url.length > 0) {
             $("#image_modal").modal("hide");
             WebSync.selectionRestore(self.selection);
             delete self.selection;
@@ -260,13 +260,13 @@ define("edit", ['websync'], function(websync) {
             document.execCommand("insertHTML", false, html);
         }*/
     });
-    $("#youtube_modal input").change(function(){
+    $("#youtube_modal input").change(function() {
         var url = $("#youtube_modal input").val()
         var youtube_id = self.youtube_parser(url);
         var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
         $("#youtube_modal #youtube-preview").html(html);
     });
-    $("#insert_youtube").click(function(){
+    $("#insert_youtube").click(function() {
         $("#youtube_modal").modal("hide");
         WebSync.selectionRestore(self.selection);
         delete self.selection;

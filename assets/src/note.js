@@ -3,7 +3,6 @@ define("/assets/note.js", ['websync'], function(websync) {
     var self = {};
     $(".content").hide().addClass("content-note").fadeIn();
     $("body").addClass("layout-note");
-    $(".content_well").attr("style", "background-color: white !important; background-image:none;");
     $("body").append('<div id="context-menu"><ul class="dropdown-menu" role="menu"><li><a tabindex="-1" href="#">Rename</a></li><li><a tabindex="-1" href="#">Delete</a></li></ul></div>');
     $(".content").append($('<div id="note-well" class="content_container"></div>'));
     $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Section</button> <button id="addPage" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Page</button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="notesView" class="panel panel-default"></div></div>'));

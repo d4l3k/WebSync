@@ -199,7 +199,7 @@ nav .settings-popup {
         li a {
             padding: 8px 14px;
             line-height: 18px;
-            color: black !important;
+            color: black;
             text-shadow: none;
             &:hover {
                 background-color: #cccccc;
@@ -866,6 +866,8 @@ nav.navbar {
 }
 .layout-note {
     .content_well {
+        background-color: white;
+        background-image: none !important;
         left: 252px;
         .content {
             height: 100%;

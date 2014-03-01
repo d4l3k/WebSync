@@ -308,7 +308,7 @@ define('websync', {
             var startNodeDist = 99999;
             var endNodeDist = 99999;
             // Locate the start & end #text nodes based on a Levenstein string distance.
-            if(startText){
+            if (startText) {
                 text_nodes.each(function(index, node) {
                     var dist = levenshteinenator(node.nodeValue, startText);
                     if (dist < startNodeDist) {

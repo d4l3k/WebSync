@@ -1,5 +1,18 @@
 # This file contains all of the ruby database connections and models.
 
+# Monkey patched Redis for easy caching.
+class Redis
+  def cache(key, expire=nil)
+    if (value = get(key)).nil?
+      value = yield(self)
+      set(key, value)
+      expire(key, expire) if expire
+      value
+    else
+      value
+    end
+  end
+end
 # Ease of use connection to the redis server.
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])

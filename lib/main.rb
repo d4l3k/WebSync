@@ -554,6 +554,10 @@ class WebSync < Sinatra::Base
         doc_id, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             if current_user.password == params[:password]
+                doc.changes.destroy!
+                doc.asset_documents.destroy!
+                doc.blobs.destroy!
+                doc.permissions.destroy!
                 doc.destroy!
                 flash[:danger] = "Document erased."
                 redirect '/'
@@ -622,11 +626,12 @@ class WebSync < Sinatra::Base
                 type = `file #{file[:tempfile].path} --mime-type`.split(" ").last
             end
             if doc.blobs(name: file[:filename])[0]
-                response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, file[:filename],  doc_id])
+                response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, type, DateTime.now, file[:filename],  doc_id])
             else
-                response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, DateTime.now, doc_id])
+                response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, type, DateTime.now, DateTime.now, doc_id])
             end
             $redis.del "url:/#{doc_id.encode62}/assets/#{URI.encode(file[:filename])}"
+            redirect "/#{doc_id.encode62}/edit"
         end
         if request.xhr?
             content_type  "application/json"

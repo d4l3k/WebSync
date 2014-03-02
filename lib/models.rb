@@ -18,11 +18,6 @@ $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$c
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 bits = URI.parse('postgres://'+$config['postgres'])
 $postgres = PG.connect({host: bits.host, dbname: bits.path[1..-1], user: bits.user, password: bits.password})
-$postgres.prepare("insert_blob", "INSERT INTO blobs (name, data, type, edit_time, create_time, document_id) VALUES ($1, $2, $3, $4, $5, $6)")
-$postgres.prepare("update_blob", "UPDATE blobs SET data = $1, type = $2, edit_time = $3 WHERE name = $4 AND document_id = $5")
-$postgres.prepare("get_blob", "SELECT data::bytea, type::text FROM blobs WHERE name::text = $1 AND document_id::int = $2 LIMIT 1")
-$postgres.prepare("document_blobs_size", "SELECT octet_length(data) FROM blobs WHERE document_id=$1")
-$postgres.prepare("document_size", "SELECT octet_length(body) FROM documents WHERE id=$1 LIMIT 1")
 class Document
     include DataMapper::Resource
     property :id,               Serial
@@ -222,3 +217,9 @@ if Theme.count == 0 && $config.has_key?("default_themes")
         puts " :: Creating: #{theme["name"]}, Success: #{a.save}"
     end
 end
+
+$postgres.prepare("insert_blob", "INSERT INTO blobs (name, data, type, edit_time, create_time, document_id) VALUES ($1, $2, $3, $4, $5, $6)")
+$postgres.prepare("update_blob", "UPDATE blobs SET data = $1, type = $2, edit_time = $3 WHERE name = $4 AND document_id = $5")
+$postgres.prepare("get_blob", "SELECT data::bytea, type::text FROM blobs WHERE name::text = $1 AND document_id::int = $2 LIMIT 1")
+$postgres.prepare("document_blobs_size", "SELECT octet_length(data) FROM blobs WHERE document_id=$1")
+$postgres.prepare("document_size", "SELECT octet_length(body) FROM documents WHERE id=$1 LIMIT 1")

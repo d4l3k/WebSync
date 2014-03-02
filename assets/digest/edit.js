@@ -88,6 +88,10 @@ define("edit", ['websync'], function(websync) {
         <input type="text" id="image_url" class="form-control"/> \
         <h3>Upload Image</h3> \
         <input type="file" name="files[]" accept="image/*" id="file_input" class="form-control" /> \
+<div class="progress progress-striped active" style="display: none;">\
+  <div class="progress-bar"  role="progressbar" style="width: 1%">\
+  </div>\
+</div>\
       </div> \
       <div class="modal-footer"> \
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> \
@@ -104,7 +108,7 @@ define("edit", ['websync'], function(websync) {
       </div> \
       <div class="modal-body"> \
         <p>Enter the youtube URL:</p> \
-        <input type="text" id="youtube_url" class="form-control"/> \
+        <input type="text" id="youtube_url" class="form-control"/> <br>\
         <div id="youtube-preview"></div> \
       </div> \
       <div class="modal-footer"> \
@@ -233,6 +237,7 @@ define("edit", ['websync'], function(websync) {
     // Picture, video and link insertion.
     $("#picture").click(function() {
         self.selection = WebSync.selectionSave();
+        console.log(self.selection);
         $("#image_modal").modal();
     });
     $("#insert_image").click(function() {
@@ -243,6 +248,31 @@ define("edit", ['websync'], function(websync) {
             delete self.selection;
             $("#image_modal input[type=text]").val("")
             document.execCommand("insertImage", false, url);
+        } else {
+            var files = $("#image_modal input[type=file]")[0].files;
+            if(files.length > 0){
+                $("#image_modal .progress").slideDown();
+                var name = files[0].name;
+                WebSync.uploadResource(files[0], function(e){
+                    var pc = parseInt(100 - (e.loaded / e.total * 100));
+                    $("#image_modal .progress-bar").css("width", pc+"%");
+                }, function(xhr){
+                    if (xhr.readyState == 4) {
+                        $("#image_modal .progress-bar").css('width', "100%");
+                        $("#image_modal .progress").slideUp();
+                        if(xhr.status == 200)
+                            WebSync.success("<strong>Success!</strong> File uploaded successfully.");
+                        else
+                            WebSync.error("<strong>Error!</strong> File failed to upload.");
+                        $("#image_modal input[type=file]").val("")
+                        $("#image_modal").modal("hide");
+                        WebSync.selectionRestore(self.selection);
+                        document.execCommand("insertImage", false, "assets/"+name);
+                    }
+                });
+            } else {
+                WebSync.error("<strong>Error!</strong> You need to input a file or URL.");
+            }
         }
     });
     $("#createLink").click(function() {
@@ -263,17 +293,17 @@ define("edit", ['websync'], function(websync) {
     $("#youtube_modal input").change(function() {
         var url = $("#youtube_modal input").val()
         var youtube_id = self.youtube_parser(url);
-        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
+        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>'
         $("#youtube_modal #youtube-preview").html(html);
     });
-    $("#insert_youtube").click(function() {
+    $("#insert_video").click(function() {
         $("#youtube_modal").modal("hide");
-        WebSync.selectionRestore(self.selection);
-        delete self.selection;
         var url = $("#youtube_modal input").val();
         $("#youtube_modal input").val("");
         var youtube_id = self.youtube_parser(url);
         var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
+        WebSync.selectionRestore(self.selection);
+        delete self.selection;
         document.execCommand("insertHTML", false, html);
     });
     // Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv

@@ -31,7 +31,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
             html += "</tr>";
             $(html).insertBefore(self.selectedElem.parentElement);
-            self.posCache = {};
             self.cursorMove(0, -1);
         }
     });
@@ -540,6 +539,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var y = top; y <= bottom; y++) {
                 selection_html += "<tr>";
                 for (var x = left; x <= right; x++) {
+                    console.log(x,left, right);
                     selection_html += "<td>" + self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML + "</td>";
                 }
                 selection_html += "</tr>";
@@ -598,19 +598,16 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     self.posCache = {};
     self.selectedPos = function(targetElem) {
         var child = (targetElem || self.selectedElem);
-        if (self.posCache[child]) {
-            return self.posCache[child];
-        } else {
-            var column = 0;
-            while ((child = child.previousSibling) != null)
+        var column = 0;
+        while ((child = child.previousSibling) != null){
+            if(child.nodeName=="TD")
                 column++;
-            child = (targetElem || self.selectedElem).parentElement
-            var row = 0
-            while ((child = child.previousSibling) != null)
-                row++;
-            self.posCache[child] = [column, row];
-            return [column, row];
         }
+        child = (targetElem || self.selectedElem).parentElement
+        var row = 0
+        while ((child = child.previousSibling) != null)
+            row++;
+        return [column, row];
     }
     self.tableSize = function() {
         return [self.selectedElem.parentElement.children.length, self.selectedElem.parentElement.parentElement.children.length]

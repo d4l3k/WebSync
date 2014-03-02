@@ -24,6 +24,15 @@ html {
     top: 0;
     left: 0;
 }
+.modal-body :first-child {
+    margin-top: 0;
+}
+#image_modal {
+    .progress {
+        margin-top: 20px;
+        margin-bottom: -15px;
+    }
+}
 .menu .btn-group {
     position: initial;
 }
@@ -354,12 +363,13 @@ nav .settings-popup {
 .content-page .content_container {
     min-height: 9in;
     width: 8.5in;
-    padding: 1in;
     margin: 0.1in auto;
     border: 1px solid #aaa;
     border-radius: 4px;
     background-color: white;
     //box-shadow: 0 0 8px #aaa;
+    color: black;
+    padding: 0;
     .page {
         -user-modify: read-write;
         -moz-user-modify: read-write;
@@ -372,6 +382,7 @@ nav .settings-popup {
         -webkit-hyphens: auto;
         -moz-hyphens: auto;
         -ms-hyphens: auto;
+        margin: 1in;
         font-size: 14px;
         line-height: 1.15;
     }
@@ -856,6 +867,7 @@ nav.navbar {
     top center);
     padding: 5px;
     position: relative;
+    color: black;
     [contenteditable=true] {
         position: relative;
     }

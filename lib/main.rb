@@ -8,6 +8,7 @@ $config = MultiJson.load(File.open('./config.json').read)
 if not ENV.key? "CONFIGMODE"
     require './lib/models'
 end
+require './lib/raw_upload.rb'
 def json_to_html_node obj
     html = "";
     if obj['name']=="#text"
@@ -72,6 +73,7 @@ end
 class WebSync < Sinatra::Base
     register Sinatra::Flash
     use Rack::Logger
+    use Rack::RawUpload
     helpers do
         def h(text)
             Rack::Utils.escape_html(text)
@@ -194,13 +196,6 @@ class WebSync < Sinatra::Base
             halt 403
         end
     end
-    configure do
-        register Sinatra::AssetPipeline
-        sprockets.append_path File.join(root, 'assets', 'css')
-        sprockets.append_path File.join(root, 'assets', 'digest')
-        sprockets.append_path File.join(root, 'assets', 'src')
-        sprockets.append_path File.join(root, 'assets', 'lib')
-    end
     configure :development do
         Bundler.require(:development)
         set :assets_debug, true
@@ -225,6 +220,11 @@ class WebSync < Sinatra::Base
         disable :show_exceptions
         disable :raise_errors
         set :template_engine, :erb
+        register Sinatra::AssetPipeline
+        sprockets.append_path File.join(root, 'assets', 'css')
+        sprockets.append_path File.join(root, 'assets', 'digest')
+        sprockets.append_path File.join(root, 'assets', 'src')
+        sprockets.append_path File.join(root, 'assets', 'lib')
     end
     get '/public' do
         cache time: 30 do
@@ -463,16 +463,25 @@ class WebSync < Sinatra::Base
             end
         end
         if content!=nil
-            # TODO: Upload into JSON format
+            dom = Nokogiri::HTML(content)
+            dom.css("img[src]").each do |img|
+                img["src"] = "assets/#{img.attr("src")}"
+            end
+            # Basic security check
+            dom.css("script").remove();
             doc = Document.create(
                 :name => filename,
-                :body => {body:html_to_json(content)},
+                :body => {html: dom.to_html},
                 :created => Time.now,
-                :last_edit_time => Time.now,
-                :user => current_user
+                :last_edit_time => Time.now
             )
             doc.assets = AssetGroup.get(1).assets
             doc.save
+            perm = Permission.create(user: current_user, document: doc, level: "owner")
+            # Upload images
+            Dir.glob(tempfile.path+"_html_*").each do |file|
+                response = $postgres.exec_prepared('insert_blob', [file.gsub("/tmp/",""), {value: File.read(file), format: 1}, `file --mime-type '#{file}'`.split(" ").last, DateTime.now, DateTime.now, doc.id])
+            end
             redirect "/#{doc.id.encode62}/edit"
         else
             redirect "/"
@@ -600,13 +609,28 @@ class WebSync < Sinatra::Base
     post "/:doc/upload" do
         doc_id, doc = document_auth
         editor! doc
-        params["files"].each do |file|
+        files = []
+        if params.has_key? "files"
+            files = params["files"]
+        elsif params.has_key? "file"
+            files.push params["file"]
+        end
+        files.each do |file|
+            type = file[:type]
+            # Fingerprint file for mime-type if we aren't provided with it.
+            if type=="application/octet-stream"
+                type = `file #{file[:tempfile].path} --mime-type`.split(" ").last
+            end
             if doc.blobs(name: file[:filename])[0]
                 response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, file[:filename],  doc_id])
             else
                 response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, file[:type], DateTime.now, DateTime.now, doc_id])
             end
             $redis.del "url:/#{doc_id.encode62}/assets/#{URI.encode(file[:filename])}"
+        end
+        if request.xhr?
+            content_type  "application/json"
+            return "{}"
         end
     end
 end

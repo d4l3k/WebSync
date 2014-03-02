@@ -273,6 +273,35 @@ define('websync', {
         if (Math.floor(length) != length) fix = 1;
         return length.toFixed(fix) + " " + UNITS[exponent];
     },
+	uploadResource: function(file, progress, done) {
+		var xhr = new XMLHttpRequest();
+		if (xhr.upload) {
+            var xhrUpload = $.ajax({
+                type : "POST",
+                url  : "upload",
+                xhr  : function(){
+                  xhr.upload.onprogress = function(e) {
+                    progress(e, xhr);
+                  };
+                  return xhr;
+                },
+                beforeSend : function(xhr){
+                  // here we set custom headers for the rack middleware, first one tells the Rack app we are doing
+                  // an xhr upload, the two others are self explanatory
+                  xhr.setRequestHeader("X-XHR-Upload", "1");
+                  xhr.setRequestHeader("X-File-Name", file.name || file.fileName);
+                  xhr.setRequestHeader("X-File-Size", file.fileSize);
+                },
+                complete : function(xhr, status) {
+                    done(xhr);
+                },
+                contentType : "application/octet-stream",
+                dataType    : "json",
+                processData : false,
+                data        : file 
+            });
+	    }
+	},
     selectionSave: function() {
         // Get start selection.
         var sel = getSelection();
@@ -1034,7 +1063,7 @@ dmp = new diff_match_patch();
 
 function NODEtoJSON(obj) {
     var jso = {
-        name: obj.nodeName,
+        nodeName: obj.nodeName,
         childNodes: []
     }
     var exempt = null;
@@ -1107,19 +1136,20 @@ function alphaNumeric(text) {
 function NODEtoDOM(obj) {
     var html = "";
     // Some basic cross site scripting attack prevention.
-    if (obj.name == "#text")
+    var name = obj.nodeName || obj.name;
+    if (name == "#text")
         return escapeHTML(obj.textContent);
-    obj.name = alphaNumeric(obj.name);
+    name = alphaNumeric(name);
     // TODO: Potentially disallow iframes!
-    if (obj.name == "script")
+    if (name == "script")
         return "";
     if (obj.exempt && WebSync.domExceptions[obj.exempt]) {
         return WebSync.domExceptions[obj.exempt].load(obj.data);
     }
-    html += "<" + obj.name;
+    html += "<" + name;
     var data_vars = []
     _.each(obj, function(v, k) {
-        if (k != "name" && k != "textContent" && k != "childNodes" && k != "dataset") {
+        if (k != "nodeName" && k != "textContent" && k != "childNodes" && k != "dataset") {
             k = alphaNumeric(k.trim())
             if (k.toLowerCase().indexOf("on") != 0) {
                 if (k.toLowerCase().indexOf("data-") == 0) {
@@ -1136,14 +1166,16 @@ function NODEtoDOM(obj) {
                 html += " data-" + alphaNumeric(k) + "=" + JSON.stringify(v);
         });
     }
-    if (obj.childNodes) {
-        html += ">";
-        _.each(obj.childNodes, function(elem, index) {
-            html += NODEtoDOM(elem);
-        });
-        html += "</" + obj.name + ">";
-    } else {
+    if(name.toLowerCase() == "br"){
         html += "/>";
+    } else {
+        html += ">";
+        if (obj.childNodes) {
+            _.each(obj.childNodes, function(elem, index) {
+                html += NODEtoDOM(elem);
+            });
+        } 
+        html += "</" + name + ">";
     }
     return html;
 }
@@ -1155,139 +1187,6 @@ function JSONToDOM(obj) {
     });
     return html;
 }
-// Finds differences between obj1 and obj2.
-function diff(obj1, obj2) {
-    var diffs = {}
-    if (_.isEqual(obj1, obj2)) {} else if (typeof(obj2) == 'undefined') {
-        diffs = {
-            op: 'delete'
-        }
-    } else if (typeof(obj1) != typeof(obj2)) {
-        diffs = {
-            op: 'replace',
-            new: obj2
-        };
-    } else if (typeof(obj1) == "string") {
-        diffs = {
-            op: 'patch',
-            patch: dmp.patch_toText(dmp.patch_make(obj1, obj2))
-        }
-    } else if ($.isArray(obj1)) {
-        diffs = [];
-        var C = []
-        // Generate a table of matching areas.
-        $.each(obj2, function(i1, val1) {
-            C[i1] = []
-            $.each(obj1, function(i2, val2) {
-                if (_.isEqual(val1, val2)) {
-                    C[i1][i2] = true;
-                }
-            });
-        });
-        log_array(C);
-        // First pass through C looking for non-matching patterns found in the new array.
-        var last_i2 = 0;
-        var last_i1 = 0;
-        $.each(C, function(i1, R) {
-            var exists = false;
-            $.each(R, function(i2, val) {
-                // This deletes duplicates.
-                if (val && exists) {
-                    delete C[i1][i2];
-                } else if (val) {
-                    exists = true;
-                    /*var x = last_i1;
-                    var y = last_i2;
-                    while(x!=i1&&y!=i2){
-                        var slope_x = 0;
-                        var slope_y = 0;
-                        if(x!=i1){
-                            slope_x = 1;
-                        }
-                        if(y!=i2){
-                            slope_y = 1;
-                        }
-                        x+=slope_x;
-                        y+=slope_y;
-                        if(!C[x][y]){
-                            if(slope_x&&slope_y){
-                                console.log(x,y,obj1,obj2);
-                                diffs.push({op:'diff',index:i2,diff:diff(obj1[y-1],obj2[x])});
-                            } else if(slope_x){
-                                diffs.push({op:'new',new:obj2[x],index:x});
-                            } else if(slope_y){
-                                diffs.push({op:'delete',index:y});
-                            }
-                        }
-                        for(var b=(x+2);b<C.length;b++){
-                            // Prune the rest of the false positives on this line.
-                            delete C[b][y];
-                        }
-                    }//*/
-                    for (var y = (last_i2); y < i2; y++) {
-                        for (var b = (i1 + 1); b < C.length; b++) {
-                            // Prune the rest of the false positives on this line.
-                            delete C[b][y];
-                        }
-                    }
-                    last_i2 = i2;
-                    last_i1 = i1;
-                }
-            });
-            if (!exists) {
-                var action = {
-                    op: 'new',
-                    new: obj2[i1],
-                    index: i1
-                }
-                last_i2++;
-                for (var x = (i1 + 1); x < C.length; x++) {
-                    // Prune the rest of the false positives on this line.
-                    delete C[x][last_i2];
-                }
-                diffs.push(action)
-            }
-        });
-        // Second pass through C looking for non-matching patterns found in the old array.
-        for (var i1 = 0; i1 < obj1.length; i1++) {
-            var exists = false;
-            for (var i2 = 0; i2 < obj2.length; i2++) {
-                if (C[i2][i1]) {
-                    exists = true;
-                }
-            }
-            if (!exists) {
-                diffs.push({
-                    op: 'delete',
-                    index: i1
-                })
-            }
-        } //*/
-        /*var tmp_diff = [];
-        for(var i=(diffs.length-1);i>=0;i--){
-            var diff = diffs[i];
-            var diff_index = tmp_diff[diff.index];
-            if(diff_index!=null){
-                {op:'diff',diff:diff(obj1[diff_index],obj2[diff_index]);
-                delete diffs[diff_index];
-                delete diffs[i];
-            } else {
-                tmp_diff[diff.index]=i;
-            }
-        }*/
-        log_array(C);
-    } else {
-        // Both Objects
-        $.each(obj1, function(k, v) {
-            var val = diff(v, obj2[k]);
-            if (!_.isEmpty(val)) {
-                diffs[k] = val;
-            }
-        });
-    }
-    return diffs;
-}
-
 function log_array(arr) {
     var output = "";
     $.each(arr, function(i1, R) {
@@ -1313,7 +1212,7 @@ function capitaliseFirstLetter(string) {
 }
 
 requirejs.config({
-    baseUrl: 'assets'
+    baseUrl: '/assets'
 });
 $(document).ready(function() {
     require(['websync'], function(websync) {

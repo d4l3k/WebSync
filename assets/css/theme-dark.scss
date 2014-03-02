@@ -20,6 +20,9 @@ body {
         color: white;
         border-color: #444;
     }
+    .btn-default:hover, .btn-default.active {
+        color: #999;
+    }
     .ribbon, .popover, .panel, .sidebar {
         background-color: #111;
         color: white;

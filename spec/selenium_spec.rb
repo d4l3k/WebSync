@@ -73,7 +73,7 @@ describe "Complete Test" do
         chat_input.click
         chat_input.send_keys "Hi there! How are you?"
         driver.find_element(:id, "msg_btn").click
-        sleep 1
+        sleep 2
         assert driver2.find_elements(:partial_link_text, 'test@websyn.ca').length==1
         driver.find_element(:id, "chat_btn").click
         driver2.find_element(:id, "chat_btn").click
@@ -82,7 +82,7 @@ describe "Complete Test" do
         driver2.quit
         driver.find_element(:css, "#ribbon_buttons a").click
         driver.find_element(:css, "[href='delete']").click
-        assert User.all(email: 'test@websyn.ca').documents.length == 0, "Document failed to be deleted."
+        assert User.all(email: 'test@websyn.ca').documents.first.deleted, "Document failed to be deleted."
         assert User.all(email: 'test@websyn.ca').documents.destroy!
         assert User.all(email: 'test@websyn.ca').destroy!
         driver.quit

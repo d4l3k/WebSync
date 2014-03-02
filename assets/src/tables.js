@@ -539,7 +539,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var y = top; y <= bottom; y++) {
                 selection_html += "<tr>";
                 for (var x = left; x <= right; x++) {
-                    console.log(x,left, right);
+                    console.log(x, left, right);
                     selection_html += "<td>" + self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML + "</td>";
                 }
                 selection_html += "</tr>";
@@ -599,8 +599,8 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     self.selectedPos = function(targetElem) {
         var child = (targetElem || self.selectedElem);
         var column = 0;
-        while ((child = child.previousSibling) != null){
-            if(child.nodeName=="TD")
+        while ((child = child.previousSibling) != null) {
+            if (child.nodeName == "TD")
                 column++;
         }
         child = (targetElem || self.selectedElem).parentElement

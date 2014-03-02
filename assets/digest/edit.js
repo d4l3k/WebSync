@@ -250,24 +250,24 @@ define("edit", ['websync'], function(websync) {
             document.execCommand("insertImage", false, url);
         } else {
             var files = $("#image_modal input[type=file]")[0].files;
-            if(files.length > 0){
+            if (files.length > 0) {
                 $("#image_modal .progress").slideDown();
                 var name = files[0].name;
-                WebSync.uploadResource(files[0], function(e){
+                WebSync.uploadResource(files[0], function(e) {
                     var pc = parseInt(100 - (e.loaded / e.total * 100));
-                    $("#image_modal .progress-bar").css("width", pc+"%");
-                }, function(xhr){
+                    $("#image_modal .progress-bar").css("width", pc + "%");
+                }, function(xhr) {
                     if (xhr.readyState == 4) {
                         $("#image_modal .progress-bar").css('width', "100%");
                         $("#image_modal .progress").slideUp();
-                        if(xhr.status == 200)
+                        if (xhr.status == 200)
                             WebSync.success("<strong>Success!</strong> File uploaded successfully.");
                         else
                             WebSync.error("<strong>Error!</strong> File failed to upload.");
                         $("#image_modal input[type=file]").val("")
                         $("#image_modal").modal("hide");
                         WebSync.selectionRestore(self.selection);
-                        document.execCommand("insertImage", false, "assets/"+name);
+                        document.execCommand("insertImage", false, "assets/" + name);
                     }
                 });
             } else {

@@ -273,35 +273,35 @@ define('websync', {
         if (Math.floor(length) != length) fix = 1;
         return length.toFixed(fix) + " " + UNITS[exponent];
     },
-	uploadResource: function(file, progress, done) {
-		var xhr = new XMLHttpRequest();
-		if (xhr.upload) {
+    uploadResource: function(file, progress, done) {
+        var xhr = new XMLHttpRequest();
+        if (xhr.upload) {
             var xhrUpload = $.ajax({
-                type : "POST",
-                url  : "upload",
-                xhr  : function(){
-                  xhr.upload.onprogress = function(e) {
-                    progress(e, xhr);
-                  };
-                  return xhr;
+                type: "POST",
+                url: "upload",
+                xhr: function() {
+                    xhr.upload.onprogress = function(e) {
+                        progress(e, xhr);
+                    };
+                    return xhr;
                 },
-                beforeSend : function(xhr){
-                  // here we set custom headers for the rack middleware, first one tells the Rack app we are doing
-                  // an xhr upload, the two others are self explanatory
-                  xhr.setRequestHeader("X-XHR-Upload", "1");
-                  xhr.setRequestHeader("X-File-Name", file.name || file.fileName);
-                  xhr.setRequestHeader("X-File-Size", file.fileSize);
+                beforeSend: function(xhr) {
+                    // here we set custom headers for the rack middleware, first one tells the Rack app we are doing
+                    // an xhr upload, the two others are self explanatory
+                    xhr.setRequestHeader("X-XHR-Upload", "1");
+                    xhr.setRequestHeader("X-File-Name", file.name || file.fileName);
+                    xhr.setRequestHeader("X-File-Size", file.fileSize);
                 },
-                complete : function(xhr, status) {
+                complete: function(xhr, status) {
                     done(xhr);
                 },
-                contentType : "application/octet-stream",
-                dataType    : "json",
-                processData : false,
-                data        : file 
+                contentType: "application/octet-stream",
+                dataType: "json",
+                processData: false,
+                data: file
             });
-	    }
-	},
+        }
+    },
     selectionSave: function() {
         // Get start selection.
         var sel = getSelection();
@@ -1166,7 +1166,7 @@ function NODEtoDOM(obj) {
                 html += " data-" + alphaNumeric(k) + "=" + JSON.stringify(v);
         });
     }
-    if(name.toLowerCase() == "br"){
+    if (name.toLowerCase() == "br") {
         html += "/>";
     } else {
         html += ">";
@@ -1174,7 +1174,7 @@ function NODEtoDOM(obj) {
             _.each(obj.childNodes, function(elem, index) {
                 html += NODEtoDOM(elem);
             });
-        } 
+        }
         html += "</" + name + ">";
     }
     return html;
@@ -1187,6 +1187,7 @@ function JSONToDOM(obj) {
     });
     return html;
 }
+
 function log_array(arr) {
     var output = "";
     $.each(arr, function(i1, R) {

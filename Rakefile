@@ -71,6 +71,34 @@ end
 task :loc do
     system("cloc lib/* Gemfile Rakefile config.ru views/* assets/css/{main,edit}.scss bin/* --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src config.json Dockerfile config spec/* hooks/*")
 end
+# Calculates the time taken using the COCOMO basic organic software project model.
+task :cocomo do
+    # Average Salary
+    average_salary = 56286
+    # Management/design overhead. sloccount use 2.4
+    overhead = 1.0
+    # COCOMO constants for an organic software project
+    a_b = 2.4
+    b_b = 1.05
+    c_b = 2.5
+    d_b = 0.38
+
+    csv = `cloc lib/* Gemfile Rakefile config.ru views/* assets/css/{main,edit}.scss bin/* --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src config.json Dockerfile config spec/* hooks/* --csv`.split("\n\n").last
+    data = CSV.parse(csv)
+    lines = data.map{|a|a[4].to_i}.inject(:+)
+    kloc = lines/1000.0
+    # Effort Applied (E) person-months
+    effort_applied = a_b*kloc**b_b
+    puts "Effort Applied (E): #{effort_applied.round(1)} person-months"
+    # Development Time (D) months
+    development_time = c_b*effort_applied**d_b
+    puts "Development Time (D): #{development_time.round(1)} months"
+    # People Required (P) count
+    people_required = effort_applied/development_time
+    puts "People Required (P): #{people_required.round(1)}"
+    cost = effort_applied/12 * average_salary * overhead
+    puts "Total Cost: $#{cost.to_i}"
+end
 task :beautify do
     files = %w(
         assets/digest/{edit,core}.js

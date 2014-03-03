@@ -4,10 +4,33 @@ define(['websync'], function(websync) {
     $("body").append('<script src="/assets/MTL.js"></script>')
     $("body").append('<script src="/assets/tween.min.js"></script>')
     $("body").append('<script src="/assets/CSS3DRenderer.js"></script>')
+    $('body').append($('<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button"><i class="fa fa-plus fa-lg"></i></button> <button id="remSlide" class="btn btn-danger" type="button"><i class="fa fa-lg fa-trash-o"></i></button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="slideView" class="slideWell panel panel-default"></div></div>'));
     var self = {};
     temp = self;
     $(".content").hide().addClass("content-awesome").append($('<div class="content_container"></div>'))
     $("body").addClass("layout-awesome");
+    var hidden = false;
+    $(".content_well").css({left: 250});
+    $("#presentation-nav .toggle-sidebar").click(function() {
+        var pos = -250;
+        var button_pos = -47
+        if (hidden) {
+            pos = 0;
+            button_pos = 5;
+        }
+        $(this).animate({
+            right: button_pos
+        });
+        $("#presentation-nav").animate({
+            left: pos
+        });
+        $(".content_well").animate({
+            left: pos + 250
+        }, function() {
+            $(window).trigger("resize");
+        });
+        hidden = !hidden;
+    });
     $(document).on("modules_loaded", function() {
         self.scene = new THREE.Scene();
         self.css_scene = new THREE.Scene();

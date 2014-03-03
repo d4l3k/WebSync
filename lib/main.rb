@@ -449,19 +449,20 @@ class WebSync < Sinatra::Base
         filetype = params[:file][:type]
         content = nil
         # TODO: Split upload/download into its own external server. Right now Unoconv is blocking. Also issues may arise if multiple copies of LibreOffice are running on the same server. Should probably use a single server instance of LibreOffice
-        system("unoconv","-f","html",tempfile.path)
-        exit_status = $?.to_i
-        if exit_status == 0
-            content = File.read(tempfile.path+".html")
+        if filetype=="application/pdf"
+            content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
+        elsif filetype=='text/html'
+            content = File.read(tempfile.path)
         else
-            if filetype=="application/pdf"
-                content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
-            elsif filetype=='text/html'
-                content = File.read(tempfile.path)
+            system("unoconv","-f","html",tempfile.path)
+            exit_status = $?.to_i
+            if exit_status == 0
+                content = File.read(tempfile.path+".html")
             else
                 logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
             end
         end
+        binding.pry
         if content!=nil
             dom = Nokogiri::HTML(content)
             dom.css("img[src]").each do |img|

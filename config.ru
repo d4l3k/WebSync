@@ -1,13 +1,7 @@
 require './lib/main'
-=begin
-map '/assets' do
-    environment = Sprockets::Environment.new
-    environment.append_path 'public/js'
-    environment.append_path 'public/css'
-    run environment
-end
-=end
-
-#map '/' do
+map '/webdav/' do
+    run DAV4Rack::Handler.new(resource_class: WSFileResource, root_uri_path: '/webdav/', log_to: 'log/webdav.log')
+  end
+map '/' do
     run WebSync
-#end
+end

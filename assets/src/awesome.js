@@ -10,7 +10,9 @@ define(['websync'], function(websync) {
     $(".content").hide().addClass("content-awesome").append($('<div class="content_container"></div>'))
     $("body").addClass("layout-awesome");
     var hidden = false;
-    $(".content_well").css({left: 250});
+    $(".content_well").css({
+        left: 250
+    });
     $("#presentation-nav .toggle-sidebar").click(function() {
         var pos = -250;
         var button_pos = -47

@@ -11,6 +11,15 @@ GIT
       sprockets-helpers
       sprockets-sass
 
+GIT
+  remote: https://github.com/inferiorhumanorgans/dav4rack.git
+  revision: a22a93fb100640c3b5b123596cebcdb8cf683caf
+  specs:
+    dav4rack (0.2.11)
+      nokogiri (>= 1.4.2)
+      rack (>= 1.1.0)
+      uuidtools (~> 2.1.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -94,6 +103,7 @@ GEM
     kgio (2.8.1)
     logger (1.2.8)
     method_source (0.8.2)
+    mime-types (2.0)
     mini_portile (0.5.2)
     multi_json (1.8.4)
     nokogiri (1.6.1)
@@ -370,12 +380,14 @@ PLATFORMS
 DEPENDENCIES
   closure-compiler
   data_mapper
+  dav4rack!
   dm-postgres-adapter
   dm-types
   erubis
   git_time_extractor
   hiredis
   json
+  mime-types
   multi_json
   nokogiri
   pdftohtmlr

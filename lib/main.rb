@@ -8,7 +8,9 @@ $config = MultiJson.load(File.open('./config.json').read)
 if not ENV.key? "CONFIGMODE"
     require './lib/models'
 end
+require './lib/util.rb'
 require './lib/raw_upload.rb'
+require './lib/webdav.rb'
 def json_to_html_node obj
     html = "";
     if obj['name']=="#text"

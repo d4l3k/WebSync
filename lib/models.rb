@@ -98,7 +98,7 @@ module DataMapper
           scale     = Property::Decimal.scale
 
           super.merge(
-            Property::BetterBlob => { :primitive => 'BYTEA'                                                      },
+            Property::BetterBlob => { :primitive => 'BYTEA' },
             Property::Binary => { :primitive => 'BYTEA'                                                      },
             BigDecimal       => { :primitive => 'NUMERIC',          :precision => precision, :scale => scale },
             Float            => { :primitive => 'DOUBLE PRECISION'                                           }
@@ -108,6 +108,8 @@ module DataMapper
     end
   end
 end # module DataMapper
+
+# This is used for document resources.
 class Blob
     include DataMapper::Resource
     property :name, Text, key: true
@@ -116,6 +118,27 @@ class Blob
     property :edit_time, DateTime
     property :create_time, DateTime
     belongs_to :document, key: true
+end
+# Static file uploads for WebDav
+class WSFile
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, Text, lazy: false
+    property :data, DataMapper::Property::BetterBlob, lazy: true, required: false
+    property :content_type, Text, lazy: false
+    property :edit_time, DateTime
+    property :create_time, DateTime
+    property :directory, Boolean, default: false
+    belongs_to :user
+    has n, :children, self, child_key: [ :parent_id ]
+    belongs_to :parent, self, required: false
+    def data= blob
+        $postgres.exec_prepared('wsfile_update', [self.id, {value: blob, format: 1}])
+    end
+    def data
+        response = $postgres.exec_prepared('wsfile_get', [self.id], 1)
+        response.to_a.length==1 && response[0]["data"] || ""
+    end
 end
 class User
     include DataMapper::Resource
@@ -223,3 +246,6 @@ $postgres.prepare("update_blob", "UPDATE blobs SET data = $1, type = $2, edit_ti
 $postgres.prepare("get_blob", "SELECT data::bytea, type::text FROM blobs WHERE name::text = $1 AND document_id::int = $2 LIMIT 1")
 $postgres.prepare("document_blobs_size", "SELECT octet_length(data) FROM blobs WHERE document_id=$1")
 $postgres.prepare("document_size", "SELECT octet_length(body) FROM documents WHERE id=$1 LIMIT 1")
+
+$postgres.prepare("wsfile_update", "UPDATE ws_files SET data = $2 WHERE id = $1")
+$postgres.prepare("wsfile_get", "SELECT data::bytea FROM ws_files WHERE id::int = $1 LIMIT 1")

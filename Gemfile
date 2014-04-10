@@ -1,5 +1,4 @@
 source 'https://rubygems.org'
-ruby '2.0.0'
 gem 'rubysl', platform: :rbx
 gem 'racc', platform: :rbx
 gem 'json'
@@ -22,9 +21,10 @@ gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeli
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 group :development do
     gem 'thin'
-	gem 'racksh'
-	gem 'pry-rescue'
-	gem 'pry-stack_explorer'
+    gem 'pry'
+    gem 'racksh'
+    gem 'pry-rescue'
+    gem 'pry-stack_explorer'
 end
 group :production do
     gem 'unicorn'

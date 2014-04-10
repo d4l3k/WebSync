@@ -7,6 +7,7 @@ require 'digest/md5'
 $config = MultiJson.load(File.open('./config.json').read)
 if not ENV.key? "CONFIGMODE"
     require './lib/models'
+    require './lib/configure'
 end
 require './lib/util.rb'
 require './lib/raw_upload.rb'

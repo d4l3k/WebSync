@@ -392,6 +392,7 @@ DEPENDENCIES
   nokogiri
   pdftohtmlr
   pg
+  pry
   pry-rescue
   pry-stack_explorer
   racc

@@ -59,9 +59,9 @@ class WSFileResource < DAV4Rack::Resource
         reload
         if collection?
             response.body = "<html>"
-            response.body << "<h2>" + file_path.html_safe + "</h2>"
+            response.body << "<h2>" + file_path.escape_html + "</h2>"
             children.each do |child|
-                name = child.file_path.html_safe
+                name = child.file_path.escape_html
                 path = child.public_path
                 response.body << "<a href='" + path + "'>" + name + "</a>"
                 response.body << "</br>"
@@ -151,5 +151,10 @@ class WSFileResource < DAV4Rack::Resource
         public_path = @options[:root_uri_path] + path
         @options[:object] = entry
         self.class.new(public_path, path, @request, @response, @options)
+    end
+end
+class String
+    def escape_html
+        Rack::Utils.escape_html(self)
     end
 end

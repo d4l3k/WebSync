@@ -130,7 +130,7 @@ define('websync', {
                 _.each(data.resources, function(resource) {
                     html += "<tr>";
                     html += "<td><a href='assets/" + escape(resource.name) + "'>" + resource.name + "</a></td>";
-                    html += "<td>" + resource.type + "</td>";
+                    html += "<td>" + resource.content_type + "</td>";
                     html += "<td>" + resource.edit_time + "</td>";
                     html += "<td>" + WebSync.byteLengthPretty(resource.octet_length) + "</td>";
                     html += "</tr>";

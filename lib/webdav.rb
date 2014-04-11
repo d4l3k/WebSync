@@ -153,8 +153,3 @@ class WSFileResource < DAV4Rack::Resource
         self.class.new(public_path, path, @request, @response, @options)
     end
 end
-class String
-    def escape_html
-        Rack::Utils.escape_html(self)
-    end
-end

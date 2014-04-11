@@ -64,6 +64,18 @@ end # module DataMapper
 # Ease of use connection to the redis server.
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
+=begin
+# DEPRECATED: This is used for document resources.
+class Blob
+    include DataMapper::Resource
+    property :name, Text, key: true
+    property :data, DataMapper::Property::BetterBlob, lazy: true # Under 10 MB
+    property :type, Text
+    property :edit_time, DateTime
+    property :create_time, DateTime
+    belongs_to :document, key: true
+end
+# DEPRECATED
 class Document
     include DataMapper::Resource
     property :id,               Serial
@@ -107,18 +119,8 @@ class Document
        "#{number.round(1)} #{UNITS[ exponent ]}"
     end
 end
-
-# This is used for document resources.
-class Blob
-    include DataMapper::Resource
-    property :name, Text, key: true
-    property :data, DataMapper::Property::BetterBlob, lazy: true # Under 10 MB
-    property :type, Text
-    property :edit_time, DateTime
-    property :create_time, DateTime
-    belongs_to :document, key: true
-end
-# Static file uploads for WebDav
+=end
+# All file data
 class WSFile
     include DataMapper::Resource
     property :id, Serial
@@ -128,7 +130,16 @@ class WSFile
     property :edit_time, DateTime
     property :create_time, DateTime
     property :directory, Boolean, default: false
-    belongs_to :user
+    property :body,             Json,       :default=>{}, :lazy=>true
+    property :visibility,       String,     :default=>"private"
+    property :default_level,    String,     :default=>"viewer"
+    property :config,           Json,       :default=>{}
+    property :deleted,          Boolean,    :default=>false
+    has n, :asset_ws_files, 'AssetWSFile', child_key: [ :file_id ]
+    has n, :assets, through: :asset_ws_files
+    has n, :changes, child_key: [ :file_id ]
+    has n, :permissions, child_key: [ :file_id ]
+    has n, :users, model: 'User', :through => :permissions
     has n, :children, self, child_key: [ :parent_id ]
     belongs_to :parent, self, required: false
     def data= blob
@@ -138,6 +149,37 @@ class WSFile
         response = $postgres.exec_prepared('wsfile_get', [self.id], 1)
         response.to_a.length==1 && response[0]["data"] || ""
     end
+    def config_set key, value
+        n_config = config.dup
+        n_config[key]=value
+        self.config= n_config
+    end
+    def size
+        size = 0
+        size += $postgres.exec_prepared('document_size', [self.id])[0]["octet_length"].to_i
+        $postgres.exec_prepared('document_blobs_size', [self.id]).each do |doc|
+            size += doc["octet_length"].to_i
+        end
+        size
+    end
+    UNITS = %W(B KB MB GB TB).freeze
+    def as_size
+        number = self.size
+        if number.to_i < 1000
+            exponent = 0
+        else
+            max_exp  = UNITS.size - 1
+            exponent = ( Math.log( number ) / Math.log( 1000 ) ).to_i # convert to base
+            exponent = max_exp if exponent > max_exp # we need this to avoid overflow for the highest unit
+            number  /= 1000.0 ** exponent
+        end
+       "#{number.round(1)} #{UNITS[ exponent ]}"
+    end
+end
+class AssetWSFile
+    include DataMapper::Resource
+    belongs_to  :asset,  key: true
+    belongs_to  :file,  model: WSFile,  key: true
 end
 class User
     include DataMapper::Resource
@@ -145,7 +187,7 @@ class User
     property :password, BCryptHash
     property :group, String, :default=>'user'
     has n, :permissions
-    has n, :documents, 'Document', :through => :permissions
+    has n, :files, model: WSFile, :through => :permissions
     has n, :changes
     property :config, Json, :default=>{}
     belongs_to :theme, required: false
@@ -163,9 +205,9 @@ class Theme
 end
 class Permission
     include DataMapper::Resource
-    property    :level,     Text,       default: "viewer" # owner, editor
-    belongs_to  :user,      :key => true
-    belongs_to  :document,  :key => true
+    property    :level, Text,           default: 'viewer' # owner, editor
+    belongs_to  :user,  key: true
+    belongs_to  :file,  model: WSFile,  key: true
 end
 class Change
     include DataMapper::Resource
@@ -174,7 +216,7 @@ class Change
     property :patch, Json
     property :parent, Integer
     belongs_to :user
-    belongs_to :document
+    belongs_to :file, 'WSFile'
 end
 # Assets could be javascript or css
 class AssetGroup
@@ -191,7 +233,8 @@ class Asset
     property :description, Text
     property :url, String
     property :type, Discriminator
-    has n, :documents, :through => Resource
+    has n, :asset_ws_files, 'AssetWSFile'
+    has n, :files, 'WSFile', :through => :asset_ws_files
     has n, :asset_groups, :through => Resource
 end
 class Javascript < Asset; end

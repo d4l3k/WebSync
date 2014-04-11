@@ -37,13 +37,13 @@ fs.readFile('./config.json', function(err, buffer) {
 
             function userAuth(callback) {
                 var info;
-                postgres.query("SELECT level FROM permissions WHERE document_id = $1 AND user_email = $2", [doc_id, user_email]).on("row", function(row) {
+                postgres.query("SELECT level FROM permissions WHERE file_id = $1 AND user_email = $2", [doc_id, user_email]).on("row", function(row) {
                     info = row;
                 }).on("end", function() {
                     if (info) {
                         callback(info.level);
                     } else {
-                        postgres.query("SELECT visibility, default_level FROM documents WHERE id = $1", [doc_id])
+                        postgres.query("SELECT visibility, default_level FROM ws_files WHERE id = $1", [doc_id])
                             .on("row", function(row) {
                                 if (row.visibility == "private") {
                                     callback("none");
@@ -170,7 +170,7 @@ fs.readFile('./config.json', function(err, buffer) {
                         if (data.type == 'load_scripts') {
                             //console.log("LOADING SCRIPTS");
                             var ids = [];
-                            postgres.query("SELECT asset_id FROM asset_documents WHERE document_id = $1", [doc_id])
+                            postgres.query("SELECT asset_id FROM asset_ws_files WHERE file_id = $1", [doc_id])
                                 .on('row', function(row) {
                                     ids.push(row.asset_id);
                                 })
@@ -201,14 +201,14 @@ fs.readFile('./config.json', function(err, buffer) {
                         } else if (data.type == "share") {
                             if (auth_level == "owner") {
                                 console.log("1");
-                                postgres.query("DELETE FROM permissions WHERE document_id = $1 AND user_email = $2", [doc_id, data.email])
+                                postgres.query("DELETE FROM permissions WHERE file_id = $1 AND user_email = $2", [doc_id, data.email])
                                     .on("error", function(err) {
                                         console.log("2");
                                     })
                                     .on("end", function() {
                                         if (data.level != "delete") {
                                             console.log("3");
-                                            postgres.query("INSERT INTO permissions (user_email, document_id, level) VALUES ($2, $1, $3)", [doc_id, data.email, data.level]);
+                                            postgres.query("INSERT INTO permissions (user_email, file_id, level) VALUES ($2, $1, $3)", [doc_id, data.email, data.level]);
                                         }
                                     });
                             } else {
@@ -220,13 +220,13 @@ fs.readFile('./config.json', function(err, buffer) {
                         } else if (data.type == "permission_info") {
                             if (auth_level == "editor" || auth_level == "owner") {
                                 var perms;
-                                postgres.query("SELECT visibility, default_level FROM documents WHERE id = $1", [doc_id])
+                                postgres.query("SELECT visibility, default_level FROM ws_files WHERE id = $1", [doc_id])
                                     .on("row", function(row) {
                                         perms = row;
                                     })
                                     .on("end", function() {
                                         perms.users = []
-                                        postgres.query("SELECT user_email, level FROM permissions WHERE document_id = $1", [doc_id])
+                                        postgres.query("SELECT user_email, level FROM permissions WHERE file_id = $1", [doc_id])
                                             .on("row", function(row) {
                                                 perms.users.push(row);
                                             })
@@ -245,7 +245,7 @@ fs.readFile('./config.json', function(err, buffer) {
                         } else if (data.type == "blob_info") {
                             if (editor) {
                                 var resources = []
-                                postgres.query("SELECT name, edit_time, create_time, type, octet_length(data) FROM blobs WHERE document_id = $1", [doc_id])
+                                postgres.query("SELECT name, edit_time, create_time, content_type, octet_length(data) FROM ws_files WHERE parent_id = $1", [doc_id])
                                     .on("row", function(row) {
                                         resources.push(row);
                                     })
@@ -265,7 +265,7 @@ fs.readFile('./config.json', function(err, buffer) {
                             userAuth(function(auth) {
                                 if (auth == "owner") {
                                     // TODO: Sanitize inputs. But whateva.
-                                    postgres.query("UPDATE documents SET visibility=$1, default_level=$2 WHERE id = $3", [data.visibility, data.default_level, doc_id]);
+                                    postgres.query("UPDATE ws_files SET visibility=$1, default_level=$2 WHERE id = $3", [data.visibility, data.default_level, doc_id]);
                                 } else {
                                     ws.sendJSON({
                                         type: "error",
@@ -277,7 +277,7 @@ fs.readFile('./config.json', function(err, buffer) {
                             responded = true;
                         } else if (data.type == 'config') {
                             if (data.action == "get") {
-                                postgres.query("SELECT config FROM documents WHERE id = $1", [doc_id])
+                                postgres.query("SELECT config FROM ws_files WHERE id = $1", [doc_id])
                                     .on('row', function(row) {
                                         if (data.space == 'document') {
                                             var doc_data = JSON.parse(row.config);
@@ -294,17 +294,17 @@ fs.readFile('./config.json', function(err, buffer) {
                                     });
                             } else if (data.action == "set") {}
                         } else if (data.type == "data_patch" && editor) {
-                            postgres.query("SELECT body FROM documents WHERE id = $1", [doc_id])
+                            postgres.query("SELECT body FROM ws_files WHERE id = $1", [doc_id])
                                 .on("row", function(row) {
                                     var body = JSON.parse(row.body);
                                     try {
                                         jsonpatch.apply(body, data.patch);
-                                        postgres.query("UPDATE documents SET body=$2,last_edit_time=$3 WHERE id = $1", [doc_id, JSON.stringify(body), new Date()]);
+                                        postgres.query("UPDATE ws_files SET body=$2,edit_time=$3 WHERE id = $1", [doc_id, JSON.stringify(body), new Date()]);
                                         var id = -1;
-                                        postgres.query("SELECT id FROM changes WHERE document_id=$1 ORDER BY time DESC LIMIT 1;", [doc_id]).on("row", function(row) {
+                                        postgres.query("SELECT id FROM changes WHERE file_id=$1 ORDER BY time DESC LIMIT 1;", [doc_id]).on("row", function(row) {
                                             id = row.id;
                                         }).on('end', function() {
-                                            postgres.query("INSERT INTO changes (time, patch, document_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)", [doc_id, JSON.stringify(data.patch), new Date(), user_email, id]);
+                                            postgres.query("INSERT INTO changes (time, patch, file_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)", [doc_id, JSON.stringify(data.patch), new Date(), user_email, id]);
                                         });
                                         redis.publish("doc:" + doc_id, JSON.stringify({
                                             type: 'client_bounce',
@@ -321,7 +321,7 @@ fs.readFile('./config.json', function(err, buffer) {
                                 });
                         } else if (data.type == 'name_update' && editor) {
                             console.log("Update", doc_id, data.name);
-                            postgres.query("UPDATE documents SET name=$2,last_edit_time=$3 WHERE id = $1", [doc_id, data.name, new Date()], function(err) {
+                            postgres.query("UPDATE ws_files SET name=$2,edit_time=$3 WHERE id = $1", [doc_id, data.name, new Date()], function(err) {
                                 if (err) throw err;
                             });
                             redis.publish("doc:" + doc_id, JSON.stringify({
@@ -354,14 +354,14 @@ fs.readFile('./config.json', function(err, buffer) {
                                         }));
                                     });
                             } else if (data.action == 'add' && editor) {
-                                postgres.query("INSERT INTO asset_documents (document_id, asset_id) VALUES ($1, $2)", [doc_id, data.id]);
+                                postgres.query("INSERT INTO asset_documents (file_id, asset_id) VALUES ($1, $2)", [doc_id, data.id]);
                             } else if (data.action == 'delete' && editor) {
-                                postgres.query("DELETE FROM asset_documents WHERE document_id = $1 AND asset_id = $2", [doc_id, data.id]);
+                                postgres.query("DELETE FROM asset_documents WHERE file_id = $1 AND asset_id = $2", [doc_id, data.id]);
                             }
                         } else if (data.type == 'diffs') {
                             if (data.action == 'list') {
                                 var patches = [];
-                                postgres.query("SELECT time, patch, user_email, id, parent FROM changes WHERE document_id=$1 ORDER BY time ASC", [doc_id])
+                                postgres.query("SELECT time, patch, user_email, id, parent FROM changes WHERE file_id=$1 ORDER BY time ASC", [doc_id])
                                     .on('row', function(row) {
                                         patches.push(row);
                                     }).on('end', function() {

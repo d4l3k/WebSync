@@ -12,66 +12,6 @@ end
 require './lib/util.rb'
 require './lib/raw_upload.rb'
 require './lib/webdav.rb'
-def json_to_html_node obj
-    html = "";
-    if obj['name']=="#text"
-        return obj['textContent']
-    end
-    html+="<"+obj['name']
-    obj.each do |k,v|
-        if k!="name"&&k!="textContent"&&k!="childNodes"
-            html+=" "+k+"="+MultiJson.dump(v)
-        end
-    end
-
-    if obj.has_key? 'childNodes'
-        html+=">";
-        obj['childNodes'].each do |elem|
-            html+= json_to_html_node(elem)
-        end
-        html+="</"+obj['name']+">"
-    else
-        html+="/>"
-    end
-    return html
-end
-def json_to_html obj
-    html = ""
-    obj.each do |elem|
-        html += json_to_html_node(elem)
-    end
-    return html
-end
-
-def node_to_json html
-    if html.name=="text"
-        return { name: "#text", textContent: html.to_s}
-    end
-    json = {
-        name: html.name.upcase
-    }
-    if defined? html.attributes
-        html.attributes.each do |name, attr|
-            json[attr.name]=attr.value
-        end
-    end
-    if html.children.length > 0
-        json['childNodes']=[]
-        html.children.each do |child|
-            json['childNodes'].push( node_to_json(child) )
-        end
-    end
-    return json
-end
-
-def html_to_json html
-    dom = Nokogiri::HTML(html)
-    json = []
-    dom.document.children.each do |elem|
-        json.push node_to_json(elem)
-    end
-    return json
-end
 
 class WebSync < Sinatra::Base
     register Sinatra::Flash
@@ -172,7 +112,7 @@ class WebSync < Sinatra::Base
             if doc_id.is_a? String
                 doc_id = doc_id.decode62
             end
-            doc = Document.get doc_id
+            doc = WSFile.get doc_id
             if doc.nil?
                 halt 404
             end
@@ -425,15 +365,16 @@ class WebSync < Sinatra::Base
         if group.nil?
             halt 400
         end
-        doc = Document.create(
+        doc = WSFile.create(
             :name => "Unnamed #{group.name}",
             :body => {body:[]},
-            :created => Time.now,
-            :last_edit_time => Time.now,
+            :create_time => Time.now,
+            :edit_time => Time.now,
         )
         doc.assets = group.assets
         doc.save
-        perm = Permission.create(user: current_user, document: doc, level: "owner")
+        perm = Permission.create(user: current_user, file: doc, level: "owner")
+        binding.pry
         redirect "/#{doc.id.encode62}/edit"
     end
     get '/upload' do
@@ -473,11 +414,11 @@ class WebSync < Sinatra::Base
             end
             # Basic security check
             dom.css("script").remove();
-            doc = Document.create(
+            doc = WSFile.create(
                 :name => filename,
                 :body => {html: dom.to_html},
-                :created => Time.now,
-                :last_edit_time => Time.now
+                :create_time => Time.now,
+                :edit_time => Time.now
             )
             doc.assets = AssetGroup.get(1).assets
             doc.save
@@ -578,7 +519,7 @@ class WebSync < Sinatra::Base
         pass unless parts.length >=3
         doc = parts[1]
         op = parts[2]
-        halt 400 unless ["edit","view","upload","assets"].include? parts[2]
+        halt 400 unless ["edit","view", "assets"].include? parts[2]
         if op == "upload"
             redirect "/#{doc}/edit"
         end
@@ -587,13 +528,11 @@ class WebSync < Sinatra::Base
             if parts[2] == "assets"
                 cache do
                     file = URI.unescape(parts[3..-1].join("/"))
-                    resp = $postgres.exec_prepared('get_blob', [file,  doc_id], 1)
-                    if resp.to_a.length == 1
-                        content_type resp[0]["type"]
-                        #content_type "application/octet-stream"
-                        response.write resp[0]["data"]
+                    asset = doc.children(name: file)[0]
+                    if asset
+                        content_type asset.content_type
+                        response.write asset.data
                         return
-                        #return response[0]["data"]
                     else
                         halt 404
                     end
@@ -614,6 +553,9 @@ class WebSync < Sinatra::Base
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
         erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op, access: access}
     end
+    get "/:doc/assets" do
+        doc_id, doc = document_auth
+    end
     post "/:doc/upload" do
         doc_id, doc = document_auth
         editor! doc
@@ -629,10 +571,15 @@ class WebSync < Sinatra::Base
             if type=="application/octet-stream"
                 type = `file #{file[:tempfile].path} --mime-type`.split(" ").last
             end
-            if doc.blobs(name: file[:filename])[0]
-                response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, type, DateTime.now, file[:filename],  doc_id])
+            ws_file = doc.children(name: file[:filename])[0]
+            if ws_file
+                ws_file.update edit_time: DateTime.now
+                ws_file.data = file[:tempfile].read
+                #response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, type, DateTime.now, file[:filename],  doc_id])
             else
-                response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, type, DateTime.now, DateTime.now, doc_id])
+                blob = WSFile.create(parent: doc, name: file[:filename], content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
+                blob.data = file[:tempfile].read
+                #response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, type, DateTime.now, DateTime.now, doc_id])
             end
             $redis.del "url:/#{doc_id.encode62}/assets/#{URI.encode(file[:filename])}"
             redirect "/#{doc_id.encode62}/edit"

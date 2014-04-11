@@ -12,15 +12,15 @@ request.params.each do |k, v|
     end
 end
 options ||= {}
-order = :last_edit_time
+order = :edit_time
 order = :name if sort == "name"
 order = :user_email if sort == "owner"
 sort_up = !invert
 sort_up = invert if sort=="recent"
 options[:order] = [sort_up ? order.asc : order.desc]
 options[:deleted] ||= false
-docs = Document.all({visibility: "public"}.merge(options)) if defined?(shared) and shared
-docs ||= user.documents options
+docs = WSFile.all({visibility: "public"}.merge(options)) if defined?(shared) and shared
+docs ||= user.files options
 
 docs = docs.sort do |a,b|
     if invert
@@ -37,8 +37,8 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent", 
 <table class="table table-bordered table-hover table-click">
     <thead>
         <tr>
-            <% headers.each do |title, url| 
-                
+            <% headers.each do |title, url|
+
             %>
                 <th><a href="?<%= url + ( (invert or sort != url) ? "" : "&invert" )%>">
                     <%= title %>

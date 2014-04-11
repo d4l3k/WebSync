@@ -158,10 +158,16 @@ class WSFile
         size = 0
         request = $postgres.exec_prepared('wsfile_size', [self.id])
         size += request[0].map{|k,v| v.to_i || 0}.inject(:+)
-        $postgres.exec_prepared('wsfile_blobs_size', [self.id]).each do |doc|
-            size += doc.map{|k,v| v.to_i || 0}.inject :+
-        end
+        size += self.children.map{|child| child.size || 0}.inject(:+) || 0
         size
+    end
+    def destroy_cascade
+        self.children.each do |child|
+            child.destroy_cascade
+        end
+        self.asset_ws_files.destroy
+        self.permissions.destroy
+        self.destroy
     end
     UNITS = %W(B KB MB GB TB).freeze
     def as_size

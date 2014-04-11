@@ -14,23 +14,30 @@ class WSFileResource < DAV4Rack::Resource
             @object = ROOT
         else
             puts "PUBLIC PATH: #{public_path}"
+        end
+    end
+    def reload
+        if not @object
+            convert_unknown
+        end
+        if @object and @object != ROOT and @object.respond_to? :model
+            @object = @object.model.get(@object.id)
+        end
+    end
+    def convert_unknown
+        if @ws_user
             parts = @local_path.split("/")
-            file = WSFile.all(parent: nil, name: parts[1])[0]
+            file = @ws_user.files(parent: nil, name: parts[1])[0]
             parts[2..-1].each do |part|
                 file = file.children(name: part)
             end
             @object = file
         end
     end
-    def reload
-        if @object.respond_to? :model
-            @object = @object.model.get(@object.id)
-        end
-    end
     def children
         reload
         if @object == ROOT
-            WSFile.all(parent: nil, user: @user).map do |file|
+            @ws_user.files(parent: nil).map do |file|
                 child file
             end
         elsif @object
@@ -42,23 +49,25 @@ class WSFileResource < DAV4Rack::Resource
         end
     end
     def collection?
+        reload
         if @object == ROOT
             true
         elsif @object
-            reload
             @object.directory
         else
             false
         end
     end
     def exist?
-        @object
+        reload
+        @object != nil
     end
     def get(request, response)
-        raise NotFound unless exist?
         reload
+        puts "GET"
+        raise NotFound unless exist?
         if collection?
-            response.body = "<html>"
+            response.body = "<html><body>"
             response.body << "<h2>" + file_path.escape_html + "</h2>"
             children.each do |child|
                 name = child.file_path.escape_html
@@ -66,7 +75,7 @@ class WSFileResource < DAV4Rack::Resource
                 response.body << "<a href='" + path + "'>" + name + "</a>"
                 response.body << "</br>"
             end
-            response.body << "</html>"
+            response.body << '<p>Copyright (c) 2014 Tristan Rice. WebSync is licensed under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p></body></html>'
             response['Content-Length'] = response.body.size.to_s
             response['Content-Type'] = 'text/html'
         else
@@ -77,14 +86,15 @@ class WSFileResource < DAV4Rack::Resource
     end
     def put(request, response)
         reload
-        if not @object
+        puts "BLAH"
+        if not @object || @object == UNKNOWN
             parts = @local_path.split("/")
             file = WSFile.all(parent: nil, name: parts[1])[0]
             endd = parts.last=="" ? -3 : -2
             parts[2..endd].each do |part|
                 file = file.children(name: part)
             end
-            @object = WSFile.create(name: parts.last, create_time: DateTime.now, directory: parts.last=="", user: @user)
+            @object = WSFile.create(name: parts.last, create_time: DateTime.now, directory: parts.last=="", user: @ws_user)
         end
         io = request.body
         temp = Tempfile.new("websync-dav-upload")
@@ -102,7 +112,7 @@ class WSFileResource < DAV4Rack::Resource
         reload
         if collection?
             if @object == ROOT
-                WSFile.all(parent: nil, user: @user).destroy!
+                WSFile.all(parent: nil, user: @ws_user).destroy!
             else
                 @object.children.destroy!
                 @object.destroy!
@@ -119,16 +129,30 @@ class WSFileResource < DAV4Rack::Resource
         raise HTTPStatus::Forbidden
     end
     def content_type
-        @object.respond_to?(:content_type)&&@object.content_type || "text/html"
+        if collection?
+            'text/html'
+        elsif @object.respond_to?(:content_type)
+            @object.content_type
+        end
     end
     def content_length
-        @object.respond_to?(:data)&&@object.data.length || 0
+        if @object.respond_to?(:data)
+            @object.data.length
+        end
     end
     def creation_date
-        @object.respond_to?(:create_time) && @object.create_time || DateTime.new
+        if @object.respond_to?(:create_time)
+            @object.create_time
+        else
+            DateTime.new
+        end
     end
     def last_modified
-        @object.respond_to?(:edit_time) && @object.edit_time || DateTime.new
+        if @object.respond_to?(:edit_time)
+            @object.edit_time
+        else
+            DateTime.new
+        end
     end
     def etag
         if @object.respond_to? :id
@@ -136,8 +160,8 @@ class WSFileResource < DAV4Rack::Resource
         end
     end
     def authenticate user, pass
-        @user = User.get(user)
-        @user && @user.password == pass
+        @ws_user = User.get(user)
+        @ws_user && @ws_user.password == pass
     end
     def file_path
         @local_path

@@ -156,9 +156,10 @@ class WSFile
     end
     def size
         size = 0
-        size += $postgres.exec_prepared('document_size', [self.id])[0]["octet_length"].to_i
-        $postgres.exec_prepared('document_blobs_size', [self.id]).each do |doc|
-            size += doc["octet_length"].to_i
+        request = $postgres.exec_prepared('wsfile_size', [self.id])
+        size += request[0].map{|k,v| v.to_i || 0}.inject(:+)
+        $postgres.exec_prepared('wsfile_blobs_size', [self.id]).each do |doc|
+            size += doc.map{|k,v| v.to_i || 0}.inject :+
         end
         size
     end
@@ -260,8 +261,8 @@ $postgres = PG.connect({host: postgres_creds.host, dbname: postgres_creds.path[1
 $postgres.prepare("insert_blob", "INSERT INTO blobs (name, data, type, edit_time, create_time, document_id) VALUES ($1, $2, $3, $4, $5, $6)")
 $postgres.prepare("update_blob", "UPDATE blobs SET data = $1, type = $2, edit_time = $3 WHERE name = $4 AND document_id = $5")
 $postgres.prepare("get_blob", "SELECT data::bytea, type::text FROM blobs WHERE name::text = $1 AND document_id::int = $2 LIMIT 1")
-$postgres.prepare("document_blobs_size", "SELECT octet_length(data) FROM blobs WHERE document_id=$1")
-$postgres.prepare("document_size", "SELECT octet_length(body) FROM documents WHERE id=$1 LIMIT 1")
+$postgres.prepare("wsfile_blobs_size", "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE parent_id=$1")
+$postgres.prepare("wsfile_size", "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE id=$1 LIMIT 1")
 
 $postgres.prepare("wsfile_update", "UPDATE ws_files SET data = $2 WHERE id = $1")
 $postgres.prepare("wsfile_get", "SELECT data::bytea FROM ws_files WHERE id::int = $1 LIMIT 1")

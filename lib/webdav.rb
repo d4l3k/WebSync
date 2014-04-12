@@ -95,7 +95,13 @@ class WSFileResource < DAV4Rack::Resource
 
     end
     def move dest, overwrite=false
-        NotImplemented
+        parent = dest.parent
+        parent.reload
+        parent = parent.file == ROOT ? nil : parent.file
+        @file.parent = parent
+        @file.save
+        binding.pry
+        Created
     end
     def copy dest, overwrite=false
         NotImplemented

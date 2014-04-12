@@ -149,7 +149,7 @@ class WebSync < Sinatra::Base
         Bundler.require(:production)
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
-        set :assets_precompile, %w(default.css edit.css edit.scss bundle-norm.js bundle-edit.js theme-*.scss) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
+        set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
         no_digest = Dir.glob(File.join(root, 'assets', 'js', '{src,lib}', "*.js")).map{|f| f.split("/").last}
         set :assets_precompile_no_digest, no_digest
     end
@@ -164,7 +164,7 @@ class WebSync < Sinatra::Base
         disable :raise_errors
         set :template_engine, :erb
         register Sinatra::AssetPipeline
-        sprockets.append_path File.join(root, 'assets', 'css')
+        #sprockets.append_path File.join(root, 'assets', 'css')
         sprockets.append_path File.join(root, 'assets', 'digest')
         sprockets.append_path File.join(root, 'assets', 'src')
         sprockets.append_path File.join(root, 'assets', 'lib')

@@ -79,6 +79,9 @@ class WSFileResource < DAV4Rack::Resource
             end
             children.each do |child|
                 response.body << "<tr><td>"
+                if child.file_path.split("/").last.nil?
+                    binding.pry
+                end
                 name = child.file_path.split("/").last.escape_html
                 path = child.public_path
                 if child.collection?
@@ -88,7 +91,7 @@ class WSFileResource < DAV4Rack::Resource
                 response.body << "<a href='" + path + "'>" + name + "</a></td><td>#{child.file.as_size}</td><td>#{child.file.edit_time}</td></tr>"
             end
             response.body << '</tbody></table><hr><p>Copyright (c) 2014 Tristan Rice. WebSync is licensed under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p></body></section></html>'
-            response['Content-Length'] = response.body.size.to_s
+            response['Content-Length'] = response.body.bytesize.to_s
             response['Content-Type'] = 'text/html'
         else
             response.body = @file.data || ""
@@ -259,6 +262,7 @@ class WSFileResource < DAV4Rack::Resource
     end
     def child(entry)
         path = entry.name
+        path = "unnamed_#{entry.id.encode62}" if path.length == 0
         parent = entry.parent
         public_path = ""
         while parent != nil

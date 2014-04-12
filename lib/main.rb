@@ -374,7 +374,6 @@ class WebSync < Sinatra::Base
         doc.assets = group.assets
         doc.save
         perm = Permission.create(user: current_user, file: doc, level: "owner")
-        binding.pry
         redirect "/#{doc.id.encode62}/edit"
     end
     get '/upload' do
@@ -551,9 +550,6 @@ class WebSync < Sinatra::Base
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
         erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op, access: access}
-    end
-    get "/:doc/assets" do
-        doc_id, doc = document_auth
     end
     post "/:doc/upload" do
         doc_id, doc = document_auth

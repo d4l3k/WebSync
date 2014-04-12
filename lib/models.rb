@@ -1,4 +1,6 @@
 # This file contains all of the ruby database connections and models.
+DATABASE_FORMAT_VERSION = 1
+
 
 # Monkey patched Redis for easy caching.
 class Redis
@@ -13,6 +15,25 @@ class Redis
     end
   end
 end
+$redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
+postgres_creds = URI.parse('postgres://'+$config['postgres'])
+$postgres = PG.connect({host: postgres_creds.host, dbname: postgres_creds.path[1..-1], user: postgres_creds.user, password: postgres_creds.password})
+$db_version = $redis.get("websync:db:version").to_i
+if $db_version != DATABASE_FORMAT_VERSION
+    def migrate range
+        if $db_version == range.first
+            puts "[MIGRATION] Attempting to migrate database from version #{range.first} to #{range.last}."
+            yield
+            $db_version = range.last
+        end
+    end
+    require_relative 'migrate'
+    if $db_version != DATABASE_FORMAT_VERSION
+        puts " :: WARNING: Can not migrate to latest database format!"
+    end
+    $redis.set "websync:db:version", $db_version
+end
+
 module DataMapper
   class Property
     class BetterBlob < Object
@@ -64,7 +85,6 @@ module DataMapper
 end # module DataMapper
 
 # Ease of use connection to the redis server.
-$redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 =begin
 # DEPRECATED: This is used for document resources.
@@ -264,13 +284,28 @@ end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 
-postgres_creds = URI.parse('postgres://'+$config['postgres'])
-$postgres = PG.connect({host: postgres_creds.host, dbname: postgres_creds.path[1..-1], user: postgres_creds.user, password: postgres_creds.password})
-$postgres.prepare("insert_blob", "INSERT INTO blobs (name, data, type, edit_time, create_time, document_id) VALUES ($1, $2, $3, $4, $5, $6)")
-$postgres.prepare("update_blob", "UPDATE blobs SET data = $1, type = $2, edit_time = $3 WHERE name = $4 AND document_id = $5")
-$postgres.prepare("get_blob", "SELECT data::bytea, type::text FROM blobs WHERE name::text = $1 AND document_id::int = $2 LIMIT 1")
-$postgres.prepare("wsfile_blobs_size", "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE parent_id=$1")
 $postgres.prepare("wsfile_size", "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE id=$1 LIMIT 1")
-
 $postgres.prepare("wsfile_update", "UPDATE ws_files SET data = $2 WHERE id = $1")
 $postgres.prepare("wsfile_get", "SELECT data::bytea FROM ws_files WHERE id::int = $1 LIMIT 1")
+
+if defined? migrate
+    resp = $postgres.exec("select exists(select * from information_schema.tables where table_name='blobs')")
+    if resp[0]["exists"]=="t"
+        puts "[MIGRATION] Table 'blobs' exists! Merging into 'ws_files'."
+        resp = $postgres.exec("SELECT * FROM blobs")
+        resp_binary = $postgres.exec_params("SELECT data FROM blobs",[],1)
+        resp.each_with_index do |row, index|
+            name = row["name"]
+            content_type = row["type"]
+            edit_time = DateTime.parse(row["edit_time"])
+            create_time = DateTime.parse(row["create_time"])
+            file_id = row["document_id"].to_i
+            parent = WSFile.get(file_id)
+            owner = parent.permissions(level: 'owner').user[0]
+            obj = WSFile.create(name: name, create_time: create_time, edit_time: edit_time, directory: false, parent: parent, content_type: content_type)
+            obj.data = resp_binary[index]["data"]
+            perm = Permission.create(user: owner, file: obj, level: "owner")
+        end
+        $postgres.exec("DROP TABLE blobs")
+    end
+end

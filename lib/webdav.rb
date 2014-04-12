@@ -18,13 +18,15 @@ class WSFileResource < DAV4Rack::Resource
         end
     end
     before do |resource, method_name|
-        resource.reload if [:put, :post, :delete, :get, :exist?].include? method_name
+        resource.reload if [:put, :post, :delete, :get].include? method_name
+        if [:put, :post, :delete, :get, :exist?, :collection?].include? method_name
+            resource.force_auth
+            if not resource.file
+                resource.convert_unknown
+            end
+        end
     end
     def reload
-        force_auth
-        if not @file
-            convert_unknown
-        end
         if @file and @file != ROOT and @file.respond_to? :id
             @file = @file.model.get(@file.id)
         end

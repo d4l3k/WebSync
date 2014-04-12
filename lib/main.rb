@@ -406,7 +406,6 @@ class WebSync < Sinatra::Base
                 logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
             end
         end
-        binding.pry
         if content!=nil
             dom = Nokogiri::HTML(content)
             dom.css("img[src]").each do |img|

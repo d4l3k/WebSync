@@ -2,7 +2,7 @@ require 'mime/types'
 class WSFileResource < DAV4Rack::Resource
     include DAV4Rack::Utils
     ROOT = :root
-    attr_accessor :object
+    attr_accessor :file
     def initialize(public_path, path, request, response, options)
         super(public_path, path, request, response, options)
         @local_path = public_path.gsub(/^#{root[0..-2]}/,"")
@@ -10,35 +10,37 @@ class WSFileResource < DAV4Rack::Resource
             @local_path = "/"
         end
         if options[:object]
-            @object = options[:object]
+            @file = options[:object]
         elsif @local_path.length <= 1
-            @object = ROOT
+            @file = ROOT
         else
-            puts "PUBLIC PATH: #{public_path}, #{@local_path}"
+            #puts "PUBLIC PATH: #{public_path}, #{@local_path}"
         end
     end
+    before do |resource, method_name|
+        resource.reload if [:put, :post, :delete, :get, :exist?].include? method_name
+    end
     def reload
-        if not @object
+        force_auth
+        if not @file
             convert_unknown
         end
-        if @object and @object != ROOT and @object.respond_to? :id
-            @object = @object.model.get(@object.id)
+        if @file and @file != ROOT and @file.respond_to? :id
+            @file = @file.model.get(@file.id)
         end
     end
     def convert_unknown
         if @ws_user
-            @object = file_by_path @local_path
-            puts @object.inspect
+            @file = file_by_path @local_path
         end
     end
     def children
-        reload
-        if @object == ROOT
+        if @file == ROOT
             @ws_user.files(parent: nil).map do |file|
                 child file
             end
-        elsif @object
-            @object.children.map do |file|
+        elsif @file
+            @file.children.map do |file|
                 child file
             end
         else
@@ -46,27 +48,31 @@ class WSFileResource < DAV4Rack::Resource
         end
     end
     def collection?
-        reload
-        if @object == ROOT
+        if @file == ROOT
             true
-        elsif @object
-            @object.directory
+        elsif @file
+            @file.directory
         else
             false
         end
     end
     def exist?
-        reload
-        @object && @object.respond_to?(:length) && @object.length > 0 || @object != nil
+        @file && @file.respond_to?(:length) && @file.length > 0 || @file != nil && @file.class != Array || file_path == "/"
+    end
+    def force_auth
+        if not @ws_user
+            user, pass = auth_credentials
+            if user
+                authenticate user, pass
+            end
+        end
     end
     def get(request, response)
-        reload
-        puts "GET"
         raise NotFound unless exist?
         if collection?
             response.body = "<html><head><style>* {font-family: monospace;} body{background-image: url(/img/logo-github.png);background-repeat:no-repeat;background-position: center center;}section{background-color: rgba(255,255,255,0.8)}</style><body><section>"
             response.body << "<h2>Index of #{file_path.escape_html}</h2><hr><table><thead><th>Name</th><th>Size</th><th>Last Modified</th></thead><tbody>"
-            if @object != ROOT
+            if @file != ROOT
                 response.body << "<tr><td><a href='..'>..</a></td></tr>"
             end
             children.each do |child|
@@ -77,53 +83,61 @@ class WSFileResource < DAV4Rack::Resource
                     name += "/"
                     path += "/"
                 end
-                response.body << "<a href='" + path + "'>" + name + "</a></td><td>#{child.object.as_size}</td><td>#{child.object.edit_time}</td></tr>"
+                response.body << "<a href='" + path + "'>" + name + "</a></td><td>#{child.file.as_size}</td><td>#{child.file.edit_time}</td></tr>"
             end
             response.body << '</tbody></table><hr><p>Copyright (c) 2014 Tristan Rice. WebSync is licensed under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p></body></section></html>'
             response['Content-Length'] = response.body.size.to_s
             response['Content-Type'] = 'text/html'
         else
-            response.body = @object.data || ""
-            response['Content-Type'] = @object.content_type
+            response.body = @file.data || ""
+            response['Content-Type'] = @file.content_type
         end
 
     end
+    def move dest, overwrite=false
+        NotImplemented
+    end
+    def copy dest, overwrite=false
+        NotImplemented
+    end
     def put(request, response)
-        reload
-        puts "BLAH"
-        if not @object || @object == UNKNOWN
+        if not @file
             parts = @local_path.split("/")
             file = WSFile.all(parent: nil, name: parts[1])[0]
             endd = parts.last=="" ? -3 : -2
             parts[2..endd].each do |part|
                 file = file.children(name: part)
             end
-            @object = WSFile.create(name: parts.last, create_time: DateTime.now, directory: false, user: @ws_user)
+            parent = file_by_path parts[0..-2].join("/")
+            @file = WSFile.create(name: parts.last, create_time: DateTime.now, directory: false, edit_time: DateTime.now, parent: parent)
+            perm = Permission.create(user: @ws_user, file: @file, level: "owner")
         end
         io = request.body
         temp = Tempfile.new("websync-dav-upload")
         data = io.read rescue ""
         temp.write data
         temp.close
-        @object.content_type = _content_type temp.path
+        @file.content_type = _content_type temp.path
         temp.flush rescue nil
-        @object.edit_time = DateTime.now
-        @object.save!
-        @object.data=data
+        @file.edit_time = DateTime.now
+        @file.save!
+        @file.data=data
         Created
     end
+    def _content_type filename
+        MIME::Types.type_for(filename).first.to_s || 'text/html'
+    end
     def delete
-        reload
         if collection?
-            if @object == ROOT
+            if @file == ROOT
                 WSFile.all(parent: nil, user: @ws_user).each do |file|
                     file.destroy_cascade
                 end
             else
-                @object.destroy_cascade
+                @file.destroy_cascade
             end
-        elsif @object
-            @object.destroy_cascade
+        elsif @file
+            @file.destroy_cascade
         end
         NoContent
     end
@@ -132,6 +146,9 @@ class WSFileResource < DAV4Rack::Resource
         _find_child parts[1..-1]
     end
     def _find_child dirs, parent=nil
+        if not dirs
+            return
+        end
         kids = []
         if not parent
             kids = @ws_user.files(parent: parent, name: dirs.first)
@@ -151,12 +168,12 @@ class WSFileResource < DAV4Rack::Resource
         nil
     end
     def make_collection
+        raise Conflict unless parent.exist?
         if request.body.read.to_s == ''
             if exist?
-                puts "woof #{@object.inspect}"
                 MethodNotAllowed
             else
-                if not @object
+                if not @file
                     parts = @local_path.split("/")
                     parent = file_by_path parts[0..-2].join("/")
                     obj = WSFile.create(name: parts.last, create_time: DateTime.now, edit_time: DateTime.now, directory: true, parent: parent)
@@ -170,49 +187,58 @@ class WSFileResource < DAV4Rack::Resource
             UnsupportedMediaType
         end
     end
-    def _content_type filename
-        MIME::Types.type_for(filename).first.to_s || 'text/html'
-    end
     def post(request, response)
-        raise HTTPStatus::Forbidden
+        Forbidden
     end
     def content_type
-        if collection?
+        if @file.respond_to?(:content_type)
+            @file.content_type
+        else
             'text/html'
-        elsif @object.respond_to?(:content_type)
-            @object.content_type
         end
     end
     def content_length
-        if @object.respond_to?(:size)
-            @object.size
+        if @file.respond_to?(:size)
+            @file.size
         end
     end
     def creation_date
-        if @object.respond_to?(:create_time)
-            @object.create_time
+        if @file.respond_to?(:create_time)
+            @file.create_time
         else
             DateTime.new
         end
     end
     def last_modified
-        if @object.respond_to?(:edit_time)
-            @object.edit_time
+        if @file.respond_to?(:edit_time)
+            @file.edit_time
         else
             DateTime.new
         end
     end
     def last_modified= time
-        if @object.respond_to? :edit_time
-            @object.update :edit_time, time
+        if @file.respond_to? :edit_time
+            @file.update :edit_time, time
         end
     end
     def etag
-        if @object.respond_to? :id
-            "#{@object.id}-#{@object.edit_time}"
+        if @file.respond_to? :id
+            "#{@file.id}-#{@file.edit_time}"
         end
     end
+    def write io
+        puts "WRITING KSDJFLSKDJFLKSDJFLSKDJFLSKDJF"
+    end
     def authenticate user, pass
+        # Try to authenticate based on cookies set by the main app.
+        session = Rack::Session::Cookie::Base64::Marshal.new.decode(request.cookies["rack.session"])
+        if not (session.nil? or session["userhash"].nil?)
+            if $redis.get('userhash:'+session['userhash'])==session['user']
+                @ws_user = User.get(session['user'])
+                return true
+            end
+        end
+        # No good cookies set. Fallback
         @ws_user = User.get(user)
         @ws_user && @ws_user.password == pass
     end

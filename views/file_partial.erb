@@ -12,6 +12,7 @@ request.params.each do |k, v|
     end
 end
 options ||= {}
+options[:parent] = nil
 order = :edit_time
 order = :name if sort == "name"
 order = :user_email if sort == "owner"

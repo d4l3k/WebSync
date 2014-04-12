@@ -27,11 +27,13 @@ module DataMapper
       # @api semipublic
 
         def load(value)
-          super.dup.force_encoding("BINARY") unless value.nil?
+          #super.dup.force_encoding("BINARY") unless value.nil?
+            nil
         end
 
         def dump(value)
-          value.dup.force_encoding("BINARY") unless value.nil?
+          #value.dup.force_encoding("BINARY") unless value.nil?
+            nil
         rescue
           value
         end

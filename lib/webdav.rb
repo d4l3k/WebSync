@@ -87,6 +87,8 @@ class WSFileResource < DAV4Rack::Resource
                 if child.collection?
                     name += "/"
                     path += "/"
+                elsif child.file.content_type.nil? and child.file.body.length > 0 or child.file.content_type == "text/websync"
+                    path = "/#{child.file.id.encode62}/edit"
                 end
                 response.body << "<a href='" + path + "'>" + name + "</a></td><td>#{child.file.as_size}</td><td>#{child.file.edit_time}</td></tr>"
             end

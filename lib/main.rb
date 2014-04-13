@@ -366,10 +366,11 @@ class WebSync < Sinatra::Base
             halt 400
         end
         doc = WSFile.create(
-            :name => "Unnamed #{group.name}",
-            :body => {body:[]},
-            :create_time => Time.now,
-            :edit_time => Time.now,
+            name: "Unnamed #{group.name}",
+            body: {body:[]},
+            create_time: Time.now,
+            edit_time: Time.now,
+            content_type: 'text/websync'
         )
         doc.assets = group.assets
         doc.save
@@ -413,10 +414,11 @@ class WebSync < Sinatra::Base
             # Basic security check
             dom.css("script").remove();
             doc = WSFile.create(
-                :name => filename,
-                :body => {html: dom.to_html},
-                :create_time => Time.now,
-                :edit_time => Time.now
+                name: filename,
+                body: {html: dom.to_html},
+                create_time: Time.now,
+                edit_time: Time.now,
+                content_type: 'text/websync'
             )
             doc.assets = AssetGroup.get(1).assets
             doc.save

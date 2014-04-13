@@ -2,7 +2,7 @@
 define(['websync'], function() {
     var self = {};
     // Load the MathQuill javascript library.
-    $("body").append('<script type="text/javascript" class="Equations" src="/assets/mathquill.min.js"></script><link rel="stylesheet" type="text/css" href="/mathquill.css">');
+    $("body").append('<script type="text/javascript" class="Equations" src="/assets/mathquill.js"></script><link rel="stylesheet" type="text/css" href="/mathquill.css">');
 
     // Append the new equation button to the File menu and make it do stuff.
     $("#Insert").append(" <button id='insert_equation' class='btn btn-default Equations' title='Insert Equation (Ctrl-Shift-F)'>Equation</button>");

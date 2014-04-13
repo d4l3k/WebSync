@@ -6,11 +6,15 @@
     <div class="row">
         <% items = {Notebook: ["note.png", "pencil"], Presentation: ["presentation.png", "picture-o"], Document: ["document.png", "file-o"], Spreadsheet: ["spreadsheet.png", "table"]} %>
         <% items.each do |type, dat| %>
-            <div class="col-md-3 col-sm-6">
+            <div class="col-md-4 col-sm-6">
                 <h3><i class="fa fa-<%= dat[1] %>"></i> <%= type.to_s %> <a href="/new/<%= AssetGroup.first(name: type).id %>" class="btn btn-default">Create</a></h3>
-                <img src="img/index/<%= dat[0] %>" style="width: 100%" class="img-thumbnail">
+                <img src="img/index/<%= dat[0] %>" class="img-thumbnail">
             </div>
         <% end %>
+        <div class="col-md-4 col-sm-6">
+            <h3><i class="fa fa-cloud"></i> Local File Sync <a href="#webdav" class="btn btn-default">More</a></h3>
+            <img src="img/index/file-mount.png" class="img-thumbnail">
+        </div>
     </div>
 </div>
 <!-- <div class="forest">
@@ -67,6 +71,10 @@
         <div class="col-md-3 col-sm-6">
             <h3><i class="fa fa-youtube-play"></i> Interactive Content</h3>
             <span>Because WebSync is built upon HTML and Javascript, you can have interactive content from outside sources. You can easily embed gifs and YouTube videos.</span>
+        </div>
+        <div class="col-md-3 col-sm-6" id="webdav">
+            <h3><i class="fa fa-cloud"></i> Local File Sync</h3>
+            <span>WebSync implements the <a href="https://en.wikipedia.org/wiki/WebDAV">WebDav protocol</a> allowing you to sync your files directly&mdash;just like Dropbox or Google Drive. Just point your file manager at <code>https://websyn.ca/webdav/</code>.</span>
         </div>
     </div>
 </div>

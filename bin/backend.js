@@ -354,9 +354,9 @@ fs.readFile('./config.json', function(err, buffer) {
                                         }));
                                     });
                             } else if (data.action == 'add' && editor) {
-                                postgres.query("INSERT INTO asset_documents (file_id, asset_id) VALUES ($1, $2)", [doc_id, data.id]);
+                                postgres.query("INSERT INTO asset_ws_files (file_id, asset_id) VALUES ($1, $2)", [doc_id, data.id]);
                             } else if (data.action == 'delete' && editor) {
-                                postgres.query("DELETE FROM asset_documents WHERE file_id = $1 AND asset_id = $2", [doc_id, data.id]);
+                                postgres.query("DELETE FROM asset_ws_files WHERE file_id = $1 AND asset_id = $2", [doc_id, data.id]);
                             }
                         } else if (data.type == 'diffs') {
                             if (data.action == 'list') {

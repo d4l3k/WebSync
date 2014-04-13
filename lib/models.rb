@@ -86,62 +86,7 @@ end # module DataMapper
 
 # Ease of use connection to the redis server.
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
-=begin
-# DEPRECATED: This is used for document resources.
-class Blob
-    include DataMapper::Resource
-    property :name, Text, key: true
-    property :data, DataMapper::Property::BetterBlob, lazy: true # Under 10 MB
-    property :type, Text
-    property :edit_time, DateTime
-    property :create_time, DateTime
-    belongs_to :document, key: true
-end
-# DEPRECATED
-class Document
-    include DataMapper::Resource
-    property :id,               Serial
-    property :name,             Text
-    property :body,             Json,       :default=>{}, :lazy=>true
-    property :created,          DateTime
-    property :last_edit_time,   DateTime
-    property :visibility,       String,     :default=>"private"
-    property :default_level,    String,     :default=>"viewer"
-    property :config,           Json,       :default=>{}
-    property :deleted,          Boolean,    :default=>false
-    has n, :assets, :through => Resource
-    has n, :changes
-    has n, :permissions
-    has n, :users, 'User', :through => :permissions
-    has n, :blobs
-    def config_set key, value
-        n_config = config.dup
-        n_config[key]=value
-        self.config= n_config
-    end
-    def size
-        size = 0
-        size += $postgres.exec_prepared('document_size', [self.id])[0]["octet_length"].to_i
-        $postgres.exec_prepared('document_blobs_size', [self.id]).each do |doc|
-            size += doc["octet_length"].to_i
-        end
-        size
-    end
-    UNITS = %W(B KB MB GB TB).freeze
-    def as_size
-        number = self.size
-        if number.to_i < 1000
-            exponent = 0
-        else
-            max_exp  = UNITS.size - 1
-            exponent = ( Math.log( number ) / Math.log( 1000 ) ).to_i # convert to base
-            exponent = max_exp if exponent > max_exp # we need this to avoid overflow for the highest unit
-            number  /= 1000.0 ** exponent
-        end
-       "#{number.round(1)} #{UNITS[ exponent ]}"
-    end
-end
-=end
+
 # All file data
 class WSFile
     include DataMapper::Resource

@@ -52,9 +52,11 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent", 
         </tr>
     </thead>
     <tbody>
-        <% docs.each do |doc| %>
+        <% docs.each do |doc|
+            path = doc.directory? ? "/webdav/#{doc.name}/" : "/#{doc.id.encode62}/edit"
+        %>
             <tr>
-                <td><a href="/<%= doc.id.encode62 %>/edit"><%= doc.name.length > 0 ? h(doc.name) : "<i>Unnamed File</i>" %></a></td>
+                <td><a href="<%= path %>"><%= doc.name.length > 0 ? h(doc.name) : "<i>Unnamed File</i>" %><%= doc.directory? ? "/" : "" %></a></td>
                 <% owner = doc.permissions(level: "owner").user %>
                 <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : (owner.length > 0 ? h(owner[0].email) : "<i>Orphaned</i>") %></td>
                 <td><%= doc.edit_time.strftime("%m/%d/%Y at %I:%M%p") %></td>

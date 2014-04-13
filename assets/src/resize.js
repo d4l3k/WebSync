@@ -108,28 +108,62 @@ define(['websync'], function() {
     self.updateHandles = function() {
         if (!self.active) return;
         var offset = $(self.active).offset();
-        $(".Resize.handle.top").offset({
-            top: offset.top - 4
-        });
-        $(".Resize.handle.left").offset({
-            left: offset.left - 4
-        });
-        $(".Resize.handle.right").offset({
-            left: offset.left + $(self.active).outerWidth() * WebSync.zoom - 3
-        });
-        $(".Resize.handle.bottom").offset({
-            top: offset.top + $(self.active).outerHeight() * WebSync.zoom - 3
-        });
-        $(".Resize.handle.right.middle, .Resize.handle.left.middle").offset({
-            top: offset.top + $(self.active).outerHeight() * WebSync.zoom / 2 - 4
-        });
-        $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").offset({
-            left: offset.left + $(self.active).outerWidth() * WebSync.zoom / 2 - 4
-        });
-        $(".Resize.handle.top.left.dragable").offset({
-            left: offset.left - 8,
-            top: offset.top - 8
-        });
+        console.log(self.active);
+        if(self.active.getBoundingClientRect){
+            var rect = self.active.getBoundingClientRect();
+            console.log(rect);
+            var width = rect.width;
+            var height = rect.height;
+            var top = rect.top;
+            var left = rect.left;
+            console.log(offset.top -4, offset.left + width -3)
+            $(".Resize.handle.top").offset({
+                top: offset.top - 4
+            });
+            $(".Resize.handle.left").offset({
+                left: offset.left - 4
+            });
+            $(".Resize.handle.right").offset({
+                left: offset.left + width - 3
+            });
+            $(".Resize.handle.bottom").offset({
+                top: offset.top + height - 3
+            });
+            $(".Resize.handle.right.middle, .Resize.handle.left.middle").offset({
+                top: offset.top + height/2 - 4
+            });
+            $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").offset({
+                left: offset.left + width/2 - 4
+            });
+            $(".Resize.handle.top.left.dragable").offset({
+                left: offset.left - 8,
+                top: offset.top - 8
+            });
+        // Fallback method. TODO: Remove.
+        } else {
+            $(".Resize.handle.top").offset({
+                top: offset.top - 4
+            });
+            $(".Resize.handle.left").offset({
+                left: offset.left - 4
+            });
+            $(".Resize.handle.right").offset({
+                left: offset.left + $(self.active).outerWidth() * WebSync.zoom - 3
+            });
+            $(".Resize.handle.bottom").offset({
+                top: offset.top + $(self.active).outerHeight() * WebSync.zoom - 3
+            });
+            $(".Resize.handle.right.middle, .Resize.handle.left.middle").offset({
+                top: offset.top + $(self.active).outerHeight() * WebSync.zoom / 2 - 4
+            });
+            $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").offset({
+                left: offset.left + $(self.active).outerWidth() * WebSync.zoom / 2 - 4
+            });
+            $(".Resize.handle.top.left.dragable").offset({
+                left: offset.left - 8,
+                top: offset.top - 8
+            });
+        }
     }
     $(document).on("zoom.Resize", self.updateHandles);
     $(document).on("resize.Resize", self.updateHandles);

@@ -13,6 +13,40 @@ define(['websync'], function(websync) {
     $(".content_well").css({
         left: 250
     });
+    WebSync.toJSON = function() {
+        // Slides/HTML
+        WebSyncData.views = [];
+        // 3D Objects
+        WebSyncData.objects = [];
+        _.each(self.css_scene.children, function(child){
+            var obj = {
+                position: child.position,
+                scale: child.scale,
+                quaternion: {
+                    w: child.quaternion.w,
+                    x: child.quaternion.x,
+                    y: child.quaternion.y,
+                    z: child.quaternion.z
+                },
+                body: DOMToJSON(child.element.childNodes)
+            };
+            WebSyncData.views.push(obj);
+        });
+    }
+    WebSync.fromJSON = function(){
+        for(var i=self.css_scene.children.length; i--; i>0){
+            self.css_scene.remove(self.css_scene.children[i]);
+        }
+        _.each(WebSyncData.views, function(view){
+            var elemm = $("<div class='awesome awesome-slide' contenteditable=true>"+JSONToDOM(view.body)+"</div>");
+            var elem = self.addCss(elemm[0]);
+            _.each(['position', 'quaternion', 'scale'], function(prop){
+                _.each(view[prop], function(v, k){
+                    elem[prop][k] = v;
+                });
+            });
+        });
+    }
     $("#presentation-nav .toggle-sidebar").click(function() {
         var pos = -250;
         var button_pos = -47
@@ -114,18 +148,7 @@ define(['websync'], function(websync) {
         self.scene.add(light);
         self.camera.position.z = 500;
 
-        var element = $("<div class='awesome awesome-slide' contenteditable=true>Some content</div>");
-
-        self.elem = self.addCss(element[0]);
-        self.elem.position.z = 70;
-
-        var elemm = $("<div class='awesome awesome-slide' contenteditable=true>Some content</div>");
-
-        self.elem2 = self.addCss(elemm[0]);
-        self.elem2.position.z = -400;
-        self.elem2.position.x = 800;
-        self.elem2.rotation.y = Math.PI / 8;
-
+        WebSync.fromJSON();
         // Helicopter
         var loader = new THREE.OBJMTLLoader();
         loader.load('assets/uh60.obj', 'assets/uh60.mtl', function(object) {
@@ -141,7 +164,7 @@ define(['websync'], function(websync) {
 
         self.render();
         $(".content").fadeIn();
-        self.focus(self.elem2);
+        self.focus(self.css_scene.children[0]);
         NProgress.done();
     });
     self.addCss = function(element) {
@@ -182,7 +205,8 @@ define(['websync'], function(websync) {
         self.camera.quaternion = qm;
         self.camera.quaternion.normalize();*/
         var time = 800;
-        var target = (new THREE.Vector3(0, 0, 550)).applyQuaternion(obj.quaternion).add(obj.position);
+        var distToCenter = 740/Math.sin( Math.PI / 180.0 * self.camera.fov * 0.5)*0.5;
+        var target = (new THREE.Vector3(0, 0, distToCenter)).applyQuaternion(obj.quaternion).add(obj.position);
         new TWEEN.Tween(self.camera.position).to(target, time).easing(TWEEN.Easing.Quadratic.InOut).start();
         new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time).easing(TWEEN.Easing.Quadratic.InOut).start();
     }

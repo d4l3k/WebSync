@@ -100,6 +100,11 @@ body .mathquill-rendered-math {
                     -webkit-hyphens: auto;
                     -moz-hyphens: auto;
                     -ms-hyphens: auto;
+                    width: 100%;
+                    &:empty:before {
+                        content: 'Type Here';
+                        color: lightgray;
+                    }
                 }
                 * {
                     text-align: center;
@@ -110,6 +115,35 @@ body .mathquill-rendered-math {
     .slidePreview > .slide,  .awesome-slide {
         width: 1024px;
         height: 756px;
+    }
+    #presentation-nav {
+        #slideView {
+            position: absolute;
+            margin: 5px;
+            bottom: 205px;
+            top: 38px;
+            left: 0;
+            right: 0;
+        }
+        #properties {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 5px;
+            height: 200px;
+            padding: 5px;
+            h3, hr, h4 {
+                margin: 5px 0;
+            }
+            input {
+                display: inline-block;
+                width: 54px;
+                margin-right: 5px;
+                padding: 5px;
+                font-size: 10pt;
+            }
+        }
     }
     .awesome-slide {
         display: -webkit-box;

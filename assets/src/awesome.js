@@ -4,7 +4,15 @@ define(['websync'], function(websync) {
     $("body").append('<script src="/assets/MTL.js"></script>')
     $("body").append('<script src="/assets/tween.min.js"></script>')
     $("body").append('<script src="/assets/CSS3DRenderer.js"></script>')
-    $('body').append($('<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button"><i class="fa fa-plus fa-lg"></i></button> <button id="remSlide" class="btn btn-danger" type="button"><i class="fa fa-lg fa-trash-o"></i></button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="slideView" class="slideWell panel panel-default"></div></div>'));
+    var nav = '<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button"><i class="fa fa-plus fa-lg"></i></button> <button id="remSlide" class="btn btn-danger" type="button"><i class="fa fa-lg fa-trash-o"></i></button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="slideView" class="slideWell panel panel-default"></div><div class="panel panel-default" id="properties"><h3>Properties</h3><hr>';
+    _.each(['Position', 'Rotation'], function(v){
+        nav += "<h4>"+v+"</h4>"
+        _.each(['x', 'y', 'z'], function(i){
+            nav += i.toUpperCase()+": <input class='form-control "+v+" "+i+"'></input>";
+        });
+    });
+    nav += '</div></div>'
+    $('body').append($(nav));
     var self = {};
     temp = self;
     $(".content").hide().addClass("content-awesome").append($('<div class="content_container"></div>'))
@@ -14,10 +22,10 @@ define(['websync'], function(websync) {
         left: 250
     });
     $("#addSlide").click(function(e){
-        var elemm = $("<div class='awesome awesome-slide' ><div class='slide-content' contenteditable=true>Type Here</div></div>");
+        var elemm = $("<div class='awesome awesome-slide' ><div class='slide-content' contenteditable=true></div></div>");
         var elem = self.addCss(elemm[0]);
+        setTimeout(self.updateMenu, 50);
     });
-    self.activeIndex
     $("#presentation-nav #slideView").delegate(".slidePreview", "click", function() {
         self.setIndex($(this).data().index);
     });
@@ -30,7 +38,35 @@ define(['websync'], function(websync) {
         $(".slidePreview.active").removeClass('active');
         $(".slidePreview").eq(index).addClass("active");
         self.focus(self.css_scene.children[index]);
+        self.updateProperties();
     }
+    self.updateProperties = function(){
+        var obj = self.css_scene.children[self.activeIndex];
+        _.each(["Position", "Rotation"], function(type){
+            console.log(type);
+            var info = obj[type.toLowerCase()]
+            _.each(["x", "y", "z"], function(v){
+                $("."+type+"."+v).val(info[v]);
+            });
+        });
+    }
+    $("#properties input").change(function(e){
+        console.log(e);
+        var axis = "x";
+        if($(this).hasClass("y")) axis = "y";
+        if($(this).hasClass("z")) axis = "z";
+        var prop = $(this).hasClass("Position") ? "position" : "rotation";
+        var obj = self.css_scene.children[self.activeIndex];
+        obj[prop][axis] = eval($(this).val());
+    }).blur(function(e){
+        var axis = "x";
+        if($(this).hasClass("y")) axis = "y";
+        if($(this).hasClass("z")) axis = "z";
+        var prop = $(this).hasClass("Position") ? "position" : "rotation";
+        var obj = self.css_scene.children[self.activeIndex];
+        obj[prop][axis] = eval($(this).val());
+        self.updateProperties();
+    });
     $(document).keydown(function(e) {
         if (WebSyncAuth.view_op == "view") {
             if (e.keyCode == 39 || e.keyCode == 32 || e.keyCode == 40) {

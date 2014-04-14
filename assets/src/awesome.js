@@ -13,6 +13,37 @@ define(['websync'], function(websync) {
     $(".content_well").css({
         left: 250
     });
+    $("#addSlide").click(function(e){
+        var elemm = $("<div class='awesome awesome-slide' ><div class='slide-content' contenteditable=true>Type Here</div></div>");
+        var elem = self.addCss(elemm[0]);
+    });
+    self.activeIndex
+    $("#presentation-nav #slideView").delegate(".slidePreview", "click", function() {
+        self.setIndex($(this).data().index);
+    });
+    self.setIndex = function(index){
+        if(index < 0) index = 0;
+        var child_length = self.css_scene.children.length;
+        if(index >= child_length) index = child_length-1;
+        self.activeIndex = index;
+        if(child_length==0) return;
+        $(".slidePreview.active").removeClass('active');
+        $(".slidePreview").eq(index).addClass("active");
+        self.focus(self.css_scene.children[index]);
+    }
+    $(document).keydown(function(e) {
+        if (WebSyncAuth.view_op == "view") {
+            if (e.keyCode == 39 || e.keyCode == 32 || e.keyCode == 40) {
+                // Move forward a slide
+                self.setIndex(self.activeIndex+1);
+                e.preventDefault();
+            } else if (e.keyCode == 37 || e.keyCode == 38) {
+                // Move back a slide
+                self.setIndex(self.activeIndex-1);
+                e.preventDefault();
+            }
+        }
+    });
     WebSync.toJSON = function() {
         // Slides/HTML
         WebSyncData.views = [];
@@ -28,7 +59,7 @@ define(['websync'], function(websync) {
                     y: child.quaternion.y,
                     z: child.quaternion.z
                 },
-                body: DOMToJSON(child.element.childNodes)
+                body: DOMToJSON(child.element.children[0].childNodes)
             };
             WebSyncData.views.push(obj);
         });
@@ -38,7 +69,7 @@ define(['websync'], function(websync) {
             self.css_scene.remove(self.css_scene.children[i]);
         }
         _.each(WebSyncData.views, function(view){
-            var elemm = $("<div class='awesome awesome-slide' contenteditable=true>"+JSONToDOM(view.body)+"</div>");
+            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>"+JSONToDOM(view.body)+"</div></div>");
             var elem = self.addCss(elemm[0]);
             _.each(['position', 'quaternion', 'scale'], function(prop){
                 _.each(view[prop], function(v, k){
@@ -46,6 +77,7 @@ define(['websync'], function(websync) {
                 });
             });
         });
+        setTimeout(self.updateMenu, 50);
     }
     $("#presentation-nav .toggle-sidebar").click(function() {
         var pos = -250;
@@ -164,7 +196,7 @@ define(['websync'], function(websync) {
 
         self.render();
         $(".content").fadeIn();
-        self.focus(self.css_scene.children[0]);
+        self.setIndex(0);
         NProgress.done();
     });
     self.addCss = function(element) {
@@ -210,5 +242,38 @@ define(['websync'], function(websync) {
         new TWEEN.Tween(self.camera.position).to(target, time).easing(TWEEN.Easing.Quadratic.InOut).start();
         new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time).easing(TWEEN.Easing.Quadratic.InOut).start();
     }
+    self.updateMenu = function() {
+        $("#slideView").html("");
+        $(".awesome-slide .slide-content").each(function(index, slide) {
+            $("<div class='slidePreview " + ($(slide).hasClass("active") ? "active" : "") + "'><div class='slide'>" + $(slide).html() + "</div></div>").attr("style", $(slide).attr("style")).appendTo($("#slideView")).data({
+                index: index
+            });
+            /*var elem = $("<div class='slidePreview'><canvas width='1024' height='756'></div>").appendTo($("#slideView"))
+            elem.data({
+                index: index
+            });
+            setTimeout(function(){
+                var canvas = elem.children().get(0);
+                var ctx = canvas.getContext("2d");
+                var data = "data:image/svg+xml," +
+                   "<svg xmlns='http://www.w3.org/2000/svg' width='1024' height='756'>" +
+                     "<foreignObject width='100%' height='100%'>" +
+                       "<div xmlns='http://www.w3.org/1999/xhtml'>" +
+                            $(slide).html() +
+                       "</div>" +
+                     "</foreignObject>" +
+                   "</svg>";
+                var img = new Image();
+                img.src = data;
+                img.onerror = function(e){
+                    console.log("IMG ERR", e, $(slide).html());
+                }
+                img.onload = function() { ctx.drawImage(img, 0, 0);
+                    alert("Loaded");
+                }
+                    $(img).appendTo("body")
+            },50);*/
+        });
+    };
     return self;
 });

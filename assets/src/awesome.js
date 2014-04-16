@@ -217,7 +217,7 @@ define(['websync'], function(websync) {
         self.camera.position.z = 500;
 
         WebSync.fromJSON();
-        // Helicopter
+        /*// Helicopter
         var loader = new THREE.OBJMTLLoader();
         loader.load('assets/uh60.obj', 'assets/uh60.mtl', function(object) {
             object.position.z = 200;
@@ -228,7 +228,7 @@ define(['websync'], function(websync) {
             self.heli = object;
             self.scene.add(object);
 
-        });
+        });*/
 
         self.render();
         $(".content").fadeIn();
@@ -239,13 +239,110 @@ define(['websync'], function(websync) {
         var obj = new THREE.CSS3DObject(element);
         self.css_scene.add(obj);
         setTimeout(function() {
-            var material = new THREE.MeshBasicMaterial({
-                color: 0
+            var material = new THREE.MeshLambertMaterial({
+                color: 0xffffff
             });
-            material.opacity = 0;
-            material.blending = THREE.NoBlending;
+            //material.opacity = 0;
+            //material.blending = THREE.NoBlending;
+            var planeFragmentShader = [
+
+                "uniform vec3 diffuse;",
+                "uniform float opacity;",
+
+                THREE.ShaderChunk[ "color_pars_fragment" ],
+                THREE.ShaderChunk[ "map_pars_fragment" ],
+                THREE.ShaderChunk[ "lightmap_pars_fragment" ],
+                THREE.ShaderChunk[ "envmap_pars_fragment" ],
+                THREE.ShaderChunk[ "fog_pars_fragment" ],
+                THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
+                THREE.ShaderChunk[ "specularmap_pars_fragment" ],
+
+                "void main() {",
+
+                    "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
+
+                    THREE.ShaderChunk[ "map_fragment" ],
+                    THREE.ShaderChunk[ "alphatest_fragment" ],
+                    THREE.ShaderChunk[ "specularmap_fragment" ],
+                    THREE.ShaderChunk[ "lightmap_fragment" ],
+                    THREE.ShaderChunk[ "color_fragment" ],
+                    THREE.ShaderChunk[ "envmap_fragment" ],
+                    THREE.ShaderChunk[ "shadowmap_fragment" ],
+                    THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
+                    THREE.ShaderChunk[ "fog_fragment" ],
+
+                    //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
+
+                "}"
+
+            ].join("\n");
+
+	    var betterFragmentShader = [
+                    "#define USE_SHADOWMAP",
+                    "uniform float opacity;",
+
+                    "varying vec3 vLightFront;",
+
+                    "#ifdef DOUBLE_SIDED",
+
+                            "varying vec3 vLightBack;",
+
+                    "#endif",
+
+                    THREE.ShaderChunk[ "color_pars_fragment" ],
+                    THREE.ShaderChunk[ "map_pars_fragment" ],
+                    THREE.ShaderChunk[ "lightmap_pars_fragment" ],
+                    THREE.ShaderChunk[ "envmap_pars_fragment" ],
+                    THREE.ShaderChunk[ "fog_pars_fragment" ],
+                    THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
+                    THREE.ShaderChunk[ "specularmap_pars_fragment" ],
+
+                    "void main() {",
+
+                            "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
+
+                            THREE.ShaderChunk[ "map_fragment" ],
+                            THREE.ShaderChunk[ "alphatest_fragment" ],
+                            THREE.ShaderChunk[ "specularmap_fragment" ],
+
+                            "#ifdef DOUBLE_SIDED",
+
+                                    //"float isFront = float( gl_FrontFacing );",
+                                    //"gl_FragColor.xyz *= isFront * vLightFront + ( 1.0 - isFront ) * vLightBack;",
+
+                                    "if ( gl_FrontFacing )",
+                                            "gl_FragColor.xyz *= vLightFront;",
+                                    "else",
+                                            "gl_FragColor.xyz *= vLightBack;",
+
+                            "#else",
+
+                                    "gl_FragColor.xyz *= vLightFront;",
+
+                            "#endif",
+
+                            THREE.ShaderChunk[ "lightmap_fragment" ],
+                            THREE.ShaderChunk[ "color_fragment" ],
+                            THREE.ShaderChunk[ "envmap_fragment" ],
+                            THREE.ShaderChunk[ "shadowmap_fragment" ],
+
+                            THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
+
+                            THREE.ShaderChunk[ "fog_fragment" ],
+                            //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
+
+                    "}"
+
+            ].join("\n")
+
+            var planeMaterial = new THREE.ShaderMaterial({
+                uniforms: THREE.ShaderLib['lambert'].uniforms,
+                vertexShader: THREE.ShaderLib['lambert'].vertexShader,
+                fragmentShader: betterFragmentShader,
+                color: 0x0000FF
+            });
             var geometry = new THREE.PlaneGeometry($(element).outerWidth(), $(element).outerHeight());
-            var planeMesh = new THREE.Mesh(geometry, material);
+            var planeMesh = new THREE.Mesh(geometry, planeMaterial);
             planeMesh.scale = obj.scale;
             planeMesh.position = obj.position;
             planeMesh.quaternion = obj.quaternion;

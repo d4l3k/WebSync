@@ -50,33 +50,6 @@ body {
     from   { opacity: 0; transform: translate3d(0, 20px, 0); }
     to  { opacity: 1; transform: translate(0, 0, 0); }
 }
-.fade-in {
-    -webkit-animation: fade-in 0.8s ease;
-    -o-animation: fade-in 0.8s ease;
-    -ms-animation: fade-in 0.8s ease;
-    -moz-animation: fade-in 0.8s ease;
-    animation: fade-in 0.8s ease;
-}
-@-webkit-keyframes fade-in {
-    from   { opacity: 0; }
-    to  { opacity: 1; }
-}
-@-o-keyframes fade-in {
-    from   { opacity: 0; }
-    to  { opacity: 1; }
-}
-@-ms-keyframes fade-in {
-    from   { opacity: 0; }
-    to  { opacity: 1; }
-}
-@-moz-keyframes fade-in {
-    from   { opacity: 0;  }
-    to  { opacity: 1; }
-}
-@keyframes fade-in {
-    from   { opacity: 0; }
-    to  { opacity: 1;  }
-}
 footer {
     color: #777;
     padding-top: 40px;
@@ -395,77 +368,6 @@ body > .container-fluid {
     *display: inline;
     *zoom: 1;
 }
-/* RESPONSIVE CSS
-    -------------------------------------------------- */
-
-@media (max-width: 979px) {
-    .container.navbar-wrapper {
-        margin-bottom: 0;
-        width: auto;
-    }
-    .head-content {
-        margin-top: 70px;
-    }
-    .navbar-fixed-top {
-        margin-bottom: 0px;
-    }
-    .navbar-inner {
-        border-radius: 0;
-    }
-    .big-head .item {} .featurette {
-        height: auto;
-        padding: 0;
-    }
-    .featurette-image.pull-left,
-    .featurette-image.pull-right {
-        display: block;
-        float: none;
-        max-width: 40%;
-        margin: 0 auto 20px;
-    }
-    .bs-docs-social-buttons {
-        margin-top: 0px;
-    }
-    .bs-docs-social-buttons li {
-        padding: 0;
-    }
-}
-@media (max-width: 767px) {
-    .navbar-inner {} .head-content {
-        margin-top: 50px;
-    }
-    .head-content .or {
-        display: none;
-    }
-    .head-content .btn-group {
-        width: 100%;
-    }
-    .head-content .btn {
-        display: block;
-        width: 100%;
-    }
-    .head-content h1 {
-        font-size: 30px;
-    }
-    .head-content .lead,
-    .head-content .btn {
-        font-size: 18px;
-    }
-    .marketing .span4 + .span4 {
-        margin-top: 40px;
-    }
-    .featurette-heading {
-        font-size: 30px;
-    }
-    .featurette .lead {
-        font-size: 18px;
-        line-height: 1.5;
-    }
-}
-.feature-head {
-    text-align: center;
-    margin: 30px;
-}
 .big-head {
     background: #1c1c1e url("/img/banner.png") 50% 0 no-repeat fixed;
     -webkit-background-size: cover;
@@ -511,8 +413,8 @@ body > .container-fluid {
         }
     }
     .btn {
-        width: 190px;
-        font-size: 1.35em;
+        min-width: 190px;
+        font-size: 1.4em;
     }
     /*.btn {
         padding: 15px 30px;
@@ -527,6 +429,109 @@ body > .container-fluid {
         }
     }*/
 }
+/* RESPONSIVE CSS
+    -------------------------------------------------- */
+
+@media (max-width: 979px) {
+    .container.navbar-wrapper {
+        margin-bottom: 0;
+        width: auto;
+    }
+    .head-content {
+        margin-top: 70px;
+    }
+    .navbar-fixed-top {
+        margin-bottom: 0px;
+    }
+    .navbar-inner {
+        border-radius: 0;
+    }
+    .big-head .item {} .featurette {
+        height: auto;
+        padding: 0;
+    }
+    .featurette-image.pull-left,
+    .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+    }
+    .bs-docs-social-buttons li {
+        padding: 0;
+    }
+    .big-head .head-content
+    .title-logo {
+        margin: 140px 0 80px 0;
+        height: 140px;
+        .logo {
+            img {
+                height: 140px;
+            }
+        }
+        h1.title {
+            height: 140px;
+            line-height: 140px;
+            font-size: 100px;
+        }
+    }
+}
+@media (max-width: 767px) {
+    .navbar-inner {} .head-content {
+        margin-top: 50px;
+    }
+    .head-content .or {
+        display: none;
+    }
+    .head-content .btn-group {
+        width: 100%;
+    }
+    .head-content .btn {
+        display: block;
+        width: 100%;
+    }
+    .head-content h1 {
+        font-size: 30px;
+    }
+    .head-content .lead,
+    .head-content .btn {
+        font-size: 18px;
+    }
+    .marketing .span4 + .span4 {
+        margin-top: 40px;
+    }
+    .featurette-heading {
+        font-size: 30px;
+    }
+    .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+    .big-head .head-content
+    .title-logo {
+        margin: 0px 0 20px 0;
+        height: 200px;
+        .logo {
+            float: none;
+            display: block;
+            margin-top: -20px;
+            margin-bottom: 20px;
+            img {
+                height: 140px;
+            }
+        }
+        h1.title {
+            height: 60px;
+            line-height: 60px;
+            font-size: 60px;
+        }
+    }
+}
+.feature-head {
+    text-align: center;
+    margin: 30px;
+}
+
 table.table-click {
     margin-top: 15px;
 }

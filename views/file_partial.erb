@@ -65,9 +65,9 @@ headers = { "Name" => "name", "Owner" =>  "owner", "Last Modified" => "recent", 
                 <% if doc.permissions(level: "owner").user[0]==current_user %>
                         <% if options[:deleted] %>
                             <a href="/<%= doc.id.encode62 %>/undelete" class="btn btn-default">Restore</a>
-                            <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i> Obliterate</a>
+                            <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> Obliterate</span></a>
                         <% else %>
-                            <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
+                            <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> Delete</span></a>
                         <% end %>
                 <% end %>
                 </td>

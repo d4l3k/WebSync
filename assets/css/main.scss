@@ -158,13 +158,17 @@ nav + .container {
             width: 100%;
             text-align: center;
             background-color: rgba(0, 0, 0, 0.5);
+            padding-bottom: 20px;
+            .btn {
+                font-size: 18px;
+                min-width: 150px;
+            }
             .fa-spin {
                 display: inline-block;
                 margin-left: -50px;
                 margin-right: 13px;
             }
             & > div {
-                width: 540px;
                 display: inline-block;
                 margin: 0;
             }
@@ -380,6 +384,7 @@ body > .container-fluid {
         text-align: center;
         background-color: transparent;
         position: static;
+        color: white;
         .title-logo {
             margin: 170px 0 90px 0;
             display: inline-block;
@@ -414,7 +419,7 @@ body > .container-fluid {
     }
     .btn {
         min-width: 190px;
-        font-size: 1.4em;
+        font-size: 20px;
     }
     /*.btn {
         padding: 15px 30px;

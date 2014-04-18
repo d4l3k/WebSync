@@ -1,8 +1,8 @@
 <% backgrounds = %w(uJc40Ne K2NLC7J olOM46q PSErBoS LCEBoBF uhRdzTv IK5mxVX) %>
-<div class="centered_alert" style="background-image: url(http://i.imgur.com/<%= backgrounds[rand(backgrounds.length)] %>.png)">
+<div class="centered_alert big-head" style="background-image: url(http://i.imgur.com/<%= backgrounds[rand(backgrounds.length)] %>.png)">
     <div>
         <div>
-            <div class="carousel-caption">
+            <div class="head-content">
                 <% if rand(2)==1 %>
                     <h1>That's <%= defined?(error) ? "a #{error}" : "an" %> error, Harry!</h1>
                 <% else %>
@@ -12,10 +12,10 @@
                     <% if defined?(reason) %>
                         Error: <%= reason %><br>
                     <% end %>
-                    If you aren't doing anything weird, please create a new issue on the GitHub page. <br>
-                    <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new">New Issue</a>
-                    <a class="btn btn-primary" href="/">Return Home</a>
+                    If you aren't doing anything weird, please create a new issue on the GitHub page.
                 </p>
+                <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new">New Issue</a>
+                <a class="btn btn-primary" href="/">Return Home</a>
             </div>
         </div>
     </div>

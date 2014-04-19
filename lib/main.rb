@@ -169,6 +169,22 @@ class WebSync < Sinatra::Base
         sprockets.append_path File.join(root, 'assets', 'src')
         sprockets.append_path File.join(root, 'assets', 'lib')
     end
+    # Block most XHR (originated from javascript). This stops scripts from doing anything malicious to other documents.
+    before do
+        # Allow static assets.
+        if request.xhr? and not request.path_info.match %r{^/assets/}
+            referer = URI.parse(request.env["HTTP_REFERER"]).path
+            path = request.path_info
+            bits = referer.split("/")
+            doc = bits[1]
+            # Only allow same document and post "upload" and get "assets/#{asset}".
+            if bits.length < 2 or not (
+                    request.post? and path.match %r{^/#{doc}/upload$} or
+                    request.get?  and path.match %r{^/#{doc}/assets/} )
+                halt 403
+            end
+        end
+    end
     get '/public' do
         cache time: 30 do
             erb :public
@@ -524,8 +540,8 @@ class WebSync < Sinatra::Base
             redirect "/#{doc}/edit"
         end
         doc_id, doc = document_auth doc
-        if parts.length > 3
-            if parts[2] == "assets"
+        if parts[2] == "assets"
+            if parts.length > 3
                 cache do
                     file = URI.unescape(parts[3..-1].join("/"))
                     asset = doc.children(name: file)[0]
@@ -537,6 +553,8 @@ class WebSync < Sinatra::Base
                         halt 404
                     end
                 end
+            else
+                halt 404
             end
         end
         @javascripts = [

@@ -18,7 +18,13 @@ class WSFileResource < DAV4Rack::Resource
         end
     end
     before do |resource, method_name|
-        resource.reload if [:put, :post, :delete, :get].include? method_name
+        if [:put, :post, :delete, :get].include? method_name
+            resource.reload
+            # Only allow XHR requests for directory listings.
+            if resource.request.xhr? and not ( method_name == :get and resource.collection? )
+                raise Forbidden
+            end
+        end
         if [:put, :post, :delete, :get, :exist?, :collection?].include? method_name
             resource.force_auth
             if not resource.file

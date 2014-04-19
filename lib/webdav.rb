@@ -85,9 +85,6 @@ class WSFileResource < DAV4Rack::Resource
             end
             children.each do |child|
                 response.body << "<tr><td>"
-                if child.file_path.split("/").last.nil?
-                    binding.pry
-                end
                 name = child.file_path.split("/").last.escape_html
                 path = child.public_path
                 if child.collection?

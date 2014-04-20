@@ -685,6 +685,7 @@ nav.navbar {
         display: block !important;
         width: auto;
         height: 51px;
+        overflow-y: hidden;
         white-space: nowrap;
         & > * {
             display: inline-block;

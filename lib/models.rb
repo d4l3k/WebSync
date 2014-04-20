@@ -149,6 +149,22 @@ class WSFile
         end
        "#{number.round(1)} #{UNITS[ exponent ]}"
     end
+    def copy
+        new_attributes = self.attributes
+        new_attributes.delete(:id)
+        file = WSFile.create(new_attributes)
+        owner = self.permissions(level: 'owner').user.first
+        perm = Permission.create(user: owner, file: file, level: "owner")
+        self.assets.each do |asset|
+            file.assets.push asset
+        end
+        self.children.each do |child|
+            file.children.push child.copy
+        end
+        file.save
+        file.data = self.data
+        file
+    end
 end
 class AssetWSFile
     include DataMapper::Resource

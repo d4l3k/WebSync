@@ -113,7 +113,22 @@ class WSFileResource < DAV4Rack::Resource
         Created
     end
     def copy dest, overwrite=false
-        NotImplemented
+        if not file_by_path dest
+            parts = @local_path.split("/")
+            parent = file_by_path parts[0..-2].join("/")
+            if parent
+                a = @file.copy
+                binding.pry
+                a.parent = parent
+                a.name = parts.last
+                a.save
+                Created
+            else
+                Conflict
+            end
+        else
+            Conflict
+        end
     end
     def put(request, response)
         if not @file

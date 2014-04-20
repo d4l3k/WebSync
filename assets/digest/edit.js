@@ -66,14 +66,26 @@ define("edit", ['websync'], function(websync) {
                 <button id="justifyright" title="Justify Right (Ctrl-Shift-R)" class="btn btn-default"><i class="fa fa-align-right"></i></button> \
                 <button id="justifyfull" title="Justify Full (Ctrl-Shift-J)" class="btn btn-default"><i class="fa fa-align-justify"></i></button> \
             </div> \
+            <div class="btn-group" id="line_spacing"> \
+                <button  title="Line Spacing" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-text-height"></i></button> \
+                <ul class="dropdown-menu" role="menu">\
+                    <li role="presentation" class="dropdown-header">Line Spacing</li> \
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">1</a></li>\
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">1.15</a></li>\
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">1.5</a></li>\
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">2</a></li>\
+                </ul> \
+            </div> \
             <button id="insertunorderedlist" title="Unordered List (Ctrl-Shift-7)" class="btn btn-default"><i class="fa fa-list-ul"></i></button> \
             <button id="insertorderedlist" title="Ordered List (Ctrl-Shift-8)" class="btn btn-default"><i class="fa fa-list-ol"></i></button> \
+            <button id="outdent" title="Outdent (Shift-Tab)" class="btn btn-default"><i class="fa fa-outdent"></i></button> \
+            <button id="indent" title="Indent (Tab)" class="btn btn-default"><i class="fa fa-indent"></i></button> \
             <button id="superscript" title="Superscript (Ctrl-Shift-^)" class="btn btn-default"><i class="fa fa-superscript"></i></button> \
             <button id="subscript" title="Subscript (Ctrl-Shift-_)" class="btn btn-default"><i class="fa fa-subscript"></i></button> \
             <input id="fontColor" title="Font Color" class="form-control" type="color"></input> \
             <input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"></input> \
             <button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> \
-            <button id="removeFormat" title="Clear Formatting (Ctrl-Shift-\\)" class="btn btn-default"><i class="fa fa-times"></i></button> \
+            <button id="removeFormat" title="Clear Formatting (Ctrl-Shift-\\)" class="btn btn-default"><i class="fa fa-unlink"></i></button> \
         </div>');
     $('body').append('<div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-hidden="true"> \
   <div class="modal-dialog"> \
@@ -119,7 +131,7 @@ define("edit", ['websync'], function(websync) {
   </div> \
 </div>');
     // List of buttons that can be clicked in the Text menu.
-    self.text_buttons = ["bold", 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', "removeFormat", "insertorderedlist", "insertunorderedlist", 'superscript', 'subscript', 'insertHorizontalRule'];
+    self.text_buttons = ["bold", 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', "removeFormat", "insertorderedlist", "insertunorderedlist", 'superscript', 'subscript', 'insertHorizontalRule', "indent", 'outdent'];
     // Bind the basic text editing commands to the buttons.
     self.text_buttons.forEach(function(elem) {
         $('button#' + elem).bind("click.TextEdit", function() {
@@ -175,7 +187,6 @@ define("edit", ['websync'], function(websync) {
     $("#hilightColor").change(function(e) {
         document.execCommand('hiliteColor', false, this.value);
     });
-
     // Reflects text in menu at top
     $(document).bind('selectionchange.TextEdit', function() {
         if (!self._selectTimeout) {
@@ -300,6 +311,10 @@ define("edit", ['websync'], function(websync) {
     $("#createLink").click(function() {
         var url = prompt("Hyperlink URL");
         document.execCommand("createLink", false, url);
+    });
+    $("#line_spacing a").click(function(e){
+        var width = $(this).text();
+        WebSync.applyCssToSelection({'line-height': width+'em'});
     });
     $("#video").click(function() {
         self.selection = WebSync.selectionSave();

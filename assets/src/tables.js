@@ -13,7 +13,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     $(".content").append($('<div id="table_cursor" class="Table"></div><div id="table_selection" class="Table"></div><div id="table_clip" style="position:absolute; left:-1000px;top:-1000px;"></div>'));
     $("#Insert").append($('<button id="table" title="Table" class="btn btn-default Table"><i class="fa fa-table"></i></button>'))
     $("#table").bind("click.Tables", function(e) {
-        console.log(e);
         var new_table = $("<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>")
         WebSync.insertAtCursor(new_table)
     });
@@ -158,7 +157,9 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     });
     self.selectionActive = false;
     $(".content").bind("click.Tables", function(e) {
-        //console.log(e);
+        self.clearSelect();
+    });
+    $(document).bind("clear_select.Tables", function(e){
         self.clearSelect();
     });
     $(".content").delegate("td", "contextmenu.Tables", function(e) {
@@ -499,8 +500,8 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
         } else {
             var end = self.selectionEnd || self.selectedElem
-            var pos = $(self.selectedElem).position(); //offset();
-            var endPos = $(end).position(); //offset();
+            var pos = $(self.selectedElem).offset();
+            var endPos = $(end).offset();
             var baseWidth = $(end).width();
             var baseHeight = $(end).height();
             if (pos.left > endPos.left) {
@@ -517,15 +518,15 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
             var height = endPos.top + baseHeight - pos.top;
             var width = endPos.left + baseWidth - pos.left;
-            if (self.selectionEnd)
-                $("#table_selection").show().css({
+            if (self.selectionEnd){
+                $("#table_selection").show().offset({
                     left: pos.left,
                     top: pos.top
                 }).height(height).width(width);
-            else
-                $("#table_selection").hide()
-                //$("#table_selection").show().animate({top:pos.top,left:pos.left,height:height,width:width},50,'linear');//offset(pos).height(height).width(width);
-                // Set hidden selection area contents to mini-table.
+            } else {
+                $("#table_selection").hide();
+            }
+            // Set hidden selection area contents to mini-table.
             var selection_html = "<table><tbody>";
             var tpos_start = self.selectedPos();
             var tpos_end = self.selectedPos(end);

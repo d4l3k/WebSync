@@ -98,6 +98,7 @@ define("/assets/note.js", ['websync'], function(websync) {
     self.switchToSection = function(section) {
         $(".note-section").hide();
         $(".note-section").eq(section).show();
+        $(document).trigger("clear_select");
     }
     self.switchToPage = function(section, page) {
         self.switchToSection(section);

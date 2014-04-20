@@ -438,7 +438,7 @@ class WebSync < Sinatra::Base
             )
             doc.assets = AssetGroup.get(1).assets
             doc.save
-            perm = Permission.create(user: current_user, document: doc, level: "owner")
+            perm = Permission.create(user: current_user, file: doc, level: "owner")
             # Upload images
             Dir.glob(tempfile.path+"_html_*").each do |file|
                 response = $postgres.exec_prepared('insert_blob', [file.gsub("/tmp/",""), {value: File.read(file), format: 1}, `file --mime-type '#{file}'`.split(" ").last, DateTime.now, DateTime.now, doc.id])

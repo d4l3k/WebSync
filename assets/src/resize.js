@@ -24,6 +24,9 @@ define(['websync'], function() {
     $(".content").bind("click.Resize", function() {
         self.resizeOff();
     });
+    $(document).bind("clear_select.Resize", function(e){
+        self.resizeOff();
+    });
     $(".content").delegate(".Resize.handle", "click.Resize", function(e) {
         e.stopPropagation();
     });

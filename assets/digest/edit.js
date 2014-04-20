@@ -183,12 +183,34 @@ define("edit", ['websync'], function(websync) {
         }
     });
     // List indentation
-    $(".content_well").bind("keydown.TextEdit", "li", function(e) {
+    $(".content_well").bind("keydown.TextEdit", function(e) {
         if (e.keyCode == 9) {
-            if (e.shiftKey) {
-                document.execCommand('outdent');
+            var node = $(getSelection().anchorNode)
+            var parent = node.parent();
+            if($(getSelection().baseNode).closest('li').length==1){
+                if (e.shiftKey) {
+                    document.execCommand('outdent');
+                } else {
+                    document.execCommand('indent');
+                }
             } else {
-                document.execCommand('indent');
+                if (e.shiftKey) {
+                    if(parent.css("text-indent")!="0px"){
+                        parent.css({"text-indent": ""});
+                    } else {
+                        document.execCommand('outdent');
+                    }
+                } else {
+                    if(parent.css("text-indent")=="0px"){
+                        if(parent.attr('contenteditable')=="true"){
+                            node.wrap( "<div style='text-indent: 40px'></div>" );
+                        } else {
+                            parent.css({"text-indent": 40});
+                        }
+                    } else {
+                        document.execCommand('indent');
+                    }
+                }
             }
             e.preventDefault();
         }

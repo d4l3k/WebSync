@@ -4,11 +4,16 @@
     </div>
     <p>Supports most document formats that LibreOffice can read. Depending on the type of file you may get mixed results.</p>
     <form class="form-horizontal" action='upload' enctype="multipart/form-data" method='post'>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="file">File</label>
-        <div class="fileupload fileupload-new col-sm-10" data-provides="fileupload">
-            <input name='file' type="file" />
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="file">File</label>
+            <div class="fileupload fileupload-new col-sm-10" data-provides="fileupload">
+                <input name='file' type="file" />
+            </div>
         </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="checkbox" name="convert" checked> Convert files to editable format.
+            </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

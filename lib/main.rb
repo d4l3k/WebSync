@@ -409,42 +409,73 @@ class WebSync < Sinatra::Base
         filetype = params[:file][:type]
         content = nil
         # TODO: Split upload/download into its own external server. Right now Unoconv is blocking. Also issues may arise if multiple copies of LibreOffice are running on the same server. Should probably use a single server instance of LibreOffice
-        if filetype=="application/pdf"
-            content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
-        elsif filetype=='text/html'
-            content = File.read(tempfile.path)
-        else
-            system("unoconv","-f","html",tempfile.path)
-            exit_status = $?.to_i
-            if exit_status == 0
-                content = File.read(tempfile.path+".html")
+        if params["convert"]
+            if filetype=="application/pdf"
+                content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
+            elsif filetype=='text/html'
+                content = File.read(tempfile.path)
             else
-                logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
+                system("unoconv","-f","html",tempfile.path)
+                exit_status = $?.to_i
+                if exit_status == 0
+                    content = File.read(tempfile.path+".html")
+                    File.delete(tempfile.path + ".html")
+                else
+                    logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
+                end
             end
-        end
-        if content!=nil
-            dom = Nokogiri::HTML(content)
-            dom.css("img[src]").each do |img|
-                img["src"] = "assets/#{img.attr("src")}"
+            File.delete tempfile.path
+            if content!=nil
+                dom = Nokogiri::HTML(content)
+                upload_list = []
+                dom.css("img[src]").each do |img|
+                    path = img.attr("src").split("/").last
+                    # Security check, make sure it starts with RackMultipart and it exists.
+                    if File.exists? "/tmp/#{path}" and /^#{tempfile.path}/.match img.attr("src")
+                        upload_list.push path
+                        img["src"] = "assets/#{path}"
+                    end
+                end
+                # Basic security check
+                dom.css("script").remove();
+                doc = WSFile.create(
+                    name: filename,
+                    body: {html: dom.to_html},
+                    create_time: Time.now,
+                    edit_time: Time.now,
+                    content_type: 'text/websync'
+                )
+                doc.assets = AssetGroup.get(1).assets
+                doc.save
+                perm = Permission.create(user: current_user, file: doc, level: "owner")
+                # Upload images
+                upload_list.each do |file|
+                    path = "/tmp/#{file}"
+                    type = MIME::Types.type_for(path).first.content_type
+                    blob = WSFile.create(parent: doc, name: file, content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
+                    blob.data = File.read path
+                    perm = Permission.create(user: current_user, file: blob, level: "owner")
+                    File.delete path
+                end
+                if not doc.id
+                    binding.pry
+                end
+                redirect "/#{doc.id.encode62}/edit"
+            else
+                flash[:danger] = "'#{h params[:file][:filename]}' failed to be converted."
+                redirect "/"
             end
-            # Basic security check
-            dom.css("script").remove();
-            doc = WSFile.create(
-                name: filename,
-                body: {html: dom.to_html},
-                create_time: Time.now,
-                edit_time: Time.now,
-                content_type: 'text/websync'
-            )
-            doc.assets = AssetGroup.get(1).assets
-            doc.save
-            perm = Permission.create(user: current_user, file: doc, level: "owner")
-            # Upload images
-            Dir.glob(tempfile.path+"_html_*").each do |file|
-                response = $postgres.exec_prepared('insert_blob', [file.gsub("/tmp/",""), {value: File.read(file), format: 1}, `file --mime-type '#{file}'`.split(" ").last, DateTime.now, DateTime.now, doc.id])
-            end
-            redirect "/#{doc.id.encode62}/edit"
         else
+            file = params["file"]
+            type = file[:type]
+            # Fingerprint file for mime-type if we aren't provided with it.
+            if type=="application/octet-stream"
+                type = MIME::Types.type_for(file[:tempfile].path).first.content_type
+            end
+            blob = WSFile.create(name: file[:filename], content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
+            blob.data = file[:tempfile].read
+            perm = Permission.create(user: current_user, file: blob, level: "owner")
+            flash[:success] = "'#{h file[:filename]}' was successfully uploaded."
             redirect "/"
         end
     end
@@ -584,17 +615,15 @@ class WebSync < Sinatra::Base
             type = file[:type]
             # Fingerprint file for mime-type if we aren't provided with it.
             if type=="application/octet-stream"
-                type = `file #{file[:tempfile].path} --mime-type`.split(" ").last
+                type = MIME::Types.type_for(file[:tempfile].path).first.content_type
             end
             ws_file = doc.children(name: file[:filename])[0]
             if ws_file
                 ws_file.update edit_time: DateTime.now
                 ws_file.data = file[:tempfile].read
-                #response = $postgres.exec_prepared('update_blob', [{value: file[:tempfile].read, format: 1}, type, DateTime.now, file[:filename],  doc_id])
             else
                 blob = WSFile.create(parent: doc, name: file[:filename], content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
                 blob.data = file[:tempfile].read
-                #response = $postgres.exec_prepared('insert_blob', [file[:filename], {value: file[:tempfile].read, format: 1}, type, DateTime.now, DateTime.now, doc_id])
             end
             $redis.del "url:/#{doc_id.encode62}/assets/#{URI.encode(file[:filename])}"
             redirect "/#{doc_id.encode62}/edit"

@@ -19,6 +19,15 @@ body {
         }
     }
 }
+.hidden-xs {
+    display: initial !important;
+}
+
+@media (max-width: 767px) {
+.hidden-xs {
+  display: none !important;
+ }
+}
 .title {
     font-family: 'Open Sans Light';
     font-size: 56px;

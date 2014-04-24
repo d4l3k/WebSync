@@ -7,12 +7,12 @@ end
 # Likely nolonger needed
 def json_to_html_node obj
     html = "";
-    if obj['name']=="#text"
+    if obj['nodeName']=="#text"
         return obj['textContent']
     end
-    html+="<"+obj['name']
+    html+="<"+obj['nodeName']
     obj.each do |k,v|
-        if k!="name"&&k!="textContent"&&k!="childNodes"
+        if k!="nodeName"&&k!="textContent"&&k!="childNodes"
             html+=" "+k+"="+MultiJson.dump(v)
         end
     end
@@ -22,7 +22,7 @@ def json_to_html_node obj
         obj['childNodes'].each do |elem|
             html+= json_to_html_node(elem)
         end
-        html+="</"+obj['name']+">"
+        html+="</"+obj['nodeName']+">"
     else
         html+="/>"
     end

@@ -159,7 +159,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     $(".content").bind("click.Tables", function(e) {
         self.clearSelect();
     });
-    $(document).bind("clear_select.Tables", function(e){
+    $(document).bind("clear_select.Tables", function(e) {
         self.clearSelect();
     });
     $(".content").delegate("td", "contextmenu.Tables", function(e) {
@@ -518,7 +518,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
             var height = endPos.top + baseHeight - pos.top;
             var width = endPos.left + baseWidth - pos.left;
-            if (self.selectionEnd){
+            if (self.selectionEnd) {
                 $("#table_selection").show().offset({
                     left: pos.left,
                     top: pos.top

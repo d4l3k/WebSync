@@ -24,7 +24,7 @@ define(['websync'], function() {
     $(".content").bind("click.Resize", function() {
         self.resizeOff();
     });
-    $(document).bind("clear_select.Resize", function(e){
+    $(document).bind("clear_select.Resize", function(e) {
         self.resizeOff();
     });
     $(".content").delegate(".Resize.handle", "click.Resize", function(e) {
@@ -112,14 +112,14 @@ define(['websync'], function() {
         if (!self.active) return;
         var offset = $(self.active).offset();
         console.log(self.active);
-        if(self.active.getBoundingClientRect){
+        if (self.active.getBoundingClientRect) {
             var rect = self.active.getBoundingClientRect();
             console.log(rect);
             var width = rect.width;
             var height = rect.height;
             var top = rect.top;
             var left = rect.left;
-            console.log(offset.top -4, offset.left + width -3)
+            console.log(offset.top - 4, offset.left + width - 3)
             $(".Resize.handle.top").offset({
                 top: offset.top - 4
             });
@@ -133,16 +133,16 @@ define(['websync'], function() {
                 top: offset.top + height - 3
             });
             $(".Resize.handle.right.middle, .Resize.handle.left.middle").offset({
-                top: offset.top + height/2 - 4
+                top: offset.top + height / 2 - 4
             });
             $(".Resize.handle.top.middle, .Resize.handle.bottom.middle").offset({
-                left: offset.left + width/2 - 4
+                left: offset.left + width / 2 - 4
             });
             $(".Resize.handle.top.left.dragable").offset({
                 left: offset.left - 8,
                 top: offset.top - 8
             });
-        // Fallback method. TODO: Remove.
+            // Fallback method. TODO: Remove.
         } else {
             $(".Resize.handle.top").offset({
                 top: offset.top - 4

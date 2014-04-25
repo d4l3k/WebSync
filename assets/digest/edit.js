@@ -198,7 +198,7 @@ define("edit", ['websync'], function(websync) {
         if (e.keyCode == 9) {
             var node = $(getSelection().anchorNode)
             var parent = node.parent();
-            if($(getSelection().baseNode).closest('li').length==1){
+            if ($(getSelection().baseNode).closest('li').length == 1) {
                 if (e.shiftKey) {
                     document.execCommand('outdent');
                 } else {
@@ -206,17 +206,21 @@ define("edit", ['websync'], function(websync) {
                 }
             } else {
                 if (e.shiftKey) {
-                    if(parent.css("text-indent")!="0px"){
-                        parent.css({"text-indent": ""});
+                    if (parent.css("text-indent") != "0px") {
+                        parent.css({
+                            "text-indent": ""
+                        });
                     } else {
                         document.execCommand('outdent');
                     }
                 } else {
-                    if(parent.css("text-indent")=="0px"){
-                        if(parent.attr('contenteditable')=="true"){
-                            node.wrap( "<div style='text-indent: 40px'></div>" );
+                    if (parent.css("text-indent") == "0px") {
+                        if (parent.attr('contenteditable') == "true") {
+                            node.wrap("<div style='text-indent: 40px'></div>");
                         } else {
-                            parent.css({"text-indent": 40});
+                            parent.css({
+                                "text-indent": 40
+                            });
                         }
                     } else {
                         document.execCommand('indent');
@@ -312,9 +316,11 @@ define("edit", ['websync'], function(websync) {
         var url = prompt("Hyperlink URL");
         document.execCommand("createLink", false, url);
     });
-    $("#line_spacing a").click(function(e){
+    $("#line_spacing a").click(function(e) {
         var width = $(this).text();
-        WebSync.applyCssToSelection({'line-height': width+'em'});
+        WebSync.applyCssToSelection({
+            'line-height': width + 'em'
+        });
     });
     $("#video").click(function() {
         self.selection = WebSync.selectionSave();

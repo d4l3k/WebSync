@@ -10,7 +10,9 @@
         "fast-json-patch": "~0.3.6",
         "underscore": "~1.5.2",
         "docco": "~0.6.3",
-        "js-beautify": "~1.4.2"
+        "js-beautify": "^1.4.2",
+        "unoconv": "^0.1.2",
+        "tmp": "0.0.23"
     },
     "repository": {
         "type": "git",

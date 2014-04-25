@@ -479,6 +479,12 @@ class WebSync < Sinatra::Base
             redirect "/"
         end
     end
+    get '/:doc/download/:id' do
+        cache do
+            halt 404
+        end
+    end
+=begin
     get '/:doc/download/:format' do
         if !%w(bib doc docx doc6 doc95 docbook html odt ott ooxml pdb pdf psw rtf latex sdw sdw4 sdw3 stw sxw text txt vor vor4 vor3 xhtml bmp emf eps gif jpg met odd otg pbm pct pgm png ppm ras std svg svm swf sxd sxd3 sxd5 tiff wmf xpm odg odp pot ppt pwp sda sdd sdd3 sdd4 sti stp sxi vor5 csv dbf dif ods pts pxl sdc sdc4 sdc3 slk stc sxc xls xls5 xls95 xlt xlt5).include?(params[:format])
             halt 400
@@ -509,6 +515,7 @@ class WebSync < Sinatra::Base
             file.unlink
         end
     end
+=end
     get '/:doc/json' do
         doc_id, doc = document_auth
         content_type 'application/json'

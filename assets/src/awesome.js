@@ -5,10 +5,10 @@ define(['websync'], function(websync) {
     $("body").append('<script src="/assets/tween.min.js"></script>')
     $("body").append('<script src="/assets/CSS3DRenderer.js"></script>')
     var nav = '<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button"><i class="fa fa-plus fa-lg"></i></button> <button id="remSlide" class="btn btn-danger" type="button"><i class="fa fa-lg fa-trash-o"></i></button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="slideView" class="slideWell panel panel-default"></div><div class="panel panel-default" id="properties"><h3>Properties</h3><hr>';
-    _.each(['Position', 'Rotation'], function(v){
-        nav += "<h4>"+v+"</h4>"
-        _.each(['x', 'y', 'z'], function(i){
-            nav += i.toUpperCase()+": <input class='form-control "+v+" "+i+"'></input>";
+    _.each(['Position', 'Rotation'], function(v) {
+        nav += "<h4>" + v + "</h4>"
+        _.each(['x', 'y', 'z'], function(i) {
+            nav += i.toUpperCase() + ": <input class='form-control " + v + " " + i + "'></input>";
         });
     });
     nav += '</div></div>'
@@ -21,7 +21,7 @@ define(['websync'], function(websync) {
     $(".content_well").css({
         left: 250
     });
-    $("#addSlide").click(function(e){
+    $("#addSlide").click(function(e) {
         var elemm = $("<div class='awesome awesome-slide' ><div class='slide-content' contenteditable=true></div></div>");
         var elem = self.addCss(elemm[0]);
         setTimeout(self.updateMenu, 50);
@@ -29,39 +29,39 @@ define(['websync'], function(websync) {
     $("#presentation-nav #slideView").delegate(".slidePreview", "click", function() {
         self.setIndex($(this).data().index);
     });
-    self.setIndex = function(index){
-        if(index < 0) index = 0;
+    self.setIndex = function(index) {
+        if (index < 0) index = 0;
         var child_length = self.css_scene.children.length;
-        if(index >= child_length) index = child_length-1;
+        if (index >= child_length) index = child_length - 1;
         self.activeIndex = index;
-        if(child_length==0) return;
+        if (child_length == 0) return;
         $(".slidePreview.active").removeClass('active');
         $(".slidePreview").eq(index).addClass("active");
         self.focus(self.css_scene.children[index]);
         self.updateProperties();
     }
-    self.updateProperties = function(){
+    self.updateProperties = function() {
         var obj = self.css_scene.children[self.activeIndex];
-        _.each(["Position", "Rotation"], function(type){
+        _.each(["Position", "Rotation"], function(type) {
             console.log(type);
             var info = obj[type.toLowerCase()]
-            _.each(["x", "y", "z"], function(v){
-                $("."+type+"."+v).val(info[v]);
+            _.each(["x", "y", "z"], function(v) {
+                $("." + type + "." + v).val(info[v]);
             });
         });
     }
-    $("#properties input").change(function(e){
+    $("#properties input").change(function(e) {
         console.log(e);
         var axis = "x";
-        if($(this).hasClass("y")) axis = "y";
-        if($(this).hasClass("z")) axis = "z";
+        if ($(this).hasClass("y")) axis = "y";
+        if ($(this).hasClass("z")) axis = "z";
         var prop = $(this).hasClass("Position") ? "position" : "rotation";
         var obj = self.css_scene.children[self.activeIndex];
         obj[prop][axis] = eval($(this).val());
-    }).blur(function(e){
+    }).blur(function(e) {
         var axis = "x";
-        if($(this).hasClass("y")) axis = "y";
-        if($(this).hasClass("z")) axis = "z";
+        if ($(this).hasClass("y")) axis = "y";
+        if ($(this).hasClass("z")) axis = "z";
         var prop = $(this).hasClass("Position") ? "position" : "rotation";
         var obj = self.css_scene.children[self.activeIndex];
         obj[prop][axis] = eval($(this).val());
@@ -71,11 +71,11 @@ define(['websync'], function(websync) {
         if (WebSyncAuth.view_op == "view") {
             if (e.keyCode == 39 || e.keyCode == 32 || e.keyCode == 40) {
                 // Move forward a slide
-                self.setIndex(self.activeIndex+1);
+                self.setIndex(self.activeIndex + 1);
                 e.preventDefault();
             } else if (e.keyCode == 37 || e.keyCode == 38) {
                 // Move back a slide
-                self.setIndex(self.activeIndex-1);
+                self.setIndex(self.activeIndex - 1);
                 e.preventDefault();
             }
         }
@@ -85,7 +85,7 @@ define(['websync'], function(websync) {
         WebSyncData.views = [];
         // 3D Objects
         WebSyncData.objects = [];
-        _.each(self.css_scene.children, function(child){
+        _.each(self.css_scene.children, function(child) {
             var obj = {
                 position: child.position,
                 scale: child.scale,
@@ -100,15 +100,15 @@ define(['websync'], function(websync) {
             WebSyncData.views.push(obj);
         });
     }
-    WebSync.fromJSON = function(){
-        for(var i=self.css_scene.children.length; i--; i>0){
+    WebSync.fromJSON = function() {
+        for (var i = self.css_scene.children.length; i--; i > 0) {
             self.css_scene.remove(self.css_scene.children[i]);
         }
-        _.each(WebSyncData.views, function(view){
-            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>"+JSONToDOM(view.body)+"</div></div>");
+        _.each(WebSyncData.views, function(view) {
+            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>" + JSONToDOM(view.body) + "</div></div>");
             var elem = self.addCss(elemm[0]);
-            _.each(['position', 'quaternion', 'scale'], function(prop){
-                _.each(view[prop], function(v, k){
+            _.each(['position', 'quaternion', 'scale'], function(prop) {
+                _.each(view[prop], function(v, k) {
                     elem[prop][k] = v;
                 });
             });
@@ -249,89 +249,89 @@ define(['websync'], function(websync) {
                 "uniform vec3 diffuse;",
                 "uniform float opacity;",
 
-                THREE.ShaderChunk[ "color_pars_fragment" ],
-                THREE.ShaderChunk[ "map_pars_fragment" ],
-                THREE.ShaderChunk[ "lightmap_pars_fragment" ],
-                THREE.ShaderChunk[ "envmap_pars_fragment" ],
-                THREE.ShaderChunk[ "fog_pars_fragment" ],
-                THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
-                THREE.ShaderChunk[ "specularmap_pars_fragment" ],
+                THREE.ShaderChunk["color_pars_fragment"],
+                THREE.ShaderChunk["map_pars_fragment"],
+                THREE.ShaderChunk["lightmap_pars_fragment"],
+                THREE.ShaderChunk["envmap_pars_fragment"],
+                THREE.ShaderChunk["fog_pars_fragment"],
+                THREE.ShaderChunk["shadowmap_pars_fragment"],
+                THREE.ShaderChunk["specularmap_pars_fragment"],
 
                 "void main() {",
 
-                    "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
+                "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
 
-                    THREE.ShaderChunk[ "map_fragment" ],
-                    THREE.ShaderChunk[ "alphatest_fragment" ],
-                    THREE.ShaderChunk[ "specularmap_fragment" ],
-                    THREE.ShaderChunk[ "lightmap_fragment" ],
-                    THREE.ShaderChunk[ "color_fragment" ],
-                    THREE.ShaderChunk[ "envmap_fragment" ],
-                    THREE.ShaderChunk[ "shadowmap_fragment" ],
-                    THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
-                    THREE.ShaderChunk[ "fog_fragment" ],
+                THREE.ShaderChunk["map_fragment"],
+                THREE.ShaderChunk["alphatest_fragment"],
+                THREE.ShaderChunk["specularmap_fragment"],
+                THREE.ShaderChunk["lightmap_fragment"],
+                THREE.ShaderChunk["color_fragment"],
+                THREE.ShaderChunk["envmap_fragment"],
+                THREE.ShaderChunk["shadowmap_fragment"],
+                THREE.ShaderChunk["linear_to_gamma_fragment"],
+                THREE.ShaderChunk["fog_fragment"],
 
-                    //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
+                //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
 
                 "}"
 
             ].join("\n");
 
-	    var betterFragmentShader = [
-                    "#define USE_SHADOWMAP",
-                    "uniform float opacity;",
+            var betterFragmentShader = [
+                "#define USE_SHADOWMAP",
+                "uniform float opacity;",
 
-                    "varying vec3 vLightFront;",
+                "varying vec3 vLightFront;",
 
-                    "#ifdef DOUBLE_SIDED",
+                "#ifdef DOUBLE_SIDED",
 
-                            "varying vec3 vLightBack;",
+                "varying vec3 vLightBack;",
 
-                    "#endif",
+                "#endif",
 
-                    THREE.ShaderChunk[ "color_pars_fragment" ],
-                    THREE.ShaderChunk[ "map_pars_fragment" ],
-                    THREE.ShaderChunk[ "lightmap_pars_fragment" ],
-                    THREE.ShaderChunk[ "envmap_pars_fragment" ],
-                    THREE.ShaderChunk[ "fog_pars_fragment" ],
-                    THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
-                    THREE.ShaderChunk[ "specularmap_pars_fragment" ],
+                THREE.ShaderChunk["color_pars_fragment"],
+                THREE.ShaderChunk["map_pars_fragment"],
+                THREE.ShaderChunk["lightmap_pars_fragment"],
+                THREE.ShaderChunk["envmap_pars_fragment"],
+                THREE.ShaderChunk["fog_pars_fragment"],
+                THREE.ShaderChunk["shadowmap_pars_fragment"],
+                THREE.ShaderChunk["specularmap_pars_fragment"],
 
-                    "void main() {",
+                "void main() {",
 
-                            "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
+                "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
 
-                            THREE.ShaderChunk[ "map_fragment" ],
-                            THREE.ShaderChunk[ "alphatest_fragment" ],
-                            THREE.ShaderChunk[ "specularmap_fragment" ],
+                THREE.ShaderChunk["map_fragment"],
+                THREE.ShaderChunk["alphatest_fragment"],
+                THREE.ShaderChunk["specularmap_fragment"],
 
-                            "#ifdef DOUBLE_SIDED",
+                "#ifdef DOUBLE_SIDED",
 
-                                    //"float isFront = float( gl_FrontFacing );",
-                                    //"gl_FragColor.xyz *= isFront * vLightFront + ( 1.0 - isFront ) * vLightBack;",
+                //"float isFront = float( gl_FrontFacing );",
+                //"gl_FragColor.xyz *= isFront * vLightFront + ( 1.0 - isFront ) * vLightBack;",
 
-                                    "if ( gl_FrontFacing )",
-                                            "gl_FragColor.xyz *= vLightFront;",
-                                    "else",
-                                            "gl_FragColor.xyz *= vLightBack;",
+                "if ( gl_FrontFacing )",
+                "gl_FragColor.xyz *= vLightFront;",
+                "else",
+                "gl_FragColor.xyz *= vLightBack;",
 
-                            "#else",
+                "#else",
 
-                                    "gl_FragColor.xyz *= vLightFront;",
+                "gl_FragColor.xyz *= vLightFront;",
 
-                            "#endif",
+                "#endif",
 
-                            THREE.ShaderChunk[ "lightmap_fragment" ],
-                            THREE.ShaderChunk[ "color_fragment" ],
-                            THREE.ShaderChunk[ "envmap_fragment" ],
-                            THREE.ShaderChunk[ "shadowmap_fragment" ],
+                THREE.ShaderChunk["lightmap_fragment"],
+                THREE.ShaderChunk["color_fragment"],
+                THREE.ShaderChunk["envmap_fragment"],
+                THREE.ShaderChunk["shadowmap_fragment"],
 
-                            THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
+                THREE.ShaderChunk["linear_to_gamma_fragment"],
 
-                            THREE.ShaderChunk[ "fog_fragment" ],
-                            //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
+                THREE.ShaderChunk["fog_fragment"],
+                //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
 
-                    "}"
+                "}"
 
             ].join("\n")
 
@@ -370,7 +370,7 @@ define(['websync'], function(websync) {
         self.camera.quaternion = qm;
         self.camera.quaternion.normalize();*/
         var time = 800;
-        var distToCenter = 740/Math.sin( Math.PI / 180.0 * self.camera.fov * 0.5)*0.5;
+        var distToCenter = 740 / Math.sin(Math.PI / 180.0 * self.camera.fov * 0.5) * 0.5;
         var target = (new THREE.Vector3(0, 0, distToCenter)).applyQuaternion(obj.quaternion).add(obj.position);
         new TWEEN.Tween(self.camera.position).to(target, time).easing(TWEEN.Easing.Quadratic.InOut).start();
         new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time).easing(TWEEN.Easing.Quadratic.InOut).start();

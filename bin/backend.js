@@ -1,14 +1,16 @@
 #!/usr/bin/node
 
 var config = {};
-var fs = require('fs');
-var jsonpatch = require('fast-json-patch')
-Base62 = require('base62');
-redisLib = require('redis');
-var pg = require('pg');
-md5 = require('MD5');
-var _ = require("underscore");
-
+var fs = require('fs'),
+    jsonpatch = require('fast-json-patch'),
+    Base62 = require('base62'),
+    redisLib = require('redis'),
+    pg = require('pg'),
+    md5 = require('MD5'),
+    _ = require("underscore"),
+    unoconv = require('unoconv'),
+    tmp = require('tmp'),
+    crypto = require('crypto');
 
 fs.readFile('./config.json', function(err, buffer) {
     config = JSON.parse(buffer.toString());
@@ -242,6 +244,28 @@ fs.readFile('./config.json', function(err, buffer) {
                                     reason: "invalid permissions."
                                 });
                             }
+                        } else if (data.type == "export_html") {
+                            tmp.file({ mode: 0644, prefix: 'websync-backend-export-', postfix: '.html' }, function _tempFileCreated(err, path, fd) {
+                                if (err) throw err;
+                                console.log("File: ", path);
+                                console.log("Filedescriptor: ", fd);
+                                fs.writeSync(fd, data.data);
+                                fs.closeSync(fd);
+                                console.log("Extension:",data.extension);
+                                unoconv.convert(path, data.extension, function(err, result){
+                                    if(err) console.log("UNOCONV ERROR", err);
+                                    else {
+                                        crypto.randomBytes(64, function(ex, buf) {
+                                            var token = buf.toString('hex');
+                                            var address = 'websync:document_export:' + doc_id + ":"+token
+                                            redis.setex(token, 15*60, result.toString(), function(err){
+                                                if(err) console.log("REDIS ERROR SETEX:",err);
+                                            });
+                                            console.log("EXPORT Address:",address, result.length, result.toString('utf-8'));
+                                        });
+                                    }
+                                });
+                            });
                         } else if (data.type == "blob_info") {
                             if (editor) {
                                 var resources = []

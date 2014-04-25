@@ -368,6 +368,31 @@ define('websync', {
             data: data
         });
     },
+    // Configures the html exporter for document downloads. Type can be [document, graphics, presentation, spreadsheet]
+    setupDownloads: function(type, export_to_html) {
+        var types = [
+            ["Microsoft Word", "docx"],
+            ["PDF", "pdf"],
+            ["HTML", "html"],
+            ["Libre Office", "odt"],
+            ["Raw Text", "txt"]
+        ]
+        var buttons = "";
+        _.each(types, function(doc_type) {
+            buttons += "<li><a href='#' data-type='" + doc_type[1] + "'>" + doc_type[0] + " (." + doc_type[1] + ")</a></li>\n";
+        });
+        $("#download_types").html(buttons);
+        $("#download_types a").click(function(e) {
+            var export_type = $(this).data().type;
+            console.log("Exporting:", export_type, type);
+            WebSync.connection.sendJSON({
+                type: 'export_html',
+                doc_type: type,
+                extension: export_type,
+                data: export_to_html()
+            });
+        });
+    },
     users: {},
     _config_callbacks: {},
     // Function: void WebSync.config_set(string key, object value, string space);

@@ -144,6 +144,8 @@ define('websync', {
                         delete WebSync._config_callbacks[data.id];
                     }
                 }
+            } else if (data.type == "download_token"){
+                window.location.pathname = "/"+window.location.pathname.split("/")[1]+"/download/"+data.token;
             } else if (data.type == "error") {
                 WebSync.error(data.reason);
             } else if (data.type == 'info') {

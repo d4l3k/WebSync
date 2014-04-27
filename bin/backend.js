@@ -255,13 +255,21 @@ fs.readFile('./config.json', function(err, buffer) {
                                 unoconv.convert(path, data.extension, function(err, result){
                                     if(err) console.log("UNOCONV ERROR", err);
                                     else {
-                                        crypto.randomBytes(64, function(ex, buf) {
+                                        crypto.randomBytes(16, function(ex, buf) {
                                             var token = buf.toString('hex');
-                                            var address = 'websync:document_export:' + doc_id + ":"+token
-                                            redis.setex(token, 15*60, result.toString(), function(err){
+                                            var address = 'websync:document_export:' + doc_id + ":"+token;
+                                            var text = result.toString();
+                                            redis.setex(address, 15*60, text, function(err){
                                                 if(err) console.log("REDIS ERROR SETEX:",err);
                                             });
-                                            console.log("EXPORT Address:",address, result.length, result.toString('utf-8'));
+                                            redis.setex(address+":extension", 15*60, data.extension, function(err){
+                                                if(err) console.log("REDIS ERROR SETEX:",err);
+                                            });
+                                            console.log("EXPORT Address:",address, result.length);
+                                            ws.sendJSON({
+                                                type: "download_token",
+                                                token: token
+                                            });
                                         });
                                     }
                                 });

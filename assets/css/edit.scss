@@ -164,7 +164,7 @@ body .mathquill-rendered-math {
     }
 }
 .noedit {
-    .content_well, #name {
+    .content, #name {
         pointer-events: none;
         .return_edit {
             pointer-events: all;

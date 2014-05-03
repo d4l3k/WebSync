@@ -283,6 +283,7 @@ nav .settings-popup {
         overflow: initial;
         .ace_editor, #css-editor {
             min-height: 300px;
+            border: 1px solid #dddddd;
         }
     }
     .popover-content {

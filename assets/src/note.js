@@ -137,8 +137,10 @@ define("/assets/note.js", ['websync'], function(websync) {
     });
     $("#note-well").on("click", ".note-page section", function(e) {
         self.deselectNoteBubble();
-        $(e.currentTarget).attr("contenteditable", true);
-        e.stopPropagation();
+        if(WebSyncAuth.access != "viewer"){
+            $(e.currentTarget).attr("contenteditable", true);
+            e.stopPropagation();
+        }
     });
     $("#addSection").on("click", function(e) {
         self.deselectNoteBubble();
@@ -155,14 +157,16 @@ define("/assets/note.js", ['websync'], function(websync) {
     $("#note-well").on("click", ".note-page", function(e) {
         console.log(e);
         self.deselectNoteBubble();
-        var page = e.currentTarget;
-        var note = $("<section></section")
-        $(page).append(note);
-        note.attr("contenteditable", true).focus();
-        note.css({
-            left: e.offsetX,
-            top: e.offsetY
-        });
+        if(WebSyncAuth.access != "viewer"){
+            var page = e.currentTarget;
+            var note = $("<section></section")
+            $(page).append(note);
+            note.attr("contenteditable", true).focus();
+            note.css({
+                left: e.offsetX,
+                top: e.offsetY
+            });
+        }
     });
     $("#notesView").on("click", ".section", function(e) {
         var section = e.currentTarget.dataset.index;

@@ -165,7 +165,6 @@ body .mathquill-rendered-math {
 }
 .noedit {
     .content, #name {
-        pointer-events: none;
         .return_edit {
             pointer-events: all;
         }
@@ -435,9 +434,6 @@ nav .settings-popup {
     color: black;
     padding: 0;
     .page {
-        -user-modify: read-write;
-        -moz-user-modify: read-write;
-        -webkit-user-modify: read-write;
         min-height: 9in;
         border: 1px solid #eee;
         word-wrap: break-word;

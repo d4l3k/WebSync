@@ -415,36 +415,36 @@ define("edit", ['websync'], function(websync) {
         }
     }
     // TODO: Not sure if this should be here.
-    self.updateStyles = function(){
+    self.updateStyles = function() {
         self.stylesheet.innerHTML = (WebSyncData.custom_css || []).join("\n");
     }
     self.stylesheet = (function() {
-	// Create the <style> tag
-	var style = document.createElement("style");
+        // Create the <style> tag
+        var style = document.createElement("style");
 
-	// WebKit hack :(
-	style.appendChild(document.createTextNode(""));
+        // WebKit hack :(
+        style.appendChild(document.createTextNode(""));
 
-	// Add the <style> element to the page
-	document.head.appendChild(style);
+        // Add the <style> element to the page
+        document.head.appendChild(style);
         return style;
     })();
     self.updateStyles();
     $(".settings-popup .tab-content").append('<div class="tab-pane active" id="css"><h3>Custom CSS Styling</h3><div id="css-editor"></div></div>');
     $('<li><a href="#css" data-toggle="tab">Custom CSS</a></li>').prependTo($(".settings-popup ul.nav-pills"));
-    _.defer(function(){
+    _.defer(function() {
         $("a[href='#css']").click();
         self.editor = ace.edit("css-editor");
         //self.editor.setTheme("ace/theme/monokai");
         self.editor.getSession().setMode("ace/mode/css");
         self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
-        self.editor.on("change", function(changes){
+        self.editor.on("change", function(changes) {
             // We split it into lines so we can do easier diffs.
             WebSyncData.custom_css = self.editor.getValue().split("\n");
             self.updateStyles();
         });
     });
-    $(document).on("patched", function(e){
+    $(document).on("patched", function(e) {
         self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
         self.updateStyles();
     });

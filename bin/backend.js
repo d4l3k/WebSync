@@ -73,8 +73,8 @@ fs.readFile('./config.json', function(err, buffer) {
             ws.sendJSON({
                 type: 'connected'
             });
-            ws.on('close', function(){
-                if(redis_sock){
+            ws.on('close', function() {
+                if (redis_sock) {
                     redis_sock.quit();
                 }
             });
@@ -97,7 +97,7 @@ fs.readFile('./config.json', function(err, buffer) {
                                     if (mdata.type == 'client_bounce') {
                                         try {
                                             ws.send(mdata.data);
-                                        } catch (err){
+                                        } catch (err) {
                                             // Socket isn't open. :(
                                         }
                                     }
@@ -237,7 +237,7 @@ fs.readFile('./config.json', function(err, buffer) {
                                     })
                                     .on("end", function() {
                                         // Check to so if it successfully got the permission level.
-                                        if(perms){
+                                        if (perms) {
                                             perms.users = []
                                             postgres.query("SELECT user_email, level FROM permissions WHERE file_id = $1", [doc_id])
                                                 .on("row", function(row) {
@@ -257,27 +257,31 @@ fs.readFile('./config.json', function(err, buffer) {
                                 });
                             }
                         } else if (data.type == "export_html") {
-                            tmp.file({ mode: 0644, prefix: 'websync-backend-export-', postfix: '.html' }, function _tempFileCreated(err, path, fd) {
+                            tmp.file({
+                                mode: 0644,
+                                prefix: 'websync-backend-export-',
+                                postfix: '.html'
+                            }, function _tempFileCreated(err, path, fd) {
                                 if (err) throw err;
                                 console.log("File: ", path);
                                 console.log("Filedescriptor: ", fd);
                                 fs.writeSync(fd, data.data);
                                 fs.closeSync(fd);
-                                console.log("Extension:",data.extension);
-                                unoconv.convert(path, data.extension, function(err, result){
-                                    if(err) console.log("UNOCONV ERROR", err);
+                                console.log("Extension:", data.extension);
+                                unoconv.convert(path, data.extension, function(err, result) {
+                                    if (err) console.log("UNOCONV ERROR", err);
                                     else {
                                         crypto.randomBytes(16, function(ex, buf) {
                                             var token = buf.toString('hex');
-                                            var address = 'websync:document_export:' + doc_id + ":"+token;
+                                            var address = 'websync:document_export:' + doc_id + ":" + token;
                                             var text = result.toString();
-                                            redis.setex(address, 15*60, result, function(err){
-                                                if(err) console.log("REDIS ERROR SETEX:",err);
+                                            redis.setex(address, 15 * 60, result, function(err) {
+                                                if (err) console.log("REDIS ERROR SETEX:", err);
                                             });
-                                            redis.setex(address+":extension", 15*60, data.extension, function(err){
-                                                if(err) console.log("REDIS ERROR SETEX:",err);
+                                            redis.setex(address + ":extension", 15 * 60, data.extension, function(err) {
+                                                if (err) console.log("REDIS ERROR SETEX:", err);
                                             });
-                                            console.log("EXPORT Address:",address, result.length);
+                                            console.log("EXPORT Address:", address, result.length);
                                             ws.sendJSON({
                                                 type: "download_token",
                                                 token: token

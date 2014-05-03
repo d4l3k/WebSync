@@ -6,7 +6,7 @@ define("/assets/page.js", ['websync'], function(websync) {
     if (!WebSyncData.body) {
         WebSyncData.body = [];
     }
-    if (WebSyncAuth.view_op == 'edit') {
+    if (WebSyncAuth.view_op == 'edit' && WebSyncAuth.access != "viewer") {
         $(".page").attr("contenteditable", true);
     }
     WebSync.toJSON = function() {
@@ -16,7 +16,7 @@ define("/assets/page.js", ['websync'], function(websync) {
         $(".content .page").get(0).innerHTML = JSONToDOM(WebSyncData.body);
     }
     WebSync.setupDownloads("document", function() {
-        return "<html><head><style>"+escapeHTML(WebSyncData.custom_css.join("\n"))+"</style></head><body>"+JSONToDOM(WebSyncData.body)+"</body></html>";
+        return "<html><head><style>" + escapeHTML(WebSyncData.custom_css.join("\n")) + "</style></head><body>" + JSONToDOM(WebSyncData.body) + "</body></html>";
     });
     $(document).on("modules_loaded", function() {
         WebSync.fromJSON();

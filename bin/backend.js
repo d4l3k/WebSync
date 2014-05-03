@@ -268,7 +268,7 @@ fs.readFile('./config.json', function(err, buffer) {
                                             var token = buf.toString('hex');
                                             var address = 'websync:document_export:' + doc_id + ":"+token;
                                             var text = result.toString();
-                                            redis.setex(address, 15*60, text, function(err){
+                                            redis.setex(address, 15*60, result, function(err){
                                                 if(err) console.log("REDIS ERROR SETEX:",err);
                                             });
                                             redis.setex(address+":extension", 15*60, data.extension, function(err){

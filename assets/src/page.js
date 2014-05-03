@@ -16,7 +16,7 @@ define("/assets/page.js", ['websync'], function(websync) {
         $(".content .page").get(0).innerHTML = JSONToDOM(WebSyncData.body);
     }
     WebSync.setupDownloads("document", function() {
-        return JSONToDOM(WebSyncData.body);
+        return "<html><head><style>"+escapeHTML(WebSyncData.custom_css.join("\n"))+"</style></head><body>"+JSONToDOM(WebSyncData.body)+"</body></html>";
     });
     $(document).on("modules_loaded", function() {
         WebSync.fromJSON();

@@ -1,7 +1,7 @@
 // WebSync: Text Editing Plugin
 define("edit", ['websync'], function(websync) {
     var self = {};
-    $("body").append('<script src="/assets/ace/ace.js"></script>')
+    $("body").append('<script src="/ace/ace.js"></script>')
     // Plugins should use a jQuery namespace for ease of use.
 
     // Bind Example: $(document).bind("click.Tables", clickHandler);

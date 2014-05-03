@@ -73,6 +73,11 @@ fs.readFile('./config.json', function(err, buffer) {
             ws.sendJSON({
                 type: 'connected'
             });
+            ws.on('close', function(){
+                if(redis_sock){
+                    redis_sock.quit();
+                }
+            });
             ws.on('message', function(message) {
                 var data = JSON.parse(message);
                 console.log('JSON: ' + message);
@@ -90,7 +95,11 @@ fs.readFile('./config.json', function(err, buffer) {
                                 var mdata = JSON.parse(msg);
                                 if (mdata.client != client_id) {
                                     if (mdata.type == 'client_bounce') {
-                                        ws.send(mdata.data);
+                                        try {
+                                            ws.send(mdata.data);
+                                        } catch (err){
+                                            // Socket isn't open. :(
+                                        }
                                     }
                                 }
                             });

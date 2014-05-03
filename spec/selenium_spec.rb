@@ -50,6 +50,7 @@ describe "Complete Test" do
         driver.find_element(:id, "settingsBtn").click
 
         # Test Hidden viewing mode
+        driver.find_element(:css, "a[href='#permissions']").click
         element = driver.find_element(:id, "access_mode")
         select=Selenium::WebDriver::Support::Select.new(element)
         select.select_by(:text, "Hidden (link only)")

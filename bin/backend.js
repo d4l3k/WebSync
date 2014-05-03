@@ -236,16 +236,19 @@ fs.readFile('./config.json', function(err, buffer) {
                                         perms = row;
                                     })
                                     .on("end", function() {
-                                        perms.users = []
-                                        postgres.query("SELECT user_email, level FROM permissions WHERE file_id = $1", [doc_id])
-                                            .on("row", function(row) {
-                                                perms.users.push(row);
-                                            })
-                                            .on("end", function() {
-                                                ws.sendJSON(_.extend({
-                                                    type: "permissions"
-                                                }, perms));
-                                            });
+                                        // Check to so if it successfully got the permission level.
+                                        if(perms){
+                                            perms.users = []
+                                            postgres.query("SELECT user_email, level FROM permissions WHERE file_id = $1", [doc_id])
+                                                .on("row", function(row) {
+                                                    perms.users.push(row);
+                                                })
+                                                .on("end", function() {
+                                                    ws.sendJSON(_.extend({
+                                                        type: "permissions"
+                                                    }, perms));
+                                                });
+                                        }
                                     });
                             } else {
                                 ws.sendJSON({

@@ -38,5 +38,6 @@ describe "WebDAV" do
         password = (rand*10**50).to_i.encode62
         user = User.first_or_create(email: 'test@websyn.ca', password: password)
         assert Litmus.test("http://localhost:9292/webdav/", user.email, password)
+        assert User.all(email: 'test@websyn.ca').destroy!
     end
 end

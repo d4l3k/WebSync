@@ -281,6 +281,9 @@ nav .settings-popup {
     }
     .tab-content {
         overflow: initial;
+        .ace_editor, #css-editor {
+            min-height: 300px;
+        }
     }
     .popover-content {
         overflow-y: auto;

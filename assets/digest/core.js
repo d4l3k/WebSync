@@ -93,6 +93,7 @@ define('websync', {
                 if (WebSync.fromJSON) {
                     WebSync.fromJSON(data.patch);
                 }
+                $(document).trigger("patched");
                 WebSync.selectionRestore(WebSync.tmp.range);
             } else if (data.type == "name_update") {
                 $("#name").text(data.name);

@@ -778,6 +778,13 @@ nav.navbar {
         #notesView {
             margin-top: 5px;
             padding: 8px 0;
+            overflow-y: auto;
+            position: absolute;
+            top: 38px;
+            left: 5px;
+            right: 5px;
+            margin-bottom: 0;
+            bottom: 7px;
             a {
                 cursor: pointer;
             }

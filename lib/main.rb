@@ -4,7 +4,7 @@ require 'sass'
 Bundler.require(:default)
 require 'tempfile'
 require 'digest/md5'
-$config = MultiJson.load(File.open('./config.json').read)
+$config = MultiJson.load(File.open('./config/config.json').read)
 if not ENV.key? "CONFIGMODE"
     require './lib/models'
     require './lib/configure'

@@ -12,7 +12,7 @@ var fs = require('fs'),
     tmp = require('tmp'),
     crypto = require('crypto');
 
-fs.readFile('./config.json', function(err, buffer) {
+fs.readFile('./config/config.json', function(err, buffer) {
     config = JSON.parse(buffer.toString());
     postgres = new pg.Client("tcp://" + config.postgres);
     postgres.connect();

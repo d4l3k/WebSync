@@ -52,9 +52,31 @@ rake "admin:remove[sample@sample.com]"
 
 Once the site is running you need to go into the admin panel and configure the script groups. Most of these are preconfigured from `config.json`
 
+# Configuration
+The configuration files are located in the `config` folder. Most of the configuration options are located in `config.json`. This configures the database connections and assets.
+
+## OAuth
+WebSync uses [OmniAuth](https://github.com/intridea/omniauth) for authenticating against other resources. OmniAuth provides an easy way to authenticate against dozen of outside services. The only ones that are packaged with WebSync are Facebook and Google, but it's fairly easy to add new ones. To use OAuth with any of these services you need to acquire API keys and add them on the command line. For example:
+```
+GPLUS_KEY="kasdlflasdfasdf.apps.googleusercontent.com" GPLUS_SECRET="jfasdjl923n3n" unicorn ...
+```
+The built in options are `GPLUS_KEY`, `GPLUS_SECRET`, `FACEBOOK_KEY` and `FACEBOOK_SECRET`.
+
+The OmniAuth providers are defined in `config/omniauth-providers.rb`. A list of available providers can be viewed on the [OmniAuth Wiki](https://github.com/intridea/omniauth/wiki/List-of-Strategies). To enable a provider you need to add the gem (eg. `omniauth-facebook`) to the `Gemfile` and configure in `config/omniauth-providers.rb` as follows. This is the Facebook provider configuration:
+
+```ruby
+# OmniAuth configuration:
+provider :facebook, ENV['FACEBOOK_KEY'], ENV['FACEBOOK_SECRET']
+
+# WebSync styling:
+# style <provider>, <button color>, <button label>
+style    :facebook, "#3b5998", "Facebook"
+
+```
+
 # Production
 ## Docker
-The easiest way to run WebSync (and most secure) is in [Docker](http://www.docker.io/). The first step is to install that by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src), butall of my manual installs on Arch Linux have worked just fine. The Docker image on Digital Ocean is out of date.
+[Docker](http://www.docker.io/) is a light weight Linux container tool that allows for easy deployment. The first step is to install that by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src) and because of it WebSyn.ca doesn't use it anymore. The Docker image on Digital Ocean is out of date.
 
 Second, modify `WebSync/config/personal-docker/config.json` with the production database information. The WebSync container does not include any databases. You need to configure Redis and PostgreSQL seperately.
 
@@ -110,7 +132,6 @@ which launches four worker threads that all listen on port 4568.
 
 If you want to avoid pm2, you can just run `./backend.js` or `node backend.js` to get a single worker on port 4568.
 
-
 # Contributing
 
 ## TODO
@@ -120,7 +141,7 @@ WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO 
 ## Source Documentation
 [WebSync Annotated Source Documentation](https://websyn.ca/documentation)
 
-WebSync uses Docco to automatically generate nicely formatted annotated source, but some of the code isn't that nicely documented. It would be great if you helped out with that. 
+WebSync uses Docco to automatically generate nicely formatted annotated source, but some of the code isn't that nicely documented. It would be great if you helped out with that.
 
 To generate the documentation you can run `rake documentation` or `rake assets:precompile`. Every WebSync server has the documentation available at `http://<server>:<port>/documentation`, assuming it has been generated. All production servers will have the documentation.
 

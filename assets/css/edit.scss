@@ -451,6 +451,11 @@ nav .settings-popup {
     .menu {
         display: none;
     }
+    &.layout-awesome, &.layout-presentation {
+        .return_edit .menu {
+            display: inline;
+        }
+    }
     .content_well {
         top: 0px;
         background-image: none;
@@ -460,7 +465,7 @@ nav .settings-popup {
         top: 0px;
         border-color: #222;
         background-color: #111;
-        #addSlide {
+        & > button, #properties {
             display: none;
         }
         #slideView {
@@ -468,6 +473,7 @@ nav .settings-popup {
             background-color: black;
             border-color: #222;
             color: white;
+            bottom: 5px;
             .slidePreview {
                 &.active {
                     border-color: cyan;
@@ -721,9 +727,9 @@ nav.navbar {
     border-left: 1px solid #cccccc;
     border-right: 1px solid #cccccc;
     .toggle-sidebar {
-        position: absolute;
+        position: relative;
         float: right;
-        right: 5px;
+        right: 0;
     }
     &#presentation-nav {
         float: left;

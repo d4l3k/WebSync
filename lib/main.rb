@@ -168,6 +168,16 @@ class WebSync < Sinatra::Base
         sprockets.append_path File.join(root, 'assets', 'digest')
         sprockets.append_path File.join(root, 'assets', 'src')
         sprockets.append_path File.join(root, 'assets', 'lib')
+
+        # OmniAuth configuration
+        use OmniAuth::Builder do
+            def style provider, color, tag
+                $config["omniauth"] ||= {}
+                $config["omniauth"][provider.to_sym] = {color: color, tag: tag}
+            end
+            # This is a huge hack.
+            eval(File.read('./config/omniauth-providers.rb'))
+        end
     end
     # Block most XHR (originated from javascript). This stops scripts from doing anything malicious to other documents.
     before do
@@ -182,6 +192,34 @@ class WebSync < Sinatra::Base
                     request.post? and path.match %r{^/#{doc}/upload$} or
                     request.get?  and path.match %r{^/#{doc}/assets/} )
                 halt 403
+            end
+        end
+    end
+    # OmniAuth: Support both GET and POST for callbacks
+    %w(get post).each do |method|
+        send(method, "/auth/:provider/callback") do
+            env['omniauth.auth'] # => OmniAuth::AuthHash
+            if logged_in?
+                flash[:danger] = "<strong>Error!</strong> Already logged in!"
+                redirect '/'
+            else
+                hash = env["omniauth.auth"]
+                email = hash["info"]["email"].downcase
+                provider = hash['provider']
+                nice_provider = $config["omniauth"][provider.to_sym][:tag]
+                user = User.get(email)
+                if user.nil?
+                    user = User.create({email: email, password: "", origin: provider})
+                elsif not user.origin.split(',').include?(provider)
+                    flash[:danger] = "<strong>Error!</strong> #{email} is not enabled for #{nice_provider} login."
+                    redirect '/login'
+                end
+                puts "[OAuth Login] #{email} #{provider}"
+                session_key = SecureRandom.uuid
+                $redis.set("userhash:#{session_key}",email)
+                session['userhash']=session_key
+                session['user']=email
+                redirect '/'
             end
         end
     end

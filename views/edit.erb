@@ -19,12 +19,15 @@
 				<ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
 				</ul>
 				<ul id="settings" class="nav navbar-nav pull-right ribbon-opt">
-					<li class>
-                        <a id="settingsBtn" title="Settings"><i class="fa fa-cog fa-lg"></i></a>
-                    </li>
-					<li class>
-                        <%= render_login_button %>
-                    </li>
+                                    <li>
+                                        <a class="present" title="Present"><i class="fa fa-expand fa-lg"></i></a>
+                                    </li>
+                                    <li>
+                                        <a id="settingsBtn" title="Settings"><i class="fa fa-cog fa-lg"></i></a>
+                                    </li>
+                                    <li>
+                                        <%= render_login_button %>
+                                    </li>
 				</ul>
                 <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b>Settings</b>
                     <ul class="nav tab-nav nav-pills">
@@ -178,6 +181,9 @@
 	</nav>
 <div class="content_well">
     <div class="return_edit">
+        <a class="menu" title="Toggle Menu" data-toggle="tooltip-top">
+            <i class="fa fa-bars fa-2x"></i>
+        </a>
         <a class="return" title="Return to Editing" data-toggle="tooltip-top">
             <i class="fa fa-compress fa-2x"></i>
         </a>

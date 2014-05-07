@@ -35,3 +35,7 @@ group :test do
     gem 'git_time_extractor'
     gem 'selenium-webdriver'
 end
+
+gem 'omniauth'
+gem 'omniauth-facebook'
+gem 'omniauth-gplus'

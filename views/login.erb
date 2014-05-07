@@ -28,6 +28,18 @@
 </form>
 </div>
 </div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Social Login</h3>
+  </div>
+  <div class="panel-body">
+<% $config["omniauth"].each do |provider, options| %>
+    <a class="btn btn-lg btn-login btn-primary" style="background-color: <%= options[:color] %>" href="/auth/<%= provider %>">
+        <%= options[:tag] %>
+    </a>
+<% end %>
+</div>
+</div>
 </div>
 
 <div class="col-md-6">

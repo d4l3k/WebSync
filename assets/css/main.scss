@@ -9,6 +9,15 @@ body {
     height: 100%;
     -webkit-font-smoothing: antialiased;
 }
+.btn-login {
+    color: white;
+    font-weight: bold;
+    font-family: 'Open Sans';
+    border: none;
+    &:hover {
+        opacity: 0.8;
+    }
+}
 @media (max-width: 979px) {
     .menu .navbar {
         ul li>a {

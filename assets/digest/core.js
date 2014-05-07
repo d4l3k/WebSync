@@ -552,6 +552,10 @@ define('websync', {
             WebSync.urlChange();
         });
         $('#view_mode').change(WebSync.updateViewMode);
+        $(".present").click(function() {
+            $('#view_mode').val("Presentation");
+            WebSync.updateViewMode();
+        });
         $(".return").click(function() {
             $('#view_mode').val("Normal");
             WebSync.updateViewMode();

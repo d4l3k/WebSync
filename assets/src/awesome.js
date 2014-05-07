@@ -115,12 +115,12 @@ define(['websync'], function(websync) {
         });
         setTimeout(self.updateMenu, 50);
     }
-    $("#presentation-nav .toggle-sidebar").click(function() {
+    $("#presentation-nav .toggle-sidebar, .return_edit .menu").click(function() {
         var pos = -250;
-        var button_pos = -47
+        var button_pos = -53;
         if (hidden) {
             pos = 0;
-            button_pos = 5;
+            button_pos = 0;
         }
         $(this).animate({
             right: button_pos
@@ -130,8 +130,10 @@ define(['websync'], function(websync) {
         });
         $(".content_well").animate({
             left: pos + 250
-        }, function() {
-            $(window).trigger("resize");
+        }, {
+            step: function() {
+                $(window).trigger("resize");
+            }
         });
         hidden = !hidden;
     });

@@ -137,7 +137,7 @@ define("/assets/note.js", ['websync'], function(websync) {
     });
     $("#note-well").on("click", ".note-page section", function(e) {
         self.deselectNoteBubble();
-        if(WebSyncAuth.access != "viewer"){
+        if (WebSyncAuth.access != "viewer") {
             $(e.currentTarget).attr("contenteditable", true);
             e.stopPropagation();
         }
@@ -157,7 +157,7 @@ define("/assets/note.js", ['websync'], function(websync) {
     $("#note-well").on("click", ".note-page", function(e) {
         console.log(e);
         self.deselectNoteBubble();
-        if(WebSyncAuth.access != "viewer"){
+        if (WebSyncAuth.access != "viewer") {
             var page = e.currentTarget;
             var note = $("<section></section")
             $(page).append(note);

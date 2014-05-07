@@ -10,3 +10,4 @@ tmp
 docs
 public/uh60
 log
+config/omniauth-providers.rb

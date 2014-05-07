@@ -1,13 +1,11 @@
 // WebSync: Text Editing Plugin
 define("edit", ['websync'], function(websync) {
     var self = {};
-    $("body").append('<script src="/ace/ace.js"></script>')
     // Plugins should use a jQuery namespace for ease of use.
-
     // Bind Example: $(document).bind("click.Tables", clickHandler);
-
     // Unbind Example: $("*").unbind(".Tables");
 
+    $("body").append('<script src="/ace/ace.js"></script>')
     // Add Text menu to the ribbon.
     $(".ribbon").append('<div id="Text" class="Text container"> \
             <button id="bold" title="Bold (Ctrl-B)" class="btn btn-default"><i class="fa fa-bold"></i></button> \

@@ -180,6 +180,8 @@ class User
     has n, :files, model: WSFile, :through => :permissions
     has n, :changes
     property :config, Json, :default=>{}
+    # Used for OmniAuth
+    property :origin, String, :default=>'local'
     belongs_to :theme, required: false
     def config_set key, value
         n_config = config.dup

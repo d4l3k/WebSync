@@ -5,7 +5,6 @@ define("edit", ['websync'], function(websync) {
     // Bind Example: $(document).bind("click.Tables", clickHandler);
     // Unbind Example: $("*").unbind(".Tables");
 
-    $("body").append('<script src="/ace/ace.js"></script>')
     // Add Text menu to the ribbon.
     $(".ribbon").append('<div id="Text" class="Text container"> \
             <button id="bold" title="Bold (Ctrl-B)" class="btn btn-default"><i class="fa fa-bold"></i></button> \
@@ -430,18 +429,26 @@ define("edit", ['websync'], function(websync) {
     self.updateStyles();
     $(".settings-popup .tab-content").append('<div class="tab-pane active" id="css"><h3>Custom CSS Styling</h3><div id="css-editor"></div></div>');
     $('<li><a href="#css" data-toggle="tab">Custom CSS</a></li>').prependTo($(".settings-popup ul.nav-pills"));
-    _.defer(function() {
-        $("a[href='#css']").click();
-        self.editor = ace.edit("css-editor");
-        //self.editor.setTheme("ace/theme/monokai");
-        self.editor.getSession().setMode("ace/mode/css");
-        self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
-        self.editor.on("change", function(changes) {
-            // We split it into lines so we can do easier diffs.
-            WebSyncData.custom_css = self.editor.getValue().split("\n");
-            self.updateStyles();
-        });
-    });
+    var tag = document.createElement("script");
+    tag.src = "/ace/ace.js";
+    document.body.appendChild(tag);
+    $("a[href='#css']").click();
+    var check = function(){
+        if(typeof ace != 'undefined'){
+            self.editor = window.ace.edit("css-editor");
+            //self.editor.setTheme("ace/theme/monokai");
+            self.editor.getSession().setMode("ace/mode/css");
+            self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
+            self.editor.on("change", function(changes) {
+                // We split it into lines so we can do easier diffs.
+                WebSyncData.custom_css = self.editor.getValue().split("\n");
+                self.updateStyles();
+            });
+        } else {
+            setTimeout(check, 100);
+        }
+    };
+    check();
     $(document).on("patched", function(e) {
         self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
         self.updateStyles();

@@ -61,10 +61,10 @@ class WebSync < Sinatra::Base
         def authenticate email, pass, expire=nil
             email.downcase!
             user = User.get(email)
-            if user.nil?
+            if user.nil? or not user.origin.split(',').include?('local')
                 return false
             end
-            if user.password==pass
+            if user.password==pass and not pass.empty?
                 session_key = SecureRandom.uuid
                 $redis.set("userhash:#{session_key}",email)
                 session['userhash']=session_key

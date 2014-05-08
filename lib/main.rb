@@ -152,6 +152,7 @@ class WebSync < Sinatra::Base
         set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
         no_digest = Dir.glob(File.join(root, 'assets', 'js', '{src,lib}', "*.js")).map{|f| f.split("/").last}
         set :assets_precompile_no_digest, no_digest
+        OmniAuth.config.full_host = $config["host_url"]
     end
     configure do
         set :public_folder, File.dirname(__FILE__) + '/../public'

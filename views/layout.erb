@@ -31,7 +31,7 @@
             WebSyncData = <%= MultiJson.dump(doc.body) %>;
 
             // Set document title.
-            document.title = "<%= doc.name %> - WebSync";
+            document.title = <%= MultiJSON.dump(doc.name + " - WebSync") %>;
             </script>
         <% end %>
 	</head>

@@ -433,8 +433,8 @@ define("edit", ['websync'], function(websync) {
     tag.src = "/ace/ace.js";
     document.body.appendChild(tag);
     $("a[href='#css']").click();
-    var check = function(){
-        if(typeof ace != 'undefined'){
+    var check = function() {
+        if (typeof ace != 'undefined') {
             self.editor = window.ace.edit("css-editor");
             //self.editor.setTheme("ace/theme/monokai");
             self.editor.getSession().setMode("ace/mode/css");

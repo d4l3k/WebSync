@@ -495,9 +495,6 @@ class WebSync < Sinatra::Base
                     perm = Permission.create(user: current_user, file: blob, level: "owner")
                     File.delete path
                 end
-                if not doc.id
-                    binding.pry
-                end
                 redirect "/#{doc.id.encode62}/edit"
             else
                 flash[:danger] = "'#{h params[:file][:filename]}' failed to be converted."

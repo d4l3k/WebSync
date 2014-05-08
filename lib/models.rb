@@ -176,6 +176,7 @@ class User
     property :email, String, :key=>true
     property :password, BCryptHash
     property :group, String, :default=>'user'
+    property :create_time, DateTime, :default=> lambda{ DateTime.new }
     has n, :permissions
     has n, :files, model: WSFile, :through => :permissions
     has n, :changes

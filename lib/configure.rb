@@ -28,13 +28,13 @@ end
 if $config.has_key?("default_themes")
     puts "[DATABASE] Checking themes..."
     $config["default_themes"].each do |theme|
-        theme = Theme.all(name: theme["name"])[0]
-        if theme.nil?
-            theme = Theme.create(name: theme["name"], location: theme["stylesheet_tag"])
-            puts " :: Created #{theme.name}."
-        elsif theme.location != theme["stylesheet_tag"]
-            theme.update(location: theme["stylesheet_tag"])
-            puts " :: Updated #{theme.name}."
+        db_theme = Theme.all(name: theme["name"])[0]
+        if db_theme.nil?
+            db_theme = Theme.create(name: theme["name"], location: theme["stylesheet_tag"])
+            puts " :: Created #{db_theme.name}."
+        elsif db_theme.location != theme["stylesheet_tag"]
+            db_theme.update(location: theme["stylesheet_tag"])
+            puts " :: Updated #{db_theme.name}."
         end
     end
 end

@@ -235,6 +235,7 @@ class WebSync < Sinatra::Base
                 erb :login
             end
         else
+            flash[:warning]="Already logged in."
             redirect '/'
         end
     end
@@ -321,11 +322,24 @@ class WebSync < Sinatra::Base
                 if params["new_password"] == params["rep_new_password"]
                     user.password = params["new_password"]
                 else
-                    # TODO: Rack flash passwords don't match.
+                    flash.now[:danger] = "Passwords don't match."
                 end
             else
-                # TODO: Rack flash incorrect pass.
+                flash.now[:danger] = "Incorrect password."
             end
+        end
+        provider_list = params.keys.select{|k| k.include? "provider"}
+            .map{|checkbox| checkbox.split(":").last}
+        provider_string = provider_list.join(",")
+        if user.origin != provider_string and not provider_list.empty?
+            if provider_list.include? "local" and user.password == ""
+                flash.now[:danger] = "You have to set a password to use the local login."
+            else
+                flash.now[:success] = "Updated providers."
+                user.origin = provider_string
+            end
+        else
+            flash.now[:danger] = "You have to specify a login method."
         end
         user.save
         erb :settings
@@ -496,7 +510,13 @@ class WebSync < Sinatra::Base
                     perm = Permission.create(user: current_user, file: blob, level: "owner")
                     File.delete path
                 end
-                redirect "/#{doc.id.encode62}/edit"
+                if doc.id
+                    flash[:success] = "'#{h params[:file][:filename]}' was successfully converted."
+                    redirect "/#{doc.id.encode62}/edit"
+                else
+                    flash[:danger] = "'#{h params[:file][:filename]}' failed to be converted."
+                    redirect "/"
+                end
             else
                 flash[:danger] = "'#{h params[:file][:filename]}' failed to be converted."
                 redirect "/"
@@ -573,8 +593,8 @@ class WebSync < Sinatra::Base
                 flash[:danger] = "Document erased."
                 redirect '/'
             else
-                flash[:danger] = "<strong>Error!</strong> Incorrect password."
-                redirect "/#{doc_id.encode62}/destroy"
+                flash.now[:danger] = "<strong>Error!</strong> Incorrect password."
+                erb :destroy, locals: {doc: doc}
             end
         else
             halt 403

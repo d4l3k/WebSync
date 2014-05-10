@@ -1,3 +1,7 @@
+# This is the Ruby implementation of sindresorhus's strip-json-comments for Node.JS.
+# https://github.com/sindresorhus/strip-json-comments
+# Ported by Tristan Rice (https://github.com/d4l3k)
+
 class JSONComments
     def self.strip(str)
         insideString = false

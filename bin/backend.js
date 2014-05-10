@@ -15,7 +15,7 @@ var fs = require('fs'),
 
 fs.readFile('./config/config.json', function(err, buffer) {
     // Modified JSON format that allows comments.
-    var config_lines = "{\n"+buffer.toString()+"\n}";
+    var config_lines = "{\n" + buffer.toString() + "\n}";
     config = JSON.parse(stripJsonComments(config_lines));
     postgres = new pg.Client("tcp://" + config.postgres);
     postgres.connect();

@@ -1,15 +1,21 @@
 // WebSync uses the JSON+Comments format.
-"postgres": "postgres:@localhost/websync",
+
+// General Settings
 "session_secret": "WebSync is awesome! This should be secret and unique to your server cluster.",
 "host_url": "https://websyn.ca",
 "websocket": {
     "port": 4568,
     "url": "websocket.websyn.ca"
 },
+
+// Database Configuration
+"postgres": "postgres:@localhost/websync",
 "redis": {
     "host": null,
     "port": null
 },
+
+// Google Analytics
 "google_analytics": {
     "enabled": false,
     "code": "UA-41779193-1"
@@ -115,7 +121,8 @@
         "Resize"
     ]
 }],
-// Theme configuration.
+
+// Themes and stylesheets they should load.
 "default_themes": [{
     "name": "Green",
     "stylesheet_tag": "theme-green"

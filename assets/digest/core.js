@@ -950,13 +950,13 @@ define('websync', {
             if (change.path.indexOf(root) == 0) {
                 var local_path = change.path.slice(root.length);
                 var parts = local_path.split("/");
-                var exempt_path = change.path.split("/").slice(0,-1).join("/");
+                var exempt_path = change.path.split("/").slice(0, -1).join("/");
                 var second_to_last = WebSync.getJsonFromPath(exempt_path);
                 // Exemption (JS plugins that don't use pure HTML)
-                if (second_to_last.exempt){
+                if (second_to_last.exempt) {
                     console.log("EXEMPT", change);
                     // Only want to act on an exemption once per patch set.
-                    if(!exemptions[exempt_path]){
+                    if (!exemptions[exempt_path]) {
                         var cur = dom;
                         _.each(parts.slice(0, -1), function(part) {
                             cur = cur[part];
@@ -1024,61 +1024,6 @@ define('websync', {
                 }
             }
         });
-    },
-    // Function: void WebSync.applyPatchToDOM(element Parent, array Patches);
-    // Applies a patch directly to the DOM instead of completely rebuilding it for each patch. BROKEN. Parses old patch system. DO NOT USE.
-    applyPatchToDOM: function(element, patch) {
-        if (_.isArray(patch)) {
-            console.log("ARRAY", element, patch);
-            _.each(patch, function(elem, index, list) {
-                var div = null;
-                if (elem.name == "#text") {
-                    div = document.createTextNode(elem.textContent);
-                } else {
-                    div = document.createElement(elem.name);
-                }
-                element.appendChild(div);
-                WebSync.applyPatchToDOM(div, elem);
-            });
-        } else {
-            if (patch["_t"] == "a") {
-                _.each(patch, function(val, key) {
-                    if (key != "_a") {
-                        var n_element = element.childNodes[parseInt(key)];
-                        if (_.isArray(val)) {
-                            _.each(val, function(elem, index, list) {
-                                var div = document.createElement(elem.name);
-                                $(element).append(div);
-                                WebSync.applyPatchToDOM(div, elem);
-                            });
-                        } else if (n_element) {
-                            WebSync.applyPatchToDOM(n_element, val);
-                        }
-                    }
-                });
-            } else {
-                if (patch.childNodes) {
-                    WebSync.applyPatchToDOM(element, patch.childNodes);
-                }
-                if (patch.textContent) {
-                    if (_.isArray(patch.textContent)) {
-                        element.textContent = patch.textContent[1];
-                    } else {
-                        element.textContent = patch.textContent;
-                    }
-                }
-                _.each(patch, function(v, k) {
-                    if (k != "name" && k != "textContent" && k != "childNodes" && k != "dataset") {
-                        $(element).attr(k, v);
-                    }
-                });
-                if (patch.dataset) {
-                    _.each(patch.dataset, function(v, k) {
-                        $(element).attr("data-" + k, v);
-                    });
-                }
-            }
-        }
     }
 });
 (function() {

@@ -13,7 +13,7 @@ define("/assets/page.js", ['websync'], function(websync) {
         WebSyncData.body = DOMToJSON($(".page").get(0).childNodes);
     }
     WebSync.fromJSON = function(patch) {
-        if(patch){
+        if (patch) {
             console.log("PATCH", patch);
             WebSync.applyPatch(patch, "/body/", $(".page").get(0));
         } else {

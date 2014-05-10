@@ -935,38 +935,54 @@ define('websync', {
     fatalHide: function() {
         $("#fatal_error").fadeOut();
     },
-    getJsonFromPath: function(path){
+    getJsonFromPath: function(path) {
         var parts = path.split("/");
         var cur = WebSyncData;
-        _.each(parts.slice(1), function(part){
+        _.each(parts.slice(1), function(part) {
             cur = cur[part];
         });
         return cur;
     },
-    applyPatch: function(patch, root, root_dom){
+    applyPatch: function(patch, root, root_dom) {
         var dom = root_dom.childNodes;
-        _.each(patch, function(change){
-            if(change.path.indexOf(root)==0){
+        var exemptions = {};
+        _.each(patch, function(change) {
+            if (change.path.indexOf(root) == 0) {
                 var local_path = change.path.slice(root.length);
                 var parts = local_path.split("/");
-                if(change.op == "replace"){
+                var exempt_path = change.path.split("/").slice(0,-1).join("/");
+                var second_to_last = WebSync.getJsonFromPath(exempt_path);
+                // Exemption (JS plugins that don't use pure HTML)
+                if (second_to_last.exempt){
+                    console.log("EXEMPT", change);
+                    // Only want to act on an exemption once per patch set.
+                    if(!exemptions[exempt_path]){
+                        var cur = dom;
+                        _.each(parts.slice(0, -1), function(part) {
+                            cur = cur[part];
+                        });
+                        var html = WebSync.domExceptions[second_to_last.exempt].load(second_to_last.data)
+                        $(cur).replaceWith(html);
+                        exemptions[exempt_path] = true;
+                    }
+                } else if (change.op == "replace") {
                     var cur = dom;
-                    _.each(parts.slice(0,-1), function(part){
+                    _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
                     var last = parts.slice(-1);
-                    if(last=="textContent"){
-                        cur[last]=change.value;
-                    } else if(last=="nodeName"){
+                    if (last == "textContent") {
+                        cur[last] = change.value;
+                    } else if (last == "nodeName") {
                         var parent = cur.parentNode;
                         var el;
-                        if(change.value == "#text"){
+                        if (change.value == "#text") {
                             el = document.createTextNode("");
                         } else {
                             el = document.createElement(change.value);
                             attrs = cur.attributes;
-                            if(attrs){
-                                for(var j=0,k=attrs.length;j<k;j++) {
+                            if (attrs) {
+                                for (var j = 0, k = attrs.length; j < k; j++) {
                                     el.setAttribute(attrs[j].name, attrs[j].value);
                                 }
                             }
@@ -974,32 +990,32 @@ define('websync', {
                         }
                         parent.replaceChild(el, cur);
                     }
-                } else if(change.op == "remove"){
+                } else if (change.op == "remove") {
                     var cur = dom;
-                    _.each(parts.slice(0,-1), function(part){
+                    _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
                     var last = parts.slice(-1);
-                    if(last=="textContent"){
+                    if (last == "textContent") {
                         cur[last] = "";
-                    } else if(last=="childNodes"){
+                    } else if (last == "childNodes") {
                         cur.innerHTML = "";
-                    } else if(cur[last].remove){
+                    } else if (cur[last].remove) {
                         cur[last].remove();
                     }
-                } else if(change.op == "add"){
+                } else if (change.op == "add") {
                     var cur = dom;
-                    _.each(parts.slice(0,-1), function(part){
+                    _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
                     var last = parts.slice(-1);
-                    if(last=="textContent"){
-                        cur[last]=change.value;
-                    } else if(last=="childNodes"){
+                    if (last == "textContent") {
+                        cur[last] = change.value;
+                    } else if (last == "childNodes") {
                         var html = JSONToDOM(change.value)
                         $(html).appendTo(cur);
-                    } else if(!_.isArray(change.value)){
-                        if(parts.length==1){
+                    } else if (!_.isArray(change.value)) {
+                        if (parts.length == 1) {
                             $(JSONToDOM([change.value])).appendTo(root_dom);
                         } else {
                             console.log("UNFORSEEN PATCH PATTERN", change);
@@ -1167,6 +1183,7 @@ function NODEtoDOM(obj) {
         return escapeHTML(obj.textContent);
     name = alphaNumeric(name);
     // TODO: Potentially disallow iframes!
+    // TODO: Potentially allow script tags. XHR requests are blocked by default now.
     if (name == "script")
         return "";
     if (obj.exempt && WebSync.domExceptions[obj.exempt]) {

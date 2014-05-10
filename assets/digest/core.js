@@ -347,7 +347,7 @@ define('websync', {
             }
 
             // Locate the start & end #text nodes based on a Levenstein string distance.
-            if (startText) {
+            if (sel.startText) {
                 text_nodes.each(function(index, node) {
                     var dist = levenshteinenator(node.nodeValue, sel.startText);
                     if (dist < startNodeDist) {
@@ -366,7 +366,7 @@ define('websync', {
                 if (!startNode)
                     startNode = start_of_doc;
                 if (!endNode)
-                    startNode = start_of_doc;
+                    endNode = start_of_doc;
             }
             // Update the text range.
             var range = document.createRange();
@@ -934,6 +934,80 @@ define('websync', {
     // Hides the fatal error banner.
     fatalHide: function() {
         $("#fatal_error").fadeOut();
+    },
+    getJsonFromPath: function(path){
+        var parts = path.split("/");
+        var cur = WebSyncData;
+        _.each(parts.slice(1), function(part){
+            cur = cur[part];
+        });
+        return cur;
+    },
+    applyPatch: function(patch, root, root_dom){
+        var dom = root_dom.childNodes;
+        _.each(patch, function(change){
+            if(change.path.indexOf(root)==0){
+                var local_path = change.path.slice(root.length);
+                var parts = local_path.split("/");
+                if(change.op == "replace"){
+                    var cur = dom;
+                    _.each(parts.slice(0,-1), function(part){
+                        cur = cur[part];
+                    });
+                    var last = parts.slice(-1);
+                    if(last=="textContent"){
+                        cur[last]=change.value;
+                    } else if(last=="nodeName"){
+                        var parent = cur.parentNode;
+                        var el;
+                        if(change.value == "#text"){
+                            el = document.createTextNode("");
+                        } else {
+                            el = document.createElement(change.value);
+                            attrs = cur.attributes;
+                            if(attrs){
+                                for(var j=0,k=attrs.length;j<k;j++) {
+                                    el.setAttribute(attrs[j].name, attrs[j].value);
+                                }
+                            }
+                            el.innerHTML = cur.innerHTML;
+                        }
+                        parent.replaceChild(el, cur);
+                    }
+                } else if(change.op == "remove"){
+                    var cur = dom;
+                    _.each(parts.slice(0,-1), function(part){
+                        cur = cur[part];
+                    });
+                    var last = parts.slice(-1);
+                    if(last=="textContent"){
+                        cur[last] = "";
+                    } else if(last=="childNodes"){
+                        cur.innerHTML = "";
+                    } else if(cur[last].remove){
+                        cur[last].remove();
+                    }
+                } else if(change.op == "add"){
+                    var cur = dom;
+                    _.each(parts.slice(0,-1), function(part){
+                        cur = cur[part];
+                    });
+                    var last = parts.slice(-1);
+                    if(last=="textContent"){
+                        cur[last]=change.value;
+                    } else if(last=="childNodes"){
+                        var html = JSONToDOM(change.value)
+                        $(html).appendTo(cur);
+                    } else if(!_.isArray(change.value)){
+                        if(parts.length==1){
+                            $(JSONToDOM([change.value])).appendTo(root_dom);
+                        } else {
+                            console.log("UNFORSEEN PATCH PATTERN", change);
+                        }
+                    }
+                }
+            }
+        });
     },
     // Function: void WebSync.applyPatchToDOM(element Parent, array Patches);
     // Applies a patch directly to the DOM instead of completely rebuilding it for each patch. BROKEN. Parses old patch system. DO NOT USE.

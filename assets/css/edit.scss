@@ -284,6 +284,15 @@ nav .settings-popup {
             min-height: 300px;
             border: 1px solid #dddddd;
         }
+        #diffs {
+            table {
+                td:first-child + td {
+                    max-width: 300px;
+                    max-height: 400px;
+                    overflow: auto;
+                }
+            }
+        }
     }
     .popover-content {
         overflow-y: auto;

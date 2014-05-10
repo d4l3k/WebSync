@@ -4,10 +4,10 @@
 <br>
 <br>
     <%
-    groups = { 
+    groups = {
         "Client Side" => {
             description: "These are the javascript files that power the front end on the client side.",
-            files: %w(assets/javascripts/{core,edit}.js assets/no_digest/*.js)
+            files: %w(assets/digest/{core,edit}.js assets/src/*.js)
         },
         "Server Side" => {
             description: "These are the files that are on the backend.",
@@ -29,8 +29,8 @@
             </div>
             <div class="panel-footer">
                 <ul class="list-inline">
-                    <% 
-                    files.each do |file| 
+                    <%
+                    files.each do |file|
                         if File.exists? file
                             doc = file.split("/").last
                     %>

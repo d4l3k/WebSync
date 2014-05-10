@@ -337,11 +337,11 @@ define('websync', {
             var startNodeDist = endNodeDist = 99999;
 
             // Check to see if the original start and end nodes are still in the document.
-            if($(sel.startContainer).parents("body").length != 0){
+            if ($(sel.startContainer).parents("body").length != 0) {
                 startNode = sel.startContainer;
                 startNodeDist = 0;
             }
-            if($(sel.endContainer).parents("body").length != 0){
+            if ($(sel.endContainer).parents("body").length != 0) {
                 endNode = sel.startContainer;
                 endNodeDist = 0;
             }
@@ -363,9 +363,9 @@ define('websync', {
             } else {
                 // Fallback to setting selection at beginning of the document.
                 var start_of_doc = $(".content [contenteditable]")[0];
-                if(!startNode)
+                if (!startNode)
                     startNode = start_of_doc;
-                if(!endNode)
+                if (!endNode)
                     startNode = start_of_doc;
             }
             // Update the text range.

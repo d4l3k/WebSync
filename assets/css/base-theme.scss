@@ -7,20 +7,22 @@ $title-hover-bg: darken($title-bg, 2%) !default;
 .navbar-inverse {
     background: $title-bg;
     border: darken($title-bg, 10%);
-    a, .navbar-text {
-        color: $title-sub !important;
-    }
-    a {
-        &.navbar-brand, &#name {
-            color: $title-bold !important;
+    .navbar-collapse > ul {
+        a, .navbar-text {
+            color: $title-sub !important;
         }
-        &:hover {
+        a {
+            &.navbar-brand, &#name {
+                color: $title-bold !important;
+            }
+            &:hover {
+                color: $title-hover !important;
+                background: $title-hover-bg !important;
+            }
+        }
+        li.active a {
             color: $title-hover !important;
             background: $title-hover-bg !important;
         }
-    }
-    li.active a {
-        color: $title-hover !important;
-        background: $title-hover-bg !important;
     }
 }

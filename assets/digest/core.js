@@ -308,21 +308,22 @@ define('websync', {
     selectionSave: function() {
         // Get start selection.
         var sel = getSelection();
-        var range, startText, startOffset, endText, endOffset;
+        var obj = {
+            active: (sel.rangeCount > 0)
+        }
+        // If range, save it;
         if (sel.rangeCount > 0) {
-            range = sel.getRangeAt(0);
-            startText = range.startContainer.nodeValue;
-            startOffset = range.startOffset;
-            endText = range.endContainer.nodeValue;
-            endOffset = range.endOffset;
+            var range = sel.getRangeAt(0);
+            _.extend(obj, {
+                startText: range.startContainer.nodeValue,
+                startOffset: range.startOffset,
+                endText: range.endContainer.nodeValue,
+                endOffset: range.endOffset,
+                startContainer: range.startContainer,
+                endContainer: range.endContainer
+            });
         }
-        return {
-            active: (sel.rangeCount > 0),
-            startText: startText,
-            startOffset: startOffset,
-            endText: endText,
-            endOffset: endOffset
-        }
+        return obj;
     },
     selectionRestore: function(sel) {
         if (sel.active) {
@@ -330,36 +331,47 @@ define('websync', {
             var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
                 return this.nodeType == 3;
             });
-            var startText = sel.startText,
-                startOffset = sel.startOffset,
-                endText = sel.endText,
-                endOffset = sel.endOffset;
-            var startNode = {};
-            var endNode = {};
-            console.log(text_nodes);
-            var startNodeDist = 99999;
-            var endNodeDist = 99999;
+            var startNode, endNode;
+
+            // Initialize Levenshtein distances to be sufficiently high.
+            var startNodeDist = endNodeDist = 99999;
+
+            // Check to see if the original start and end nodes are still in the document.
+            if($(sel.startContainer).parents("body").length != 0){
+                startNode = sel.startContainer;
+                startNodeDist = 0;
+            }
+            if($(sel.endContainer).parents("body").length != 0){
+                endNode = sel.startContainer;
+                endNodeDist = 0;
+            }
+
             // Locate the start & end #text nodes based on a Levenstein string distance.
             if (startText) {
                 text_nodes.each(function(index, node) {
-                    var dist = levenshteinenator(node.nodeValue, startText);
+                    var dist = levenshteinenator(node.nodeValue, sel.startText);
                     if (dist < startNodeDist) {
                         startNode = node;
                         startNodeDist = dist;
                     }
-                    dist = levenshteinenator(node.nodeValue, endText);
+                    dist = levenshteinenator(node.nodeValue, sel.endText);
                     if (dist < endNodeDist) {
                         endNode = node;
                         endNodeDist = dist;
                     }
                 });
             } else {
-                startNode = endNode = $(".content [contenteditable]")[0];
+                // Fallback to setting selection at beginning of the document.
+                var start_of_doc = $(".content [contenteditable]")[0];
+                if(!startNode)
+                    startNode = start_of_doc;
+                if(!endNode)
+                    startNode = start_of_doc;
             }
             // Update the text range.
             var range = document.createRange();
-            range.setStart(startNode, startOffset);
-            range.setEnd(endNode, endOffset);
+            range.setStart(startNode, sel.startOffset);
+            range.setEnd(endNode, sel.endOffset);
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
         }

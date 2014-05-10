@@ -459,7 +459,7 @@ nav .settings-popup {
     .content_well {
         top: 0px;
         background-image: none;
-        background-color: black !important;
+        background-color: black;
     }
     #presentation-nav {
         top: 0px;
@@ -715,6 +715,11 @@ nav.navbar {
 }
 .float {
     position: absolute;
+}
+.view {
+    .sidebar {
+        top: 0px;
+    }
 }
 .sidebar {
     width: 250px;

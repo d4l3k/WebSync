@@ -9,10 +9,10 @@ define("/assets/note.js", ['websync'], function(websync) {
     var hidden = false;
     $("#note-nav .toggle-sidebar").click(function() {
         var pos = -250;
-        var button_pos = -47
+        var button_pos = -53;
         if (hidden) {
             pos = 0;
-            button_pos = 5;
+            button_pos = 0;
         }
         $(this).animate({
             right: button_pos

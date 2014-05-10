@@ -1,122 +1,131 @@
-{
-    "postgres": "postgres:@localhost/websync",
-    "session_secret": "WebSync is awesome! This should be secret and unique to your server cluster.",
-    "host_url": "https://websyn.ca",
-    "websocket": {
-        "port": 4568,
-        "url": "websocket.websyn.ca"
-    },
-    "redis": {
-        "host": null,
-        "port": null
-    },
-    "default_assets": [{
-        "name": "Tables",
-        "description": "Enables table editting.",
-        "url": "/assets/tables.js"
-    }, {
-        "name": "Chat",
-        "description": "Enables chat between editors.",
-        "url": "/assets/chat.js"
-    }, {
-        "name": "Page Layout",
-        "description": "Standard document layout.",
-        "url": "/assets/page.js"
-    }, {
-        "name": "Presentation Layout",
-        "description": "Standard presentation layout.",
-        "url": "/assets/presentation.js"
-    }, {
-        "name": "Spreadsheet Layout",
-        "description": "Standard presentation layout.",
-        "url": "/assets/spreadsheet.js"
-    }, {
-        "name": "Note Layout",
-        "description": "Standard note-taking layout.",
-        "url": "/assets/note.js"
-    }, {
-        "name": "Resize",
-        "description": "Enables object resizing with handles.",
-        "url": "/assets/resize.js"
-    }, {
-        "name": "Equations",
-        "description": "Enables equation editing.",
-        "url": "/assets/equations.js"
-    }, {
-        "name": "Drawing",
-        "description": "Allows you to draw arbitrary shapes.",
-        "url": "/assets/drawing.js"
-    }, {
-        "name": "Awesome",
-        "description": "Awesome presentation layout.",
-        "url": "/assets/awesome.js"
-    }],
-    "default_asset_groups": [{
-        "name": "Document",
-        "description": "Format similar to Microsoft Word or LibreOffice Writer.",
-        "assets": [
-            "Tables",
-            "Chat",
-            "Page Layout",
-            "Equations",
-            "Drawing",
-            "Resize"
-        ]
-    }, {
-        "name": "Presentation",
-        "description": "Format similar to Microsoft PowerPoint or LibreOffice Impress.",
-        "assets": [
-            "Tables",
-            "Chat",
-            "Presentation Layout",
-            "Equations",
-            "Drawing",
-            "Resize"
-        ]
-    }, {
-        "name": "Spreadsheet",
-        "description": "Format similar to Microsoft Excel or LibreOffice Calc.",
-        "assets": [
-            "Tables",
-            "Chat",
-            "Spreadsheet Layout",
-            "Equations",
-            "Resize"
-        ]
-    }, {
-        "name": "Notebook",
-        "description": "Format similar to Microsoft OneNote.",
-        "assets": [
-            "Tables",
-            "Chat",
-            "Note Layout",
-            "Equations",
-            "Drawing",
-            "Resize"
-        ]
-    }, {
-        "name": "Awe",
-        "description": "Format similar to Prezi but in 3D.",
-        "assets": [
-            "Tables",
-            "Chat",
-            "Awesome",
-            "Equations",
-            "Drawing",
-            "Resize"
-        ]
-    }],
-    "default_themes": [{
-        "name": "Green",
-        "stylesheet_tag": "theme-green"
-    }, {
-        "name": "Purple",
-        "stylesheet_tag": "theme-purple"
-    }, {
-        "name": "Blue",
-        "stylesheet_tag": "theme-blue"
-    }, {
-        "name": "Dark",
-        "stylesheet_tag": "theme-dark"
-    }]
-}
+// WebSync uses the JSON+Comments format.
+"postgres": "postgres:@localhost/websync",
+"session_secret": "WebSync is awesome! This should be secret and unique to your server cluster.",
+"host_url": "https://websyn.ca",
+"websocket": {
+    "port": 4568,
+    "url": "websocket.websyn.ca"
+},
+"redis": {
+    "host": null,
+    "port": null
+},
+"google_analytics": {
+    "enabled": false,
+    "code": "UA-41779193-1"
+},
+
+// Most of the stuff past here should probably be left as is.
+// This is the list of assets.
+"default_assets": [{
+    "name": "Tables",
+    "description": "Enables table editting.",
+    "url": "/assets/tables.js"
+}, {
+    "name": "Chat",
+    "description": "Enables chat between editors.",
+    "url": "/assets/chat.js"
+}, {
+    "name": "Page Layout",
+    "description": "Standard document layout.",
+    "url": "/assets/page.js"
+}, {
+    "name": "Presentation Layout",
+    "description": "Standard presentation layout.",
+    "url": "/assets/presentation.js"
+}, {
+    "name": "Spreadsheet Layout",
+    "description": "Standard presentation layout.",
+    "url": "/assets/spreadsheet.js"
+}, {
+    "name": "Note Layout",
+    "description": "Standard note-taking layout.",
+    "url": "/assets/note.js"
+}, {
+    "name": "Resize",
+    "description": "Enables object resizing with handles.",
+    "url": "/assets/resize.js"
+}, {
+    "name": "Equations",
+    "description": "Enables equation editing.",
+    "url": "/assets/equations.js"
+}, {
+    "name": "Drawing",
+    "description": "Allows you to draw arbitrary shapes.",
+    "url": "/assets/drawing.js"
+}, {
+    "name": "Awesome",
+    "description": "Awesome presentation layout.",
+    "url": "/assets/awesome.js"
+}],
+
+// These represent different document types and the scripts they should load.
+"default_asset_groups": [{
+    "name": "Document",
+    "description": "Format similar to Microsoft Word or LibreOffice Writer.",
+    "assets": [
+        "Tables",
+        "Chat",
+        "Page Layout",
+        "Equations",
+        "Drawing",
+        "Resize"
+    ]
+}, {
+    "name": "Presentation",
+    "description": "Format similar to Microsoft PowerPoint or LibreOffice Impress.",
+    "assets": [
+        "Tables",
+        "Chat",
+        "Presentation Layout",
+        "Equations",
+        "Drawing",
+        "Resize"
+    ]
+}, {
+    "name": "Spreadsheet",
+    "description": "Format similar to Microsoft Excel or LibreOffice Calc.",
+    "assets": [
+        "Tables",
+        "Chat",
+        "Spreadsheet Layout",
+        "Equations",
+        "Resize"
+    ]
+}, {
+    "name": "Notebook",
+    "description": "Format similar to Microsoft OneNote.",
+    "assets": [
+        "Tables",
+        "Chat",
+        "Note Layout",
+        "Equations",
+        "Drawing",
+        "Resize"
+    ]
+}, {
+    "name": "Awe",
+    "description": "Format similar to Prezi but in 3D.",
+    "assets": [
+        "Tables",
+        "Chat",
+        "Awesome",
+        "Equations",
+        "Drawing",
+        "Resize"
+    ]
+}],
+// Theme configuration.
+"default_themes": [{
+    "name": "Green",
+    "stylesheet_tag": "theme-green"
+}, {
+    "name": "Purple",
+    "stylesheet_tag": "theme-purple"
+}, {
+    "name": "Blue",
+    "stylesheet_tag": "theme-blue"
+}, {
+    "name": "Dark",
+    "stylesheet_tag": "theme-dark"
+}]

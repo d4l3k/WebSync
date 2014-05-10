@@ -10,10 +10,13 @@ var fs = require('fs'),
     _ = require("underscore"),
     unoconv = require('unoconv'),
     tmp = require('tmp'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    stripJsonComments = require('stripJsonComments');
 
 fs.readFile('./config/config.json', function(err, buffer) {
-    config = JSON.parse(buffer.toString());
+    // Modified JSON format that allows comments.
+    var config_lines = "{\n"+buffer.toString()+"\n}";
+    config = JSON.parse(stripJsonComments(config_lines));
     postgres = new pg.Client("tcp://" + config.postgres);
     postgres.connect();
     redis = redisLib.createClient(config.redis.port, config.redis.host);

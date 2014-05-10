@@ -4,14 +4,19 @@ require 'sass'
 Bundler.require(:default)
 require 'tempfile'
 require 'digest/md5'
-$config = MultiJson.load(File.open('./config/config.json').read)
-if not ENV.key? "CONFIGMODE"
-    require './lib/models'
-    require './lib/configure'
-end
-require './lib/util.rb'
-require './lib/raw_upload.rb'
-require './lib/webdav.rb'
+
+# Load the JSON+Comments configuration file.
+require_relative 'strip_json_comments'
+$config = MultiJson.load(
+    "{\n"+
+        JSONComments.strip(File.open('./config/config.json').read)+
+    "\n}")
+
+require_relative 'models'
+require_relative 'configure'
+require_relative 'util'
+require_relative 'raw_upload'
+require_relative 'webdav'
 
 class WebSync < Sinatra::Base
     register Sinatra::Flash

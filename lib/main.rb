@@ -13,7 +13,10 @@ $config = MultiJson.load(
     "\n}")
 
 require_relative 'models'
-require_relative 'configure'
+# Don't load databases if running rake tasks.
+if not ENV["CONFIGMODE"]
+    require_relative 'configure'
+end
 require_relative 'util'
 require_relative 'raw_upload'
 require_relative 'webdav'

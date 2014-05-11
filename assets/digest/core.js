@@ -837,7 +837,7 @@ define('websync', {
         if (WebSyncAuth.access == "viewer" && patches.length > 0) {
             WebSync.error("<b>Error</b> You don't have permission to make changes.");
         } else if (patches.length > 0) {
-            console.log("Diffing", patches)
+            console.log("DIFF", patches)
             $(document).trigger("diffed");
             WebSync.connection.sendJSON({
                 type: "data_patch",
@@ -1000,11 +1000,20 @@ define('websync', {
                         cur.innerHTML = "";
                     } else if (cur[last] && cur[last].remove) {
                         cur[last].remove();
+                    } else if (last == "data") {
+                        $(cur).html("");
+                    } else if (last == "exempt") {
+                        var attrs = cur.attributes;
+                        for(i=attrs.length-1;i>=0;i--){
+                            $(cur).attr(attrs[i].name, null);
+                        }
                     }
                 } else if (change.op == "add") {
                     var cur = dom;
+                    var tree = [root_dom, dom];
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
+                        tree.push(cur);
                     });
                     var last = parts.slice(-1)[0];
                     if (last == "textContent") {
@@ -1012,12 +1021,16 @@ define('websync', {
                     } else if (last == "childNodes") {
                         var html = JSONToDOM(change.value)
                         $(html).appendTo(cur);
+                    } else if ( parts.slice(-2,-1)[0] == "childNodes" && !_.isArray(change.value)) {
+                        var parent = tree.slice(-2,-1)[0];
+                        var json = JSONToDOM([change.value]);
+                        console.log("APPENDING CHILD", json, parent);
+                        parent.innerHTML += json;
                     } else if (!_.isArray(change.value)) {
                         if (parts.length == 1) {
-                            $(JSONToDOM([change.value])).appendTo(root_dom);
+                            root_dom.appendChild($(JSONToDOM([change.value]))[0]);
                         } else {
-                            $(JSONToDOM([change.value])).appendTo(cur);
-                            //console.log("UNFORSEEN PATCH PATTERN", change);
+                            cur.appendChild($(JSONToDOM([change.value]))[0]);
                         }
                     }
                 } else {
@@ -1118,7 +1131,7 @@ function escapeHTML(html) {
 }
 
 function alphaNumeric(text) {
-    return text.match(/[a-zA-Z0-9\-]+/g).join("");
+    return (text || "").match(/[a-zA-Z0-9\-]+/g).join("");
 }
 
 function NODEtoDOM(obj) {

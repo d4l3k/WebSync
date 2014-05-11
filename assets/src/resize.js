@@ -45,14 +45,12 @@ define(['websync'], function() {
         e.preventDefault();
     });
     $(".content").delegate(".Resize.handle.bottom", "mousedown.Resize", function(e) {
-        console.log(e);
         self.drag = true;
         self.origY = e.pageY;
         self.origHeight = $(self.active).outerHeight();
         e.preventDefault();
     });
     $(".content").delegate(".Resize.handle.right", "mousedown.Resize", function(e) {
-        console.log(e);
         self.drag = true;
         self.origX = e.pageX;
         self.origWidth = $(self.active).outerWidth();
@@ -82,7 +80,6 @@ define(['websync'], function() {
     });
     $(document).bind("mouseup.Resize", function(e) {
         if (self.drag) {
-            console.log(e);
             e.preventDefault();
             self.origX = null;
             self.origY = null;
@@ -111,15 +108,12 @@ define(['websync'], function() {
     self.updateHandles = function() {
         if (!self.active) return;
         var offset = $(self.active).offset();
-        console.log(self.active);
         if (self.active.getBoundingClientRect) {
             var rect = self.active.getBoundingClientRect();
-            console.log(rect);
             var width = rect.width;
             var height = rect.height;
             var top = rect.top;
             var left = rect.left;
-            console.log(offset.top - 4, offset.left + width - 3)
             $(".Resize.handle.top").offset({
                 top: offset.top - 4
             });

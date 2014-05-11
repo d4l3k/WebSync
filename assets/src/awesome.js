@@ -172,6 +172,7 @@ define(['websync'], function(websync) {
             self.css_renderer.setSize(width, height);
             self.camera.aspect = aspect;
             self.camera.updateProjectionMatrix();
+            self.dirty = true;
         }
         setTimeout(function() {
             resize();
@@ -181,6 +182,7 @@ define(['websync'], function(websync) {
         $('.content_container').bind('wheel', function(e) {
             if (e.originalEvent.deltaY) {
                 self.camera.position.add(new THREE.Vector3(0, 0, e.originalEvent.deltaY).applyQuaternion(self.camera.quaternion));
+                self.dirty = true;
             }
             console.log(e);
         }).bind('mousedown', function(e) {
@@ -199,6 +201,7 @@ define(['websync'], function(websync) {
                 //self.camera.position.x = self.cam_start.x+(self.start.x-e.pageX);
                 //self.camera.position.y = self.cam_start.y+(e.pageY-self.start.y);
                 self.camera.position = self.cam_start.clone().add(new THREE.Vector3(self.start.x - e.pageX, e.pageY - self.start.y, 0).applyQuaternion(self.camera.quaternion));
+                self.dirty = true;
                 e.preventDefault();
             }
         }).bind('mouseup', function(e) {
@@ -340,11 +343,17 @@ define(['websync'], function(websync) {
             var planeMaterial = new THREE.ShaderMaterial({
                 uniforms: THREE.ShaderLib['lambert'].uniforms,
                 vertexShader: THREE.ShaderLib['lambert'].vertexShader,
-                fragmentShader: betterFragmentShader,
+                //fragmentShader: betterFragmentShader,
+                fragmentShader: THREE.ShaderLib['lambert'].fragmentShader,
                 color: 0x0000FF
             });
+            var material = new THREE.MeshLambertMaterial({
+                color: 0
+            });
+            material.opacity = 0;
+            material.blending = THREE.NoBlending;
             var geometry = new THREE.PlaneGeometry($(element).outerWidth(), $(element).outerHeight());
-            var planeMesh = new THREE.Mesh(geometry, planeMaterial);
+            var planeMesh = new THREE.Mesh(geometry, material);
             planeMesh.scale = obj.scale;
             planeMesh.position = obj.position;
             planeMesh.quaternion = obj.quaternion;
@@ -363,9 +372,13 @@ define(['websync'], function(websync) {
         self.lastRender = c_time;
         if (self.heli) self.heli.rotation.z += 0.01 * td;
         requestAnimationFrame(self.render);
-        self.renderer.render(self.scene, self.camera);
-        self.css_renderer.render(self.css_scene, self.camera);
+        if(self.dirty){
+            self.dirty = false;
+            self.renderer.render(self.scene, self.camera);
+            self.css_renderer.render(self.css_scene, self.camera);
+        }
     };
+    self.dirty = true;
     self.focus = function(obj) {
         /*var qm = new THREE.Quaternion();
         THREE.Quaternion.slerp(self.camera.quaternion, obj.quaternion, qm, 0.07);
@@ -374,40 +387,35 @@ define(['websync'], function(websync) {
         var time = 800;
         var distToCenter = 740 / Math.sin(Math.PI / 180.0 * self.camera.fov * 0.5) * 0.5;
         var target = (new THREE.Vector3(0, 0, distToCenter)).applyQuaternion(obj.quaternion).add(obj.position);
-        new TWEEN.Tween(self.camera.position).to(target, time).easing(TWEEN.Easing.Quadratic.InOut).start();
-        new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time).easing(TWEEN.Easing.Quadratic.InOut).start();
+        function markDirty(){
+            self.dirty = true;
+        }
+        new TWEEN.Tween(self.camera.position).to(target, time)
+            .easing(TWEEN.Easing.Quadratic.InOut).onUpdate(markDirty).start();
+        new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time)
+            .easing(TWEEN.Easing.Quadratic.InOut).onUpdate(markDirty).start();
     };
     self.updateMenu = function() {
         $('#slideView').html('');
         $('.awesome-slide .slide-content').each(function(index, slide) {
-            $("<div class='slidePreview " + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>').attr('style', $(slide).attr('style')).appendTo($('#slideView')).data({
+            $("<div draggable='true' class='slidePreview" + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>').attr('style', $(slide).attr('style')).appendTo($('#slideView')).data({
                 index: index
             });
-            /*var elem = $("<div class='slidePreview'><canvas width='1024' height='756'></div>").appendTo($("#slideView"))
-            elem.data({
-                index: index
-            });
-            setTimeout(function(){
-                var canvas = elem.children().get(0);
-                var ctx = canvas.getContext("2d");
-                var data = "data:image/svg+xml," +
-                   "<svg xmlns='http://www.w3.org/2000/svg' width='1024' height='756'>" +
-                     "<foreignObject width='100%' height='100%'>" +
-                       "<div xmlns='http://www.w3.org/1999/xhtml'>" +
-                            $(slide).html() +
-                       "</div>" +
-                     "</foreignObject>" +
-                   "</svg>";
-                var img = new Image();
-                img.src = data;
-                img.onerror = function(e){
-                    console.log("IMG ERR", e, $(slide).html());
-                }
-                img.onload = function() { ctx.drawImage(img, 0, 0);
-                    alert("Loaded");
-                }
-                    $(img).appendTo("body")
-            },50);*/
+        });
+        var drag_elem;
+        $(".slidePreview").on("dragstart", function(e){
+            drag_elem = this;
+        }).on("dragenter", function(e){
+            e.preventDefault();
+        }).on("dragover", function(e){
+            e.preventDefault();
+            $(this).addClass('over');
+        }).on("dragleave", function(e){
+            $(this).removeClass('over');
+            e.preventDefault();
+        }).on("drop", function(e){
+            e.preventDefault();
+            self.updateMenu();
         });
     };
     return self;

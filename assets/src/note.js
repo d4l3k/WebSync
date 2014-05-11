@@ -47,54 +47,54 @@ define('/assets/note.js', ['websync'], function(websync) {
 
         var drag_elem = null;
         var secondLevel = false;
-        $('#notesView li').on('dragstart', function(e){
-            secondLevel = $(this).parents("ul > li > ul").length !== 0;
-            console.log("SECOND LEVEL", secondLevel);
+        $('#notesView li').on('dragstart', function(e) {
+            secondLevel = $(this).parents('ul > li > ul').length !== 0;
+            console.log('SECOND LEVEL', secondLevel);
             e.originalEvent.dataTransfer.effectAllowed = 'move';
             e.originalEvent.dataTransfer.setData('text/plain', $(this).data().index);
             drag_elem = this;
             e.stopPropagation();
-        }).on('dragenter', function(e){
+        }).on('dragenter', function(e) {
             e.preventDefault();
-        }).on('dragover', function(e){
-            var c2 = $(e.target).parents("ul > li > ul").length !== 0;
-            if(secondLevel && c2){
-                $(this).addClass("over");
-            } else if(!secondLevel){
-                $(e.target).parents("#notesView > ul > li").addClass("over");
+        }).on('dragover', function(e) {
+            var c2 = $(e.target).parents('ul > li > ul').length !== 0;
+            if (secondLevel && c2) {
+                $(this).addClass('over');
+            } else if (!secondLevel) {
+                $(e.target).parents('#notesView > ul > li').addClass('over');
             }
             e.stopPropagation();
             e.preventDefault();
-        }).on('dragleave', function(e){
-            $(this).removeClass("over");
-        }).on('drop', function(e){
-            console.log("DROPPED",drag_elem, "ON", e.target);
-            $("li.over").removeClass("over");
-            if(secondLevel){
-                var orig_page = $(drag_elem).children("a").data().index;
+        }).on('dragleave', function(e) {
+            $(this).removeClass('over');
+        }).on('drop', function(e) {
+            console.log('DROPPED', drag_elem, 'ON', e.target);
+            $('li.over').removeClass('over');
+            if (secondLevel) {
+                var orig_page = $(drag_elem).children('a').data().index;
                 var orig_section = $(drag_elem)
-                    .parents("#notesView > ul > li").children("a")
+                    .parents('#notesView > ul > li').children('a')
                     .data().index;
 
                 var target_page = $(e.target).data().index;
                 var target_section = $(e.target)
-                    .parents("#notesView > ul > li").children("a")
+                    .parents('#notesView > ul > li').children('a')
                     .data().index;
                 console.log(orig_section, orig_page, target_section, target_page);
 
                 var page = $('.note-section').eq(orig_section)
                     .children().eq(orig_page);
-                if($(e.target).parents("#notesView > ul > li > ul").length !== 0){
+                if ($(e.target).parents('#notesView > ul > li > ul').length !== 0) {
                     $('.note-section').eq(target_section).children()
-                    .eq(target_page).after(page);
+                        .eq(target_page).after(page);
                 } else {
                     $('.note-section').eq(target_section).prepend(page);
                 }
             } else {
-                var orig_section = $(drag_elem).children("a").data().index;
+                var orig_section = $(drag_elem).children('a').data().index;
                 var target_section = $(e.target)
-                    .parents("#notesView > ul > li").children("a").data().index;
-                console.log("MOVING", target_section);
+                    .parents('#notesView > ul > li').children('a').data().index;
+                console.log('MOVING', target_section);
                 var section = $('.note-section').eq(orig_section);
                 $('.note-section').eq(target_section).after(section);
             }

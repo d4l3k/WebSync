@@ -124,6 +124,12 @@ body .mathquill-rendered-math {
             top: 38px;
             left: 0;
             right: 0;
+            .slidePreview {
+                @include ex(transition, background-color 0.2s);
+                &.over {
+                    background-color: #eee;
+                }
+            }
         }
         #properties {
             position: absolute;

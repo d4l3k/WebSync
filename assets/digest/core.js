@@ -938,6 +938,10 @@ define('websync', {
         });
         return cur;
     },
+    // Applies patches directly to the HTML.
+    //      patch: the list of changes
+    //      root: the path of the base of the JSON html. eg. "/body/"
+    //      root_dom: the root DOM element.
     applyPatch: function(patch, root, root_dom) {
         var dom = root_dom.childNodes;
         var exemptions = {};
@@ -961,14 +965,19 @@ define('websync', {
                         $(cur).replaceWith(html);
                         exemptions[exempt_path] = true;
                     }
+                // Replace a property
                 } else if (change.op == "replace") {
                     var cur = dom;
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
                     var last = parts.slice(-1)[0];
+
+                    // Change #text
                     if (last == "textContent") {
                         cur[last] = change.value;
+
+                    // Change tag name.
                     } else if (last == "nodeName") {
                         var parent = cur.parentNode;
                         var el;
@@ -985,29 +994,41 @@ define('websync', {
                             el.innerHTML = cur.innerHTML;
                         }
                         parent.replaceChild(el, cur);
+
+                    // Change a property. Eg. "style"
                     } else {
                         $(cur).attr(last, change.value);
                     }
+
+                // Remove a property/element
                 } else if (change.op == "remove") {
                     var cur = dom;
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
                     var last = parts.slice(-1)[0];
+                    // Remove #text
                     if (last == "textContent") {
                         cur[last] = "";
+
+                    // Remove all children
                     } else if (last == "childNodes") {
                         cur.innerHTML = "";
+
+                    // Remove if a DOM element that responds to .remove()
                     } else if (cur[last] && cur[last].remove) {
                         cur[last].remove();
-                    } else if (last == "data") {
-                        $(cur).html("");
+
+                    // Remove all properties for an EXEMPT item.
                     } else if (last == "exempt") {
+                        cur.innerHTML = "";
                         var attrs = cur.attributes;
-                        for(i=attrs.length-1;i>=0;i--){
+                        for (i = attrs.length - 1; i >= 0; i--) {
                             $(cur).attr(attrs[i].name, null);
                         }
                     }
+
+                // Add a property or element.
                 } else if (change.op == "add") {
                     var cur = dom;
                     var tree = [root_dom, dom];
@@ -1016,21 +1037,25 @@ define('websync', {
                         tree.push(cur);
                     });
                     var last = parts.slice(-1)[0];
+                    // Add #text
                     if (last == "textContent") {
                         cur[last] = change.value;
+
+                    // Add child elements
                     } else if (last == "childNodes") {
-                        var html = JSONToDOM(change.value)
-                        $(html).appendTo(cur);
-                    } else if ( parts.slice(-2,-1)[0] == "childNodes" && !_.isArray(change.value)) {
-                        var parent = tree.slice(-2,-1)[0];
-                        var json = JSONToDOM([change.value]);
-                        console.log("APPENDING CHILD", json, parent);
-                        parent.innerHTML += json;
+                        cur.innerHTML += JSONToDOM(change.value);
+
+                    // Add a single DOM element
+                    } else if (parts.slice(-2, -1)[0] == "childNodes" && !_.isArray(change.value)) {
+                        var parent = tree.slice(-2, -1)[0];
+                        parent.innerHTML += JSONToDOM([change.value]);
+
+                    // Add a single DOM element (TODO: confirm the difference from above).
                     } else if (!_.isArray(change.value)) {
                         if (parts.length == 1) {
-                            root_dom.appendChild($(JSONToDOM([change.value]))[0]);
+                            root_dom.innerHTML += JSONToDOM([change.value]);
                         } else {
-                            cur.appendChild($(JSONToDOM([change.value]))[0]);
+                            cur.innerHTML += JSONToDOM([change.value]);
                         }
                     }
                 } else {
@@ -1217,35 +1242,7 @@ function capitaliseFirstLetter(string) {
 requirejs.config({
     baseUrl: '/assets'
 });
-$(document).ready(function() {
-    require(['websync'], function(websync) {
-        window.WebSync = websync;
-        WebSync.initialize();
-    });
+require(['websync'], function(websync) {
+    window.WebSync = websync;
+    WebSync.initialize();
 });
-
-
-// Polyfill for non-standard webkit method scrollIntoViewIfNeeded by Hubert SABLONNIERE @hsablonniere
-if (!Element.prototype.scrollIntoViewIfNeeded) {
-    Element.prototype.scrollIntoViewIfNeeded = function(centerIfNeeded) {
-        centerIfNeeded = arguments.length === 0 ? true : !! centerIfNeeded;
-        var parent = this.parentNode,
-            parentComputedStyle = window.getComputedStyle(parent, null),
-            parentBorderTopWidth = parseInt(parentComputedStyle.getPropertyValue('border-top-width')),
-            parentBorderLeftWidth = parseInt(parentComputedStyle.getPropertyValue('border-left-width')),
-            overTop = this.offsetTop - parent.offsetTop < parent.scrollTop,
-            overBottom = (this.offsetTop - parent.offsetTop + this.clientHeight - parentBorderTopWidth) > (parent.scrollTop + parent.clientHeight),
-            overLeft = this.offsetLeft - parent.offsetLeft < parent.scrollLeft,
-            overRight = (this.offsetLeft - parent.offsetLeft + this.clientWidth - parentBorderLeftWidth) > (parent.scrollLeft + parent.clientWidth),
-            alignWithTop = overTop && !overBottom;
-        if ((overTop || overBottom) && centerIfNeeded) {
-            parent.scrollTop = this.offsetTop - parent.offsetTop - parent.clientHeight / 2 - parentBorderTopWidth + this.clientHeight / 2;
-        }
-        if ((overLeft || overRight) && centerIfNeeded) {
-            parent.scrollLeft = this.offsetLeft - parent.offsetLeft - parent.clientWidth / 2 - parentBorderLeftWidth + this.clientWidth / 2;
-        }
-        if ((overTop || overBottom || overLeft || overRight) && !centerIfNeeded) {
-            this.scrollIntoView(alignWithTop);
-        }
-    };
-}

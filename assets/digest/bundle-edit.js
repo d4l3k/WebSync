@@ -12,5 +12,6 @@
 //= require diff_match_patch.js
 //= require jsondiffpatch.js
 //= require json-patch-duplex.js
-//= require core.js
+//= require polyfill-scrollintoviewifneeded.js
 //= require edit.js
+//= require core.js

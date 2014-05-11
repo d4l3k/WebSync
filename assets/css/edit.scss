@@ -204,24 +204,6 @@ body .mathquill-rendered-math {
         }
     }
 }
-/*
-// Flat buttons until hover
-.menu .btn {
-    background-color: white;
-    background-image: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    border-color: rgb(204, 204, 204);
-}
-.menu .btn:hover, .menu .btn:focus {
-    background-image: -moz-linear-gradient(top,#fff,#e6e6e6);
-    background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));
-    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
-    background-image: -o-linear-gradient(top,#fff,#e6e6e6);
-    background-image: linear-gradient(to bottom,#fff,#e6e6e6);
-}*/
-
 .content * {
     line-height: 1.15em;
 }
@@ -232,16 +214,18 @@ body .mathquill-rendered-math {
 .content ul {
     margin: 0 0 0px 25px;
 }
-.zen .menu {
-    position: fixed;
-    z-index: 1000;
-}
-.zen .content_well {
-    background-color: white !important;
-    background-image: none !important;
-}
-.zen .content {
-    border: none;
+.zen {
+    .menu {
+        position: fixed;
+        z-index: 1000;
+    }
+    .content_well {
+        background-color: white !important;
+        background-image: none !important;
+    }
+    .content {
+        border: none;
+    }
 }
 cursor {
     background-color: red;
@@ -312,21 +296,23 @@ nav .settings-popup {
         }
     }
 }
-.settings-popup .arrow {
-    /*left: 914px !important;*/
-}
-.settings-popup .close {
-    color: black !important;
-}
-.settings-popup td {
-    vertical-align: middle;
-}
-.settings-popup .input-append,
-.settings-popup select {
-    margin-bottom: 0px !important;
-}
-.settings-popup .input-append .active {
-    border-color: #f89406 #f89406 #ad6704 !important;
+.settings-popup {
+    .arrow {
+        /*left: 914px !important;*/
+    }
+    .close {
+        color: black !important;
+    }
+    td {
+        vertical-align: middle;
+    }
+    .input-append,
+    select {
+        margin-bottom: 0px !important;
+    }
+    .input-append .active {
+        border-color: #f89406 #f89406 #ad6704 !important;
+    }
 }
 .content_well {
     background-color: #eee;
@@ -346,6 +332,13 @@ nav .settings-popup {
     display: inline-block;
     overflow: auto;
     text-align: center;
+    & > div {
+        @include ex(transform-origin,
+        top center);
+    }
+    img {
+        max-width: 100%;
+    }
     .return_edit {
         z-index: 800;
         position: fixed;
@@ -366,10 +359,6 @@ nav .settings-popup {
         }
     }
 }
-.content_well > div {
-    @include ex(transform-origin,
-    top center);
-}
 .layout-presentation {
     //box-shadow: 0 0 8px #aaa;
     #slides {
@@ -388,14 +377,10 @@ nav .settings-popup {
         line-height: 1.15;
         display: none;
         -user-modify: read-write;
-        -moz-user-modify: read-write;
-        -webkit-user-modify: read-write;
+        @include ex(user-modify, read-write);
         word-wrap: break-word;
         overflow-wrap: break-work;
-        hyphens: auto;
-        -webkit-hyphens: auto;
-        -moz-hyphens: auto;
-        -ms-hyphens: auto;
+        @include ex(hyphens, auto);
         &.active {
             display: block;
         }
@@ -448,9 +433,7 @@ nav .settings-popup {
         word-wrap: break-word;
         overflow-wrap: break-work;
         hyphens: auto;
-        -webkit-hyphens: auto;
-        -moz-hyphens: auto;
-        -ms-hyphens: auto;
+        @include ex(hyphens, auto);
         margin: 1in;
         font-size: 14px;
         line-height: 1.15;
@@ -803,6 +786,12 @@ nav.navbar {
             bottom: 7px;
             a {
                 cursor: pointer;
+            }
+            li {
+                @include ex(transition, background-color 0.2s);
+                &.over {
+                    background-color: #eee;
+                }
             }
             ul {
                 ul {

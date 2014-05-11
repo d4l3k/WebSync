@@ -34,16 +34,74 @@ define('/assets/note.js', ['websync'], function(websync) {
         $('.note-section').each(function(index, section) {
             var sect = $(section);
             var name = (section.dataset.name || 'Unnamed Section');
-            html += '<li ' + (section == active_section ? "class='active2'" : '') + "><a class='section' data-index=" + index + '>' + name + "</a><ul class='nav nav-list'>";
+            html += '<li draggable="true"' + (section == active_section ? "class='active2'" : '') + "><a class='section' data-index=" + index + '>' + name + "</a><ul class='nav nav-list'>";
             sect.children().each(function(index, page) {
                 var page_name = ($(page).children().filter('.note-title').text().trim() || $(page).children().filter(":not('.note-title')").first().text().trim() || 'Unnamed Page');
-                html += '<li ' + (page == active_page ? "class='active'" : '') + "><a class='page' data-index=" + index + '>' + page_name + '</a></li>';
+                html += '<li draggable="true"' + (page == active_page ? "class='active'" : '') + "><a class='page' data-index=" + index + '>' + page_name + '</a></li>';
             });
             html += '</ul></li>';
         });
         html += '</ul>';
         var nav = $('#notesView').html(html);
         var selectedElem = null;
+
+        var drag_elem = null;
+        var secondLevel = false;
+        $('#notesView li').on('dragstart', function(e){
+            secondLevel = $(this).parents("ul > li > ul").length !== 0;
+            console.log("SECOND LEVEL", secondLevel);
+            e.originalEvent.dataTransfer.effectAllowed = 'move';
+            e.originalEvent.dataTransfer.setData('text/plain', $(this).data().index);
+            drag_elem = this;
+            e.stopPropagation();
+        }).on('dragenter', function(e){
+            e.preventDefault();
+        }).on('dragover', function(e){
+            var c2 = $(e.target).parents("ul > li > ul").length !== 0;
+            if(secondLevel && c2){
+                $(this).addClass("over");
+            } else if(!secondLevel){
+                $(e.target).parents("#notesView > ul > li").addClass("over");
+            }
+            e.stopPropagation();
+            e.preventDefault();
+        }).on('dragleave', function(e){
+            $(this).removeClass("over");
+        }).on('drop', function(e){
+            console.log("DROPPED",drag_elem, "ON", e.target);
+            $("li.over").removeClass("over");
+            if(secondLevel){
+                var orig_page = $(drag_elem).children("a").data().index;
+                var orig_section = $(drag_elem)
+                    .parents("#notesView > ul > li").children("a")
+                    .data().index;
+
+                var target_page = $(e.target).data().index;
+                var target_section = $(e.target)
+                    .parents("#notesView > ul > li").children("a")
+                    .data().index;
+                console.log(orig_section, orig_page, target_section, target_page);
+
+                var page = $('.note-section').eq(orig_section)
+                    .children().eq(orig_page);
+                if($(e.target).parents("#notesView > ul > li > ul").length !== 0){
+                    $('.note-section').eq(target_section).children()
+                    .eq(target_page).after(page);
+                } else {
+                    $('.note-section').eq(target_section).prepend(page);
+                }
+            } else {
+                var orig_section = $(drag_elem).children("a").data().index;
+                var target_section = $(e.target)
+                    .parents("#notesView > ul > li").children("a").data().index;
+                console.log("MOVING", target_section);
+                var section = $('.note-section').eq(orig_section);
+                $('.note-section').eq(target_section).after(section);
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            self.updateNav();
+        });
         $('#notesView a').contextmenu({
             target: '#context-menu',
             before: function(e, element) {

@@ -47,7 +47,7 @@ define("/assets/presentation.js", ['websync'], function(websync) {
         WebSyncData.body = [];
     }
     WebSync.toJSON = function() {
-        WebSyncData.body = DOMToJSON($("#slides").get(0).childNodes);
+        WebSyncData.body = WS.DOMToJSON($("#slides").get(0).childNodes);
         setTimeout(self.updateMenu, 50);
     }
     WebSync.fromJSON = function() {

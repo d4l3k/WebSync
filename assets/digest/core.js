@@ -8,7 +8,7 @@
     rice (at) outerearth (dot) net
     http://tristanrice.name/
 */
-// Variable: object WebSync;
+
 // This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
 define('websync', {
     // Variable: object WebSync.tmp;
@@ -26,7 +26,7 @@ define('websync', {
             protocol = 'wss';
             path = WebSyncAuth.websocket_url;
         }
-        WebSync.connection = new WebSocket(protocol + "://" + path + window.location.pathname);
+        WebSync.connection = new WebSocket(protocol + '://' + path + window.location.pathname);
         WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
         WebSync.connection.onclose = WebSync.webSocketCallbacks.onclose;
         WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;
@@ -37,10 +37,10 @@ define('websync', {
     webSocketCallbacks: {
         onopen: function(e) {
             WebSync.diffInterval = setInterval(WebSync.checkDiff, 1000);
-            $("nav").removeClass("no-connection");
-            $(document).trigger("connection");
-            $("#connection_msg").remove();
-            $("#fatal_error").fadeOut();
+            $('nav').removeClass('no-connection');
+            $(document).trigger('connection');
+            $('#connection_msg').remove();
+            $('#fatal_error').fadeOut();
             setTimeout(function() {
                 if (WebSync.webSocketFirstTime) {
                     WebSync.connection.sendJSON({
@@ -54,7 +54,7 @@ define('websync', {
                         id: WebSyncAuth.id,
                         key: WebSyncAuth.key
                     });
-                    WebSync.success("<strong>Success!</strong> Connection restablished.");
+                    WebSync.success('<strong>Success!</strong> Connection restablished.');
                 }
             }, 100);
         },
@@ -63,24 +63,24 @@ define('websync', {
             console.log(e);
             if (WebSync.diffInterval) {
                 clearInterval(WebSync.diffInterval);
-                $("nav").addClass("no-connection");
-                WebSync.error("<strong>Connection Lost!</strong> Server is currently unavailable.").get(0).id = "connection_msg";
+                $('nav').addClass('no-connection');
+                WebSync.error('<strong>Connection Lost!</strong> Server is currently unavailable.').get(0).id = 'connection_msg';
                 WebSync.diffInterval = null;
-                $(document).trigger("noconnection");
+                $(document).trigger('noconnection');
             } else {
-                WebSync.fatalError("Failed to connect to backend.");
+                WebSync.fatalError('Failed to connect to backend.');
             }
             setTimeout(WebSync.webSocketStart, 2000);
         },
         onmessage: function(e) {
             data = JSON.parse(e.data);
-            console.log("MESSAGE", data);
-            if (data.type == "scripts") {
+            console.log('MESSAGE', data);
+            if (data.type == 'scripts') {
                 // Load scripts from server.
                 require(data.js);
             } else if (data.type == 'data_patch') {
                 WebSync.tmp.range = WebSync.selectionSave();
-                $(document).trigger("data_patch", {
+                $(document).trigger('data_patch', {
                     patch: data.patch
                 });
                 // Make sure there aren't any outstanding changes that need to be sent before patching document.
@@ -91,61 +91,61 @@ define('websync', {
                 if (WebSync.fromJSON) {
                     WebSync.fromJSON(data.patch);
                 }
-                $(document).trigger("patched");
+                $(document).trigger('patched');
                 WebSync.selectionRestore(WebSync.tmp.range);
-            } else if (data.type == "name_update") {
-                $("#name").text(data.name);
+            } else if (data.type == 'name_update') {
+                $('#name').text(data.name);
             } else if (data.type == 'ping') {
                 WebSync.connection.sendJSON({
                     type: 'ping'
                 });
-            } else if (data.type == "permissions") {
-                $("#access_mode").val(data.visibility);
-                $("#default_permissions").val(data.default_level);
-                var users = $("#user_perms tbody");
-                var html = "";
+            } else if (data.type == 'permissions') {
+                $('#access_mode').val(data.visibility);
+                $('#default_permissions').val(data.default_level);
+                var users = $('#user_perms tbody');
+                var html = '';
                 _.each(data.users, function(user) {
-                    html += "<tr>";
-                    html += "<td>" + user.user_email + "</td><td><select class='form-control'"
-                    if (WebSync.clients[WebSyncAuth.id].email == user.user_email) html += " disabled"
-                    html += ">"
-                    _.each(["viewer", "editor", "owner"], function(level) {
-                        html += "<option value='" + level + "'"
-                        if (level == user.level) html += " selected"
-                        html += ">"
-                        html += level.charAt(0).toUpperCase() + level.slice(1)
-                        html += "</option>"
+                    html += '<tr>';
+                    html += '<td>' + user.user_email + "</td><td><select class='form-control'";
+                    if (WebSync.clients[WebSyncAuth.id].email == user.user_email) html += ' disabled';
+                    html += '>';
+                    _.each(['viewer', 'editor', 'owner'], function(level) {
+                        html += "<option value='" + level + "'";
+                        if (level == user.level) html += ' selected';
+                        html += '>';
+                        html += level.charAt(0).toUpperCase() + level.slice(1);
+                        html += '</option>';
                     });
-                    html += "</select></td><td><a class='btn btn-danger'"
-                    if (WebSync.clients[WebSyncAuth.id].email == user.user_email) html += " disabled"
-                    html += "><i class='fa fa-trash-o visible-xs fa-lg'></i> <span class='hidden-xs'>Delete</span></a></td>"
-                    html += "</tr>";
+                    html += "</select></td><td><a class='btn btn-danger'";
+                    if (WebSync.clients[WebSyncAuth.id].email == user.user_email) html += ' disabled';
+                    html += "><i class='fa fa-trash-o visible-xs fa-lg'></i> <span class='hidden-xs'>Delete</span></a></td>";
+                    html += '</tr>';
                 });
                 users.html(html);
-            } else if (data.type == "blobs") {
+            } else if (data.type == 'blobs') {
                 console.log(data);
-                var table = $("#blobs tbody");
-                var html = "";
+                var table = $('#blobs tbody');
+                var html = '';
                 _.each(data.resources, function(resource) {
-                    html += "<tr>";
-                    html += "<td><a href='assets/" + escape(resource.name) + "'>" + resource.name + "</a></td>";
-                    html += "<td>" + resource.content_type + "</td>";
-                    html += "<td>" + resource.edit_time + "</td>";
-                    html += "<td>" + WebSync.byteLengthPretty(resource.octet_length) + "</td>";
-                    html += "</tr>";
+                    html += '<tr>';
+                    html += "<td><a href='assets/" + escape(resource.name) + "'>" + resource.name + '</a></td>';
+                    html += '<td>' + resource.content_type + '</td>';
+                    html += '<td>' + resource.edit_time + '</td>';
+                    html += '<td>' + WebSync.byteLengthPretty(resource.octet_length) + '</td>';
+                    html += '</tr>';
                 });
                 table.html(html);
             } else if (data.type == 'config') {
                 if (data.action == 'get') {
-                    var callback = WebSync._config_callbacks[data.id]
+                    var callback = WebSync._config_callbacks[data.id];
                     if (callback) {
                         callback(data.property, data.value, data.space);
                         delete WebSync._config_callbacks[data.id];
                     }
                 }
-            } else if (data.type == "download_token") {
-                window.location.pathname = "/" + window.location.pathname.split("/")[1] + "/download/" + data.token;
-            } else if (data.type == "error") {
+            } else if (data.type == 'download_token') {
+                window.location.pathname = '/' + window.location.pathname.split('/')[1] + '/download/' + data.token;
+            } else if (data.type == 'error') {
                 WebSync.error(data.reason);
             } else if (data.type == 'info') {
                 WebSync.webSocketFirstTime = false;
@@ -155,17 +155,17 @@ define('websync', {
                     action: 'get',
                     property: 'public'
                 });
-                WebSync.clients = data['users'];
+                WebSync.clients = data.users;
                 var to_trigger = {};
                 $.each(WebSync.clients, function(k, v) {
-                    if (v.email == "anon@websyn.ca") {
+                    if (v.email == 'anon@websyn.ca') {
                         WebSync.users[v.id] = {
-                            displayName: "Anonymous"
+                            displayName: 'Anonymous'
                         };
                     } else if (!WebSync.users[v.id]) {
                         to_trigger[v.id] = [k];
                         $.ajax({
-                            url: "https://secure.gravatar.com/" + v.id + ".json",
+                            url: 'https://secure.gravatar.com/' + v.id + '.json',
                             dataType: 'jsonp',
                             timeout: 2000
                         }).done(function(data) {
@@ -176,7 +176,7 @@ define('websync', {
                                     client: item
                                 });
                             });
-                        })
+                        });
                         WebSync.users[v.id] = {};
                     } else {
                         if (!to_trigger[v.id]) {
@@ -189,18 +189,18 @@ define('websync', {
                     }
                 });
             } else if (data.type == 'new_user') {
-                WebSync.clients[data['id']] = data['user'];
-                var user_id = data['user'].id;
-                var client_id = data['id']
-                console.log("NEW USER INFO", data);
-                if (data['user'].email == "anon@websyn.ca") {
-                    WebSync.users[data['id']] = {
-                        displayName: "Anonymous"
+                WebSync.clients[data.id] = data.user;
+                var user_id = data.user.id;
+                var client_id = data.id;
+                console.log('NEW USER INFO', data);
+                if (data.user.email == 'anon@websyn.ca') {
+                    WebSync.users[data.id] = {
+                        displayName: 'Anonymous'
                     };
                 }
-                if (!WebSync.users[data['user'].id]) {
+                if (!WebSync.users[data.user.id]) {
                     $.ajax({
-                        url: "https://secure.gravatar.com/" + data['user'].id + ".json",
+                        url: 'https://secure.gravatar.com/' + data.user.id + '.json',
                         dataType: 'jsonp'
                     }).done(function(data) {
                         WebSync.users[user_id] = data.entry[0];
@@ -212,16 +212,16 @@ define('websync', {
                             client: client_id
                         });
                     });
-                    WebSync.users[data['user'].id] = {};
+                    WebSync.users[data.user.id] = {};
                 } else {
                     $(document).trigger('client_load', {
-                        client: data['id']
+                        client: data.id
                     });
                 }
             } else if (data.type == 'exit_user') {
-                delete WebSync.clients[data['id']];
+                delete WebSync.clients[data.id];
                 $(document).trigger('client_leave', {
-                    client: data['id']
+                    client: data.id
                 });
             } else if (data.type == 'client_event') {
                 $(document).trigger('client_event_' + data.event, {
@@ -229,15 +229,15 @@ define('websync', {
                     data: data.data
                 });
             } else if (data.type == 'asset_list') {
-                var row = $("<tr><td></td><td></td><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' " + (($("script[src='" + data.url + "']").length > 0) ? "checked" : "") + "/></div></td></tr>");
-                row.get(0).dataset['id'] = data.id;
+                var row = $("<tr><td></td><td></td><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' " + (($("script[src='" + data.url + "']").length > 0) ? 'checked' : '') + '/></div></td></tr>');
+                row.get(0).dataset.id = data.id;
                 var children = row.children();
                 children.get(0).innerText = data.name;
                 children.get(1).innerText = data.description;
                 children.get(2).innerText = data.url;
                 children.get(3).innerText = data.atype;
                 $($(children.get(4)).children().get(0)).bootstrapSwitch();
-                $("#assets tbody").append(row);
+                $('#assets tbody').append(row);
             } else if (data.type == 'diff_list') {
                 WebSync.patches = data.patches;
                 _.each(WebSync.patches, function(patch) {
@@ -247,7 +247,7 @@ define('websync', {
                     children.get(1).innerText = patch.patch;
                     children.get(2).innerText = patch.user_email;
                     $($(children.get(4)).children().get(0)).bootstrapSwitch();
-                    $("#diffs tbody").prepend(row);
+                    $('#diffs tbody').prepend(row);
                 });
             }
         },
@@ -258,7 +258,7 @@ define('websync', {
     },
     // This function is used to output byte lengths in a more human understandable format.
     byteLengthPretty: function(length) {
-        var UNITS = ["B", "KB", "MB", "GB", "TB"];
+        var UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
         var exponent = 0;
         if (length >= 1000) {
             var max_exp = UNITS.length;
@@ -270,14 +270,14 @@ define('websync', {
         }
         var fix = 0;
         if (Math.floor(length) != length) fix = 1;
-        return length.toFixed(fix) + " " + UNITS[exponent];
+        return length.toFixed(fix) + ' ' + UNITS[exponent];
     },
     uploadResource: function(file, progress, done) {
         var xhr = new XMLHttpRequest();
         if (xhr.upload) {
             var xhrUpload = $.ajax({
-                type: "POST",
-                url: "upload",
+                type: 'POST',
+                url: 'upload',
                 xhr: function() {
                     xhr.upload.onprogress = function(e) {
                         progress(e, xhr);
@@ -287,15 +287,15 @@ define('websync', {
                 beforeSend: function(xhr) {
                     // here we set custom headers for the rack middleware, first one tells the Rack app we are doing
                     // an xhr upload, the two others are self explanatory
-                    xhr.setRequestHeader("X-XHR-Upload", "1");
-                    xhr.setRequestHeader("X-File-Name", file.name || file.fileName);
-                    xhr.setRequestHeader("X-File-Size", file.fileSize);
+                    xhr.setRequestHeader('X-XHR-Upload', '1');
+                    xhr.setRequestHeader('X-File-Name', file.name || file.fileName);
+                    xhr.setRequestHeader('X-File-Size', file.fileSize);
                 },
                 complete: function(xhr, status) {
                     done(xhr);
                 },
-                contentType: "application/octet-stream",
-                dataType: "json",
+                contentType: 'application/octet-stream',
+                dataType: 'json',
                 processData: false,
                 data: file
             });
@@ -306,7 +306,7 @@ define('websync', {
         var sel = getSelection();
         var obj = {
             active: (sel.rangeCount > 0)
-        }
+        };
         // If range, save it;
         if (sel.rangeCount > 0) {
             var range = sel.getRangeAt(0);
@@ -324,7 +324,7 @@ define('websync', {
     selectionRestore: function(sel) {
         if (sel.active) {
             // Find all #text nodes.
-            var text_nodes = $(".content").find(":not(iframe)").addBack().contents().filter(function() {
+            var text_nodes = $('.content').find(':not(iframe)').addBack().contents().filter(function() {
                 return this.nodeType == 3;
             });
             var startNode, endNode;
@@ -333,11 +333,11 @@ define('websync', {
             var startNodeDist = endNodeDist = 99999;
 
             // Check to see if the original start and end nodes are still in the document.
-            if ($(sel.startContainer).parents("body").length != 0) {
+            if ($(sel.startContainer).parents('body').length != 0) {
                 startNode = sel.startContainer;
                 startNodeDist = 0;
             }
-            if ($(sel.endContainer).parents("body").length != 0) {
+            if ($(sel.endContainer).parents('body').length != 0) {
                 endNode = sel.startContainer;
                 endNodeDist = 0;
             }
@@ -358,7 +358,7 @@ define('websync', {
                 });
             } else {
                 // Fallback to setting selection at beginning of the document.
-                var start_of_doc = $(".content [contenteditable]")[0];
+                var start_of_doc = $('.content [contenteditable]')[0];
                 if (!startNode)
                     startNode = start_of_doc;
                 if (!endNode)
@@ -382,20 +382,20 @@ define('websync', {
     // Configures the html exporter for document downloads. Type can be [document, graphics, presentation, spreadsheet]
     setupDownloads: function(type, export_to_html) {
         var types = [
-            ["Microsoft Word", "docx"],
-            ["PDF", "pdf"],
-            ["HTML", "html"],
-            ["Libre Office", "odt"],
-            ["Raw Text", "txt"]
-        ]
-        var buttons = "";
+            ['Microsoft Word', 'docx'],
+            ['PDF', 'pdf'],
+            ['HTML', 'html'],
+            ['Libre Office', 'odt'],
+            ['Raw Text', 'txt']
+        ];
+        var buttons = '';
         _.each(types, function(doc_type) {
-            buttons += "<li><a href='#' data-type='" + doc_type[1] + "'>" + doc_type[0] + " (." + doc_type[1] + ")</a></li>\n";
+            buttons += "<li><a href='#' data-type='" + doc_type[1] + "'>" + doc_type[0] + ' (.' + doc_type[1] + ')</a></li>\n';
         });
-        $("#download_types").html(buttons);
-        $("#download_types a").click(function(e) {
+        $('#download_types').html(buttons);
+        $('#download_types a').click(function(e) {
             var export_type = $(this).data().type;
-            console.log("Exporting:", export_type, type);
+            console.log('Exporting:', export_type, type);
             WebSync.connection.sendJSON({
                 type: 'export_html',
                 doc_type: type,
@@ -445,15 +445,15 @@ define('websync', {
         this.webSocketStart();
         $("#settingsBtn, [href='#permissions']").click(function() {
             WebSync.connection.sendJSON({
-                type: "permission_info"
+                type: 'permission_info'
             });
         });
         $("#settingsBtn, [href='#blobs']").click(function() {
             WebSync.connection.sendJSON({
-                type: "blob_info"
+                type: 'blob_info'
             });
         });
-        $("#user_perms").delegate("select", "change", function(e) {
+        $('#user_perms').delegate('select', 'change', function(e) {
             var email = $(e.target).parent().parent().children().eq(0).text();
             var choice = $(e.target).val();
             WebSync.connection.sendJSON({
@@ -462,113 +462,113 @@ define('websync', {
                 level: choice
             });
         });
-        $("#user_perms").delegate("a", "click", function(e) {
+        $('#user_perms').delegate('a', 'click', function(e) {
             var email = $(e.target).parent().parent().children().eq(0).text();
             WebSync.connection.sendJSON({
                 type: 'share',
                 email: email,
-                level: "delete"
+                level: 'delete'
             });
             setTimeout(function() {
                 WebSync.connection.sendJSON({
-                    type: "permission_info"
+                    type: 'permission_info'
                 });
             }, 200);
         });
-        $("#share_with").click(function() {
-            var email = $("#share_email").val();
+        $('#share_with').click(function() {
+            var email = $('#share_email').val();
             WebSync.connection.sendJSON({
-                type: "share",
+                type: 'share',
                 email: email,
-                level: "viewer"
+                level: 'viewer'
             });
             setTimeout(function() {
                 WebSync.connection.sendJSON({
-                    type: "permission_info"
+                    type: 'permission_info'
                 });
             }, 200);
-            $("#share_email").val("");
+            $('#share_email').val('');
         });
-        $("#access_mode, #default_permissions").change(function() {
-            if (WebSyncAuth.access == "owner") {
+        $('#access_mode, #default_permissions').change(function() {
+            if (WebSyncAuth.access == 'owner') {
                 WebSync.connection.sendJSON({
                     type: 'default_permissions',
-                    visibility: $("#access_mode").val(),
-                    default_level: $("#default_permissions").val()
+                    visibility: $('#access_mode').val(),
+                    default_level: $('#default_permissions').val()
                 });
             } else {
-                WebSync.error("Invalid permissions.");
+                WebSync.error('Invalid permissions.');
             }
         });
-        $("#name").blur(function() {
+        $('#name').blur(function() {
             var name = $(this).text();
-            document.title = name + " - WebSync";
+            document.title = name + ' - WebSync';
             WebSync.connection.sendJSON({
-                type: "name_update",
+                type: 'name_update',
                 name: name
             });
         });
-        $("#name").keydown(function(e) {
+        $('#name').keydown(function(e) {
             e.stopPropagation();
         });
-        $("#name").focus(function() {
-            if (this.innerText.indexOf("Unnamed") == 0) {
+        $('#name').focus(function() {
+            if (this.innerText.indexOf('Unnamed') == 0) {
                 setTimeout(function() {
                     document.execCommand('selectAll');
                 }, 100);
             }
         });
-        $(".settings-popup #config").delegate('button', 'click', function() {
+        $('.settings-popup #config').delegate('button', 'click', function() {
             $(this.parentElement.children[0]).prop('disabled', function(_, val) {
                 return !val;
             });
-            $(this).toggleClass("active");
+            $(this).toggleClass('active');
         });
-        $("nav, .content_well").bind("mousedown selectstart", function(e) {
-            if (e.target.tagName != "SELECT") {
+        $('nav, .content_well').bind('mousedown selectstart', function(e) {
+            if (e.target.tagName != 'SELECT') {
                 return false;
             }
         });
-        $("#name, #permissions input[type=text]").bind("mousedown selectstart", function(e) {
+        $('#name, #permissions input[type=text]').bind('mousedown selectstart', function(e) {
             e.stopPropagation();
         });
         $('#zoom_level').slider()
             .on('slide', function(e) {
-                WebSync.setZoom($('#zoom_level').data("slider").getValue() / 100.0)
+                WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
 
             });
         $('body').mousemove(function(e) {
             if (WebSync.viewMode == 'Zen') {
                 if (e.pageY < 85 && !WebSync.menuVisible) {
-                    $("nav").animate({
+                    $('nav').animate({
                         top: 0
                     }, 200);
                     WebSync.menuVisible = true;
                 } else if (e.pageY > 85 && WebSync.menuVisible) {
-                    $("nav").animate({
+                    $('nav').animate({
                         top: -96
                     }, 200);
                     WebSync.menuVisible = false;
                 }
             }
         });
-        if (WebSyncAuth.access == "viewer") {
-            $("body").addClass("noedit");
+        if (WebSyncAuth.access == 'viewer') {
+            $('body').addClass('noedit');
         }
         WebSync.urlChange();
-        $(window).bind("popstate", function(e) {
+        $(window).bind('popstate', function(e) {
             WebSync.urlChange();
         });
         $('#view_mode').change(WebSync.updateViewMode);
-        $(".present").click(function() {
-            $('#view_mode').val("Presentation");
+        $('.present').click(function() {
+            $('#view_mode').val('Presentation');
             WebSync.updateViewMode();
         });
-        $(".return").click(function() {
-            $('#view_mode').val("Normal");
+        $('.return').click(function() {
+            $('#view_mode').val('Normal');
             WebSync.updateViewMode();
         });
-        $(".fullscreen").click(function() {
+        $('.fullscreen').click(function() {
             if (fullScreenApi.isFullScreen())
                 fullScreenApi.cancelFullScreen();
             else
@@ -578,19 +578,19 @@ define('websync', {
         this.updateRibbon();
         rangy.init();
         $('#settingsBtn').click(function() {
-            $(this.parentElement).toggleClass("active");
-            $(".settings-popup").toggle();
+            $(this.parentElement).toggleClass('active');
+            $('.settings-popup').toggle();
             WebSync.resize();
         });
         $('.settings-popup .close').click(function() {
-            $($("#settingsBtn").get(0).parentElement).toggleClass("active");
-            $(".settings-popup").toggle();
+            $($('#settingsBtn').get(0).parentElement).toggleClass('active');
+            $('.settings-popup').toggle();
         });
-        $(".settings-popup #diffs").delegate('button', 'click', function(e) {
+        $('.settings-popup #diffs').delegate('button', 'click', function(e) {
             console.log(this);
             var patches = [];
             var c_div = this.parentElement.parentElement;
-            var id = parseInt($(this).data("id"));
+            var id = parseInt($(this).data('id'));
             // TODO: Tree based patches.
             for (var i = 0; i < WebSync.patches.length; i++) {
                 patches.push(WebSync.patches[i]);
@@ -619,13 +619,13 @@ define('websync', {
             WebSync.checkDiff();
         });
         $("a[href='#assets']").click(function() {
-            $("#assets tbody").html("");
+            $('#assets tbody').html('');
             WebSync.connection.sendJSON({
                 type: 'assets',
                 action: 'list'
             });
         });
-        $(".tab-pane#assets").delegate(".switch", "switch-change", function(e, data) {
+        $('.tab-pane#assets').delegate('.switch', 'switch-change', function(e, data) {
             var id = e.target.parentElement.parentElement.dataset.id;
             var url = e.target.parentElement.parentElement.children[2].innerText;
             WebSync.connection.sendJSON({
@@ -641,16 +641,16 @@ define('websync', {
             }
         });
         $("a[href='#diffs']").click(function() {
-            $("#diffs tbody").html("");
+            $('#diffs tbody').html('');
             WebSync.connection.sendJSON({
                 type: 'diffs',
                 action: 'list'
             });
         });
-        $(document).on("online", function() {
+        $(document).on('online', function() {
             NProgress.done();
         });
-        this.applier = rangy.createCssClassApplier("tmp");
+        this.applier = rangy.createCssClassApplier('tmp');
         // TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
         this.resize();
         $(window).resize(this.resize);
@@ -685,22 +685,22 @@ define('websync', {
     // WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
     setZoom: function(zoom) {
         WebSync.zoom = zoom;
-        $('#zoom_level').data("slider").setValue(zoom * 100)
-        var container = $(".content_container");
+        $('#zoom_level').data('slider').setValue(zoom * 100);
+        var container = $('.content_container');
         container.css({
-            "transform": "scale(" + zoom + ")"
+            'transform': 'scale(' + zoom + ')'
         });
         WebSync.updateOrigin();
-        $(document).trigger("zoom");
+        $(document).trigger('zoom');
     },
     urlChange: function() {
-        var current = window.location.pathname.split("/")[2]
-        if (current == "zen")
-            $("#view_mode").val("Zen")
-        if (current == "view")
-            $("#view_mode").val("Presentation")
+        var current = window.location.pathname.split('/')[2];
+        if (current == 'zen')
+            $('#view_mode').val('Zen');
+        if (current == 'view')
+            $('#view_mode').val('Presentation');
         else
-            $("#view_mode").val("Normal")
+            $('#view_mode').val('Normal');
         WebSync.updateViewMode(null, true);
     },
     updateViewMode: function(e, dontPush) {
@@ -708,94 +708,94 @@ define('websync', {
         WebSync.viewMode = mode;
         fullScreenApi.cancelFullScreen();
         if (mode == 'Zen') {
-            $("body").removeClass("presentation").addClass("zen").resize();
-            WebSyncAuth.view_op = "edit";
+            $('body').removeClass('presentation').addClass('zen').resize();
+            WebSyncAuth.view_op = 'edit';
             if (!dontPush)
-                window.history.pushState("", "WebSync - Zen Mode", "zen");
-            $("body").addClass("zen").resize();
-            $("#zoom_level").data("slider").setValue(120);
-            $("#zoom_level").trigger("slide");
-            $("nav").animate({
+                window.history.pushState('', 'WebSync - Zen Mode', 'zen');
+            $('body').addClass('zen').resize();
+            $('#zoom_level').data('slider').setValue(120);
+            $('#zoom_level').trigger('slide');
+            $('nav').animate({
                 top: -96
             }, 200);
-            $(".content_well").animate({
+            $('.content_well').animate({
                 top: 0
             }, 200);
         } else if (mode == 'Presentation') {
-            $("body").removeClass("edit").removeClass("zen").addClass("view").resize();
-            WebSyncAuth.view_op = "view";
+            $('body').removeClass('edit').removeClass('zen').addClass('view').resize();
+            WebSyncAuth.view_op = 'view';
             if (!dontPush)
-                window.history.pushState("", "WebSync - Presentation Mode", "view");
-            $("nav").animate({
+                window.history.pushState('', 'WebSync - Presentation Mode', 'view');
+            $('nav').animate({
                 top: -96
             }, 200);
-            $(".content_well, .sidebar").animate({
+            $('.content_well, .sidebar').animate({
                 top: 0
             }, 200);
             fullScreenApi.requestFullScreen(document.body);
         } else {
-            $("body").removeClass("zen").removeClass("view").addClass("edit").resize();
-            WebSyncAuth.view_op = "edit";
+            $('body').removeClass('zen').removeClass('view').addClass('edit').resize();
+            WebSyncAuth.view_op = 'edit';
             if (!dontPush)
-                window.history.pushState("", "WebSync - Edit Mode", "edit");
-            $("#zoom_level").data("slider").setValue(100);
-            $("#zoom_level").trigger("slide");
-            $("nav").animate({
+                window.history.pushState('', 'WebSync - Edit Mode', 'edit');
+            $('#zoom_level').data('slider').setValue(100);
+            $('#zoom_level').trigger('slide');
+            $('nav').animate({
                 top: 0
             }, 200);
-            $(".content_well, .sidebar").animate({
+            $('.content_well, .sidebar').animate({
                 top: 96
             }, 200);
         }
-        $(document).trigger("viewmode");
+        $(document).trigger('viewmode');
     },
     // Function: void WebSync.updateRibbon();
     // This updates the ribbon buttons based on the content in the ribbon bar. TODO: Use registration system & persist menu between updates.
     updateRibbon: function() {
-        var menu_buttons = "";
-        var active = $("#ribbon_buttons .active").text();
-        $(".ribbon .container").each(function(elem) {
-            menu_buttons += '<li' + (this.id == active ? ' class="active"' : "") + '><a>' + this.id + '</a></li>'
+        var menu_buttons = '';
+        var active = $('#ribbon_buttons .active').text();
+        $('.ribbon .container').each(function(elem) {
+            menu_buttons += '<li' + (this.id == active ? ' class="active"' : '') + '><a>' + this.id + '</a></li>';
         });
         $('#ribbon_buttons').html(menu_buttons);
         $('#ribbon_buttons li').click(function(e) {
             $('#ribbon_buttons li').removeClass('active');
             $(this).addClass('active');
             $('.ribbon .container').hide();
-            $("#" + $(this).text()).show();
+            $('#' + $(this).text()).show();
         });
-        if (active == "") $('#ribbon_buttons li:contains(Text)').click();
+        if (active == '') $('#ribbon_buttons li:contains(Text)').click();
     },
     // Function: void WebSync.loadScripts();
     // Checks server for plugin scripts to load.
     loadScripts: function() {
         WebSync.connection.sendJSON({
-            type: "load_scripts"
+            type: 'load_scripts'
         });
     },
     // Function: void WebSync.showHTML();
     // Converts visible text to HTML. TODO: Delete/figure something out.
     showHTML: function() {
-        $('.page').html("<code>" + WebSync.getHTML() + "</code>");
+        $('.page').html('<code>' + WebSync.getHTML() + '</code>');
     },
     // Function: string WebSync.getHTML();
     // This will return sanitized document HTML. TODO: This should be migrated into the page handler.
     getHTML: function() {
-        $(".page").get(0).normalize();
-        var html = $(".page").html().trim();
+        $('.page').get(0).normalize();
+        var html = $('.page').html().trim();
         // Remove other cursors.
-        html = html.replace(/\<cursor[^\/]+\/?\<\/cursor\>/g, "")
+        html = html.replace(/\<cursor[^\/]+\/?\<\/cursor\>/g, '');
         return html;
     },
     // Function: void WebSync.resize();
     // Event handler for when the window resizes. This is an internal method.
     resize: function() {
         //$(".content_well").height(window.innerHeight-$(".content_well").position().top);
-        $(".arrow").offset({
-            left: $("#settingsBtn").parent().offset().left + 13
+        $('.arrow').offset({
+            left: $('#settingsBtn').parent().offset().left + 13
         });
-        $(".settings-popup .popover-content").css({
-            maxHeight: window.innerHeight - $(".settings-popup").offset().top - 100
+        $('.settings-popup .popover-content').css({
+            maxHeight: window.innerHeight - $('.settings-popup').offset().top - 100
         });
         WebSync.updateRibbon();
         WebSync.updateOrigin();
@@ -803,10 +803,10 @@ define('websync', {
     // Function: void WebSync.updateOrigin();
     // Changes the transform origin based on the content_container dimensions.
     updateOrigin: function() {
-        var container = $(".content_container");
+        var container = $('.content_container');
         if (container.width() > container.parent().width() || container.parent().get(0) && container.parent().get(0).scrollWidth - 2 > container.parent().width()) {
-            container.addClass("left").css({
-                "margin-left": "initial"
+            container.addClass('left').css({
+                'margin-left': 'initial'
             });
             // TODO: Center zoomed out
             /*var side = container.parent().width() - container.width()*WebSync.zoom;
@@ -814,9 +814,9 @@ define('websync', {
                 container.css({"margin-left":  side/2});
             }*/
         } else {
-            container.removeClass("left");
+            container.removeClass('left');
             container.css({
-                "margin-left": "auto"
+                'margin-left': 'auto'
             });
         }
     },
@@ -834,13 +834,13 @@ define('websync', {
         //if(stringWebSync!=WebSync.oldDataString){
         //}
         var patches = jsonpatch.generate(WebSync.patchObserver);
-        if (WebSyncAuth.access == "viewer" && patches.length > 0) {
+        if (WebSyncAuth.access == 'viewer' && patches.length > 0) {
             WebSync.error("<b>Error</b> You don't have permission to make changes.");
         } else if (patches.length > 0) {
-            console.log("DIFF", patches)
-            $(document).trigger("diffed");
+            console.log('DIFF', patches);
+            $(document).trigger('diffed');
             WebSync.connection.sendJSON({
-                type: "data_patch",
+                type: 'data_patch',
                 patch: patches
             });
             //WebSync.oldDataString = stringWebSync;
@@ -867,10 +867,10 @@ define('websync', {
     // Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.
     getCss: function() {
         /*WebSync.applier.toggleSelection();
-		if($(".tmp").length==0) return {};
-		return $(".tmp").removeClass("tmp").getStyleObject();*/
+            if($(".tmp").length==0) return {};
+            return $(".tmp").removeClass("tmp").getStyleObject();*/
         var selection = getSelection();
-        if (selection.type == "None") {
+        if (selection.type == 'None') {
             return {};
         }
         var selNode = getSelection().baseNode.parentNode;
@@ -887,27 +887,27 @@ define('websync', {
     // Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.
     applyCssToSelection: function(css) {
         WebSync.applier.toggleSelection();
-        $(".tmp").css(css).removeClass("tmp");
+        $('.tmp').css(css).removeClass('tmp');
     },
     // Function: void WebSync.alert(string Message);
     // Displays an alert message in the lower right hand corner of the window.
     alert: function(msg) {
-        return WebSync.alertMessage(msg, "alert-warning");
+        return WebSync.alertMessage(msg, 'alert-warning');
     },
     // Function: void WebSync.error(string Message);
     // Displays an error message in the lower right hand corner of the window.
     error: function(msg) {
-        return WebSync.alertMessage(msg, "alert-danger");
+        return WebSync.alertMessage(msg, 'alert-danger');
     },
     // Function: void WebSync.success(string Message);
     // Displays a success message in the lower right hand corner of the window.
     success: function(msg) {
-        return WebSync.alertMessage(msg, "alert-success");
+        return WebSync.alertMessage(msg, 'alert-success');
     },
     // Function: void WebSync.info(string Message);
     // Displays an info message in the lower right hand corner of the window.
     info: function(msg) {
-        return WebSync.alertMessage(msg, "alert-info");
+        return WebSync.alertMessage(msg, 'alert-info');
     },
     // Function: void WebSync.alertMessage(string Message, string Classes);
     // Displays an message in the lower right hand corner of the window with css classes.
@@ -922,16 +922,16 @@ define('websync', {
     // Function: void WebSync.fatalError(string Message);
     // Displays a large error banner. Should only be displayed for unrecoverable or interface blocking errors.
     fatalError: function(msg) {
-        if (msg) $("#error_message").text(msg);
-        $("#fatal_error").fadeIn();
+        if (msg) $('#error_message').text(msg);
+        $('#fatal_error').fadeIn();
     },
     // Function void WebSync.fatalHide();
     // Hides the fatal error banner.
     fatalHide: function() {
-        $("#fatal_error").fadeOut();
+        $('#fatal_error').fadeOut();
     },
     getJsonFromPath: function(path) {
-        var parts = path.split("/");
+        var parts = path.split('/');
         var cur = WebSyncData;
         _.each(parts.slice(1), function(part) {
             cur = cur[part];
@@ -948,25 +948,25 @@ define('websync', {
         _.each(patch, function(change) {
             if (change.path.indexOf(root) == 0) {
                 var local_path = change.path.slice(root.length);
-                var parts = local_path.split("/");
-                var exempt_path = change.path.split("/").slice(0, -1).join("/");
+                var parts = local_path.split('/');
+                var exempt_path = change.path.split('/').slice(0, -1).join('/');
                 var second_to_last = WebSync.getJsonFromPath(exempt_path);
-                console.log("CHANGE", change, second_to_last);
+                console.log('CHANGE', change, second_to_last);
                 // Exemption (JS plugins that don't use pure HTML)
                 if (second_to_last.exempt) {
-                    console.log("EXEMPT", change);
+                    console.log('EXEMPT', change);
                     // Only want to act on an exemption once per patch set.
                     if (!exemptions[exempt_path]) {
                         var cur = dom;
                         _.each(parts.slice(0, -1), function(part) {
                             cur = cur[part];
                         });
-                        var html = WebSync.domExceptions[second_to_last.exempt].load(second_to_last.data)
+                        var html = WebSync.domExceptions[second_to_last.exempt].load(second_to_last.data);
                         $(cur).replaceWith(html);
                         exemptions[exempt_path] = true;
                     }
-                // Replace a property
-                } else if (change.op == "replace") {
+                    // Replace a property
+                } else if (change.op == 'replace') {
                     var cur = dom;
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
@@ -974,15 +974,15 @@ define('websync', {
                     var last = parts.slice(-1)[0];
 
                     // Change #text
-                    if (last == "textContent") {
+                    if (last == 'textContent') {
                         cur[last] = change.value;
 
-                    // Change tag name.
-                    } else if (last == "nodeName") {
+                        // Change tag name.
+                    } else if (last == 'nodeName') {
                         var parent = cur.parentNode;
                         var el;
-                        if (change.value == "#text") {
-                            el = document.createTextNode("");
+                        if (change.value == '#text') {
+                            el = document.createTextNode('');
                         } else {
                             el = document.createElement(change.value);
                             attrs = cur.attributes;
@@ -995,41 +995,41 @@ define('websync', {
                         }
                         parent.replaceChild(el, cur);
 
-                    // Change a property. Eg. "style"
+                        // Change a property. Eg. "style"
                     } else {
                         $(cur).attr(last, change.value);
                     }
 
-                // Remove a property/element
-                } else if (change.op == "remove") {
+                    // Remove a property/element
+                } else if (change.op == 'remove') {
                     var cur = dom;
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
                     var last = parts.slice(-1)[0];
                     // Remove #text
-                    if (last == "textContent") {
-                        cur[last] = "";
+                    if (last == 'textContent') {
+                        cur[last] = '';
 
-                    // Remove all children
-                    } else if (last == "childNodes") {
-                        cur.innerHTML = "";
+                        // Remove all children
+                    } else if (last == 'childNodes') {
+                        cur.innerHTML = '';
 
-                    // Remove if a DOM element that responds to .remove()
+                        // Remove if a DOM element that responds to .remove()
                     } else if (cur[last] && cur[last].remove) {
                         cur[last].remove();
 
-                    // Remove all properties for an EXEMPT item.
-                    } else if (last == "exempt") {
-                        cur.innerHTML = "";
+                        // Remove all properties for an EXEMPT item.
+                    } else if (last == 'exempt') {
+                        cur.innerHTML = '';
                         var attrs = cur.attributes;
                         for (i = attrs.length - 1; i >= 0; i--) {
                             $(cur).attr(attrs[i].name, null);
                         }
                     }
 
-                // Add a property or element.
-                } else if (change.op == "add") {
+                    // Add a property or element.
+                } else if (change.op == 'add') {
                     var cur = dom;
                     var tree = [root_dom, dom];
                     _.each(parts.slice(0, -1), function(part) {
@@ -1038,33 +1038,162 @@ define('websync', {
                     });
                     var last = parts.slice(-1)[0];
                     // Add #text
-                    if (last == "textContent") {
+                    if (last == 'textContent') {
                         cur[last] = change.value;
 
-                    // Add child elements
-                    } else if (last == "childNodes") {
-                        cur.innerHTML += JSONToDOM(change.value);
+                        // Add child elements
+                    } else if (last == 'childNodes') {
+                        cur.innerHTML += WS.JSONToDOM(change.value);
 
-                    // Add a single DOM element
-                    } else if (parts.slice(-2, -1)[0] == "childNodes" && !_.isArray(change.value)) {
+                        // Add a single DOM element
+                    } else if (parts.slice(-2, -1)[0] == 'childNodes' && !_.isArray(change.value)) {
                         var parent = tree.slice(-2, -1)[0];
-                        parent.innerHTML += JSONToDOM([change.value]);
+                        parent.innerHTML += WS.JSONToDOM([change.value]);
 
-                    // Add a single DOM element (TODO: confirm the difference from above).
+                        // Add a single DOM element (TODO: confirm the difference from above).
                     } else if (!_.isArray(change.value)) {
                         if (parts.length == 1) {
-                            root_dom.innerHTML += JSONToDOM([change.value]);
+                            root_dom.innerHTML += WS.JSONToDOM([change.value]);
                         } else {
-                            cur.innerHTML += JSONToDOM([change.value]);
+                            cur.innerHTML += WS.JSONToDOM([change.value]);
                         }
                     }
                 } else {
-                    console.log("UNKNOWN PATCH TYPE", patch);
+                    console.log('UNKNOWN PATCH TYPE', patch);
                 }
             }
         });
+    },
+    dmp: (new diff_match_patch()),
+    NODEtoJSON: function(obj) {
+        var jso = {
+            nodeName: obj.nodeName,
+            childNodes: []
+        };
+        var exempt = null;
+        if (WebSync.domExceptions[obj.nodeName]) {
+            exempt = obj.nodeName;
+        } else if (WebSync.domExceptions['#' + obj.id]) {
+            exempt = '#' + obj.id;
+        } else {
+            _.each(obj.classList, function(cl) {
+                if (WebSync.domExceptions['.' + cl]) {
+                    exempt = '.' + cl;
+                }
+            });
+        }
+        if (exempt) {
+            delete jso.childNodes;
+            jso.exempt = exempt;
+            jso.data = WebSync.domExceptions[exempt].dump(obj);
+            return jso;
+        }
+        var search_children = true;
+        if (_.size(obj.dataset) > 0) {
+            jso.dataset = {};
+            _.each(obj.dataset, function(v, k) {
+                jso.dataset[k] = v;
+            });
+            if (jso.dataset.search_children == 'false') {
+                search_children = false;
+            }
+        }
+        if (obj.nodeName == '#text') {
+            jso.textContent = obj.textContent;
+        }
+        if (obj.attributes) {
+            _.each(obj.attributes, function(v, k) {
+                // TODO: Add blacklist of classnames & attributes for DOM serialization.
+                if (v.name != 'contenteditable' && v.name.indexOf('data-') !== 0) {
+                    jso[v.name] = v.value;
+                }
+            });
+        }
+        if (search_children) {
+            _.each(obj.childNodes, function(child, index) {
+                jso.childNodes.push(WS.NODEtoJSON(child));
+            });
+        }
+        if (_.isEmpty(jso.childNodes)) {
+            delete jso.childNodes;
+        }
+        return jso;
+    },
+    DOMToJSON: function(obj) {
+        var jso = [];
+        _.each(obj, function(elem, index) {
+            elem.normalize();
+            jso.push(WebSync.NODEtoJSON(elem));
+        });
+        return jso;
+    },
+    alphaNumeric: function(text) {
+        return text.match(/[a-zA-Z0-9\-]+/g).join('');
+    },
+    NODEtoDOM: function(obj) {
+        var html = '';
+        // Some basic cross site scripting attack prevention.
+        var name = obj.nodeName || obj.name || '';
+        if (name == '#text')
+            return _.escape(obj.textContent);
+        name = WebSync.alphaNumeric(name);
+        // TODO: Potentially disallow iframes!
+        // TODO: Potentially allow script tags. XHR requests are blocked by default now.
+        if (name == 'script')
+            return '';
+        if (obj.exempt && WebSync.domExceptions[obj.exempt]) {
+            return WebSync.domExceptions[obj.exempt].load(obj.data);
+        }
+        html += '<' + name;
+        var data_vars = [];
+        _.each(obj, function(v, k) {
+            if (k != 'nodeName' && k != 'textContent' && k != 'childNodes' && k != 'dataset') {
+                k = WS.alphaNumeric(k.trim());
+                if (k.toLowerCase().indexOf('on') !== 0) {
+                    if (k.toLowerCase().indexOf('data-') === 0) {
+                        data_vars.push(k);
+                    }
+                    html += ' ' + k + '=' + JSON.stringify(v);
+                }
+            }
+        });
+        if (obj.dataset) {
+            _.each(obj.dataset, function(v, k) {
+                k = WS.alphaNumeric(k.trim());
+                if (data_vars.indexOf('data-' + k) == -1)
+                    html += ' data-' + WS.alphaNumeric(k) + '=' + JSON.stringify(v);
+            });
+        }
+        if (name.toLowerCase() == 'br') {
+            html += '/>';
+        } else {
+            html += '>';
+            if (obj.childNodes) {
+                _.each(obj.childNodes, function(elem, index) {
+                    html += WS.NODEtoDOM(elem);
+                });
+            }
+            html += '</' + name + '>';
+        }
+        return html;
+    },
+    JSONToDOM: function(obj) {
+        var html = '';
+        _.each(obj, function(elem, index) {
+            html += WebSync.NODEtoDOM(elem);
+        });
+        return html;
     }
 });
+
+// Helper method for sending JSON over a websocket.
+WebSocket.prototype.sendJSON = function(object) {
+    this.send(JSON.stringify(object));
+};
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 (function() {
     var done = false;
     // This is used to know when all modules are loaded. It uses a sketchy internal function subject to change.
@@ -1080,169 +1209,17 @@ define('websync', {
             total += 1;
         });
         if (loaded == total && total > 0) {
-            $(document).trigger("modules_loaded");
+            $(document).trigger('modules_loaded');
             done = true;
         }
-    }
+    };
+    // Configure RequireJS. TODO: Make sure relative requires actually work.
+    requirejs.config({
+        baseUrl: '/assets'
+    });
+    // Load and initialize WebSync.
+    require(['websync'], function(websync) {
+        window.WebSync = window.WS = websync;
+        WebSync.initialize();
+    });
 })();
-dmp = new diff_match_patch();
-
-function NODEtoJSON(obj) {
-    var jso = {
-        nodeName: obj.nodeName,
-        childNodes: []
-    }
-    var exempt = null;
-    if (WebSync.domExceptions[obj.nodeName]) {
-        exempt = obj.nodeName;
-    } else if (WebSync.domExceptions["#" + obj.id]) {
-        exempt = "#" + obj.id;
-    } else {
-        _.each(obj.classList, function(cl) {
-            if (WebSync.domExceptions["." + cl]) {
-                exempt = "." + cl;
-            }
-        });
-    }
-    if (exempt) {
-        delete jso.childNodes;
-        jso.exempt = exempt;
-        jso.data = WebSync.domExceptions[exempt].dump(obj);
-        return jso;
-    }
-    var search_children = true;
-    if (_.size(obj.dataset) > 0) {
-        jso.dataset = {}
-        _.each(obj.dataset, function(v, k) {
-            jso.dataset[k] = v;
-        });
-        if (jso.dataset.search_children == "false") {
-            search_children = false;
-        }
-    }
-    if (obj.nodeName == "#text") {
-        jso.textContent = obj.textContent;
-    }
-    if (obj.attributes) {
-        _.each(obj.attributes, function(v, k) {
-            // TODO: Add blacklist of classnames & attributes for DOM serialization.
-            if (v.name != "contenteditable" && v.name.indexOf("data-") != 0) {
-                jso[v.name] = v.value;
-            }
-        });
-    }
-    if (search_children) {
-        _.each(obj.childNodes, function(child, index) {
-            jso.childNodes.push(NODEtoJSON(child));
-        });
-    }
-    if (_.isEmpty(jso.childNodes)) {
-        delete jso.childNodes;
-    }
-    return jso;
-}
-
-function DOMToJSON(obj) {
-    var jso = [];
-    _.each(obj, function(elem, index) {
-        elem.normalize();
-        jso.push(NODEtoJSON(elem));
-    });
-    return jso;
-}
-
-function escapeHTML(html) {
-    return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-function alphaNumeric(text) {
-    return (text || "").match(/[a-zA-Z0-9\-]+/g).join("");
-}
-
-function NODEtoDOM(obj) {
-    var html = "";
-    // Some basic cross site scripting attack prevention.
-    var name = obj.nodeName || obj.name || "";
-    if (name == "#text")
-        return escapeHTML(obj.textContent);
-    name = alphaNumeric(name);
-    // TODO: Potentially disallow iframes!
-    // TODO: Potentially allow script tags. XHR requests are blocked by default now.
-    if (name == "script")
-        return "";
-    if (obj.exempt && WebSync.domExceptions[obj.exempt]) {
-        return WebSync.domExceptions[obj.exempt].load(obj.data);
-    }
-    html += "<" + name;
-    var data_vars = []
-    _.each(obj, function(v, k) {
-        if (k != "nodeName" && k != "textContent" && k != "childNodes" && k != "dataset") {
-            k = alphaNumeric(k.trim())
-            if (k.toLowerCase().indexOf("on") != 0) {
-                if (k.toLowerCase().indexOf("data-") == 0) {
-                    data_vars.push(k)
-                }
-                html += " " + k + "=" + JSON.stringify(v);
-            }
-        }
-    });
-    if (obj.dataset) {
-        _.each(obj.dataset, function(v, k) {
-            k = alphaNumeric(k.trim());
-            if (data_vars.indexOf("data-" + k) == -1)
-                html += " data-" + alphaNumeric(k) + "=" + JSON.stringify(v);
-        });
-    }
-    if (name.toLowerCase() == "br") {
-        html += "/>";
-    } else {
-        html += ">";
-        if (obj.childNodes) {
-            _.each(obj.childNodes, function(elem, index) {
-                html += NODEtoDOM(elem);
-            });
-        }
-        html += "</" + name + ">";
-    }
-    return html;
-}
-
-function JSONToDOM(obj) {
-    var html = "";
-    _.each(obj, function(elem, index) {
-        html += NODEtoDOM(elem);
-    });
-    return html;
-}
-
-function log_array(arr) {
-    var output = "";
-    $.each(arr, function(i1, R) {
-        var exists = false;
-        $.each(R, function(i2, val) {
-            if (val) {
-                output += '0';
-            } else {
-                output += ' ';
-            }
-        });
-        output += "\n";
-    });
-    console.log(output);
-
-}
-WebSocket.prototype.sendJSON = function(object) {
-    this.send(JSON.stringify(object));
-}
-
-function capitaliseFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-requirejs.config({
-    baseUrl: '/assets'
-});
-require(['websync'], function(websync) {
-    window.WebSync = websync;
-    WebSync.initialize();
-});

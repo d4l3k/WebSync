@@ -111,13 +111,13 @@ define("/assets/note.js", ['websync'], function(websync) {
         WebSyncData.body = [];
     }
     WebSync.toJSON = function() {
-        WebSyncData.body = DOMToJSON($("#note-well").get(0).childNodes);
+        WebSyncData.body = WS.DOMToJSON($("#note-well").get(0).childNodes);
     }
     WebSync.fromJSON = function(patch) {
         if (patch) {
             WebSync.applyPatch(patch, "/body/", $("#note-well").get(0));
         } else {
-            $(".content #note-well").get(0).innerHTML = JSONToDOM(WebSyncData.body);
+            $(".content #note-well").get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
         }
         self.updateNav();
     }

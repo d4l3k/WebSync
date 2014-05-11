@@ -14,7 +14,7 @@ define("/assets/spreadsheet.js", ['websync', "/assets/tables.js"], function(webs
         _.each(rows, function(row, index) {
             json_set[index] = [];
             _.each(row.childNodes, function(cell, index2) {
-                json_set[index][index2] = DOMToJSON(cell.childNodes);
+                json_set[index][index2] = WS.DOMToJSON(cell.childNodes);
             });
         })
         WebSyncData.body = json_set;
@@ -25,7 +25,7 @@ define("/assets/spreadsheet.js", ['websync', "/assets/tables.js"], function(webs
         _.each(WebSyncData.body, function(row) {
             html_set += "<tr>"
             _.each(row, function(cell) {
-                html_set += "<td>" + JSONToDOM(cell) + "</td>";
+                html_set += "<td>" + WS.JSONToDOM(cell) + "</td>";
             });
             html_set += "</tr>";
         });

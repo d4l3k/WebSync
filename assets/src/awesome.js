@@ -95,7 +95,7 @@ define(['websync'], function(websync) {
                     y: child.quaternion.y,
                     z: child.quaternion.z
                 },
-                body: DOMToJSON(child.element.children[0].childNodes)
+                body: WS.DOMToJSON(child.element.children[0].childNodes)
             };
             WebSyncData.views.push(obj);
         });
@@ -105,7 +105,7 @@ define(['websync'], function(websync) {
             self.css_scene.remove(self.css_scene.children[i]);
         }
         _.each(WebSyncData.views, function(view) {
-            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>" + JSONToDOM(view.body) + "</div></div>");
+            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>" + WS.JSONToDOM(view.body) + "</div></div>");
             var elem = self.addCss(elemm[0]);
             _.each(['position', 'quaternion', 'scale'], function(prop) {
                 _.each(view[prop], function(v, k) {

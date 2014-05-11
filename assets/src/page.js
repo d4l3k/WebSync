@@ -10,14 +10,13 @@ define("/assets/page.js", ['websync'], function(websync) {
         $(".page").attr("contenteditable", true);
     }
     WebSync.toJSON = function() {
-        WebSyncData.body = DOMToJSON($(".page").get(0).childNodes);
+        WebSyncData.body = WS.DOMToJSON($(".page").get(0).childNodes);
     }
     WebSync.fromJSON = function(patch) {
         if (patch) {
-            console.log("PATCH", patch);
             WebSync.applyPatch(patch, "/body/", $(".page").get(0));
         } else {
-            $(".content .page").get(0).innerHTML = JSONToDOM(WebSyncData.body);
+            $(".content .page").get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
         }
     }
     WebSync.setupDownloads("document", function() {

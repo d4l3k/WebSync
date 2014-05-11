@@ -392,7 +392,7 @@ define("edit", ['websync'], function(websync) {
                 button.removeClass('active');
             }
         });
-        $('#font').val(capitaliseFirstLetter(document.queryCommandValue('fontname').split(",")[0].split("'").join("")));
+        $('#font').val(document.queryCommandValue('fontname').split(",")[0].split("'").join("").capitalize());
         clearTimeout(self._selectTimeout);
         self._selectTimeout = null;
     }

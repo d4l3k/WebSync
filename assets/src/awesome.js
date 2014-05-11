@@ -372,7 +372,7 @@ define(['websync'], function(websync) {
         self.lastRender = c_time;
         if (self.heli) self.heli.rotation.z += 0.01 * td;
         requestAnimationFrame(self.render);
-        if(self.dirty){
+        if (self.dirty) {
             self.dirty = false;
             self.renderer.render(self.scene, self.camera);
             self.css_renderer.render(self.css_scene, self.camera);
@@ -387,7 +387,8 @@ define(['websync'], function(websync) {
         var time = 800;
         var distToCenter = 740 / Math.sin(Math.PI / 180.0 * self.camera.fov * 0.5) * 0.5;
         var target = (new THREE.Vector3(0, 0, distToCenter)).applyQuaternion(obj.quaternion).add(obj.position);
-        function markDirty(){
+
+        function markDirty() {
             self.dirty = true;
         }
         new TWEEN.Tween(self.camera.position).to(target, time)
@@ -403,20 +404,44 @@ define(['websync'], function(websync) {
             });
         });
         var drag_elem;
-        $(".slidePreview").on("dragstart", function(e){
+        $('.slidePreview').on('dragstart', function(e) {
             drag_elem = this;
-        }).on("dragenter", function(e){
+        }).on('dragenter', function(e) {
             e.preventDefault();
-        }).on("dragover", function(e){
+        }).on('dragover', function(e) {
             e.preventDefault();
             $(this).addClass('over');
-        }).on("dragleave", function(e){
+        }).on('dragleave', function(e) {
             $(this).removeClass('over');
             e.preventDefault();
-        }).on("drop", function(e){
+        }).on('drop', function(e) {
+            var slide_index = $(drag_elem).data().index;
+            var slide = $(".awesome-slide").eq($(drag_elem).data().index);
+            var new_index = $(e.target).parents(".slidePreview").data().index
+            $(".awesome-slide")
+                .eq(new_index)
+                .after(slide);
+            self.css_scene.children.move(slide_index, new_index);
             e.preventDefault();
             self.updateMenu();
         });
     };
     return self;
 });
+// https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
+Array.prototype.move = function (old_index, new_index) {
+    while (old_index < 0) {
+        old_index += this.length;
+    }
+    while (new_index < 0) {
+        new_index += this.length;
+    }
+    if (new_index >= this.length) {
+        var k = new_index - this.length;
+        while ((k--) + 1) {
+            this.push(undefined);
+        }
+    }
+    this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+    return this; // for testing purposes
+};

@@ -8,31 +8,31 @@ define(['websync'], function() {
     self.points = {};
 
     // Toggle button to enable drawing mode. Might be moved under the text editing tab.
-    $("#Insert").append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");
-    $("#drawing_mode").click(function() {
-        $(this).toggleClass("active");
+    $('#Insert').append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");
+    $('#drawing_mode').click(function() {
+        $(this).toggleClass('active');
         self.active = !self.active;
     });
 
     // Bind mouse to the content container. This waits to make sure that the .content_container has been added (happens in the layout plugin).
-    $(document).on("modules_loaded", function() {
-        $(".content_container").bind("mousedown.Drawing", function(e) {
+    $(document).on('modules_loaded', function() {
+        $('.content_container').bind('mousedown.Drawing', function(e) {
             if (self.active) {
                 self.drag = true;
                 self.last_time = new Date();
                 // The active_id is the identifier used for each line.
                 self.active_id = (new Date()).getTime().toString();
                 self.points[self.active_id] = [];
-                if ($(e.target).attr("contenteditable") == "true") {
+                if ($(e.target).attr('contenteditable') == 'true') {
                     self.parent = e.target;
                 } else {
-                    self.parent = $(e.target).parents("[contenteditable=true]");
+                    self.parent = $(e.target).parents('[contenteditable=true]');
                 }
-                self.canvas = document.createElement("canvas");
-                $(self.canvas).addClass("Drawing").data("drawid", self.active_id).prependTo(self.parent);
+                self.canvas = document.createElement('canvas');
+                $(self.canvas).addClass('Drawing').data('drawid', self.active_id).prependTo(self.parent);
                 self.savePoint(e);
             }
-        }).bind("mousemove.Drawing", function(e) {
+        }).bind('mousemove.Drawing', function(e) {
             if (self.active && self.drag) {
                 var date = new Date();
                 //if(date - self.last_time > self.interval){
@@ -40,7 +40,7 @@ define(['websync'], function() {
                 self.last_time = date;
                 //}
             }
-        }).bind("mouseup.Drawing", function(e) {
+        }).bind('mouseup.Drawing', function(e) {
             if (self.active && self.drag) {
                 self.drag = false;
                 self.savePoint(e);
@@ -50,16 +50,16 @@ define(['websync'], function() {
     // Add a point to a line based on event.
     self.savePoint = function(e) {
         var relative_to = $(self.parent);
-        var position = relative_to.css("position");
-        if (position != "absolute" && position != "relative") {
-            relative_to = $(".content_container")
+        var position = relative_to.css('position');
+        if (position != 'absolute' && position != 'relative') {
+            relative_to = $('.content_container');
         }
         var corner = relative_to.offset();
-        var point = [e.pageX - corner.left, e.pageY - corner.top]
+        var point = [e.pageX - corner.left, e.pageY - corner.top];
         self.points[self.active_id].push(point);
         self.drawPoints(self.active_id, self.canvas);
         e.preventDefault();
-    }
+    };
     // Draw a line to a canvas based on a series of [x,y] coordinate pairs.
     self.drawPoints = function(id, canvas) {
         var points = self.points[id];
@@ -74,14 +74,14 @@ define(['websync'], function() {
         // This is a hack to clear canvas.
         canvas.width = 100;
         $(canvas).css({
-            position: "absolute",
+            position: 'absolute',
             left: left,
             top: top
-        }).attr("width", right - left).attr("height", bottom - top);
+        }).attr('width', right - left).attr('height', bottom - top);
         var ctx = canvas.getContext('2d');
-        ctx.fillStyle = "#000000";
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
+        ctx.fillStyle = '#000000';
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
         ctx.lineWidth = 3;
         _.each(points, function(point, index) {
             if (points[index + 1]) {
@@ -90,10 +90,10 @@ define(['websync'], function() {
             }
         });
         ctx.stroke();
-    }
+    };
     // Register a DOM serialization exception. This allows us to store custom JSON instead of JSONized HTML.
-    WebSync.registerDOMException(".Drawing", function(obj) {
-        var id = $(obj).data("drawid")
+    WebSync.registerDOMException('.Drawing', function(obj) {
+        var id = $(obj).data('drawid');
         var position = $(obj).position();
         return {
             id: id,
@@ -117,11 +117,11 @@ define(['websync'], function() {
     });
     // Code to disable the function.
     self.disable = function() {
-        $("*").unbind(".Drawing");
-        $("*").undelegate(".Drawing");
-        $(".Drawing").remove();
-        WebSync.unregisterDOMException(".drawing");
-    }
+        $('*').unbind('.Drawing');
+        $('*').undelegate('.Drawing');
+        $('.Drawing').remove();
+        WebSync.unregisterDOMException('.drawing');
+    };
     // Return self so other modules can hook into this one.
     return self;
 });

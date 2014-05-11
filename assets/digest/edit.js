@@ -1,12 +1,12 @@
 // WebSync: Text Editing Plugin
-define("edit", ['websync'], function(websync) {
+define('edit', ['websync'], function(websync) {
     var self = {};
     // Plugins should use a jQuery namespace for ease of use.
     // Bind Example: $(document).bind("click.Tables", clickHandler);
     // Unbind Example: $("*").unbind(".Tables");
 
     // Add Text menu to the ribbon.
-    $(".ribbon").append('<div id="Text" class="Text container"> \
+    $('.ribbon').append('<div id="Text" class="Text container"> \
             <button id="bold" title="Bold (Ctrl-B)" class="btn btn-default"><i class="fa fa-bold"></i></button> \
             <button id="italic" title="Italic (Ctrl-I)" class="btn btn-default"><i class="fa fa-italic"></i></button> \
             <button id="strikethrough" title="Strikethrough" class="btn btn-default"><i class="fa fa-strikethrough"></i></button> \
@@ -129,60 +129,60 @@ define("edit", ['websync'], function(websync) {
   </div> \
 </div>');
     // List of buttons that can be clicked in the Text menu.
-    self.text_buttons = ["bold", 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', "removeFormat", "insertorderedlist", "insertunorderedlist", 'superscript', 'subscript', 'insertHorizontalRule', "indent", 'outdent'];
+    self.text_buttons = ['bold', 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'removeFormat', 'insertorderedlist', 'insertunorderedlist', 'superscript', 'subscript', 'insertHorizontalRule', 'indent', 'outdent'];
     // Bind the basic text editing commands to the buttons.
     self.text_buttons.forEach(function(elem) {
-        $('button#' + elem).bind("click.TextEdit", function() {
+        $('button#' + elem).bind('click.TextEdit', function() {
             document.execCommand(elem);
             //$(this).toggleClass("active");
             $(document).trigger('selectionchange');
         });
     });
     // Button and code to handle word/character counting.
-    $("#view_mode").after(' <button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
+    $('#view_mode').after(' <button id="word_count" class="Text btn btn-default"><i class="fa fa-eye"></i> Word Count</button>');
     var updateText = function() {
-        var table = $("#word_count_info");
+        var table = $('#word_count_info');
         var popover = table.parent().parent();
         popover.css({
-            "max-width": 500,
-            "z-index": 10000
+            'max-width': 500,
+            'z-index': 10000
         });
         table.parent().css({
             padding: 0
         });
-        popover.children(".popover-content").html();
-        var text = $(".content_container").text();
-        var seltext = rangy.getSelection().toString();;
-        table.find("tr").eq(1).find("td").eq(0).text(text.split(/\s+/).length)
-        table.find("tr").eq(1).find("td").eq(1).text(seltext == "" ? 0 : seltext.split(/\s+/).length)
-        table.find("tr").eq(2).find("td").eq(0).text(text.length)
-        table.find("tr").eq(2).find("td").eq(1).text(seltext.length)
-        table.find("tr").eq(3).find("td").eq(0).text(text.split(" ").join("").length)
-        table.find("tr").eq(3).find("td").eq(1).text(seltext.split(" ").join("").length)
-    }
+        popover.children('.popover-content').html();
+        var text = $('.content_container').text();
+        var seltext = rangy.getSelection().toString();
+        table.find('tr').eq(1).find('td').eq(0).text(text.split(/\s+/).length);
+        table.find('tr').eq(1).find('td').eq(1).text(seltext == '' ? 0 : seltext.split(/\s+/).length);
+        table.find('tr').eq(2).find('td').eq(0).text(text.length);
+        table.find('tr').eq(2).find('td').eq(1).text(seltext.length);
+        table.find('tr').eq(3).find('td').eq(0).text(text.split(' ').join('').length);
+        table.find('tr').eq(3).find('td').eq(1).text(seltext.split(' ').join('').length);
+    };
     var live_update = false;
-    $(document).on("selectionchange.Text", function(e) {
+    $(document).on('selectionchange.Text', function(e) {
         if (live_update) {
             updateText();
         }
     });
-    $("#word_count").on('shown.bs.popover', function(e) {
+    $('#word_count').on('shown.bs.popover', function(e) {
         updateText();
         live_update = true;
     }).on('hide.bs.popover', function(e) {
         live_update = false;
     }).popover({
-        placement: "bottom",
+        placement: 'bottom',
         html: true,
         container: 'body',
         content: "<table id='word_count_info' class='table' style='margin: 0'><thead><tr><th></th><th>Document</th><th>Selection</th></tr></thead><tbody><tr><th>Words</th><td></td><td></td></tr><tr><th>Characters</th><td></td><td></td></tr><tr><th>... (no spaces)</th><td></td><td></td></tr></tbody></table>"
     }).popover('show').popover('hide');
 
     // Text styling handlers
-    $("#fontColor").change(function(e) {
+    $('#fontColor').change(function(e) {
         document.execCommand('foreColor', false, this.value);
     });
-    $("#hilightColor").change(function(e) {
+    $('#hilightColor').change(function(e) {
         document.execCommand('hiliteColor', false, this.value);
     });
     // Reflects text in menu at top
@@ -192,9 +192,9 @@ define("edit", ['websync'], function(websync) {
         }
     });
     // List indentation
-    $(".content_well").bind("keydown.TextEdit", function(e) {
+    $('.content_well').bind('keydown.TextEdit', function(e) {
         if (e.keyCode == 9) {
-            var node = $(getSelection().anchorNode)
+            var node = $(getSelection().anchorNode);
             var parent = node.parent();
             if ($(getSelection().baseNode).closest('li').length == 1) {
                 if (e.shiftKey) {
@@ -204,20 +204,20 @@ define("edit", ['websync'], function(websync) {
                 }
             } else {
                 if (e.shiftKey) {
-                    if (parent.css("text-indent") != "0px") {
+                    if (parent.css('text-indent') != '0px') {
                         parent.css({
-                            "text-indent": ""
+                            'text-indent': ''
                         });
                     } else {
                         document.execCommand('outdent');
                     }
                 } else {
-                    if (parent.css("text-indent") == "0px") {
-                        if (parent.attr('contenteditable') == "true") {
+                    if (parent.css('text-indent') == '0px') {
+                        if (parent.attr('contenteditable') == 'true') {
                             node.wrap("<div style='text-indent: 40px'></div>");
                         } else {
                             parent.css({
-                                "text-indent": 40
+                                'text-indent': 40
                             });
                         }
                     } else {
@@ -230,99 +230,99 @@ define("edit", ['websync'], function(websync) {
         if (e.shiftKey && e.ctrlKey) {
             var command = true;
             if (e.keyCode == 54) { // Key 6
-                document.execCommand("superscript")
+                document.execCommand('superscript');
             } else if (e.keyCode == 55) { // Key 7
-                document.execCommand("insertunorderedlist")
+                document.execCommand('insertunorderedlist');
             } else if (e.keyCode == 56) { // Key 8
-                document.execCommand("insertorderedlist")
+                document.execCommand('insertorderedlist');
             } else if (e.keyCode == 69) { // E
-                document.execCommand("justifycenter")
+                document.execCommand('justifycenter');
             } else if (e.keyCode == 74) { // J
-                document.execCommand("justifyfull")
+                document.execCommand('justifyfull');
             } else if (e.keyCode == 76) { // L
-                document.execCommand("justifyleft")
+                document.execCommand('justifyleft');
             } else if (e.keyCode == 82) { // R
-                document.execCommand("justifyright")
+                document.execCommand('justifyright');
             } else if (e.keyCode == 189) { // -
-                document.execCommand("subscript")
+                document.execCommand('subscript');
             } else if (e.keyCode == 220) { // \
-                document.execCommand("removeFormat")
+                document.execCommand('removeFormat');
             } else {
                 command = false;
             }
             if (command) e.preventDefault();
         }
         if (e.ctrlKey && e.keyCode == 83) { // S
-            WebSync.info("<b>Saved</b> WebSync automatically saves your changes.");
-            $("#ribbon_buttons a:contains(File)").click()
-            $("#File .btn-group button").click();
+            WebSync.info('<b>Saved</b> WebSync automatically saves your changes.');
+            $('#ribbon_buttons a:contains(File)').click();
+            $('#File .btn-group button').click();
             e.preventDefault();
         }
     });
-    $('#font').bind("change.TextEdit", function() {
+    $('#font').bind('change.TextEdit', function() {
         document.execCommand('fontname', false, $('#font').val());
     });
     $('#font_size').change(function() {
-        var size = $('#font_size').val()
+        var size = $('#font_size').val();
         console.log(size);
         WebSync.applyCssToSelection({
             'font-size': size
         });
     });
     // Picture, video and link insertion.
-    $("#picture").click(function() {
+    $('#picture').click(function() {
         self.selection = WebSync.selectionSave();
         console.log(self.selection);
-        $("#image_modal").modal();
+        $('#image_modal').modal();
     });
-    $("#insert_image").click(function() {
-        var url = $("#image_modal input[type=text]").val();
+    $('#insert_image').click(function() {
+        var url = $('#image_modal input[type=text]').val();
         if (url.length > 0) {
-            $("#image_modal").modal("hide");
+            $('#image_modal').modal('hide');
             WebSync.selectionRestore(self.selection);
             delete self.selection;
-            $("#image_modal input[type=text]").val("")
-            document.execCommand("insertImage", false, url);
+            $('#image_modal input[type=text]').val('');
+            document.execCommand('insertImage', false, url);
         } else {
-            var files = $("#image_modal input[type=file]")[0].files;
+            var files = $('#image_modal input[type=file]')[0].files;
             if (files.length > 0) {
-                $("#image_modal .progress").slideDown();
+                $('#image_modal .progress').slideDown();
                 var name = files[0].name;
                 WebSync.uploadResource(files[0], function(e) {
                     var pc = parseInt(100 - (e.loaded / e.total * 100));
-                    $("#image_modal .progress-bar").css("width", pc + "%");
+                    $('#image_modal .progress-bar').css('width', pc + '%');
                 }, function(xhr) {
                     if (xhr.readyState == 4) {
-                        $("#image_modal .progress-bar").css('width', "100%");
-                        $("#image_modal .progress").slideUp();
+                        $('#image_modal .progress-bar').css('width', '100%');
+                        $('#image_modal .progress').slideUp();
                         if (xhr.status == 200)
-                            WebSync.success("<strong>Success!</strong> File uploaded successfully.");
+                            WebSync.success('<strong>Success!</strong> File uploaded successfully.');
                         else
-                            WebSync.error("<strong>Error!</strong> File failed to upload.");
-                        $("#image_modal input[type=file]").val("")
-                        $("#image_modal").modal("hide");
+                            WebSync.error('<strong>Error!</strong> File failed to upload.');
+                        $('#image_modal input[type=file]').val('');
+                        $('#image_modal').modal('hide');
                         WebSync.selectionRestore(self.selection);
-                        document.execCommand("insertImage", false, "assets/" + name);
+                        document.execCommand('insertImage', false, 'assets/' + name);
                     }
                 });
             } else {
-                WebSync.error("<strong>Error!</strong> You need to input a file or URL.");
+                WebSync.error('<strong>Error!</strong> You need to input a file or URL.');
             }
         }
     });
-    $("#createLink").click(function() {
-        var url = prompt("Hyperlink URL");
-        document.execCommand("createLink", false, url);
+    $('#createLink').click(function() {
+        var url = prompt('Hyperlink URL');
+        document.execCommand('createLink', false, url);
     });
-    $("#line_spacing a").click(function(e) {
+    $('#line_spacing a').click(function(e) {
         var width = $(this).text();
         WebSync.applyCssToSelection({
             'line-height': width + 'em'
         });
     });
-    $("#video").click(function() {
+    $('#video').click(function() {
         self.selection = WebSync.selectionSave();
-        $("#youtube_modal").modal();
+        $('#youtube_modal').modal();
         /*var url = prompt("Video URL (Youtube)");
         if (url.indexOf("youtu") != -1) {
             var youtube_id = self.youtube_parser(url);
@@ -331,21 +331,21 @@ define("edit", ['websync'], function(websync) {
             document.execCommand("insertHTML", false, html);
         }*/
     });
-    $("#youtube_modal input").change(function() {
-        var url = $("#youtube_modal input").val()
+    $('#youtube_modal input').change(function() {
+        var url = $('#youtube_modal input').val();
         var youtube_id = self.youtube_parser(url);
-        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>'
-        $("#youtube_modal #youtube-preview").html(html);
+        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>';
+        $('#youtube_modal #youtube-preview').html(html);
     });
-    $("#insert_video").click(function() {
-        $("#youtube_modal").modal("hide");
-        var url = $("#youtube_modal input").val();
-        $("#youtube_modal input").val("");
+    $('#insert_video').click(function() {
+        $('#youtube_modal').modal('hide');
+        var url = $('#youtube_modal input').val();
+        $('#youtube_modal input').val('');
         var youtube_id = self.youtube_parser(url);
-        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
+        var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>';
         WebSync.selectionRestore(self.selection);
         delete self.selection;
-        document.execCommand("insertHTML", false, html);
+        document.execCommand('insertHTML', false, html);
     });
     // Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
     self.youtube_parser = function(url) {
@@ -354,12 +354,12 @@ define("edit", ['websync'], function(websync) {
         if (match && match[2].length == 11) {
             return match[2];
         } else {
-            alert("Invalid URL");
+            alert('Invalid URL');
         }
-    }
+    };
     // Helper function to convert rgba(r, g, b, a) to #RRGGBB
     self.rgb_to_hex = function(rgb) {
-        if (rgb == "rgba(0, 0, 0, 0)") return "#FFFFFF";
+        if (rgb == 'rgba(0, 0, 0, 0)') return '#FFFFFF';
         if (rgb.indexOf('rgba') != -1) {
             //return '#000000';
         }
@@ -369,35 +369,35 @@ define("edit", ['websync'], function(websync) {
             if (parts[i].length == 1) parts[i] = '0' + parts[i];
         }
         return '#' + parts.slice(1, 4).join('').toUpperCase();
-    }
+    };
     // Disables the TextEdit plugin.
     self.disable = function() {
-        var elem = $(".Text").remove();
+        var elem = $('.Text').remove();
         WebSync.updateRibbon();
-        $("*").unbind(".TextEdit");
-        $("*").undelegate(".TextEdit");
-    }
+        $('*').unbind('.TextEdit');
+        $('*').undelegate('.TextEdit');
+    };
     // Handling function for displaying accurate information about text in ribbon.
     self.selectHandler = function() {
         var style = WebSync.getCss();
-        $("#fontColor")[0].value = self.rgb_to_hex(style.color);
-        $("#hilightColor")[0].value = self.rgb_to_hex(style.backgroundColor);
-        $('#font_size').val(Math.round(parseInt(style.fontSize) * (0.75)) + "pt");
+        $('#fontColor')[0].value = self.rgb_to_hex(style.color);
+        $('#hilightColor')[0].value = self.rgb_to_hex(style.backgroundColor);
+        $('#font_size').val(Math.round(parseInt(style.fontSize) * (0.75)) + 'pt');
 
         self.text_buttons.forEach(function(elem) {
-            var button = $('button#' + elem)
+            var button = $('button#' + elem);
             if (document.queryCommandState(elem)) {
-                button.addClass("active");
+                button.addClass('active');
             } else {
                 button.removeClass('active');
             }
         });
-        $('#font').val(document.queryCommandValue('fontname').split(",")[0].split("'").join("").capitalize());
+        $('#font').val(document.queryCommandValue('fontname').split(',')[0].split("'").join('').capitalize());
         clearTimeout(self._selectTimeout);
         self._selectTimeout = null;
-    }
+    };
     // Sets up the list of fonts
-    var fonts = ["Cursive", "Monospace", "Serif", "Sans-serif", "Fantasy", "Arial", "Arial Black", "Arial Narrow", "Arial Rounded MT Bold", "Bookman Old Style", "Bradley Hand ITC", "Century", "Century Gothic", "Comic Sans MS", "Droid Sans", "Courier", "Courier New", "Georgia", "Gentium", "Impact", "King", "Lucida Console", "Lalit", "Modena", "Monotype Corsiva", "Papyrus", "TeX", "Times", "Times New Roman", "Trebuchet MS", "Tahoma", "Verdana", "Verona", 'Helvetica', 'Segoe', 'Open Sans'];
+    var fonts = ['Cursive', 'Monospace', 'Serif', 'Sans-serif', 'Fantasy', 'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Bookman Old Style', 'Bradley Hand ITC', 'Century', 'Century Gothic', 'Comic Sans MS', 'Droid Sans', 'Courier', 'Courier New', 'Georgia', 'Gentium', 'Impact', 'King', 'Lucida Console', 'Lalit', 'Modena', 'Monotype Corsiva', 'Papyrus', 'TeX', 'Times', 'Times New Roman', 'Trebuchet MS', 'Tahoma', 'Verdana', 'Verona', 'Helvetica', 'Segoe', 'Open Sans'];
     var d = new Detector();
     var font_list = [];
     fonts = fonts.sort(function(a, b) {
@@ -408,40 +408,40 @@ define("edit", ['websync'], function(websync) {
     for (i = 0; i < fonts.length; i++) {
         var result = d.detect(fonts[i]);
         if (result) {
-            font_list.push("<option>" + fonts[i] + "</option>");
+            font_list.push('<option>' + fonts[i] + '</option>');
         }
     }
     // TODO: Not sure if this should be here.
     self.updateStyles = function() {
-        self.stylesheet.innerHTML = (WebSyncData.custom_css || []).join("\n");
-    }
+        self.stylesheet.innerHTML = (WebSyncData.custom_css || []).join('\n');
+    };
     self.stylesheet = (function() {
         // Create the <style> tag
-        var style = document.createElement("style");
+        var style = document.createElement('style');
 
         // WebKit hack :(
-        style.appendChild(document.createTextNode(""));
+        style.appendChild(document.createTextNode(''));
 
         // Add the <style> element to the page
         document.head.appendChild(style);
         return style;
     })();
     self.updateStyles();
-    $(".settings-popup .tab-content").append('<div class="tab-pane active" id="css"><h3>Custom CSS Styling</h3><div id="css-editor"></div></div>');
-    $('<li><a href="#css" data-toggle="tab">Custom CSS</a></li>').prependTo($(".settings-popup ul.nav-pills"));
-    var tag = document.createElement("script");
-    tag.src = "/ace/ace.js";
+    $('.settings-popup .tab-content').append('<div class="tab-pane active" id="css"><h3>Custom CSS Styling</h3><div id="css-editor"></div></div>');
+    $('<li><a href="#css" data-toggle="tab">Custom CSS</a></li>').prependTo($('.settings-popup ul.nav-pills'));
+    var tag = document.createElement('script');
+    tag.src = '/ace/ace.js';
     document.body.appendChild(tag);
     $("a[href='#css']").click();
     var check = function() {
         if (typeof ace != 'undefined') {
-            self.editor = window.ace.edit("css-editor");
+            self.editor = window.ace.edit('css-editor');
             //self.editor.setTheme("ace/theme/monokai");
-            self.editor.getSession().setMode("ace/mode/css");
-            self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
-            self.editor.on("change", function(changes) {
+            self.editor.getSession().setMode('ace/mode/css');
+            self.editor.setValue((WebSyncData.custom_css || []).join('\n'));
+            self.editor.on('change', function(changes) {
                 // We split it into lines so we can do easier diffs.
-                WebSyncData.custom_css = self.editor.getValue().split("\n");
+                WebSyncData.custom_css = self.editor.getValue().split('\n');
                 self.updateStyles();
             });
         } else {
@@ -449,11 +449,11 @@ define("edit", ['websync'], function(websync) {
         }
     };
     check();
-    $(document).on("patched", function(e) {
-        self.editor.setValue((WebSyncData.custom_css || []).join("\n"));
+    $(document).on('patched', function(e) {
+        self.editor.setValue((WebSyncData.custom_css || []).join('\n'));
         self.updateStyles();
     });
-    $('#font').html(font_list.join("\n"));
+    $('#font').html(font_list.join('\n'));
     WebSync.updateRibbon();
     return self;
 });

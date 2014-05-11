@@ -1,32 +1,32 @@
 // WebSync: Awe (similar to Prezi) handler
 define(['websync'], function(websync) {
-    $("body").append('<script src="/assets/three.js"></script>')
-    $("body").append('<script src="/assets/MTL.js"></script>')
-    $("body").append('<script src="/assets/tween.min.js"></script>')
-    $("body").append('<script src="/assets/CSS3DRenderer.js"></script>')
+    $('body').append('<script src="/assets/three.js"></script>');
+    $('body').append('<script src="/assets/MTL.js"></script>');
+    $('body').append('<script src="/assets/tween.min.js"></script>');
+    $('body').append('<script src="/assets/CSS3DRenderer.js"></script>');
     var nav = '<div id="presentation-nav" class="sidebar"><button id="addSlide" class="btn btn-default" type="button"><i class="fa fa-plus fa-lg"></i></button> <button id="remSlide" class="btn btn-danger" type="button"><i class="fa fa-lg fa-trash-o"></i></button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="slideView" class="slideWell panel panel-default"></div><div class="panel panel-default" id="properties"><h3>Properties</h3><hr>';
     _.each(['Position', 'Rotation'], function(v) {
-        nav += "<h4>" + v + "</h4>"
+        nav += '<h4>' + v + '</h4>';
         _.each(['x', 'y', 'z'], function(i) {
-            nav += i.toUpperCase() + ": <input class='form-control " + v + " " + i + "'></input>";
+            nav += i.toUpperCase() + ": <input class='form-control " + v + ' ' + i + "'></input>";
         });
     });
-    nav += '</div></div>'
+    nav += '</div></div>';
     $('body').append($(nav));
     var self = {};
     temp = self;
-    $(".content").hide().addClass("content-awesome").append($('<div class="content_container"></div>'))
-    $("body").addClass("layout-awesome");
+    $('.content').hide().addClass('content-awesome').append($('<div class="content_container"></div>'));
+    $('body').addClass('layout-awesome');
     var hidden = false;
-    $(".content_well").css({
+    $('.content_well').css({
         left: 250
     });
-    $("#addSlide").click(function(e) {
+    $('#addSlide').click(function(e) {
         var elemm = $("<div class='awesome awesome-slide' ><div class='slide-content' contenteditable=true></div></div>");
         var elem = self.addCss(elemm[0]);
         setTimeout(self.updateMenu, 50);
     });
-    $("#presentation-nav #slideView").delegate(".slidePreview", "click", function() {
+    $('#presentation-nav #slideView').delegate('.slidePreview', 'click', function() {
         self.setIndex($(this).data().index);
     });
     self.setIndex = function(index) {
@@ -35,40 +35,40 @@ define(['websync'], function(websync) {
         if (index >= child_length) index = child_length - 1;
         self.activeIndex = index;
         if (child_length == 0) return;
-        $(".slidePreview.active").removeClass('active');
-        $(".slidePreview").eq(index).addClass("active");
+        $('.slidePreview.active').removeClass('active');
+        $('.slidePreview').eq(index).addClass('active');
         self.focus(self.css_scene.children[index]);
         self.updateProperties();
-    }
+    };
     self.updateProperties = function() {
         var obj = self.css_scene.children[self.activeIndex];
-        _.each(["Position", "Rotation"], function(type) {
+        _.each(['Position', 'Rotation'], function(type) {
             console.log(type);
-            var info = obj[type.toLowerCase()]
-            _.each(["x", "y", "z"], function(v) {
-                $("." + type + "." + v).val(info[v]);
+            var info = obj[type.toLowerCase()];
+            _.each(['x', 'y', 'z'], function(v) {
+                $('.' + type + '.' + v).val(info[v]);
             });
         });
-    }
-    $("#properties input").change(function(e) {
+    };
+    $('#properties input').change(function(e) {
         console.log(e);
-        var axis = "x";
-        if ($(this).hasClass("y")) axis = "y";
-        if ($(this).hasClass("z")) axis = "z";
-        var prop = $(this).hasClass("Position") ? "position" : "rotation";
+        var axis = 'x';
+        if ($(this).hasClass('y')) axis = 'y';
+        if ($(this).hasClass('z')) axis = 'z';
+        var prop = $(this).hasClass('Position') ? 'position' : 'rotation';
         var obj = self.css_scene.children[self.activeIndex];
         obj[prop][axis] = eval($(this).val());
     }).blur(function(e) {
-        var axis = "x";
-        if ($(this).hasClass("y")) axis = "y";
-        if ($(this).hasClass("z")) axis = "z";
-        var prop = $(this).hasClass("Position") ? "position" : "rotation";
+        var axis = 'x';
+        if ($(this).hasClass('y')) axis = 'y';
+        if ($(this).hasClass('z')) axis = 'z';
+        var prop = $(this).hasClass('Position') ? 'position' : 'rotation';
         var obj = self.css_scene.children[self.activeIndex];
         obj[prop][axis] = eval($(this).val());
         self.updateProperties();
     });
     $(document).keydown(function(e) {
-        if (WebSyncAuth.view_op == "view") {
+        if (WebSyncAuth.view_op == 'view') {
             if (e.keyCode == 39 || e.keyCode == 32 || e.keyCode == 40) {
                 // Move forward a slide
                 self.setIndex(self.activeIndex + 1);
@@ -99,13 +99,13 @@ define(['websync'], function(websync) {
             };
             WebSyncData.views.push(obj);
         });
-    }
+    };
     WebSync.fromJSON = function() {
         for (var i = self.css_scene.children.length; i--; i > 0) {
             self.css_scene.remove(self.css_scene.children[i]);
         }
         _.each(WebSyncData.views, function(view) {
-            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>" + WS.JSONToDOM(view.body) + "</div></div>");
+            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>" + WS.JSONToDOM(view.body) + '</div></div>');
             var elem = self.addCss(elemm[0]);
             _.each(['position', 'quaternion', 'scale'], function(prop) {
                 _.each(view[prop], function(v, k) {
@@ -114,8 +114,8 @@ define(['websync'], function(websync) {
             });
         });
         setTimeout(self.updateMenu, 50);
-    }
-    $("#presentation-nav .toggle-sidebar, .return_edit .menu").click(function() {
+    };
+    $('#presentation-nav .toggle-sidebar, .return_edit .menu').click(function() {
         var pos = -250;
         var button_pos = -53;
         if (hidden) {
@@ -125,19 +125,19 @@ define(['websync'], function(websync) {
         $(this).animate({
             right: button_pos
         });
-        $("#presentation-nav").animate({
+        $('#presentation-nav').animate({
             left: pos
         });
-        $(".content_well").animate({
+        $('.content_well').animate({
             left: pos + 250
         }, {
             step: function() {
-                $(window).trigger("resize");
+                $(window).trigger('resize');
             }
         });
         hidden = !hidden;
     });
-    $(document).on("modules_loaded", function() {
+    $(document).on('modules_loaded', function() {
         self.scene = new THREE.Scene();
         self.css_scene = new THREE.Scene();
         self.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10000);
@@ -146,16 +146,16 @@ define(['websync'], function(websync) {
             antialias: true,
             alpha: true
         });
-        $(".content_container").append(self.renderer.domElement);
+        $('.content_container').append(self.renderer.domElement);
         self.css_renderer = new THREE.CSS3DRenderer();
         $(self.css_renderer.domElement).css({
             top: 0,
             position: 'absolute'
         });
-        $(".content_container").prepend(self.css_renderer.domElement).bind("mousedown selectstart", function(e) {
+        $('.content_container').prepend(self.css_renderer.domElement).bind('mousedown selectstart', function(e) {
             e.stopPropagation();
         });
-        $(".content_container").on("mousedown", ".awesome-slide", function(e) {
+        $('.content_container').on('mousedown', '.awesome-slide', function(e) {
             console.log(e);
             _.each(self.css_scene.getDescendants(), function(dec) {
                 if (dec.element == e.currentTarget) {
@@ -165,8 +165,8 @@ define(['websync'], function(websync) {
         });
 
         function resize() {
-            var width = $(".content_container").width(),
-                height = $(".content_container").height(),
+            var width = $('.content_container').width(),
+                height = $('.content_container').height(),
                 aspect = width / height;
             self.renderer.setSize(width, height);
             self.css_renderer.setSize(width, height);
@@ -178,12 +178,12 @@ define(['websync'], function(websync) {
         }, 1);
         $(window).resize(resize);
         self.dom = self.css_renderer.domElement;
-        $(".content_container").bind("wheel", function(e) {
+        $('.content_container').bind('wheel', function(e) {
             if (e.originalEvent.deltaY) {
                 self.camera.position.add(new THREE.Vector3(0, 0, e.originalEvent.deltaY).applyQuaternion(self.camera.quaternion));
             }
             console.log(e);
-        }).bind("mousedown", function(e) {
+        }).bind('mousedown', function(e) {
             console.log(e);
             if (e.currentTarget == e.target.parentElement || e.currentTarget == e.target.parentElement.parentElement) {
                 self.active = true;
@@ -233,7 +233,7 @@ define(['websync'], function(websync) {
         });*/
 
         self.render();
-        $(".content").fadeIn();
+        $('.content').fadeIn();
         self.setIndex(0);
         NProgress.done();
     });
@@ -248,94 +248,94 @@ define(['websync'], function(websync) {
             //material.blending = THREE.NoBlending;
             var planeFragmentShader = [
 
-                "uniform vec3 diffuse;",
-                "uniform float opacity;",
+                'uniform vec3 diffuse;',
+                'uniform float opacity;',
 
-                THREE.ShaderChunk["color_pars_fragment"],
-                THREE.ShaderChunk["map_pars_fragment"],
-                THREE.ShaderChunk["lightmap_pars_fragment"],
-                THREE.ShaderChunk["envmap_pars_fragment"],
-                THREE.ShaderChunk["fog_pars_fragment"],
-                THREE.ShaderChunk["shadowmap_pars_fragment"],
-                THREE.ShaderChunk["specularmap_pars_fragment"],
+                THREE.ShaderChunk['color_pars_fragment'],
+                THREE.ShaderChunk['map_pars_fragment'],
+                THREE.ShaderChunk['lightmap_pars_fragment'],
+                THREE.ShaderChunk['envmap_pars_fragment'],
+                THREE.ShaderChunk['fog_pars_fragment'],
+                THREE.ShaderChunk['shadowmap_pars_fragment'],
+                THREE.ShaderChunk['specularmap_pars_fragment'],
 
-                "void main() {",
+                'void main() {',
 
-                "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
+                'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );',
 
-                THREE.ShaderChunk["map_fragment"],
-                THREE.ShaderChunk["alphatest_fragment"],
-                THREE.ShaderChunk["specularmap_fragment"],
-                THREE.ShaderChunk["lightmap_fragment"],
-                THREE.ShaderChunk["color_fragment"],
-                THREE.ShaderChunk["envmap_fragment"],
-                THREE.ShaderChunk["shadowmap_fragment"],
-                THREE.ShaderChunk["linear_to_gamma_fragment"],
-                THREE.ShaderChunk["fog_fragment"],
+                THREE.ShaderChunk['map_fragment'],
+                THREE.ShaderChunk['alphatest_fragment'],
+                THREE.ShaderChunk['specularmap_fragment'],
+                THREE.ShaderChunk['lightmap_fragment'],
+                THREE.ShaderChunk['color_fragment'],
+                THREE.ShaderChunk['envmap_fragment'],
+                THREE.ShaderChunk['shadowmap_fragment'],
+                THREE.ShaderChunk['linear_to_gamma_fragment'],
+                THREE.ShaderChunk['fog_fragment'],
 
                 //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
 
-                "}"
+                '}'
 
-            ].join("\n");
+            ].join('\n');
 
             var betterFragmentShader = [
-                "#define USE_SHADOWMAP",
-                "uniform float opacity;",
+                '#define USE_SHADOWMAP',
+                'uniform float opacity;',
 
-                "varying vec3 vLightFront;",
+                'varying vec3 vLightFront;',
 
-                "#ifdef DOUBLE_SIDED",
+                '#ifdef DOUBLE_SIDED',
 
-                "varying vec3 vLightBack;",
+                'varying vec3 vLightBack;',
 
-                "#endif",
+                '#endif',
 
-                THREE.ShaderChunk["color_pars_fragment"],
-                THREE.ShaderChunk["map_pars_fragment"],
-                THREE.ShaderChunk["lightmap_pars_fragment"],
-                THREE.ShaderChunk["envmap_pars_fragment"],
-                THREE.ShaderChunk["fog_pars_fragment"],
-                THREE.ShaderChunk["shadowmap_pars_fragment"],
-                THREE.ShaderChunk["specularmap_pars_fragment"],
+                THREE.ShaderChunk['color_pars_fragment'],
+                THREE.ShaderChunk['map_pars_fragment'],
+                THREE.ShaderChunk['lightmap_pars_fragment'],
+                THREE.ShaderChunk['envmap_pars_fragment'],
+                THREE.ShaderChunk['fog_pars_fragment'],
+                THREE.ShaderChunk['shadowmap_pars_fragment'],
+                THREE.ShaderChunk['specularmap_pars_fragment'],
 
-                "void main() {",
+                'void main() {',
 
-                "gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );",
+                'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );',
 
-                THREE.ShaderChunk["map_fragment"],
-                THREE.ShaderChunk["alphatest_fragment"],
-                THREE.ShaderChunk["specularmap_fragment"],
+                THREE.ShaderChunk['map_fragment'],
+                THREE.ShaderChunk['alphatest_fragment'],
+                THREE.ShaderChunk['specularmap_fragment'],
 
-                "#ifdef DOUBLE_SIDED",
+                '#ifdef DOUBLE_SIDED',
 
                 //"float isFront = float( gl_FrontFacing );",
                 //"gl_FragColor.xyz *= isFront * vLightFront + ( 1.0 - isFront ) * vLightBack;",
 
-                "if ( gl_FrontFacing )",
-                "gl_FragColor.xyz *= vLightFront;",
-                "else",
-                "gl_FragColor.xyz *= vLightBack;",
+                'if ( gl_FrontFacing )',
+                'gl_FragColor.xyz *= vLightFront;',
+                'else',
+                'gl_FragColor.xyz *= vLightBack;',
 
-                "#else",
+                '#else',
 
-                "gl_FragColor.xyz *= vLightFront;",
+                'gl_FragColor.xyz *= vLightFront;',
 
-                "#endif",
+                '#endif',
 
-                THREE.ShaderChunk["lightmap_fragment"],
-                THREE.ShaderChunk["color_fragment"],
-                THREE.ShaderChunk["envmap_fragment"],
-                THREE.ShaderChunk["shadowmap_fragment"],
+                THREE.ShaderChunk['lightmap_fragment'],
+                THREE.ShaderChunk['color_fragment'],
+                THREE.ShaderChunk['envmap_fragment'],
+                THREE.ShaderChunk['shadowmap_fragment'],
 
-                THREE.ShaderChunk["linear_to_gamma_fragment"],
+                THREE.ShaderChunk['linear_to_gamma_fragment'],
 
-                THREE.ShaderChunk["fog_fragment"],
+                THREE.ShaderChunk['fog_fragment'],
                 //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
 
-                "}"
+                '}'
 
-            ].join("\n")
+            ].join('\n');
 
             var planeMaterial = new THREE.ShaderMaterial({
                 uniforms: THREE.ShaderLib['lambert'].uniforms,
@@ -351,13 +351,13 @@ define(['websync'], function(websync) {
             self.scene.add(planeMesh);
         }, 1);
         return obj;
-    }
+    };
     var dir = 1;
     self.render = function() {
         var td = 1.0;
         var c_time = new Date();
         if (self.lastRender) {
-            td = (c_time - self.lastRender) / (16.66667)
+            td = (c_time - self.lastRender) / (16.66667);
         }
         TWEEN.update();
         self.lastRender = c_time;
@@ -365,7 +365,7 @@ define(['websync'], function(websync) {
         requestAnimationFrame(self.render);
         self.renderer.render(self.scene, self.camera);
         self.css_renderer.render(self.css_scene, self.camera);
-    }
+    };
     self.focus = function(obj) {
         /*var qm = new THREE.Quaternion();
         THREE.Quaternion.slerp(self.camera.quaternion, obj.quaternion, qm, 0.07);
@@ -376,11 +376,11 @@ define(['websync'], function(websync) {
         var target = (new THREE.Vector3(0, 0, distToCenter)).applyQuaternion(obj.quaternion).add(obj.position);
         new TWEEN.Tween(self.camera.position).to(target, time).easing(TWEEN.Easing.Quadratic.InOut).start();
         new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time).easing(TWEEN.Easing.Quadratic.InOut).start();
-    }
+    };
     self.updateMenu = function() {
-        $("#slideView").html("");
-        $(".awesome-slide .slide-content").each(function(index, slide) {
-            $("<div class='slidePreview " + ($(slide).hasClass("active") ? "active" : "") + "'><div class='slide'>" + $(slide).html() + "</div></div>").attr("style", $(slide).attr("style")).appendTo($("#slideView")).data({
+        $('#slideView').html('');
+        $('.awesome-slide .slide-content').each(function(index, slide) {
+            $("<div class='slidePreview " + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>').attr('style', $(slide).attr('style')).appendTo($('#slideView')).data({
                 index: index
             });
             /*var elem = $("<div class='slidePreview'><canvas width='1024' height='756'></div>").appendTo($("#slideView"))

@@ -104,15 +104,18 @@ task :beautify do
         assets/digest/{edit,core}.js
         assets/src/*.js
         bin/backend.js
-        config.json
         package.json
         )
     paths = []
     files.each do |file|
         paths += Dir.glob(file)
     end
+    backend = File.readlines("bin/backend.js")
     system("js-beautify -r #{paths.join " "}")
-    #system("css-beautify -r assets/stylesheets/*.scss")
+    system("fixjsstyle #{paths.join " "}")
+    fixed_backend = File.readlines("bin/backend.js")
+    fixed_backend[0] = backend[0]
+    File.write("bin/backend.js", fixed_backend.join(""))
 end
 task :documentation do
     files = %w(

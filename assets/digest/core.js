@@ -36,7 +36,6 @@ define('websync', {
     // An object with all of the callbacks for a websocket connection.
     webSocketCallbacks: {
         onopen: function(e) {
-            console.log(e);
             WebSync.diffInterval = setInterval(WebSync.checkDiff, 1000);
             $("nav").removeClass("no-connection");
             $(document).trigger("connection");
@@ -74,9 +73,8 @@ define('websync', {
             setTimeout(WebSync.webSocketStart, 2000);
         },
         onmessage: function(e) {
-            console.log(e);
             data = JSON.parse(e.data);
-            console.log("Message data:", data);
+            console.log("MESSAGE", data);
             if (data.type == "scripts") {
                 // Load scripts from server.
                 require(data.js);
@@ -160,7 +158,6 @@ define('websync', {
                 WebSync.clients = data['users'];
                 var to_trigger = {};
                 $.each(WebSync.clients, function(k, v) {
-                    console.log(k, v);
                     if (v.email == "anon@websyn.ca") {
                         WebSync.users[v.id] = {
                             displayName: "Anonymous"
@@ -195,7 +192,7 @@ define('websync', {
                 WebSync.clients[data['id']] = data['user'];
                 var user_id = data['user'].id;
                 var client_id = data['id']
-                console.log("USER INFO", data);
+                console.log("NEW USER INFO", data);
                 if (data['user'].email == "anon@websyn.ca") {
                     WebSync.users[data['id']] = {
                         displayName: "Anonymous"
@@ -206,7 +203,6 @@ define('websync', {
                         url: "https://secure.gravatar.com/" + data['user'].id + ".json",
                         dataType: 'jsonp'
                     }).done(function(data) {
-                        console.log(data);
                         WebSync.users[user_id] = data.entry[0];
                         $(document).trigger('client_load', {
                             client: client_id
@@ -581,7 +577,6 @@ define('websync', {
         require(['edit']);
         this.updateRibbon();
         rangy.init();
-        console.log(rangy)
         $('#settingsBtn').click(function() {
             $(this.parentElement).toggleClass("active");
             $(".settings-popup").toggle();
@@ -952,6 +947,7 @@ define('websync', {
                 var parts = local_path.split("/");
                 var exempt_path = change.path.split("/").slice(0, -1).join("/");
                 var second_to_last = WebSync.getJsonFromPath(exempt_path);
+                console.log("CHANGE", change, second_to_last);
                 // Exemption (JS plugins that don't use pure HTML)
                 if (second_to_last.exempt) {
                     console.log("EXEMPT", change);
@@ -970,7 +966,7 @@ define('websync', {
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
-                    var last = parts.slice(-1);
+                    var last = parts.slice(-1)[0];
                     if (last == "textContent") {
                         cur[last] = change.value;
                     } else if (last == "nodeName") {
@@ -989,18 +985,20 @@ define('websync', {
                             el.innerHTML = cur.innerHTML;
                         }
                         parent.replaceChild(el, cur);
+                    } else {
+                        $(cur).attr(last, change.value);
                     }
                 } else if (change.op == "remove") {
                     var cur = dom;
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
-                    var last = parts.slice(-1);
+                    var last = parts.slice(-1)[0];
                     if (last == "textContent") {
                         cur[last] = "";
                     } else if (last == "childNodes") {
                         cur.innerHTML = "";
-                    } else if (cur[last].remove) {
+                    } else if (cur[last] && cur[last].remove) {
                         cur[last].remove();
                     }
                 } else if (change.op == "add") {
@@ -1008,7 +1006,7 @@ define('websync', {
                     _.each(parts.slice(0, -1), function(part) {
                         cur = cur[part];
                     });
-                    var last = parts.slice(-1);
+                    var last = parts.slice(-1)[0];
                     if (last == "textContent") {
                         cur[last] = change.value;
                     } else if (last == "childNodes") {
@@ -1018,9 +1016,12 @@ define('websync', {
                         if (parts.length == 1) {
                             $(JSONToDOM([change.value])).appendTo(root_dom);
                         } else {
-                            console.log("UNFORSEEN PATCH PATTERN", change);
+                            $(JSONToDOM([change.value])).appendTo(cur);
+                            //console.log("UNFORSEEN PATCH PATTERN", change);
                         }
                     }
+                } else {
+                    console.log("UNKNOWN PATCH TYPE", patch);
                 }
             }
         });
@@ -1123,7 +1124,7 @@ function alphaNumeric(text) {
 function NODEtoDOM(obj) {
     var html = "";
     // Some basic cross site scripting attack prevention.
-    var name = obj.nodeName || obj.name;
+    var name = obj.nodeName || obj.name || "";
     if (name == "#text")
         return escapeHTML(obj.textContent);
     name = alphaNumeric(name);

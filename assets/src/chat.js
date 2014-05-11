@@ -17,7 +17,6 @@ define(['websync'], function(edit, websink) {
     });
     $("#chat img").tooltip();
     $(document).bind('client_load.Chat', function(e, data) {
-        console.log("Client_load", data);
         var client = data.client;
         var client_dom = $("#client_" + client);
         var user = WebSync.clients[client];
@@ -60,7 +59,6 @@ define(['websync'], function(edit, websink) {
         else
             display_name += ' (' + user.email + ')'
         display_name = _.escape(display_name);
-        console.log(user);
         var style = user.email == "anon@websyn.ca" ? "mm" : "retro";
         $("#user_list").append('<a target="_blank" id="client_' + client + '" href="https://secure.gravatar.com/' + user.id + '"><img data-toggle="tooltip" data-placement="bottom" title="' + display_name + '" src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img></a>').children().last().children().tooltip();
     }

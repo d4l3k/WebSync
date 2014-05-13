@@ -339,12 +339,14 @@ class WebSync < Sinatra::Base
         provider_list = params.keys.select{|k| k.include? "provider"}
             .map{|checkbox| checkbox.split(":").last}
         provider_string = provider_list.join(",")
-        if user.origin != provider_string and not provider_list.empty?
-            if provider_list.include? "local" and user.password == ""
-                flash.now[:danger] = "You have to set a password to use the local login."
-            else
-                flash.now[:success] = "Updated providers."
-                user.origin = provider_string
+        if not provider_list.empty?
+            if user.origin != provider_string
+                if provider_list.include? "local" and user.password == ""
+                    flash.now[:danger] = "You have to set a password to use the local login."
+                else
+                    flash.now[:success] = "Updated providers."
+                    user.origin = provider_string
+                end
             end
         else
             flash.now[:danger] = "You have to specify a login method."

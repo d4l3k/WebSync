@@ -416,11 +416,15 @@ define(['websync'], function(websync) {
             e.preventDefault();
         }).on('drop', function(e) {
             var slide_index = $(drag_elem).data().index;
-            var slide = $(".awesome-slide").eq($(drag_elem).data().index);
-            var new_index = $(e.target).parents(".slidePreview").data().index
-            $(".awesome-slide")
-                .eq(new_index)
-                .after(slide);
+            var slide = $('.awesome-slide').eq($(drag_elem).data().index);
+            var new_index = $(e.target).parents('.slidePreview').data().index;
+            var target = $('.awesome-slide')
+                .eq(new_index);
+            if ($('.awesome-slide').length == new_index - 1) {
+                target.after(slide);
+            } else {
+                target.insertBefore(slide);
+            }
             self.css_scene.children.move(slide_index, new_index);
             e.preventDefault();
             self.updateMenu();
@@ -429,7 +433,7 @@ define(['websync'], function(websync) {
     return self;
 });
 // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
-Array.prototype.move = function (old_index, new_index) {
+Array.prototype.move = function(old_index, new_index) {
     while (old_index < 0) {
         old_index += this.length;
     }

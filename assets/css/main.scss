@@ -12,7 +12,6 @@ body {
 .btn-login {
     color: white;
     font-weight: bold;
-    font-family: 'Open Sans';
     border: none;
     &:hover {
         opacity: 0.8;
@@ -76,8 +75,12 @@ footer {
         text-align: center;
     }
 }
-h1, h2, h3, h4,, h5, .navbar-brand, .btn {
+h1, h2, h3, h4,, h5, .navbar-brand {
     font-family: 'Open Sans Light', 'Droid Sans', 'Segoe UI Light', 'Arial', 'Sans';
+}
+.btn {
+
+    font-family: 'Open Sans', 'Droid Sans', 'Segoe UI', 'Arial', 'Sans';
 }
 .navbar-brand {
     font-weight: bold;
@@ -393,7 +396,7 @@ body > .container-fluid {
     *zoom: 1;
 }
 .big-head {
-    background: #1c1c1e url("/img/banner.png") 50% 0 no-repeat fixed;
+    background: #1c1c1e url("/img/banner.jpg") 50% 0 no-repeat fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

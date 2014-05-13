@@ -22,7 +22,7 @@ define(['websync'], function(websync) {
         left: 250
     });
     $('#addSlide').click(function(e) {
-        var elemm = $("<div class='awesome awesome-slide' ><div class='slide-content' contenteditable=true></div></div>");
+        var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true></div></div>");
         var elem = self.addCss(elemm[0]);
         setTimeout(self.updateMenu, 50);
     });
@@ -116,26 +116,29 @@ define(['websync'], function(websync) {
         setTimeout(self.updateMenu, 50);
     };
     $('#presentation-nav .toggle-sidebar, .return_edit .menu').click(function() {
+        $("#presentation-nav").toggleClass("offscreen");
         var pos = -250;
-        var button_pos = -53;
         if (hidden) {
             pos = 0;
-            button_pos = 0;
         }
-        $(this).animate({
-            right: button_pos
-        });
-        $('#presentation-nav').animate({
-            left: pos
-        });
-        $('.content_well').animate({
-            left: pos + 250
-        }, {
-            step: function() {
-                $(window).trigger('resize');
-            }
-        });
         hidden = !hidden;
+        $('.content_well').css({
+            left: pos + 250
+        });
+        _.delay(function(){
+            $(window).trigger('resize');
+        },200);
+    });
+    $(document).on('viewmode', function(e){
+        if(WS.viewMode == 'Presentation'){
+            $("#presentation-nav").removeClass("offscreen");
+            hidden = false;
+            $("#presentation-nav .toggle-sidebar").click();
+        } else {
+            $("#presentation-nav").addClass("offscreen");
+            hidden = true;
+            $("#presentation-nav .toggle-sidebar").click();
+        }
     });
     $(document).on('modules_loaded', function() {
         self.scene = new THREE.Scene();
@@ -244,110 +247,7 @@ define(['websync'], function(websync) {
         var obj = new THREE.CSS3DObject(element);
         self.css_scene.add(obj);
         setTimeout(function() {
-            var material = new THREE.MeshLambertMaterial({
-                color: 0xffffff
-            });
-            //material.opacity = 0;
-            //material.blending = THREE.NoBlending;
-            var planeFragmentShader = [
-
-                'uniform vec3 diffuse;',
-                'uniform float opacity;',
-
-                THREE.ShaderChunk['color_pars_fragment'],
-                THREE.ShaderChunk['map_pars_fragment'],
-                THREE.ShaderChunk['lightmap_pars_fragment'],
-                THREE.ShaderChunk['envmap_pars_fragment'],
-                THREE.ShaderChunk['fog_pars_fragment'],
-                THREE.ShaderChunk['shadowmap_pars_fragment'],
-                THREE.ShaderChunk['specularmap_pars_fragment'],
-
-                'void main() {',
-
-                'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );',
-
-                THREE.ShaderChunk['map_fragment'],
-                THREE.ShaderChunk['alphatest_fragment'],
-                THREE.ShaderChunk['specularmap_fragment'],
-                THREE.ShaderChunk['lightmap_fragment'],
-                THREE.ShaderChunk['color_fragment'],
-                THREE.ShaderChunk['envmap_fragment'],
-                THREE.ShaderChunk['shadowmap_fragment'],
-                THREE.ShaderChunk['linear_to_gamma_fragment'],
-                THREE.ShaderChunk['fog_fragment'],
-
-                //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
-
-                '}'
-
-            ].join('\n');
-
-            var betterFragmentShader = [
-                '#define USE_SHADOWMAP',
-                'uniform float opacity;',
-
-                'varying vec3 vLightFront;',
-
-                '#ifdef DOUBLE_SIDED',
-
-                'varying vec3 vLightBack;',
-
-                '#endif',
-
-                THREE.ShaderChunk['color_pars_fragment'],
-                THREE.ShaderChunk['map_pars_fragment'],
-                THREE.ShaderChunk['lightmap_pars_fragment'],
-                THREE.ShaderChunk['envmap_pars_fragment'],
-                THREE.ShaderChunk['fog_pars_fragment'],
-                THREE.ShaderChunk['shadowmap_pars_fragment'],
-                THREE.ShaderChunk['specularmap_pars_fragment'],
-
-                'void main() {',
-
-                'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );',
-
-                THREE.ShaderChunk['map_fragment'],
-                THREE.ShaderChunk['alphatest_fragment'],
-                THREE.ShaderChunk['specularmap_fragment'],
-
-                '#ifdef DOUBLE_SIDED',
-
-                //"float isFront = float( gl_FrontFacing );",
-                //"gl_FragColor.xyz *= isFront * vLightFront + ( 1.0 - isFront ) * vLightBack;",
-
-                'if ( gl_FrontFacing )',
-                'gl_FragColor.xyz *= vLightFront;',
-                'else',
-                'gl_FragColor.xyz *= vLightBack;',
-
-                '#else',
-
-                'gl_FragColor.xyz *= vLightFront;',
-
-                '#endif',
-
-                THREE.ShaderChunk['lightmap_fragment'],
-                THREE.ShaderChunk['color_fragment'],
-                THREE.ShaderChunk['envmap_fragment'],
-                THREE.ShaderChunk['shadowmap_fragment'],
-
-                THREE.ShaderChunk['linear_to_gamma_fragment'],
-
-                THREE.ShaderChunk['fog_fragment'],
-                //"gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 - shadowColor.x );",
-
-                '}'
-
-            ].join('\n');
-
-            var planeMaterial = new THREE.ShaderMaterial({
-                uniforms: THREE.ShaderLib['lambert'].uniforms,
-                vertexShader: THREE.ShaderLib['lambert'].vertexShader,
-                //fragmentShader: betterFragmentShader,
-                fragmentShader: THREE.ShaderLib['lambert'].fragmentShader,
-                color: 0x0000FF
-            });
-            var material = new THREE.MeshLambertMaterial({
+            var material = new THREE.MeshBasicMaterial({
                 color: 0
             });
             material.opacity = 0;

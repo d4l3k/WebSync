@@ -7,24 +7,18 @@ define('/assets/note.js', ['websync'], function(websync) {
     $('.content').append($('<div id="note-well" class="content_container"></div>'));
     $('body').append($('<div id="note-nav" class="sidebar"><button id="addSection" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Section</button> <button id="addPage" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Page</button> <button class="btn btn-default toggle-sidebar"><i class="fa fa-bars fa-lg"></i></button><div id="notesView" class="panel panel-default"></div></div>'));
     var hidden = false;
-    $('#note-nav .toggle-sidebar').click(function() {
+    $('#note-nav .toggle-sidebar, .return_edit .menu').click(function() {
         var pos = -250;
-        var button_pos = -53;
         if (hidden) {
             pos = 0;
-            button_pos = 0;
         }
-        $(this).animate({
-            right: button_pos
-        });
-        $('#note-nav').animate({
-            left: pos
-        });
-        $('.content_well').animate({
+        $('#note-nav').toggleClass("offscreen");
+        $('.content_well').css({
             left: pos + 250
-        }, function() {
-            $(document).trigger('resize');
         });
+        _.delay(function(){
+            $(document).trigger('resize');
+        }, 200);
         hidden = !hidden;
     });
     self.updateNav = function() {

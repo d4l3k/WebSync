@@ -14,7 +14,7 @@ define('/assets/presentation.js', ['websync'], function(websync) {
         self.updateMenu();
     });
     var hidden = false;
-    $('#presentation-nav .toggle-sidebar').click(function() {
+    $('#presentation-nav .toggle-sidebar, .return_edit .menu').click(function() {
         var pos = -250;
         var button_pos = -47;
         if (hidden) {
@@ -51,7 +51,7 @@ define('/assets/presentation.js', ['websync'], function(websync) {
         setTimeout(self.updateMenu, 50);
     };
     WebSync.fromJSON = function() {
-        $('.content_well #slides').get(0).innerHTML = JSONToDOM(WebSyncData.body);
+        $('.content_well #slides').get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
         // TODO: Get rid of the cause of this patch.
         //$(".slide").appendTo($("#slides"));
         if (WebSyncAuth.view_op == 'edit') {

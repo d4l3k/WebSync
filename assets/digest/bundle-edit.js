@@ -9,6 +9,7 @@
 //= require underscore-min.js
 //= require levenshtein.js
 //= require jquery.transform2d.js
+//= require jquery.dataselector.js
 //= require diff_match_patch.js
 //= require jsondiffpatch.js
 //= require json-patch-duplex.js

@@ -495,16 +495,17 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         }
     };
     self.evalJS = function(js, elem) {
-        console.log("ELEMO", elem);
+        console.log('ELEMO', elem);
         // Hack. :(
         window._tmp_elem = elem;
-        function c(range){
-            var parts = range.split(":");
+
+        function c(range) {
+            var parts = range.split(':');
             var coords = self.coordsFromLabel(parts[0]);
-            console.log("ELEM", window._tmp_elem);
+            console.log('ELEM', window._tmp_elem);
             var elem = self.posToElem(coords[0], coords[1], window._tmp_elem);
             var val = $(elem).text();
-            if(parseFloat(val)==val){
+            if (parseFloat(val) == val) {
                 val = parseFloat(val);
             }
             return val;
@@ -524,12 +525,12 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             $(node).text(self.evalJS(data.slice(1), node));
         }
     };
-    self.updateAllJS = function(){
-        var nodes = $(".content table td:data(content)");
-        _.each(nodes, function(node){
+    self.updateAllJS = function() {
+        var nodes = $('.content table td:data(content)');
+        _.each(nodes, function(node) {
             self.updateJS(node);
         });
-    }
+    };
     self.selectedEditable = function(edit) {
         if (!edit) {
             self.selectedElem.contentEditable = 'inherit';
@@ -724,7 +725,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         return (elem || self.selectedElem).parentElement.parentElement.parentElement;
     };
     self.posToElem = function(x, y, elem) {
-        if(!elem){
+        if (!elem) {
             elem = self.selectedElem;
         }
         return elem.parentElement.parentElement.children[y].children[x];
@@ -770,23 +771,24 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         return s;
     };
     // Convert from a "A1" formated label to a coordinate.
-    self.coordsFromLabel = function(label){
+    self.coordsFromLabel = function(label) {
         // Row (number), Column (Base 26)
-        var r = "", c = "";
-        _.each(label, function(sym){
-            if(alpha.indexOf(sym) != -1){
+        var r = '',
+            c = '';
+        _.each(label, function(sym) {
+            if (alpha.indexOf(sym) != -1) {
                 c += sym;
             } else {
                 r += sym;
             }
         });
         var column = 0;
-        _.each(c, function(sym, i){
-            column += (alpha.indexOf(sym)+1)*Math.pow(26, c.length-i-1);
+        _.each(c, function(sym, i) {
+            column += (alpha.indexOf(sym) + 1) * Math.pow(26, c.length - i - 1);
         });
 
-        return [parseInt(r)-1, column-1]
-    }
+        return [parseInt(r) - 1, column - 1];
+    };
 
     // Return self so other modules can hook into this one.
     return self;
@@ -795,7 +797,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
 
 // https://stackoverflow.com/questions/2891452/jquery-data-selector
 // TODO: Move to it's own file.
-(function(){
+(function() {
 
     var matcher = /\s*(?:((?:(?:\\\.|[^.,])+\.?)+)\s*([!~><=]=|[><])\s*("|')?((?:\\\3|.)*?)\3|(.+?))\s*(?:,|$)/g;
 
@@ -829,14 +831,29 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             val = resolve(el, m[1] || m[5]);
 
             switch (m[2]) {
-                case '==': foundMatch = val == check; break;
-                case '!=': foundMatch = val != check; break;
-                case '<=': foundMatch = val <= check; break;
-                case '>=': foundMatch = val >= check; break;
-                case '~=': foundMatch = RegExp(check).test(val); break;
-                case '>': foundMatch = val > check; break;
-                case '<': foundMatch = val < check; break;
-                default: if (m[5]) foundMatch = !!val;
+                case '==':
+                    foundMatch = val == check;
+                    break;
+                case '!=':
+                    foundMatch = val != check;
+                    break;
+                case '<=':
+                    foundMatch = val <= check;
+                    break;
+                case '>=':
+                    foundMatch = val >= check;
+                    break;
+                case '~=':
+                    foundMatch = RegExp(check).test(val);
+                    break;
+                case '>':
+                    foundMatch = val > check;
+                    break;
+                case '<':
+                    foundMatch = val < check;
+                    break;
+                default:
+                    if (m[5]) foundMatch = !! val;
             }
 
             allMatch = allMatch === null ? foundMatch : allMatch && foundMatch;

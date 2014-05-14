@@ -63,7 +63,7 @@ define(['websync'], function(edit, websink) {
         $('#user_list').append('<a target="_blank" id="client_' + client + '" href="https://secure.gravatar.com/' + user.id + '"><img data-toggle="tooltip" data-placement="bottom" title="' + display_name + '" src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img></a>').children().last().children().tooltip();
     };
     $(document).bind('client_leave.Chat', function(e, data) {
-        console.log('Client leaving', data);
+        console.log('CLIENT LEAVING', data);
         $('#client_' + data.client).remove();
         self.updateUserList();
     });

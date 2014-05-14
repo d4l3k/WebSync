@@ -12,11 +12,11 @@ define('/assets/note.js', ['websync'], function(websync) {
         if (hidden) {
             pos = 0;
         }
-        $('#note-nav').toggleClass("offscreen");
+        $('#note-nav').toggleClass('offscreen');
         $('.content_well').css({
             left: pos + 250
         });
-        _.delay(function(){
+        _.delay(function() {
             $(document).trigger('resize');
         }, 200);
         hidden = !hidden;

@@ -16,11 +16,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         var new_table = $('<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>');
         WebSync.insertAtCursor(new_table);
     });
-    // TODO: More efficient table json & =equation() support.
-    /*WebSync.registerDOMException("table", function(obj){
-    }, function(json){
-        return '<span class="Equations Equation-Editable make-editable" contenteditable="false">'+json+'</span>';
-    });*/
     $('.Table [title="Insert Row Above"]').bind('click.Tables', function(e) {
         if (self.selected) {
             var html = '<tr>';
@@ -310,7 +305,68 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
         }
     };
-
+    WS.registerDOMException('TABLE', function(obj) {
+        var out = {
+            data: [],
+            heights: [],
+            widths: []
+        };
+        for (var attr, i = 0, attrs = obj.attributes, l = attrs.length; i < l; i++) {
+            attr = attrs.item(i);
+            if (!out.attrs)
+                out.attrs = {};
+            out.attrs[attr.nodeName] = attr.nodeValue;
+        }
+        var rows = $(obj).find(':not(table) tr');
+        _.each(rows, function(row, i) {
+            out.heights[i] = $(row).height();
+            var columns = $(row).children('td');
+            var row_out = [];
+            _.each(columns, function(cell, j) {
+                out.widths[j] = $(cell).width();
+                // Potential JS code.
+                var data = $(cell).data().content || WS.DOMToJSON(cell.childNodes);
+                var cell_out = {
+                    content: data
+                };
+                for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
+                    attr = attrs.item(i);
+                    // Ignore attribute if it's set by the table.
+                    if (attr.nodeName != 'data-content' &&
+                        attr.nodeName != 'contenteditable') {
+                        if (!cell_out.attrs)
+                            cell_out.attrs = {};
+                        cell_out.attrs[attr.nodeName] = attr.nodeValue;
+                    }
+                }
+                row_out.push(cell_out);
+            });
+            out.data.push(row_out);
+        });
+        return out;
+    }, function(json) {
+        var html = '<table';
+        _.each(json.attrs, function(v, k) {
+            html += ' ' + k + '=\"' + v + '\"';
+        });
+        html += '><tbody>';
+        _.each(json.data, function(row, i) {
+            html += '<tr>';
+            _.each(row, function(cell, j) {
+                html += '<td>';
+                if (cell.content[0] === '=') {
+                    html += cell.content;
+                } else {
+                    html += WS.JSONToDOM(cell.content);
+                }
+                html += '</td>';
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        console.log('RESTORING', html);
+        return html;
+    });
     WebSync.updateRibbon();
     $("#ribbon_buttons a:contains('Table')").parent().hide();
     // Function: void [plugin=edit].disable();
@@ -410,9 +466,21 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }, 1);
         }
     };
+    self.evalJS = function(js){
+        try {
+            return eval(js);
+        } catch (e) {
+            return "!"+e;
+        }
+    }
     self.selectedEditable = function(edit) {
         if (!edit) {
             self.selectedElem.contentEditable = 'inherit';
+            var text = $(self.selectedElem).text();
+            if(text[0]==="="){
+                $(self.selectedElem).data("content", text);
+                $(self.selectedElem).text(self.evalJS(text.slice(1)));
+            }
             $('#table_cursor').css({
                 borderStyle: 'solid',
                 outlineStyle: 'solid'
@@ -420,6 +488,10 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             $('#ribbon_buttons a:contains("Table")').click();
         } else {
             self.selectedElem.contentEditable = true;
+            var data = $(self.selectedElem).data();
+            if(data.content){
+                $(self.selectedElem).text(data.content);
+            }
             $('#table_cursor').css({
                 borderStyle: 'dashed',
                 outlineStyle: 'dashed'
@@ -540,7 +612,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var y = top; y <= bottom; y++) {
                 selection_html += '<tr>';
                 for (var x = left; x <= right; x++) {
-                    console.log(x, left, right);
                     selection_html += '<td>' + self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML + '</td>';
                 }
                 selection_html += '</tr>';
@@ -568,7 +639,9 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
         for (var y = top; y <= bottom; y++) {
             for (var x = left; x <= right; x++) {
-                self.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML = '';
+                var node = self.selectedElem.parentElement.parentElement.children[y].children[x];
+                node.innerHTML = '';
+                $(node).data("content", null);
             }
         }
     };

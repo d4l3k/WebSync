@@ -949,19 +949,34 @@ define('websync', {
             if (change.path.indexOf(root) == 0) {
                 var local_path = change.path.slice(root.length);
                 var parts = local_path.split('/');
-                var exempt_path = change.path.split('/').slice(0, -1).join('/');
-                var second_to_last = WebSync.getJsonFromPath(exempt_path);
-                console.log('CHANGE', change, second_to_last);
+                //var exempt_path = change.path.split('/').slice(0, -1).join('/');
+                //var second_to_last = WebSync.getJsonFromPath(exempt_path);
+                console.log('CHANGE', change);
+
+                // Walk the path and see if any of the parent nodes are exempt.
+                var exempt_json, exempt_path;
+                _.each(parts, function(part, i) {
+                    if (!exempt_path) {
+                        var check_path = root + parts.slice(0, i + 1).join('/');
+                        var json = WS.getJsonFromPath(check_path);
+                        if (json.exempt) {
+                            exempt_json = json;
+                            exempt_path = check_path;
+                        }
+                    }
+                });
                 // Exemption (JS plugins that don't use pure HTML)
-                if (second_to_last.exempt) {
+                if (exempt_path) {
                     console.log('EXEMPT', change);
                     // Only want to act on an exemption once per patch set.
                     if (!exemptions[exempt_path]) {
                         var cur = dom;
-                        _.each(parts.slice(0, -1), function(part) {
+                        var local_exempt_path = exempt_path.slice(root.length);
+                        var exempt_parts =  local_exempt_path.split("/");
+                        _.each(exempt_parts, function(part) {
                             cur = cur[part];
                         });
-                        var html = WebSync.domExceptions[second_to_last.exempt].load(second_to_last.data);
+                        var html = WebSync.domExceptions[exempt_json.exempt].load(exempt_json.data);
                         $(cur).replaceWith(html);
                         exemptions[exempt_path] = true;
                     }

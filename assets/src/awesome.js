@@ -113,10 +113,11 @@ define(['websync'], function(websync) {
                 });
             });
         });
+        self.dirty = true;
         setTimeout(self.updateMenu, 50);
     };
     $('#presentation-nav .toggle-sidebar, .return_edit .menu').click(function() {
-        $("#presentation-nav").toggleClass("offscreen");
+        $('#presentation-nav').toggleClass('offscreen');
         var pos = -250;
         if (hidden) {
             pos = 0;
@@ -125,19 +126,19 @@ define(['websync'], function(websync) {
         $('.content_well').css({
             left: pos + 250
         });
-        _.delay(function(){
+        _.delay(function() {
             $(window).trigger('resize');
-        },200);
+        }, 200);
     });
-    $(document).on('viewmode', function(e){
-        if(WS.viewMode == 'Presentation'){
-            $("#presentation-nav").removeClass("offscreen");
+    $(document).on('viewmode', function(e) {
+        if (WS.viewMode == 'Presentation') {
+            $('#presentation-nav').removeClass('offscreen');
             hidden = false;
-            $("#presentation-nav .toggle-sidebar").click();
+            $('#presentation-nav .toggle-sidebar').click();
         } else {
-            $("#presentation-nav").addClass("offscreen");
+            $('#presentation-nav').addClass('offscreen');
             hidden = true;
-            $("#presentation-nav .toggle-sidebar").click();
+            $('#presentation-nav .toggle-sidebar').click();
         }
     });
     $(document).on('modules_loaded', function() {
@@ -203,7 +204,9 @@ define(['websync'], function(websync) {
             if (self.active) {
                 //self.camera.position.x = self.cam_start.x+(self.start.x-e.pageX);
                 //self.camera.position.y = self.cam_start.y+(e.pageY-self.start.y);
-                self.camera.position = self.cam_start.clone().add(new THREE.Vector3(self.start.x - e.pageX, e.pageY - self.start.y, 0).applyQuaternion(self.camera.quaternion));
+                var x = self.start.x - e.pageX;
+                var y = e.pageY - self.start.y;
+                self.camera.position = self.cam_start.clone().add(new THREE.Vector3(x, y, 0).applyQuaternion(self.camera.quaternion));
                 self.dirty = true;
                 e.preventDefault();
             }

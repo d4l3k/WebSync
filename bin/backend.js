@@ -366,7 +366,7 @@ fs.readFile('./config/config.json', function(err, buffer) {
                                         console.log('[data_patch] Error:', e);
                                         ws.send(JSON.stringify({
                                             type: 'error',
-                                            msg: 'Bad patch'
+                                            reason: 'Bad patch'
                                         }));
                                     }
                                 });

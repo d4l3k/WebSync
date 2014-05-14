@@ -1,7 +1,6 @@
 // WebSync: Page layout handler
 define('/assets/page.js', ['websync'], function(websync) {
     var self = this;
-    console.log('Page loaded');
     $('.content').hide().append($('<div class="content_container"><div class="page"></div></div>')).addClass('content-page').fadeIn();
     if (!WebSyncData.body) {
         WebSyncData.body = [];

@@ -15,7 +15,6 @@ options ||= {}
 options[:parent] = nil
 order = :edit_time
 order = :name if sort == "name"
-order = :user_email if sort == "owner"
 sort_up = !invert
 sort_up = invert if sort=="recent"
 options[:order] = [sort_up ? order.asc : order.desc]
@@ -31,8 +30,28 @@ docs = docs.sort do |a,b|
     end
 end if sort=="size"
 
+docs = docs.sort do |a,b|
+    owner_a = a.owner
+    owner_b = b.owner
+    # Always put the orphaned document at the bottom.
+    if owner_a.nil? or owner_b.nil?
+        if owner_a.nil?
+            1<=>0
+        else
+            0<=>1
+        end
+    elsif invert
+        owner_a.email <=> owner_b.email
+    else
+        owner_b.email <=> owner_a.email
+    end
+end if sort == "owner"
 
-headers = { "Name" => "name", "Owner" =>  "owner", "<span class='hidden-xs'>Last </span>Modified" => "recent", "Size" => "size" }
+
+headers = { "Name" => "name",
+    "Owner" =>  "owner",
+    "<span class='hidden-xs'>Last </span>Modified" => "recent",
+    "Size" => "size" }
 
 %>
 <table class="table table-bordered table-hover table-click">

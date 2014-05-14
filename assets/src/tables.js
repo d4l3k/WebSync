@@ -495,15 +495,17 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         }
     };
     self.evalJS = function(js, elem) {
-        console.log('ELEMO', elem);
         // Hack. :(
         window._tmp_elem = elem;
 
         function c(range) {
             var parts = range.split(':');
             var coords = self.coordsFromLabel(parts[0]);
-            console.log('ELEM', window._tmp_elem);
-            var elem = self.posToElem(coords[0], coords[1], window._tmp_elem);
+            var elem = self.posToElem(coords[1], coords[0], window._tmp_elem);
+            // Prevent infinite extension.
+            if(elem == window._tmp_elem){
+                return "";
+            }
             var val = $(elem).text();
             if (parseFloat(val) == val) {
                 val = parseFloat(val);
@@ -793,4 +795,3 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     // Return self so other modules can hook into this one.
     return self;
 });
-

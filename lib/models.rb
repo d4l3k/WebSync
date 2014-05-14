@@ -116,6 +116,14 @@ class WSFile
         response = $postgres.exec_prepared('wsfile_get', [self.id], 1)
         response.to_a.length==1 && response[0]["data"] || ""
     end
+    def owner
+        permission = self.permissions(level: 'owner')[0]
+        if permission
+            permission.user
+        else
+            nil
+        end
+    end
     def config_set key, value
         n_config = config.dup
         n_config[key]=value

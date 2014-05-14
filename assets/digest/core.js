@@ -972,7 +972,7 @@ define('websync', {
                     if (!exemptions[exempt_path]) {
                         var cur = dom;
                         var local_exempt_path = exempt_path.slice(root.length);
-                        var exempt_parts =  local_exempt_path.split("/");
+                        var exempt_parts = local_exempt_path.split('/');
                         _.each(exempt_parts, function(part) {
                             cur = cur[part];
                         });

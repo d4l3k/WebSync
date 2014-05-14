@@ -143,7 +143,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         //e.preventDefault();
     });
     $('.content').bind('mousemove.Tables', function(e) {
-        if (self.selectionActive && self.selectedElem.contentEditable != 'true') {
+        if (self.selectionActive && self.selectedElem && self.selectedElem.contentEditable != 'true') {
             e.preventDefault();
         }
     });
@@ -319,15 +319,27 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         }
         var rows = $(obj).find(':not(table) tr');
         _.each(rows, function(row, i) {
-            out.heights[i] = $(row).height();
+            var height = $(row)[0].style.height;
+            if(height){
+                out.heights[i] = height;
+            }
             var columns = $(row).children('td');
             var row_out = [];
             _.each(columns, function(cell, j) {
-                out.widths[j] = $(cell).width();
+                var width = $(row)[0].style.width;
+                if(width){
+                    out.widths[j] = width;
+                }
                 // Potential JS code.
-                var data = $(cell).data().content || WS.DOMToJSON(cell.childNodes);
+                var data;
+                var content = $(cell).data().content;
+                if(content){
+                    data = [document.createTextNode(content)];
+                } else {
+                    data = cell.childNodes;
+                }
                 var cell_out = {
-                    content: data
+                    content: WS.DOMToJSON(data)
                 };
                 for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
                     attr = attrs.item(i);
@@ -365,8 +377,24 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         });
         html += '</tbody></table>';
         console.log('RESTORING', html);
+        _.defer(self.checkForJS);
         return html;
     });
+    self.checkForJS = function(){
+        var elems = $(".content table td:contains('=')");
+        _.each(elems, function(cell){
+            var data = $(cell).data().content;
+            if(!data){
+                var text = $(cell).text();
+                if (text[0] === '=') {
+                    $(cell).data('content', text);
+                    self.updateJS(cell);
+                }
+            } else if(data[0] === "="){
+                self.updateJS(cell);
+            }
+        });
+    }
     WebSync.updateRibbon();
     $("#ribbon_buttons a:contains('Table')").parent().hide();
     // Function: void [plugin=edit].disable();
@@ -466,20 +494,26 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }, 1);
         }
     };
-    self.evalJS = function(js){
+    self.evalJS = function(js) {
         try {
             return eval(js);
         } catch (e) {
-            return "!"+e;
+            return '!' + e;
+        }
+    };
+    self.updateJS = function(node){
+        var data = $(node).data().content;
+        if (data[0] === '=') {
+            $(node).text(self.evalJS(data.slice(1)));
         }
     }
     self.selectedEditable = function(edit) {
         if (!edit) {
             self.selectedElem.contentEditable = 'inherit';
             var text = $(self.selectedElem).text();
-            if(text[0]==="="){
-                $(self.selectedElem).data("content", text);
-                $(self.selectedElem).text(self.evalJS(text.slice(1)));
+            if (text[0] === '=') {
+                $(self.selectedElem).data('content', text);
+                self.updateJS(self.selectedElem);
             }
             $('#table_cursor').css({
                 borderStyle: 'solid',
@@ -489,7 +523,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         } else {
             self.selectedElem.contentEditable = true;
             var data = $(self.selectedElem).data();
-            if(data.content){
+            if (data.content) {
                 $(self.selectedElem).text(data.content);
             }
             $('#table_cursor').css({
@@ -641,7 +675,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var x = left; x <= right; x++) {
                 var node = self.selectedElem.parentElement.parentElement.children[y].children[x];
                 node.innerHTML = '';
-                $(node).data("content", null);
+                $(node).data('content', null);
             }
         }
     };

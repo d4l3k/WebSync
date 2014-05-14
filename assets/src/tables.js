@@ -320,20 +320,20 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         var rows = $(obj).find(':not(table) tr');
         _.each(rows, function(row, i) {
             var height = $(row)[0].style.height;
-            if(height){
+            if (height) {
                 out.heights[i] = height;
             }
             var columns = $(row).children('td');
             var row_out = [];
             _.each(columns, function(cell, j) {
                 var width = $(row)[0].style.width;
-                if(width){
+                if (width) {
                     out.widths[j] = width;
                 }
                 // Potential JS code.
                 var data;
                 var content = $(cell).data().content;
-                if(content){
+                if (content) {
                     data = [document.createTextNode(content)];
                 } else {
                     data = cell.childNodes;
@@ -380,21 +380,21 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         _.defer(self.checkForJS);
         return html;
     });
-    self.checkForJS = function(){
+    self.checkForJS = function() {
         var elems = $(".content table td:contains('=')");
-        _.each(elems, function(cell){
+        _.each(elems, function(cell) {
             var data = $(cell).data().content;
-            if(!data){
+            if (!data) {
                 var text = $(cell).text();
                 if (text[0] === '=') {
                     $(cell).data('content', text);
                     self.updateJS(cell);
                 }
-            } else if(data[0] === "="){
+            } else if (data[0] === '=') {
                 self.updateJS(cell);
             }
         });
-    }
+    };
     WebSync.updateRibbon();
     $("#ribbon_buttons a:contains('Table')").parent().hide();
     // Function: void [plugin=edit].disable();
@@ -494,18 +494,41 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }, 1);
         }
     };
-    self.evalJS = function(js) {
-        try {
-            return eval(js);
-        } catch (e) {
-            return '!' + e;
+    self.evalJS = function(js, elem) {
+        console.log("ELEMO", elem);
+        // Hack. :(
+        window._tmp_elem = elem;
+        function c(range){
+            var parts = range.split(":");
+            var coords = self.coordsFromLabel(parts[0]);
+            console.log("ELEM", window._tmp_elem);
+            var elem = self.posToElem(coords[0], coords[1], window._tmp_elem);
+            var val = $(elem).text();
+            if(parseFloat(val)==val){
+                val = parseFloat(val);
+            }
+            return val;
         }
+        var out;
+        try {
+            out = eval(js);
+        } catch (e) {
+            out = '!' + e;
+        }
+        delete window._tmp_elem;
+        return out;
     };
-    self.updateJS = function(node){
+    self.updateJS = function(node) {
         var data = $(node).data().content;
         if (data[0] === '=') {
-            $(node).text(self.evalJS(data.slice(1)));
+            $(node).text(self.evalJS(data.slice(1), node));
         }
+    };
+    self.updateAllJS = function(){
+        var nodes = $(".content table td:data(content)");
+        _.each(nodes, function(node){
+            self.updateJS(node);
+        });
     }
     self.selectedEditable = function(edit) {
         if (!edit) {
@@ -513,8 +536,8 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             var text = $(self.selectedElem).text();
             if (text[0] === '=') {
                 $(self.selectedElem).data('content', text);
-                self.updateJS(self.selectedElem);
             }
+            self.updateAllJS();
             $('#table_cursor').css({
                 borderStyle: 'solid',
                 outlineStyle: 'solid'
@@ -700,8 +723,11 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     self.primaryTable = function(elem) {
         return (elem || self.selectedElem).parentElement.parentElement.parentElement;
     };
-    self.posToElem = function(x, y) {
-        return self.selectedElem.parentElement.parentElement.children[y].children[x];
+    self.posToElem = function(x, y, elem) {
+        if(!elem){
+            elem = self.selectedElem;
+        }
+        return elem.parentElement.parentElement.children[y].children[x];
     };
     self.posCache = {};
     self.selectedPos = function(targetElem) {
@@ -743,7 +769,82 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
 
         return s;
     };
+    // Convert from a "A1" formated label to a coordinate.
+    self.coordsFromLabel = function(label){
+        // Row (number), Column (Base 26)
+        var r = "", c = "";
+        _.each(label, function(sym){
+            if(alpha.indexOf(sym) != -1){
+                c += sym;
+            } else {
+                r += sym;
+            }
+        });
+        var column = 0;
+        _.each(c, function(sym, i){
+            column += (alpha.indexOf(sym)+1)*Math.pow(26, c.length-i-1);
+        });
+
+        return [parseInt(r)-1, column-1]
+    }
 
     // Return self so other modules can hook into this one.
     return self;
 });
+
+
+// https://stackoverflow.com/questions/2891452/jquery-data-selector
+// TODO: Move to it's own file.
+(function(){
+
+    var matcher = /\s*(?:((?:(?:\\\.|[^.,])+\.?)+)\s*([!~><=]=|[><])\s*("|')?((?:\\\3|.)*?)\3|(.+?))\s*(?:,|$)/g;
+
+    function resolve(element, data) {
+
+        data = data.match(/(?:\\\.|[^.])+(?=\.|$)/g);
+
+        var cur = jQuery.data(element)[data.shift()];
+
+        while (cur && data[0]) {
+            cur = cur[data.shift()];
+        }
+
+        return cur || undefined;
+
+    }
+
+    jQuery.expr[':'].data = function(el, i, match) {
+
+        matcher.lastIndex = 0;
+
+        var expr = match[3],
+            m,
+            check, val,
+            allMatch = null,
+            foundMatch = false;
+
+        while (m = matcher.exec(expr)) {
+
+            check = m[4];
+            val = resolve(el, m[1] || m[5]);
+
+            switch (m[2]) {
+                case '==': foundMatch = val == check; break;
+                case '!=': foundMatch = val != check; break;
+                case '<=': foundMatch = val <= check; break;
+                case '>=': foundMatch = val >= check; break;
+                case '~=': foundMatch = RegExp(check).test(val); break;
+                case '>': foundMatch = val > check; break;
+                case '<': foundMatch = val < check; break;
+                default: if (m[5]) foundMatch = !!val;
+            }
+
+            allMatch = allMatch === null ? foundMatch : allMatch && foundMatch;
+
+        }
+
+        return allMatch;
+
+    };
+
+}());

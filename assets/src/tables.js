@@ -503,8 +503,8 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             var coords = self.coordsFromLabel(parts[0]);
             var elem = self.posToElem(coords[1], coords[0], window._tmp_elem);
             // Prevent infinite extension.
-            if(elem == window._tmp_elem){
-                return "";
+            if (elem == window._tmp_elem) {
+                return '';
             }
             var val = $(elem).text();
             if (parseFloat(val) == val) {

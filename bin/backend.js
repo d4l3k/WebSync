@@ -13,6 +13,7 @@ var fs = require('fs'),
     crypto = require('crypto'),
     stripJsonComments = require('strip-json-comments');
 
+
 fs.readFile('./config/config.json', function(err, buffer) {
     // Modified JSON format that allows comments.
     var config_lines = '{\n' + buffer.toString() + '\n}';
@@ -20,9 +21,13 @@ fs.readFile('./config/config.json', function(err, buffer) {
     postgres = new pg.Client('tcp://' + config.postgres);
     postgres.connect();
     redis = redisLib.createClient(config.redis.port, config.redis.host);
+    var port;
+    if( (p = process.argv.indexOf("-p")) != -1){
+        port = process.argv[p+1];
+    }
     var WebSocketServer = require('ws').Server,
         wss = new WebSocketServer({
-            port: config.websocket.port
+            port: port || config.websocket.port
         });
     wss.on('connection', function(ws) {
         console.log('Connection: ', ws.upgradeReq.url);
@@ -429,5 +434,5 @@ fs.readFile('./config/config.json', function(err, buffer) {
         }
     });
     console.log('WebSync WebSocket server is ready to receive connections.');
-    console.log('Listening on: 0.0.0.0:' + config.websocket.port);
+    console.log('Listening on: 0.0.0.0:' + port || config.websocket.port);
 });

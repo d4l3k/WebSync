@@ -21,7 +21,6 @@ gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeli
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 group :development do
     gem 'thin'
-    gem 'pry'
     gem 'racksh'
     gem 'pry-rescue'
     gem 'pry-stack_explorer'
@@ -34,6 +33,11 @@ end
 group :test do
     gem 'git_time_extractor'
     gem 'selenium-webdriver'
+    gem 'faye-websocket'
+    gem 'rspec'
+end
+group :development, :test do
+    gem 'pry'
 end
 
 gem 'omniauth'

@@ -142,6 +142,7 @@ class WSFile
         end
         self.asset_ws_files.destroy
         self.permissions.destroy
+        self.changes.destroy
         self.destroy
     end
     UNITS = %W(B KB MB GB TB).freeze

@@ -1,14 +1,14 @@
 require 'bundler'
 ENV['RACK_ENV']='production'
 require 'sass'
-Bundler.require(:default,:development,:production)
-require 'rake'
 require 'rake/tasklib'
-require 'rake/sprocketstask'
-require 'rake/testtask'
-Rake::TestTask.new do |t|
-    t.pattern = "spec/*_spec.rb"
+
+task :spec do
+    system("hooks/pre-push.sh")
 end
+
+task default: :spec
+
 module AssetPipeline
     class Task < Rake::TaskLib
       def initialize(app)

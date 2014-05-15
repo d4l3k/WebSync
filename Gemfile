@@ -35,6 +35,7 @@ group :test do
     gem 'selenium-webdriver'
     gem 'faye-websocket'
     gem 'rspec'
+    gem 'rake'
 end
 group :development, :test do
     gem 'pry'

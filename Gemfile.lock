@@ -442,6 +442,7 @@ DEPENDENCIES
   racc
   racksh
   radix62
+  rake
   redis
   rspec
   rubysl

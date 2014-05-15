@@ -25,7 +25,7 @@ fs.readFile('./config/config.json', function(err, buffer) {
     if ((p = process.argv.indexOf('-p')) != -1) {
         port = process.argv[p + 1];
     }
-    if(!port)
+    if (!port)
         port = config.websocket.port;
     var WebSocketServer = require('ws').Server,
         wss = new WebSocketServer({

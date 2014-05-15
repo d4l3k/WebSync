@@ -5,7 +5,16 @@ require_relative '../lib/helpers.rb'
 RSpec.configure do |conf|
   conf.include Rack::Test::Methods
 end
-
+class TestRequest
+    def path
+        '/test'
+    end
+end
+class TestResponse
+    def header
+        {}
+    end
+end
 class TestHelpers
     include Helpers
     def initialize
@@ -14,11 +23,19 @@ class TestHelpers
     def session
         return @session
     end
+    def request
+        TestRequest.new
+    end
+    def etag tag
+    end
+    def response
+        TestResponse.new
+    end
 end
 $helpers = TestHelpers.new
 
 def testuser
-    $helpers.register 'test@websyn.ca', 'testboop'
+    user = $helpers.register 'test@websyn.ca', 'testboop'
     post '/login', {
         email: 'test@websyn.ca',
         password: 'testboop'
@@ -27,6 +44,7 @@ def testuser
     follow_redirect!
     assert last_response.ok?
     assert last_request.path == "/"
+    user
 end
 def destroy_testuser
     user = User.get('test@websyn.ca')

@@ -22,12 +22,14 @@ fs.readFile('./config/config.json', function(err, buffer) {
     postgres.connect();
     redis = redisLib.createClient(config.redis.port, config.redis.host);
     var port;
-    if( (p = process.argv.indexOf("-p")) != -1){
-        port = process.argv[p+1];
+    if ((p = process.argv.indexOf('-p')) != -1) {
+        port = process.argv[p + 1];
     }
+    if(!port)
+        port = config.websocket.port;
     var WebSocketServer = require('ws').Server,
         wss = new WebSocketServer({
-            port: port || config.websocket.port
+            port: port
         });
     wss.on('connection', function(ws) {
         console.log('Connection: ', ws.upgradeReq.url);
@@ -434,5 +436,5 @@ fs.readFile('./config/config.json', function(err, buffer) {
         }
     });
     console.log('WebSync WebSocket server is ready to receive connections.');
-    console.log('Listening on: 0.0.0.0:' + port || config.websocket.port);
+    console.log('Listening on: 0.0.0.0:' + port);
 });

@@ -7,6 +7,9 @@ def app
 end
 
 describe "WebSync Frontend Helpers" do
+    before :each do
+        $helpers = TestHelpers.new
+    end
     it "current_user should be anonymous" do
         $helpers.current_user.class.should eq(AnonymousUser)
     end
@@ -28,8 +31,9 @@ describe "WebSync Frontend Helpers" do
         $helpers.cache do
             'nottest'
         end.should eq('test')
-        $redis.ttl("url:/test").should be <= 60
-        $redis.ttl("url:/test").should be > 0
+        ttl = $redis.ttl("url:/test")
+        ttl.should be <= 60
+        ttl.should be > 0
     end
     after :each do
         destroy_testuser

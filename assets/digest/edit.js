@@ -422,7 +422,7 @@ define('edit', ['websync'], function(websync) {
         }
     }
     var webfonts = ['Ubuntu', 'Ubuntu Mono', 'Roboto', 'Oswald', 'Lato', 'Droid Sans', 'Droid Serif'];
-    $('head').append("<link href='http://fonts.googleapis.com/css?family=" +
+    $('head').append("<link href='https://fonts.googleapis.com/css?family=" +
         webfonts.join('|').replace(/\s+/g, '+') + "' rel='stylesheet' type='text/css'>");
     _.each(webfonts, function(font) {
         if (self.available_fonts.indexOf(font) == -1) {

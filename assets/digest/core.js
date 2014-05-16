@@ -1144,7 +1144,7 @@ define('websync', {
     },
     alphaNumeric: function(text) {
         var match = text.match(/[a-zA-Z0-9\-]+/g);
-        if(!match){
+        if (!match) {
             return null;
         }
         return match.join('');
@@ -1156,7 +1156,7 @@ define('websync', {
         if (name == '#text')
             return _.escape(obj.textContent);
         name = WebSync.alphaNumeric(name);
-        if(name == null){
+        if (name == null) {
             return '';
         }
         // TODO: Potentially disallow iframes!

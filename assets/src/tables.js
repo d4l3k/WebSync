@@ -340,7 +340,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 }
                 var cell_out = {};
                 var content_json = WS.DOMToJSON(data);
-                if(!_.isEmpty(content_json)){
+                if (!_.isEmpty(content_json)) {
                     cell_out.content = content_json;
                 }
                 for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
@@ -368,7 +368,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             html += '<tr>';
             _.each(row, function(cell, j) {
                 html += '<td>';
-                if(cell.content){
+                if (cell.content) {
                     if (cell.content[0] === '=') {
                         html += cell.content;
                     } else {

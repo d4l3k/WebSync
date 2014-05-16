@@ -959,7 +959,7 @@ define('websync', {
                     if (!exempt_path) {
                         var check_path = root + parts.slice(0, i + 1).join('/');
                         var json = WS.getJsonFromPath(check_path);
-                        if (json.exempt) {
+                        if (json && json.exempt) {
                             exempt_json = json;
                             exempt_path = check_path;
                         }
@@ -1143,7 +1143,11 @@ define('websync', {
         return jso;
     },
     alphaNumeric: function(text) {
-        return text.match(/[a-zA-Z0-9\-]+/g).join('');
+        var match = text.match(/[a-zA-Z0-9\-]+/g);
+        if(!match){
+            return null;
+        }
+        return match.join('');
     },
     NODEtoDOM: function(obj) {
         var html = '';
@@ -1152,6 +1156,9 @@ define('websync', {
         if (name == '#text')
             return _.escape(obj.textContent);
         name = WebSync.alphaNumeric(name);
+        if(name == null){
+            return '';
+        }
         // TODO: Potentially disallow iframes!
         // TODO: Potentially allow script tags. XHR requests are blocked by default now.
         if (name == 'script')

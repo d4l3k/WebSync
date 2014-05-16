@@ -399,7 +399,9 @@ define('edit', ['websync'], function(websync) {
         });
         var font = document.queryCommandValue('fontname').split(',')[0]
             .split("'").join('').capitalize();
-        $('#font .name').text(font).css({"font-family": font});
+        $('#font .name').text(font).css({
+            'font-family': font
+        });
         clearTimeout(self._selectTimeout);
         self._selectTimeout = null;
     };
@@ -412,24 +414,24 @@ define('edit', ['websync'], function(websync) {
         if (a > b) return 1;
         return 0;
     });
-    self.available_fonts = []
+    self.available_fonts = [];
     for (i = 0; i < fonts.length; i++) {
         var result = d.detect(fonts[i]);
         if (result) {
             self.available_fonts.push(fonts[i]);
         }
     }
-    var webfonts = ["Ubuntu", "Ubuntu Mono", "Roboto", "Oswald", "Lato", "Droid Sans", "Droid Serif"]
-    $("head").append("<link href='http://fonts.googleapis.com/css?family="+
-        webfonts.join("|").replace(/\s+/g, "+")+"' rel='stylesheet' type='text/css'>");
-    _.each(webfonts, function(font){
-        if(self.available_fonts.indexOf(font)==-1){
+    var webfonts = ['Ubuntu', 'Ubuntu Mono', 'Roboto', 'Oswald', 'Lato', 'Droid Sans', 'Droid Serif'];
+    $('head').append("<link href='http://fonts.googleapis.com/css?family=" +
+        webfonts.join('|').replace(/\s+/g, '+') + "' rel='stylesheet' type='text/css'>");
+    _.each(webfonts, function(font) {
+        if (self.available_fonts.indexOf(font) == -1) {
             self.available_fonts.push(font);
         }
     });
 
-    _.each(self.available_fonts, function(font){
-        font_list.push('<li><a href="#" style="font-family: \''+font+'"\'">' + font + '</a></li>');
+    _.each(self.available_fonts, function(font) {
+        font_list.push('<li><a href="#" style="font-family: \'' + font + '"\'">' + font + '</a></li>');
     });
     // TODO: Not sure if this should be here.
     self.updateStyles = function() {

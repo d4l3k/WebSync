@@ -9,17 +9,17 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
         WebSyncData.body = [];
     }
     WebSync.toJSON = function() {
-        WebSyncData.body = [WS.domExceptions.TABLE.dump($(".table_content table")[0])];
+        WebSyncData.body = [WS.domExceptions.TABLE.dump($('.table_content table')[0])];
         //WebSyncData.body = DOMToJSON($("#tableInner").get(0).childNodes);
     };
     WebSync.fromJSON = function() {
-        $(".table_content").html(WS.domExceptions.TABLE.load(WebSyncData.body[0]));
+        $('.table_content').html(WS.domExceptions.TABLE.load(WebSyncData.body[0]));
     };
 
     $(document).on('modules_loaded', function() {
         if (_.isEmpty(WebSyncData.body)) {
             console.log('Appending!!!');
-            $(".table_content").html("<table><tbody></tbody></table>");
+            $('.table_content').html('<table><tbody></tbody></table>');
             for (var r = 0; r < 50; r++) {
                 var row = $('<tr></tr>').appendTo($('.table_content > table > tbody'));
                 for (var c = 0; c < 50; c++) {

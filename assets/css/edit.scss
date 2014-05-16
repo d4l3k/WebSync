@@ -570,6 +570,7 @@ a#name {
     height: 100%;
     display: inline-block;
     margin-bottom: -15px;
+    font-family: 'Arial';
     table {
         @include ex(user-modify, read-only);
     }
@@ -622,9 +623,14 @@ a#name {
     }
     .btn-group {
         margin-left: 0px !important;
-    }
-    .btn+.btn-group {
-        margin-left: 5px !important;
+        .name {
+            line-height: 10px;
+        }
+        .dropdown-menu {
+            overflow-y: auto;
+            max-height: 400px;
+            height: auto;
+        }
     }
     overflow-y: auto;
     .container {

@@ -9,7 +9,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     // Plugins should use a jQuery namespace for ease of use.
     // Bind Example: $(document).bind("click.Tables", clickHandler);
     // Unbind Example: $("*").unbind(".Tables");
-    $('.ribbon').append($('<div id="Table" class="Table container" style="display: none;"><button class="btn btn-default" title="Delete Table"><i class="fa fa-trash-o"></i> Table</button><div class="btn-group"><button class="btn btn-default" type="button" title="Insert Row Above"><i class="fa fa-plus"></i></button></span><button class="btn btn-default" type="button" title="Delete Row"><i class="fa fa-trash"></i> Row</button><button class="btn btn-default" type="button" title="Insert Row Below"><i class="fa fa-plus"></i></button></div>     <div class="btn-group"><button class="btn btn-default" type="button" title="Insert Column Left"><i class="fa fa-plus"></i></button></span><button class="btn btn-default" type="button" title="Delete Column"><i class="fa fa-trash"></i> Column</button><button class="btn btn-default" type="button" title="Insert Column Right"><i class="fa fa-plus"></i></button></div></div>'));
+    $('.ribbon').append($('<div id="Table" class="Table container" style="display: none;"><button class="btn btn-default" title="Delete Table"><i class="fa fa-trash-o"></i> Table</button> <div class="btn-group"><button class="btn btn-default" type="button" title="Insert Row Above"><i class="fa fa-plus"></i></button></span><button class="btn btn-default" type="button" title="Delete Row"><i class="fa fa-trash"></i> Row</button><button class="btn btn-default" type="button" title="Insert Row Below"><i class="fa fa-plus"></i></button></div>     <div class="btn-group"><button class="btn btn-default" type="button" title="Insert Column Left"><i class="fa fa-plus"></i></button></span><button class="btn btn-default" type="button" title="Delete Column"><i class="fa fa-trash"></i> Column</button><button class="btn btn-default" type="button" title="Insert Column Right"><i class="fa fa-plus"></i></button></div></div>'));
     $('.content').append($('<div id="table_cursor" class="Table"></div><div id="table_selection" class="Table"></div><div id="table_clip" style="position:absolute; left:-1000px;top:-1000px;"></div>'));
     $('#Insert').append($('<button id="table" title="Table" class="btn btn-default Table"><i class="fa fa-table"></i></button>'));
     $('#table').bind('click.Tables', function(e) {
@@ -338,9 +338,11 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 } else {
                     data = cell.childNodes;
                 }
-                var cell_out = {
-                    content: WS.DOMToJSON(data)
-                };
+                var cell_out = {};
+                var content_json = WS.DOMToJSON(data);
+                if(!_.isEmpty(content_json)){
+                    cell_out.content = content_json;
+                }
                 for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
                     attr = attrs.item(i);
                     // Ignore attribute if it's set by the table.
@@ -366,10 +368,12 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             html += '<tr>';
             _.each(row, function(cell, j) {
                 html += '<td>';
-                if (cell.content[0] === '=') {
-                    html += cell.content;
-                } else {
-                    html += WS.JSONToDOM(cell.content);
+                if(cell.content){
+                    if (cell.content[0] === '=') {
+                        html += cell.content;
+                    } else {
+                        html += WS.JSONToDOM(cell.content);
+                    }
                 }
                 html += '</td>';
             });

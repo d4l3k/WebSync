@@ -75,7 +75,6 @@ describe "WebSync Backend" do
                 EM.stop
             end
         }
-
     end
     after(:all) do
         Process.kill("TERM", $backend_daemon)

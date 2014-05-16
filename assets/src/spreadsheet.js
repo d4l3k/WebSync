@@ -1,42 +1,27 @@
-// WebSync: Page layout handler
+// WebSync: Spreadsheet layout handler
 define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(websync, tables) {
     var self = this;
     console.log('Spreadsheet loaded');
     $('.content').hide().addClass('content-spreadsheet').fadeIn();
-    $('.content').append($('<div id="spreadsheetWell" class="content_container"><table><tbody id="tableInner"></tbody></table></div>'));
+    $('.content').append($('<div id="spreadsheetWell" class="content_container"><div class="table_content"></div></div>'));
     $('.content').append($('<div id="top_corner"></div>'));
     if (!WebSyncData.body) {
         WebSyncData.body = [];
     }
     WebSync.toJSON = function() {
-        var json_set = [];
-        var rows = $('#tableInner').get(0).childNodes;
-        _.each(rows, function(row, index) {
-            json_set[index] = [];
-            _.each(row.childNodes, function(cell, index2) {
-                json_set[index][index2] = WS.DOMToJSON(cell.childNodes);
-            });
-        });
-        WebSyncData.body = json_set;
+        WebSyncData.body = [WS.domExceptions.TABLE.dump($(".table_content table")[0])];
         //WebSyncData.body = DOMToJSON($("#tableInner").get(0).childNodes);
     };
     WebSync.fromJSON = function() {
-        var html_set = '';
-        _.each(WebSyncData.body, function(row) {
-            html_set += '<tr>';
-            _.each(row, function(cell) {
-                html_set += '<td>' + WS.JSONToDOM(cell) + '</td>';
-            });
-            html_set += '</tr>';
-        });
-        $('#tableInner').get(0).innerHTML = html_set; //=JSONToDOM(WebSyncData.body);
+        $(".table_content").html(WS.domExceptions.TABLE.load(WebSyncData.body[0]));
     };
 
     $(document).on('modules_loaded', function() {
         if (_.isEmpty(WebSyncData.body)) {
             console.log('Appending!!!');
+            $(".table_content").html("<table><tbody></tbody></table>");
             for (var r = 0; r < 50; r++) {
-                var row = $('<tr></tr>').appendTo($('#tableInner'));
+                var row = $('<tr></tr>').appendTo($('.table_content > table > tbody'));
                 for (var c = 0; c < 50; c++) {
                     $('<td></td>').appendTo(row);
                 }

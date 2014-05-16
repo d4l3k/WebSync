@@ -12,8 +12,11 @@ define('edit', ['websync'], function(websync) {
             <button id="strikethrough" title="Strikethrough" class="btn btn-default"><i class="fa fa-strikethrough"></i></button> \
             <button id="underline" title="Underline (Ctrl-U)" class="btn btn-default"><i class="fa fa-underline"></i></button> \
             <button id="createLink" title="Hyperlink" class="btn btn-default"><i class="fa fa-link"></i></button> \
-            <select id="font" title="Font" class="form-control ribbon_button"> \
-            </select> \
+            <div id="font" class="dropdown btn-group"> \
+                <button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="name">Font</span> <i class="fa fa-caret-down"></i></button> \
+                <ul class="dropdown-menu" role="menu"> \
+                </ul>\
+            </div> \
             <select id="font_size" title="Font Size" class="form-control ribbon_button"> \
                 <option>8pt</option> \
                 <option>9pt</option> \
@@ -259,8 +262,10 @@ define('edit', ['websync'], function(websync) {
             e.preventDefault();
         }
     });
-    $('#font').bind('change.TextEdit', function() {
-        document.execCommand('fontname', false, $('#font').val());
+    $('#font ul').on('click.TextEdit', 'a', function(e) {
+        var font = $(e.currentTarget).text();
+        console.log(e, font);
+        document.execCommand('fontname', false, font);
     });
     $('#font_size').change(function() {
         var size = $('#font_size').val();
@@ -392,7 +397,9 @@ define('edit', ['websync'], function(websync) {
                 button.removeClass('active');
             }
         });
-        $('#font').val(document.queryCommandValue('fontname').split(',')[0].split("'").join('').capitalize());
+        var font = document.queryCommandValue('fontname').split(',')[0]
+            .split("'").join('').capitalize();
+        $('#font .name').text(font).css({"font-family": font});
         clearTimeout(self._selectTimeout);
         self._selectTimeout = null;
     };
@@ -405,12 +412,25 @@ define('edit', ['websync'], function(websync) {
         if (a > b) return 1;
         return 0;
     });
+    self.available_fonts = []
     for (i = 0; i < fonts.length; i++) {
         var result = d.detect(fonts[i]);
         if (result) {
-            font_list.push('<option>' + fonts[i] + '</option>');
+            self.available_fonts.push(fonts[i]);
         }
     }
+    var webfonts = ["Ubuntu", "Ubuntu Mono", "Roboto", "Oswald", "Lato", "Droid Sans", "Droid Serif"]
+    $("head").append("<link href='http://fonts.googleapis.com/css?family="+
+        webfonts.join("|").replace(/\s+/g, "+")+"' rel='stylesheet' type='text/css'>");
+    _.each(webfonts, function(font){
+        if(self.available_fonts.indexOf(font)==-1){
+            self.available_fonts.push(font);
+        }
+    });
+
+    _.each(self.available_fonts, function(font){
+        font_list.push('<li><a href="#" style="font-family: \''+font+'"\'">' + font + '</a></li>');
+    });
     // TODO: Not sure if this should be here.
     self.updateStyles = function() {
         self.stylesheet.innerHTML = (WebSyncData.custom_css || []).join('\n');
@@ -453,7 +473,7 @@ define('edit', ['websync'], function(websync) {
         self.editor.setValue((WebSyncData.custom_css || []).join('\n'));
         self.updateStyles();
     });
-    $('#font').html(font_list.join('\n'));
+    $('#font .dropdown-menu').html(font_list.join('\n'));
     WebSync.updateRibbon();
     return self;
 });

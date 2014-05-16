@@ -43,7 +43,7 @@ required_dirs = %w(log tmp)
 required_dirs.each do |dir|
     if not Dir.exists? dir
         puts "[Creating Directory] #{dir}"
-        if Dir.mkdir(dir)
+        if not Dir.mkdir(dir)
             puts " :: Failed to create directory!"
             exit 1
         end

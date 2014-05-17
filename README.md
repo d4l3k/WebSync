@@ -1,7 +1,7 @@
 # ![WebSync](https://github.com/d4l3k/WebSync/raw/master/public/img/logo-github.png)
 WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive.
 
-[![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync)
+[![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync)  [![Build Status](https://travis-ci.org/d4l3k/WebSync.svg?branch=master)](https://travis-ci.org/d4l3k/WebSync)
 
 # Features
 [WebSyn.ca](https://websyn.ca) has a nice list of features. These might be incomplete:

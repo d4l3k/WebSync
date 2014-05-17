@@ -10,7 +10,8 @@ postgres:
   username: postgres
 services:
   - redis-server
-before_script:
+before_install:
   - sudo apt-get install libpq-dev libpq5
+before_script:
   - "psql -c 'create database websync;' -U postgres"
   - npm install

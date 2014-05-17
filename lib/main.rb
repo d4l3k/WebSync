@@ -12,9 +12,9 @@ $config = MultiJson.load(
         JSONComments.strip(File.open('./config/config.json').read)+
     "\n}")
 
-require_relative 'models'
 # Don't load databases if running rake tasks.
 if not ENV["CONFIGMODE"]
+    require_relative 'models'
     require_relative 'configure'
 end
 require_relative 'util'

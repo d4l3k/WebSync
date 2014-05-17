@@ -5,6 +5,7 @@ require 'rake/tasklib'
 
 task :spec do
     system("hooks/pre-push.sh")
+    Process::exit $?.exitstatus
 end
 
 task default: :spec

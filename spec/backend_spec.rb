@@ -14,9 +14,12 @@ end
 
 describe "WebSync Backend" do
     before(:all) do
+        # Get backend path relative to binary.
+        path = File.expand_path(File.dirname(__FILE__))
+        backend = File.join(path, '../bin/backend.js')
         # Launch the backend daemon
         $backend_daemon = fork do
-            exec 'bin/backend.js -p 1337'
+            exec "#{backend} -p 1337"
         end
     end
     it "should successfully connect to the backend" do

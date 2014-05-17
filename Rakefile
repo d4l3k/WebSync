@@ -99,6 +99,22 @@ task :cocomo do
     cost = effort_applied/12 * average_salary * overhead
     puts "Total Cost: $#{cost.to_i}"
 end
+
+require 'open3'
+def get_python2
+    if a = which('python2')
+        return a
+    else
+        stdin, stdout, stderr, wait_thr = Open3.popen3('python', '--version')
+        response = stdout.gets(nil).to_s + stderr.gets(nil).to_s
+        version = response.strip.split(" ")[1]
+        if version[0..2] == "2.7"
+            return which('python')
+        else
+            throw 'ERROR: Python2.7 is required!'
+        end
+    end
+end
 task :beautify do
     files = %w(
         assets/digest/{edit,core}.js
@@ -110,9 +126,16 @@ task :beautify do
     files.each do |file|
         paths += Dir.glob(file)
     end
+    # Use the version in node_modules
+    js_beautify_path = "node_modules/js-beautify/js/bin/js-beautify.js"
+    system("#{js_beautify_path} -r #{paths.join " "}")
+
+    # Closure-linter screws up the first line of bin/backend.js
     backend = File.readlines("bin/backend.js")
-    system("js-beautify -r #{paths.join " "}")
-    system("fixjsstyle #{paths.join " "}")
+    # Make sure Python2 exists on the system.
+    python = get_python2
+    fixjsstyle_path = "node_modules/closure-linter-wrapper/tools/fixjsstyle.py"
+    system(python+" "+fixjsstyle_path +" "+paths.join(" "))
     fixed_backend = File.readlines("bin/backend.js")
     fixed_backend[0] = backend[0]
     File.write("bin/backend.js", fixed_backend.join(""))
@@ -128,7 +151,7 @@ task :documentation do
     files.each do |file|
         paths += Dir.glob(file)
     end
-    system("docco #{paths.join " "}")
+    system("node_modules/docco/bin/docco #{paths.join " "}")
 end
 task :hooks do
     %w(pre-commit pre-push).each do |hook|

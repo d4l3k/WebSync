@@ -66,6 +66,7 @@ define(['websync'], function(websync) {
         var obj = self.css_scene.children[self.activeIndex];
         obj[prop][axis] = eval($(this).val());
         self.updateProperties();
+        self.dirty = true;
     });
     $(document).keydown(function(e) {
         if (WebSyncAuth.view_op == 'view') {

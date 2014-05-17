@@ -1,23 +1,24 @@
 {
-    "name": "WebSync",
-    "version": "0.1.0",
-    "dependencies": {
-        "MD5": "~1.0.3",
-        "base62": "0.1.1",
-        "canonical-json": "0.0.4",
-        "docco": "~0.6.3",
-        "fast-json-patch": "~0.3.6",
-        "js-beautify": "^1.4.2",
-        "pg": "~1.3.0",
-        "redis": "~0.8.6",
-        "strip-json-comments": "^0.1.2",
-        "tmp": "0.0.23",
-        "underscore": "~1.5.2",
-        "unoconv": "^0.1.2",
-        "ws": "~0.4.31"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/d4l3k/WebSync.git"
-    }
+  "name": "WebSync",
+  "version": "0.1.0",
+  "dependencies": {
+    "MD5": "~1.0.3",
+    "base62": "0.1.1",
+    "canonical-json": "0.0.4",
+    "closure-linter-wrapper": "^0.2.9",
+    "docco": "^0.6.3",
+    "fast-json-patch": "~0.3.6",
+    "js-beautify": "^1.5.1",
+    "pg": "~1.3.0",
+    "redis": "~0.8.6",
+    "strip-json-comments": "^0.1.2",
+    "tmp": "0.0.23",
+    "underscore": "~1.5.2",
+    "unoconv": "^0.1.2",
+    "ws": "~0.4.31"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/d4l3k/WebSync.git"
+  }
 }

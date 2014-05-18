@@ -1,4 +1,8 @@
 en:
+    # Time
+    time:
+        formats:
+            default: "%m/%d/%y at %I:%M%p"
     # Layout
     layout:
         created_by: "Created by Tristan Rice"

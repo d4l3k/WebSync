@@ -74,7 +74,7 @@ headers = %w{name owner recent size}
                 <td><a href="<%= path %>"><%= doc.name.length > 0 ? h(doc.name) : "<i>Unnamed File</i>" %><%= doc.directory? ? "/" : "" %></a></td>
                 <% owner = doc.permissions(level: "owner").user %>
                 <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : (owner.length > 0 ? h(owner[0].email) : "<i>Orphaned</i>") %></td>
-                <td><%= doc.edit_time.strftime("%m/%d/%y at %I:%M%p") %></td>
+                <td><%= l doc.edit_time %></td>
                 <td><%= doc.as_size %></td>
                 <td class="actions">
                 <% if doc.permissions(level: "owner").user[0]==current_user %>

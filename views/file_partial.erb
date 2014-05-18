@@ -48,26 +48,22 @@ docs = docs.sort do |a,b|
 end if sort == "owner"
 
 
-headers = { "Name" => "name",
-    "Owner" =>  "owner",
-    "<span class='hidden-xs'>Last </span>Modified" => "recent",
-    "Size" => "size" }
-
+headers = %w{name owner recent size}
 %>
 <table class="table table-bordered table-hover table-click">
     <thead>
         <tr>
-            <% headers.each do |title, url|
+            <% headers.each do |url|
 
             %>
                 <th><a href="?<%= url + ( (invert or sort != url) ? "" : "&invert" )%>">
-                    <%= title %>
+                    <%= t("files.#{url}") %>
                     <% if sort == url %>
                         <i class="fa fa-sort-<%= !sort_up ? "asc" : "desc" %>"></i>
                     <% end %>
                 </a></th>
             <% end %>
-            <th style="width: 1px"><span class="hidden-xs">Actions</span></th>
+            <th style="width: 1px"><span class="hidden-xs"><%= t "files.actions" %></span></th>
         </tr>
     </thead>
     <tbody>
@@ -83,10 +79,10 @@ headers = { "Name" => "name",
                 <td class="actions">
                 <% if doc.permissions(level: "owner").user[0]==current_user %>
                         <% if options[:deleted] %>
-                            <a href="/<%= doc.id.encode62 %>/undelete" class="btn btn-default">Restore</a>
-                            <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> Obliterate</span></a>
+                            <a href="/<%= doc.id.encode62 %>/undelete" class="btn btn-default"><%= t "files.restore" %></a>
+                            <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> <%= t "files.obliterate" %></span></a>
                         <% else %>
-                            <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> Delete</span></a>
+                            <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> <%= t "files.delete" %></span></a>
                         <% end %>
                 <% end %>
                 </td>

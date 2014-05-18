@@ -1,6 +1,5 @@
-
 <div class="container">
-    <div class="page-header"><h1>Publicly Shared Documents</h1></div>
+    <div class="page-header"><h1><%= t "public.header" %></h1></div>
     <%= erb :file_partial, locals: {shared: true} %>
-    <i>Results on this page are cached for 30 seconds. Changes may not take immediate effect.</i>
+    <i><%= t "public.cache" %></i>
 </div>

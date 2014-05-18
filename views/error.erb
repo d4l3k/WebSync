@@ -10,12 +10,12 @@
                 <% end %>
                 <p class="lead">
                     <% if defined?(reason) %>
-                        Error: <%= reason %><br>
+                        <%= t "error.error" %>: <%= reason %><br>
                     <% end %>
-                    If you aren't doing anything weird, please create a new issue on the GitHub page.
+                    <%= t 'error.weird' %>
                 </p>
-                <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new">New Issue</a>
-                <a class="btn btn-primary" href="/">Return Home</a>
+                <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new"><%= t "error.new_issue" %></a>
+                <a class="btn btn-primary" href="/"><%= t "error.return_home" %></a>
             </div>
         </div>
     </div>

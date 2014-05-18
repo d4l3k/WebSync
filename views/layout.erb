@@ -50,30 +50,30 @@
   <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only"><%= t :toggle_navigation %></span>
+          <span class="sr-only"><%= t "layout.toggle_navigation" %></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/" title="<%= t :created_by %>">WebSyn.ca</a>
+        <a class="navbar-brand" href="/" title="<%= t "layout.created_by" %>">WebSyn.ca</a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <p class="navbar-text hidden-sm"><%= t :tag_line %></p>
+        <p class="navbar-text hidden-sm"><%= t "layout.tag_line" %></p>
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <a href="/public" title="<% t :publicly_shared_documents %>"><i class="fa fa-archive fa-lg"></i> <%= t :shared %></a>
+                <a href="/public" title="<%= t "layout.publicly_shared_documents" %>"><i class="fa fa-archive fa-lg"></i> <%= t "layout.shared" %></a>
             </li>
             <li>
-                <a href="/upload" title="<%= t :upload %>"><i class="fa fa-lg fa-cloud-upload"></i></a>
+                <a href="/upload" title="<%= t "layout.upload" %>"><i class="fa fa-lg fa-cloud-upload"></i></a>
             </li>
             <li>
-                <a href="/documentation" title="<%= t :documentation %>"><i class="fa fa-code fa-lg"></i></a>
+                <a href="/documentation" title="<%= t "layout.documentation" %>"><i class="fa fa-code fa-lg"></i></a>
             </li>
             <% if logged_in? %>
                 <li>
-                    <a href="/settings" title="<%= t :settings %>"><i class="fa fa-cog fa-lg"></i></a>
+                    <a href="/settings" title="<%= t "layout.settings" %>"><i class="fa fa-cog fa-lg"></i></a>
                 </li>
             <% end %>
             <li>
@@ -89,7 +89,7 @@
             <footer>
                 <div class="container">
                     <p>
-                        Copyright © 2014 Tristan Rice. WebSync <%= t :licensed_under %> <a href="http://opensource.org/licenses/MIT">MIT License</a>. <a href="http://blog.fn.lc">Blog</a>.
+                        Copyright © 2014 Tristan Rice. WebSync <%= t "layout.licensed_under" %> <a href="http://opensource.org/licenses/MIT">MIT License</a>. <a href="http://blog.fn.lc">Blog</a>.
                     </p>
                 </div>
             </footer>

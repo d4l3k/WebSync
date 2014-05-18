@@ -1,31 +1,25 @@
 <div class="container">
-    <div class="page-header"><h1>Documentation</h1></div>
-    If you're interested in running WebSync you should look at the <a href="https://github.com/d4l3k/WebSync">README</a>. However, if you're interested in the code, WebSync uses Docco to automatically generate nicely formatted annotated source which is helpfully provided below. If there isn't anything below, you or the server administrator should run the command <code>rake documentation</code> in the WebSync root directory.
+    <div class="page-header"><h1><%= t 'documentation.head' %></h1></div>
+    <%= t 'documetation.desc' %>
 <br>
 <br>
     <%
     groups = {
-        "Client Side" => {
-            description: "These are the javascript files that power the front end on the client side.",
-            files: %w(assets/digest/{core,edit}.js assets/src/*.js)
-        },
-        "Server Side" => {
-            description: "These are the files that are on the backend.",
-            files: %w(bin/backend.js lib/*.rb)
-        }
+        client: %w(assets/digest/{core,edit}.js assets/src/*.js)
+        server: %w(bin/backend.js lib/*.rb)
     }
-    groups.each do |name, group|
+    groups.each do |name, files|
         files = []
-        group[:files].each do |file|
+        files.each do |file|
             files += Dir.glob(file)
         end
     %>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <%= name %>
+                <%= t("documentation.#{name}.head") %>
             </div>
             <div class="panel-body">
-                <%= group[:description] %>
+                <%= t("documentation.#{name}.desc") %>
             </div>
             <div class="panel-footer">
                 <ul class="list-inline">

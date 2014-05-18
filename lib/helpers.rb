@@ -75,9 +75,9 @@ module Helpers
     end
     def render_login_button
         if logged_in?
-           return '<a href="/logout" title="Sign Out"><i class="fa fa-sign-out fa-lg"></i><span class="hidden-phone"> Sign Out</span></a>'
+           return '<a href="/logout" title="'+t('layout.sign_out')+'"><i class="fa fa-sign-out fa-lg"></i><span class="hidden-phone"> '+t('layout.sign_out')+'</span></a>'
         else
-           return '<a href="/login" title="Sign In"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> Sign In</span></a>'
+           return '<a href="/login" title="'+t('layout.sign_in')+'"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> '+t('layout.sign_in')+'</span></a>'
         end
     end
     def cache time: 3600, &block

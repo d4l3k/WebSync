@@ -11,31 +11,31 @@
 
       <div class="collapse navbar-collapse">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/" title="Created by Tristan Rice" data-toggle="tooltip"><span class="hidden-xs">WebSyn.ca</span><i class="fa visible-xs fa-home fa-lg"></i></a>
+        <a class="navbar-brand" href="/" title="<%= t "layout.created_by" %>" data-toggle="tooltip"><span class="hidden-xs">WebSyn.ca</span><i class="fa visible-xs fa-home fa-lg"></i></a>
       </div>
                 <ul class="nav navbar-nav">
-					<li class="active"><a id="name" contenteditable=true data-toggle="tooltip" title="Edit Name"><%= doc.name %></a></li>
+					<li class="active"><a id="name" contenteditable=true data-toggle="tooltip" title="<%= t "edit.edit_name" %>"><%= doc.name %></a></li>
 				</ul>
 				<ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
 				</ul>
 				<ul id="settings" class="nav navbar-nav pull-right ribbon-opt">
                                     <li>
-                                        <a class="present" title="Present"><i class="fa fa-expand fa-lg"></i></a>
+                                        <a class="present" title="<%= t "edit.present" %>"><i class="fa fa-expand fa-lg"></i></a>
                                     </li>
                                     <li>
-                                        <a id="settingsBtn" title="Settings"><i class="fa fa-cog fa-lg"></i></a>
+                                        <a id="settingsBtn" title="<%= t "edit.settings" %>"><i class="fa fa-cog fa-lg"></i></a>
                                     </li>
                                     <li>
                                         <%= render_login_button %>
                                     </li>
 				</ul>
-                <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b>Settings</b>
+                <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b><%= t "edit.settings" %></b>
                     <ul class="nav tab-nav nav-pills">
-                        <li class="active" ><a href="#permissions" data-toggle="tab">Permissions</a></li>
-                        <li><a href="#config" data-toggle="tab">Config</a></li>
-                        <li><a href="#blobs" data-toggle="tab">Resources</a></li>
-                        <li><a href="#diffs" data-toggle="tab">Changes</a></li>
-                        <li><a href="#assets" data-toggle="tab">Javascript Libraries</a></li>
+                        <li class="active" ><a href="#permissions" data-toggle="tab"><%= t 'edit.permissions' %></a></li>
+                        <li><a href="#config" data-toggle="tab"><%= t "edit.changes" %></a></li>
+                        <li><a href="#blobs" data-toggle="tab"><%= t 'edit.resources_lab' %></a></li>
+                        <li><a href="#diffs" data-toggle="tab"><%= t 'edit.changes' %></a></li>
+                        <li><a href="#assets" data-toggle="tab"><%= t 'edit.js_libs' %></a></li>
                     </ul>
                     <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
                         <div class="tab-content">
@@ -43,10 +43,10 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                            <th>URL</th>
-                                            <th>Type</th>
+                                            <th><%= t 'edit.name' %></th>
+                                            <th><%= t 'edit.description' %></th>
+                                            <th><%= t 'edit.URL' %></th>
+                                            <th><%= t 'edit.type' %></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -57,9 +57,9 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Time</th>
-                                            <th>Patch</th>
-                                            <th>User</th>
+                                            <th><%= t 'edit.time' %></th>
+                                            <th><%= t 'edit.patch' %></th>
+                                            <th><%= t 'edit.user' %></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,27 +69,27 @@
                             <div class="tab-pane active" id="permissions">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <h3>Default Access</h3>
-                                        Access Mode:
+                                        <h3><%= t 'edit.default_access' %></h3>
+                                        <%= t 'edit.access_mode' %>:
                                         <select id="access_mode" class="form-control">
-                                            <option value="public">Public</option>
-                                            <option value="hidden">Hidden (link only)</option>
-                                            <option value="private">Private</option>
+                                            <option value="public"><%= t "edit.modes.public" %></option>
+                                            <option value="hidden"><%= t "edit.modes.hidden" %></option>
+                                            <option value="private"><%= t "edit.modes.private" %></option>
                                         </select>
-                                        Default permission level:
+                                        <%= t "edit.default_perm" %>
                                         <select id="default_permissions" class="form-control">
-                                            <option value="editor">Editor</option>
-                                            <option value="viewer">Viewer</option>
+                                            <option value="editor"><%= t "edit.perms.editor" %></option>
+                                            <option value="viewer"><%= t "edit.perms.viewer" %></option>
                                         </select>
                                     </div>
                                     <div class="col-md-9">
-                                        <h3>User Access</h3>
+                                        <h3><%= t "edit.user_access" %></h3>
                                         <table id="user_perms" class="table table-bordered table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th>Email</th>
-                                                    <th>Access Level</th>
-                                                    <th>Actions</th>
+                                                    <th><%= t "edit.email" %></th>
+                                                    <th><%= t "edit.access_level" %></th>
+                                                    <th><%= t "edit.actions" %></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -102,20 +102,20 @@
                             <div class="tab-pane" id="blobs">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <h3>Upload Resources</h3>
+                                        <h3><%= t "edit.upload_resources" %></h3>
                                         <form action="upload" method="post" enctype="multipart/form-data">
-                                            <input type="file" name="files[]" id="file_input" class="form-control" multiple /><input type="submit" name="submit" class="form-control" value="Upload">
+                                            <input type="file" name="files[]" id="file_input" class="form-control" multiple /><input type="submit" name="submit" class="form-control" value="<%= t "edit.upload" %>">
                                         </form>
                                     </div>
                                     <div class="col-md-9">
-                                        <h3>Resource List</h3>
+                                        <h3><%= t "edit.resource_list" %></h3>
                                         <table class="table table-bordered table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th>File</th>
-                                                    <th>Type</th>
-                                                    <th>Edit Time</th>
-                                                    <th>Size</th>
+                                                    <th><%= t "edit.resources.file" %></th>
+                                                    <th><%= t 'edit.type' %></th>
+                                                    <th><%= t 'edit.resources.edit_time' %></th>
+                                                    <th><%= t 'edit.resources.size' %></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -125,6 +125,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="config">
+                                At the moment this doesn't do anything.
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -158,36 +159,36 @@
 		<div class="ribbon">
 			<div id="File" class="container">
                 <div class="btn-group">
-                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> Download <span class="caret"></span></button>
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> <%= t 'edit.download' %> <span class="caret"></span></button>
                     <ul class="dropdown-menu" id="download_types" role="menu">
                         <li role="presentation" class="dropdown-header">
-                            Downloading not supported for this document type.
+                            <%= t 'edit.download_not_supported' %>
                         </li>
                     </ul>
                 </div>
-                <a href="json" class="btn btn-default" title="View JSON" data-toggle="tooltip"><i class="fa fa-eye"></i> JSON</a>
-                <span title="Zoom" data-toggle="tooltip" ><input type="text" id="zoom_level" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100"></span>
-                <select id="view_mode" class="form-control" title="View Mode" class="ribbon_button">
+                <a href="json" class="btn btn-default" title="<%= t 'edit.view_json' %>" data-toggle="tooltip"><i class="fa fa-eye"></i> JSON</a>
+                <span title="<%= t "edit.zoom" %>" data-toggle="tooltip" ><input type="text" id="zoom_level" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100"></span>
+                <select id="view_mode" class="form-control" title="<%= t 'edit.view_mode' %>" class="ribbon_button">
 					<option>Normal</option>
 					<option>Zen</option>
                     <option>Presentation</option>
 				</select>
-                <a href="delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
+                <a href="delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> <%= t "files.delete" %></a>
 			</div>
 			<div id="Insert" class="container">
-				<button id="picture" title="Picture" class="btn btn-default"><i class="fa fa-picture-o"></i></button>
-				<button id="video" title="Video" class="btn btn-default"><i class="fa fa-youtube-play"></i></button>
+				<button id="picture" title="<%= t "edit.picture" %>" class="btn btn-default"><i class="fa fa-picture-o"></i></button>
+				<button id="video" title="<%= t "edit.video" %>" class="btn btn-default"><i class="fa fa-youtube-play"></i></button>
 			</div>
 	</nav>
 <div class="content_well">
     <div class="return_edit">
-        <a class="menu" title="Toggle Menu" data-toggle="tooltip-top">
+        <a class="menu" title="<%= t "edit.toggle_menu" %>" data-toggle="tooltip-top">
             <i class="fa fa-bars fa-2x"></i>
         </a>
-        <a class="return" title="Return to Editing" data-toggle="tooltip-top">
+        <a class="return" title="<%= t 'edit.return' %>" data-toggle="tooltip-top">
             <i class="fa fa-compress fa-2x"></i>
         </a>
-        <a class="fullscreen" title="Toggle Fullscreen" data-toggle="tooltip-top">
+        <a class="fullscreen" title="<%= t 'edit.fullscreen' %>" data-toggle="tooltip-top">
             <i class="fa fa-arrows-alt fa-2x"></i>
         </a>
     </div>
@@ -201,12 +202,12 @@
     <div>
         <div>
             <div class="head-content">
-                <h1>That's an error, Harry!</h1>
+                <h1><%= t 'edit.error' %></h1>
                 <p class="lead">
-                    Error: <span id="error_message">Something failed to load.</span> <br>
-                    Check the console for more information. If you aren't doing anything weird, please create a new issue on the GitHub page. <br>
-                    <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new">New Issue</a>
-                    <a class="btn btn-primary" href="/">Return Home</a>
+                    <%= t 'error.error' %>: <span id="error_message"><% t 'edit.error_load' %></span> <br>
+                    <%= t 'edit.check_console' %> <%= t 'error.weird' %> <br>
+                    <a class="btn btn-default" href="https://github.com/d4l3k/WebSync/issues/new"><%= t 'error.new_issue' %></a>
+                    <a class="btn btn-primary" href="/"><%= t 'error.return_home' %></a>
                 </p>
             </div>
         </div>

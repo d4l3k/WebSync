@@ -17,19 +17,16 @@
               </div>
               <h1 class="title">Web<b>Syn</b>.<b>c</b>a</h1>
           </div>
-          <p class="lead">
-              An open source self hostable document editing tool
-              created by <a href="http://tristanrice.name">Tristan Rice</a>.
-          </p>
+          <p class="lead"><%= t "nicehead.tag" %></p>
               <div class="btn-group">
-                  <button class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> Create a File
-<spaclass="caret"></span></button>
+                  <button class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> <%= t "nicehead.create" %>
+<span class="caret"></span></button>
                   <ul class="dropdown-menu">
                       <% AssetGroup.each do |ass| %>
                           <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
                       <% end %>
                   </ul>
-              </div> <a href="/upload" class='btn btn-lg btn-default'><i class="fa fa-cloud-upload"></i> Upload a File</a> <a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-lg'><i class="fa fa-terminal"></i> View the Code</a>
+              </div> <a href="/upload" class='btn btn-lg btn-default'><i class="fa fa-cloud-upload"></i> <%= t "nicehead.upload" %></a> <a href="https://github.com/d4l3k/WebSync" class='btn btn-info btn-lg'><i class="fa fa-terminal"></i> <%= t "nicehead.view_code" %></a>
       </div>
       <ul class="bs-docs-social-buttons">
         <li>

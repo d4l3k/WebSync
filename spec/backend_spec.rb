@@ -27,7 +27,7 @@ describe "WebSync Backend" do
         get '/new/1'
         if !last_response.redirect?
             puts last_response.inspect
-            puts last_response.errors
+            puts last_request.inspect
         end
         expect(last_response).to be_redirect
         follow_redirect!

@@ -2,8 +2,12 @@ require 'bundler'
 ENV['RACK_ENV']='production'
 require 'sass'
 require 'rake/tasklib'
+ENV["CONFIGMODE"] = "y"
 
+require './lib/main'
 task :spec do
+    require './lib/models'
+    require './lib/configure'
     system("hooks/pre-push.sh")
     Process::exit $?.exitstatus
 end
@@ -41,8 +45,6 @@ module AssetPipeline
       end
     end
 end
-ENV["CONFIGMODE"] = "y"
-require './lib/main'
 AssetPipeline::Task.define! WebSync
 
 namespace :admin do

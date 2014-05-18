@@ -31,7 +31,7 @@ describe "WebSync Frontend Helpers" do
         $helpers.cache do
             'nottest'
         end.should eq('test')
-        ttl = $redis.ttl("url:/test")
+        ttl = $redis.ttl("url:#{I18n.locale}:/test")
         ttl.should be <= 60
         ttl.should be > 0
     end

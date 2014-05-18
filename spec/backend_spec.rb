@@ -19,7 +19,7 @@ describe "WebSync Backend" do
         backend = File.join(path, '../bin/backend.js')
         # Launch the backend daemon
         $backend_daemon = fork do
-            exec "#{backend} -p 1337"
+            exec "node #{backend} -p 1337"
         end
     end
     it "should successfully connect to the backend" do

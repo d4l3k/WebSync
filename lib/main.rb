@@ -44,6 +44,11 @@ class WebSync < Sinatra::Base
         set :assets_precompile_no_digest, no_digest
         OmniAuth.config.full_host = $config["host_url"]
     end
+    configure :test do
+        set :raise_errors, true
+        set :dump_errors, true
+        set :show_exceptions, false
+    end
     configure do
         set :public_folder, File.dirname(__FILE__) + '/../public'
         set :views, File.dirname(__FILE__)+"/../views"

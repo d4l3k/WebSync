@@ -5,12 +5,12 @@
 <br>
     <%
     groups = {
-        client: %w(assets/digest/{core,edit}.js assets/src/*.js)
-        server: %w(bin/backend.js lib/*.rb)
+        client: %w{assets/digest/{core,edit}.js assets/src/*.js},
+        server: %w{bin/backend.js lib/*.rb}
     }
-    groups.each do |name, files|
+    groups.each do |name, glob_list|
         files = []
-        files.each do |file|
+        glob_list.each do |file|
             files += Dir.glob(file)
         end
     %>

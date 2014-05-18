@@ -25,6 +25,9 @@ describe "WebSync Backend" do
     it "should successfully connect to the backend" do
         testuser
         get '/new/1'
+        if !last_response.redirect?
+            puts last_response.inspect
+        end
         expect(last_response).to be_redirect
         follow_redirect!
         expect(last_response).to be_ok

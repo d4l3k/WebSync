@@ -25,8 +25,7 @@ WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive
 * Libre Office, unoconv and poppler is required for file upload & download.
 * You probably need Java for the Closure javascript compressor (send me a message if it works without it).
 
-[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync has been tested with MRI Ruby 2.0.0. At this time 2.1.0 doesn't work due to a Rice compilation error, but hopefully will be supported sometime in the future.
-
+[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync is automatically tested against Ruby 2.0.0 and Ruby 2.1.2.
 The Ruby dependencies need Bundler and you can install it by running `gem install rubygems-bundler` and then `bundle` inside the WebSync directory to download the dependencies.
 
 To install the Node.JS dependencies, just run `npm install`.

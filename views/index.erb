@@ -1,18 +1,18 @@
 <%= erb :nicehead %>
 <div class="feature-head">
-    <h2>WebSync has all of your bases covered.</h2>
+    <h2><%= t :promo_line %></h2>
 </div>
 <div class="container-fluid promo well">
     <div class="row">
-        <% items = {Notebook: ["note.png", "pencil"], Presentation: ["presentation.png", "picture-o"], Document: ["document.png", "file-o"], Spreadsheet: ["spreadsheet.png", "table"]} %>
+        <% items = {notebook: ["note.png", "pencil"], presentation: ["presentation.png", "picture-o"], document: ["document.png", "file-o"], spreadsheet: ["spreadsheet.png", "table"]} %>
         <% items.each do |type, dat| %>
             <div class="col-md-4 col-sm-6">
-                <h3><i class="fa fa-<%= dat[1] %>"></i> <%= type.to_s %> <a href="/new/<%= AssetGroup.first(name: type).id %>" class="btn btn-default">Create</a></h3>
+                <h3><i class="fa fa-<%= dat[1] %>"></i> <%= t type %> <a href="/new/<%= AssetGroup.first(name: type.capitalize).id %>" class="btn btn-default">Create</a></h3>
                 <img src="img/index/<%= dat[0] %>" class="img-thumbnail">
             </div>
         <% end %>
         <div class="col-md-4 col-sm-6">
-            <h3><i class="fa fa-cloud"></i> Local File Sync <a href="#webdav" class="btn btn-default">More</a></h3>
+            <h3><i class="fa fa-cloud"></i> <%= t :local_file_sync %> <a href="#webdav" class="btn btn-default"><%= t :more %></a></h3>
             <img src="img/index/file-mount.png" class="img-thumbnail">
         </div>
     </div>
@@ -23,60 +23,36 @@
     </div>
 </div> -->
 <div class="container">
-    <div class="row features">
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-pencil"></i> Note Taking</h3>
-            <span>A limitation of Google Drive is not having a note taking application and a reason WebSync was created. WebSync makes up for this by providing a OneNote-esqe Notebook file type.</span>
+    <% notes = [
+        [
+            {s: 'pencil', t: 'note_taking'},
+            {s: 'refresh', t: 'collaborative_work'},
+            {s: 'eye-slash', t: 'self_host'},
+            {s: 'camera-retro', t: 'incremental_backups'}
+        ], [
+            {s: 'female', t: 'gravatar'},
+            {s: 'gears', t: 'equations'},
+            {s: 'code', t: 'plugin_based'},
+            {s: 'keyboard-o', t: 'open_source'}
+        ], [
+            {s: 'mobile', t: 'responsive'},
+            {s: 'pencil', t: 'drawing'},
+            {s: 'youtube-play', t: 'interactive_content'},
+            {s: 'cloud', t: 'file_sync'}
+        ], [
+            {s: 'globe', t: 'i18n'}
+        ]
+    ]
+    notes.each do |row| %>
+        <div class="row features">
+        <% row.each do |cell| %>
+            <div class="col-md-3 col-sm-6">
+                <h3><i class="fa fa-<%= cell[:s] %>"></i> <%= t("descriptions.#{cell[:t]}.name") %></h3>
+                <span><%= t("descriptions.#{cell[:t]}.desc") %></span>
+            </div>
+        <% end %>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-refresh"></i> Collaborative Work</h3>
-            <span>WebSync has real time collaborative editing built in. You can work on things with as many people as you want and use the built in chat to collaborate.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-eye-slash"></i> Self Host</h3>
-            <span>You can host WebSync yourself and be sure that no one but you is looking at your data. Self hosting eliminates the service provider that could be knowingly or unknowingly letting the government spy on you.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-camera-retro"></i> Incremental Backups</h3>
-            <span>WebSync automatically records all your changes as they happen. Accidentally delete something? You can rollback to any point in time in just three clicks.</span>
-        </div>
-    </div>
-    <div class="row features">
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-female"></i> Gravatar</h3>
-            <span>WebSync uses Gravatar allowing you to use the same profile and photo across numerous sites.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-gears"></i> Equations</h3>
-            <span>The equation plugin allows you to seamlessly use L<sup>A</sup>T<sub>E</sub>X notation in all of your documents. This is powered by <a href="http://mathquill.com/">MathQuill</a>--an interactive editor library.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-code"></i> Plugin Based</h3>
-            <span>WebSync is a plugin based system. All of the editing tools and document types are in their own files. This allows the same code to work on all of your documents, or just on the ones you specify.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-keyboard-o"></i> Open Source</h3>
-            <span>WebSync is open source and can be modified in any way you like. If you're a programmer, you can add that one feature you've always wanted. <i class="fa fa-smile-o"></i></span>
-        </div>
-    </div>
-    <div class="row features">
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-mobile"></i> Responsive</h3>
-            <span>WebSync works on all devices including smart phones by using responsive CSS. In most cases, no extra work is required to make a plugin work on your phone.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-pencil"></i> Drawing</h3>
-            <span>The WebSync drawing plugin allows you to seamlessly add drawings and handwritten notes to your documents.</span>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <h3><i class="fa fa-youtube-play"></i> Interactive Content</h3>
-            <span>Because WebSync is built upon HTML and Javascript, you can have interactive content from outside sources. You can easily embed gifs and YouTube videos.</span>
-        </div>
-        <div class="col-md-3 col-sm-6" id="webdav">
-            <h3><i class="fa fa-cloud"></i> Local File Sync</h3>
-            <span>WebSync implements the <a href="https://en.wikipedia.org/wiki/WebDAV">WebDav protocol</a> allowing you to sync your files directly&mdash;just like Dropbox or Google Drive. Just point your file manager at <code>https://websyn.ca/webdav/</code>.</span>
-        </div>
-    </div>
+    <% end %>
 </div>
 <a href="https://github.com/d4l3k/WebSync" class="hidden-xs fork-me"></a>
 

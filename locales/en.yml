@@ -1,0 +1,70 @@
+en:
+    # Layout
+    created_by: "Created by Tristan Rice"
+    tag_line: "is a document editing tool similar to Google Drive or Microsoft Skydrive."
+    toggle_navigation: "Toggle navigation"
+    publicly_shared_documents: "Publicly Shared Documents"
+    shared: "Shared"
+    upload: "Upload"
+    documentation: "Documentation"
+    settings: "Settings"
+    licensed_under: "is licensed under the"
+
+    # Index
+    promo_line: "WebSync has all of your bases covered."
+
+    # File Types
+    notebook: "Notebook"
+    presentation: "Presentation"
+    document: "Document"
+    spreadsheet: "Spreadsheet"
+
+    local_file_sync: "Local File Sync"
+    more: "More"
+    descriptions:
+        note_taking:
+            name: "Note Taking"
+            desc: "A limitation of Google Drive is not having a note taking application and a reason WebSync was created. WebSync makes up for this by providing a OneNote-esque Notebook file type."
+        collaborative_work:
+            name: "Collaborative Work"
+            desc: "WebSync has real time collaborative editing built in. You can work on things with as many people as you want and use the built in chat to collaborate."
+        self_host:
+            name: "Self Host"
+            desc: "You can host WebSync yourself and be sure that no one but you is looking at your data. Self hosting eliminates the service provider that could be knowingly or unknowingly letting the government spy on you."
+        incremental_backups:
+            name: "Incremental Backups"
+            desc: "WebSync automatically records all your changes as they happen. Accidentally delete something? You can rollback to any point in time in just three clicks."
+        gravatar:
+            name: "Gravatar"
+            desc: "WebSync uses Gravatar allowing you to use the same profile and photo across numerous sites."
+        equations:
+            name: "Equations"
+            desc: "The equation plugin allows you to seamlessly use L<sup>A</sup>T<sub>E</sub>X notation in all of your documents. This is powered by <a href='http://mathquill.com/'>MathQuill</a>&emdash;an interactive editor library."
+        plugin_based:
+            name: "Plugin Based"
+            desc: "WebSync is a plugin based system. All of the editing tools and document types are in their own files. This allows the same code to work on all of your documents, or just on the ones you specify."
+        open_source:
+            name: "Open Source"
+            desc: "WebSync is open source and can be modified in any way you like. If you're a programmer, you can add that one feature you've always wanted. <i class='fa fa-smile-o'></i>"
+        responsive:
+            name: "Responsive"
+            desc: "WebSync works on all devices including smart phones by using responsive CSS. In most cases, no extra work is required to make a plugin work on your phone."
+        drawing:
+            name: "Drawing"
+            desc: "The WebSync drawing plugin allows you to seamlessly add drawings and handwritten notes to your documents."
+        interactive_content:
+            name: "Interactive Content"
+            desc: "Because WebSync is built upon HTML and Javascript, you can have interactive content from outside sources. You can easily embed gifs and YouTube videos."
+        file_sync:
+            name: "File Sync"
+            desc: "WebSync implements the <a href='https://en.wikipedia.org/wiki/WebDAV'>WebDav protocol</a> allowing you to sync your files directly&mdash;just like Dropbox or Google Drive. Just point your file manager at <code>https://websyn.ca/webdav/</code>."
+        i18n:
+            name: "Any Language"
+            desc: "WebSync uses i18n allowing for easy translation to any language. We're currently looking for people willing to translate."
+    login:
+        sign_in: "Sign In"
+        email: "Email"
+        password: "Password"
+        social_login: "Social Login"
+        register: "Register"
+

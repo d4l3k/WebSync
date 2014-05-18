@@ -2,6 +2,17 @@ module Helpers
     def h(text)
         Rack::Utils.escape_html(text)
     end
+    def t token
+        I18n.t(token)
+    end
+    def l time
+        I18n.l(Time.now)
+    end
+    def find_template(views, name, engine, &block)
+        I18n.fallbacks[I18n.locale].each { |locale|
+            super(views, "#{name}.#{locale}", engine, &block) }
+        super(views, name, engine, &block)
+    end
     def logger
         request.logger
     end
@@ -73,7 +84,7 @@ module Helpers
         if ENV["RACK_ENV"]=="development"
             return yield
         end
-        tag = "url:#{request.path}"
+        tag = "url:#{I18n.locale}:#{request.path}"
         page = $redis.get(tag)
         if page
             etag Digest::SHA1.hexdigest(page)

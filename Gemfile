@@ -15,6 +15,8 @@ gem 'sinatra', :require=>'sinatra/base'
 gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'nokogiri'
 gem 'multi_json'
+gem 'i18n', require: ['i18n', 'i18n/backend/fallbacks']
+gem 'rack-contrib'
 gem 'radix62'
 gem 'pg'
 gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeline.git', :require=>'sinatra/asset_pipeline'

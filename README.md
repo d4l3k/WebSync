@@ -36,7 +36,7 @@ Some things (like databases and initial javascript assets) can be configured in 
 Once the dependencies are installed and running, you should be able to run a development server by running:
 ```
 rackup
-./backend.js
+bin/backend.js
 ```
 This launches the main site on port 9292 and the web socket server on 4568.
 
@@ -125,11 +125,11 @@ thin start -C config/thin.yaml
 ### Backend
 For the backend, it's recommended you install [pm2](https://github.com/Unitech/pm2) (`npm install -g pm2`) and run the command:
 ```
-pm2 start backend.js -i 4
+pm2 start bin/backend.js -i 4
 ```
 which launches four worker threads that all listen on port 4568.
 
-If you want to avoid pm2, you can just run `./backend.js` or `node backend.js` to get a single worker on port 4568.
+If you want to avoid pm2, you can just run `bin/backend.js` or `node node/backend.js` to get a single worker on port 4568.
 
 # Contributing
 

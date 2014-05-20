@@ -144,6 +144,9 @@ WebSync uses Docco to automatically generate nicely formatted annotated source, 
 
 To generate the documentation you can run `rake documentation` or `rake assets:precompile`. Every WebSync server has the documentation available at `http://<server>:<port>/documentation`, assuming it has been generated. All production servers will have the documentation.
 
+Here's a pretty graph of the setup on WebSyn.ca that I made for a talk.
+![WebSync](https://i.imgur.com/eE3UNxS.png)
+
 
 License
 ----

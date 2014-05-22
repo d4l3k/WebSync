@@ -25,6 +25,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
             html += '</tr>';
             $(html).insertBefore(self.selectedElem.parentElement);
+            self.redrawTitles()
             self.cursorMove(0, -1);
         }
     });
@@ -37,6 +38,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
             html += '</tr>';
             $(html).insertAfter(self.selectedElem.parentElement);
+            self.redrawTitles()
             self.posCache = {};
             self.cursorMove(0, 1);
         }
@@ -44,6 +46,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     $('.Table [title="Delete Row"]').bind('click.Tables', function(e) {
         if (self.selected) {
             self.selectedElem.parentElement.remove();
+            self.redrawTitles()
             self.posCache = {};
         }
         self.clearSelect();
@@ -55,6 +58,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var i = 0; i < size[1]; i++) {
                 $('<td></td>').insertBefore(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
             }
+            self.redrawTitles()
             self.cursorMove(-1, 0);
             self.posCache = {};
         }
@@ -66,6 +70,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var i = 0; i < size[1]; i++) {
                 $('<td></td>').insertAfter(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
             }
+            self.redrawTitles()
             self.posCache = {};
             self.cursorMove(1, 0);
         }
@@ -78,6 +83,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             for (var i = 0; i < size[1]; i++) {
                 parentElem.children[i].children[pos[0]].remove();
             }
+            self.redrawTitles()
             self.posCache = {};
             self.clearSelect();
         }
@@ -123,7 +129,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     });
     $('.content').delegate('.Table.axis#y th', 'mousemove.Tables', function(e) {
         var position = $(this).offset();
-        console.log(e.pageY, position.top);
         $('.Table.axis th.resize').removeClass('resize');
         if (Math.abs(e.pageY - position.top) < 5 || Math.abs(e.pageY - (position.top + $(this).height())) < 5) {
             $(this).addClass('resize');
@@ -173,15 +178,23 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     });
     $('.content').delegate('.Table.axis#x th.resize', 'mousedown.Tables', function(e) {
         self.drag = true;
-        self.active = this;
+        if(Math.abs(e.pageX - $(this).offset().left) < 5){
+            self.active = $(this).prev()[0];
+        } else {
+            self.active = this;
+        }
         self.origX = e.pageX;
-        self.origWidth = $(this).width();
+        self.origWidth = $(self.active).width();
     });
     $('.content').delegate('.Table.axis#y th.resize', 'mousedown.Tables', function(e) {
         self.drag = true;
-        self.active = this;
+        if(Math.abs(e.pageY - $(this).offset().top) < 5){
+            self.active = $(this).prev()[0];
+        } else {
+            self.active = this;
+        }
         self.origY = e.pageY;
-        self.origHeight = $(this).height();
+        self.origHeight = $(self.active).height();
     });
     $(document).bind('mousemove.Tables', function(e) {
         if (self.drag) {
@@ -214,7 +227,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     });
     $('.content').delegate(".Table.axis#x th:not('resize')", 'click.Tables', function(e) {
         var pos = self.selectedPos(this);
-        console.log("POS", pos);
+        console.log('POS', pos);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(pos[0], 0));
         if (!e.shiftKey) {
@@ -225,9 +238,9 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     $('.content').delegate(".Table.axis#y th:not('resize')", 'click.Tables', function(e) {
         var pos = self.selectedPos(this);
         var size = self.tableSize();
-        self.cursorSelect(self.posToElem(0, pos[1]-1));
+        self.cursorSelect(self.posToElem(0, pos[1] - 1));
         if (!e.shiftKey) {
-            self.selectionEnd = self.posToElem(size[0] - 1, pos[1]-1);
+            self.selectionEnd = self.posToElem(size[0] - 1, pos[1] - 1);
         }
         self.updateSelectedArea();
     });
@@ -410,8 +423,13 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         $('*').unbind('.Tables');
         $('*').undelegate('.Tables');
     };
+    self.redrawTitles = function(){
+        $('.Table.axis').remove();
+        self.cursorSelect(self.selectedElem, true);
+        self.headerUpdate();
+    }
     // Helper methods:
-    self.cursorSelect = function(td) {
+    self.cursorSelect = function(td, noanim) {
         $("#ribbon_buttons a:contains('Table')").parent().fadeIn(200);
         // Cleanup last elem.
         if (self.selectedElem) {
@@ -432,14 +450,20 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 var bounding = elem.getBoundingClientRect();
                 nodes += '<th style="width: ' + (bounding.width - 1).toFixed(0) + 'px">' + self.columnLabel(i) + '</th>';
             }
-            nodes += '</tr></thead></table><table class="Table axis" id="y"><thead><tr><th>Unnamed</th></tr>';
+            var table_count = $(".content_container table").index(self.primaryTable()) + 1;
+            var name = "Sheet " + table_count;
+            nodes += '</tr></thead></table><table class="Table axis" id="y"><thead><tr><th>'+name +'</th></tr>';
             for (var i = 0; i < size[1]; i++) {
                 var elem = self.posToElem(0, i);
                 nodes += '<tr><th style="height: ' + ($(elem).height() + 1) + 'px">' + (i + 1) + '</th></tr>';
             }
             nodes += '</thead></table>';
             $('.content').append($(nodes));
-            $('.Table.axis').fadeIn(200);
+            if(!noanim){
+                $('.Table.axis').fadeIn(200);
+            } else {
+                $('.Table.axis').show();
+            }
         }
         self.cursorUpdate();
         self.enterLeaveBinds();
@@ -457,7 +481,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         for (var i = 0; i < size[1]; i++) {
             var elem = self.posToElem(0, i);
             var bounding = elem.getBoundingClientRect();
-            y_nodes[i].style.height = (bounding.height) + 'px';
+            y_nodes[i+1].style.height = (bounding.height) + 'px';
             //y_nodes.eq(i).css({height: (bounding.height-1)});//+'px">'+(i+1);
         }
         var table = $(self.primaryTable());
@@ -484,7 +508,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         $('#table_cursor').offset({
             left: pos.left,
             top: pos.top
-        }).height($(self.selectedElem).height() * WebSync.zoom - 2).width($(self.selectedElem).width() * WebSync.zoom - 1).get(0).scrollIntoViewIfNeeded();
+        }).height($(self.selectedElem).height() * WebSync.zoom - 3).width($(self.selectedElem).width() * WebSync.zoom - 2).get(0).scrollIntoViewIfNeeded();
         if (table.css('position') == 'absolute' || pos) {
             setTimeout(function() {
                 var offset = table.offset();
@@ -493,7 +517,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                     top: offset.top - 16
                 }).width(table.width());
                 $('.Table.axis#y').offset({
-                    left: offset.left - $(".Table.axis#y").width(),
+                    left: offset.left - $('.Table.axis#y').width(),
                     top: offset.top - 16
                 }).height(table.height());
             }, 1);
@@ -501,7 +525,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     };
     // Accepts values in the format of "Name.A1:B6"
     self.getCellData = function(range) {
-        var bits = range.split(".");
+        var bits = range.split('.');
         var parts = _.last(bits).split(':');
         var first = self.coordsFromLabel(parts[0]),
             second;
@@ -528,13 +552,11 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             bottom_right[1] - top_left[1] + 1
         ];
         var data = [];
-        console.log(size);
         for (var x = 0; x < size[0]; x++) {
             for (var y = 0; y < size[1]; y++) {
                 if (!data[x]) data[x] = [];
                 var elem = self.posToElem(top_left[0] + x, top_left[1] + y,
                     window._tmp_elem);
-                console.log('ELEM', elem);
                 if (elem === window._tmp_elem) {
                     throw "Error: Cell can't select it's own content.";
                 }
@@ -711,7 +733,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
             var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
             $('.Table.axis#x').children().children().children().slice(left, right + 1).addClass('active');
-            $('.Table.axis#y').children().children().slice(top+1, bottom + 2).children().addClass('active');
+            $('.Table.axis#y').children().children().slice(top + 1, bottom + 2).children().addClass('active');
             for (var y = top; y <= bottom; y++) {
                 selection_html += '<tr>';
                 for (var x = left; x <= right; x++) {
@@ -780,7 +802,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         var child = (targetElem || self.selectedElem);
         var column = 0;
         while ((child = child.previousSibling) != null) {
-            if (child.nodeName == 'TD' || child.nodeName == "TH")
+            if (child.nodeName == 'TD' || child.nodeName == 'TH')
                 column++;
         }
         child = (targetElem || self.selectedElem).parentElement;

@@ -41,14 +41,14 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
             left: -1
         });
         $('.axis#x').offset({
-            top: $('.content_well').offset().top-1
+            top: $('.content_well').offset().top - 1
         });
-        if($('.axis#x').length > 0){
+        if ($('.axis#x').length > 0) {
             var x_rect = $('.axis#x')[0].getBoundingClientRect();
             var y_rect = $('.axis#y')[0].getBoundingClientRect();
-            $(".content-spreadsheet #spreadsheetWell").css({
-                "padding-top": x_rect.height-2,
-                "padding-left": y_rect.width-2
+            $('.content-spreadsheet #spreadsheetWell').css({
+                'padding-top': x_rect.height - 2,
+                'padding-left': y_rect.width - 2
             });
         }
     };

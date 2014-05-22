@@ -604,6 +604,7 @@ a#name {
     th {
         text-align: center;
         font-size: 13px;
+        white-space: nowrap;
     }
     &#x th.resize {
         cursor: col-resize;

@@ -214,7 +214,8 @@ define('edit', ['websync'], function(websync) {
                     } else {
                         document.execCommand('outdent');
                     }
-                } else if(!parent.is("td, th")) {
+                // No indentation inside a table.
+                } else if (!parent.is('td, th')) {
                     if (parent.css('text-indent') == '0px') {
                         if (parent.attr('contenteditable') == 'true') {
                             node.wrap("<div style='text-indent: 40px'></div>");

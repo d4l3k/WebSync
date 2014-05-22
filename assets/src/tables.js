@@ -214,6 +214,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     });
     $('.content').delegate(".Table.axis#x th:not('resize')", 'click.Tables', function(e) {
         var pos = self.selectedPos(this);
+        console.log("POS", pos);
         var size = self.tableSize();
         self.cursorSelect(self.posToElem(pos[0], 0));
         if (!e.shiftKey) {
@@ -224,9 +225,9 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     $('.content').delegate(".Table.axis#y th:not('resize')", 'click.Tables', function(e) {
         var pos = self.selectedPos(this);
         var size = self.tableSize();
-        self.cursorSelect(self.posToElem(0, pos[1]));
+        self.cursorSelect(self.posToElem(0, pos[1]-1));
         if (!e.shiftKey) {
-            self.selectionEnd = self.posToElem(size[0] - 1, pos[1]);
+            self.selectionEnd = self.posToElem(size[0] - 1, pos[1]-1);
         }
         self.updateSelectedArea();
     });
@@ -431,7 +432,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 var bounding = elem.getBoundingClientRect();
                 nodes += '<th style="width: ' + (bounding.width - 1).toFixed(0) + 'px">' + self.columnLabel(i) + '</th>';
             }
-            nodes += '</tr></thead></table><table class="Table axis" id="y"><thead>';
+            nodes += '</tr></thead></table><table class="Table axis" id="y"><thead><tr><th>Unnamed</th></tr>';
             for (var i = 0; i < size[1]; i++) {
                 var elem = self.posToElem(0, i);
                 nodes += '<tr><th style="height: ' + ($(elem).height() + 1) + 'px">' + (i + 1) + '</th></tr>';
@@ -492,45 +493,48 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                     top: offset.top - 16
                 }).width(table.width());
                 $('.Table.axis#y').offset({
-                    left: offset.left - 39,
-                    top: offset.top
+                    left: offset.left - $(".Table.axis#y").width(),
+                    top: offset.top - 16
                 }).height(table.height());
             }, 1);
         }
     };
-    self.getCellData = function(range){
-        var parts = range.split(':');
-        var first = self.coordsFromLabel(parts[0]), second;
-        if(parts.length == 2){
+    // Accepts values in the format of "Name.A1:B6"
+    self.getCellData = function(range) {
+        var bits = range.split(".");
+        var parts = _.last(bits).split(':');
+        var first = self.coordsFromLabel(parts[0]),
+            second;
+        if (parts.length == 2) {
             second = self.coordsFromLabel(parts[1]);
         }
         var top_left, bottom_right, size;
-        if(second){
+        if (second) {
             // Get top left cell.
             top_left = [
                 first[0] < second[0] ? first[0] : second[0],
                 first[1] < second[1] ? first[1] : second[1]
-            ]
+            ];
             bottom_right = [
                 first[0] > second[0] ? first[0] : second[0],
                 first[1] > second[1] ? first[1] : second[1]
-            ]
+            ];
         } else {
             top_left = first;
             bottom_right = first;
         }
         var size = [
-            bottom_right[0]-top_left[0]+1,
+            bottom_right[0] - top_left[0] + 1,
             bottom_right[1] - top_left[1] + 1
         ];
         var data = [];
         console.log(size);
-        for(var x = 0; x< size[0]; x++){
-            for(var y = 0; y< size[1]; y++){
-                if(!data[x]) data[x] = [];
+        for (var x = 0; x < size[0]; x++) {
+            for (var y = 0; y < size[1]; y++) {
+                if (!data[x]) data[x] = [];
                 var elem = self.posToElem(top_left[0] + x, top_left[1] + y,
                     window._tmp_elem);
-                console.log("ELEM", elem);
+                console.log('ELEM', elem);
                 if (elem === window._tmp_elem) {
                     throw "Error: Cell can't select it's own content.";
                 }
@@ -541,11 +545,11 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 data[x][y] = val;
             }
         }
-        if(data.length === 1 && data[0].length === 1){
+        if (data.length === 1 && data[0].length === 1) {
             return data[0][0];
         }
         return data;
-    }
+    };
     self.evalJS = function(js, elem) {
         // Hack. :(
         window._tmp_elem = elem;
@@ -707,7 +711,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
             var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
             $('.Table.axis#x').children().children().children().slice(left, right + 1).addClass('active');
-            $('.Table.axis#y').children().children().slice(top, bottom + 1).children().addClass('active');
+            $('.Table.axis#y').children().children().slice(top+1, bottom + 2).children().addClass('active');
             for (var y = top; y <= bottom; y++) {
                 selection_html += '<tr>';
                 for (var x = left; x <= right; x++) {
@@ -776,7 +780,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         var child = (targetElem || self.selectedElem);
         var column = 0;
         while ((child = child.previousSibling) != null) {
-            if (child.nodeName == 'TD')
+            if (child.nodeName == 'TD' || child.nodeName == "TH")
                 column++;
         }
         child = (targetElem || self.selectedElem).parentElement;

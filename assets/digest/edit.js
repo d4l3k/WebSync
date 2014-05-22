@@ -214,7 +214,7 @@ define('edit', ['websync'], function(websync) {
                     } else {
                         document.execCommand('outdent');
                     }
-                } else {
+                } else if(!parent.is("td, th")) {
                     if (parent.css('text-indent') == '0px') {
                         if (parent.attr('contenteditable') == 'true') {
                             node.wrap("<div style='text-indent: 40px'></div>");

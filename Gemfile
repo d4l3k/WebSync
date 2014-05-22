@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+#source 'https://rubygems.org'
 gem 'rubysl', platform: :rbx
 gem 'racc', platform: :rbx
 gem 'json'
@@ -38,6 +38,9 @@ group :test do
     gem 'faye-websocket'
     gem 'rspec'
     gem 'rake'
+    gem 'capybara'
+    #gem 'capybara-webkit'
+    #gem 'poltergeist'
 end
 group :development, :test do
     gem 'pry'

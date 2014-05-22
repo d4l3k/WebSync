@@ -498,24 +498,59 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }, 1);
         }
     };
+    self.getCellData = function(range){
+        var parts = range.split(':');
+        var first = self.coordsFromLabel(parts[0]), second;
+        if(parts.length == 2){
+            second = self.coordsFromLabel(parts[1]);
+        }
+        var top_left, bottom_right, size;
+        if(second){
+            // Get top left cell.
+            top_left = [
+                first[0] < second[0] ? first[0] : second[0],
+                first[1] < second[1] ? first[1] : second[1]
+            ]
+            bottom_right = [
+                first[0] > second[0] ? first[0] : second[0],
+                first[1] > second[1] ? first[1] : second[1]
+            ]
+        } else {
+            top_left = first;
+            bottom_right = first;
+        }
+        var size = [
+            bottom_right[0]-top_left[0]+1,
+            bottom_right[1] - top_left[1] + 1
+        ];
+        var data = [];
+        console.log(size);
+        for(var x = 0; x< size[0]; x++){
+            for(var y = 0; y< size[1]; y++){
+                if(!data[x]) data[x] = [];
+                var elem = self.posToElem(top_left[0] + x, top_left[1] + y,
+                    window._tmp_elem);
+                console.log("ELEM", elem);
+                if (elem === window._tmp_elem) {
+                    throw "Error: Cell can't select it's own content.";
+                }
+                var val = $(elem).text();
+                if (parseFloat(val).toString() === val) {
+                    val = parseFloat(val);
+                }
+                data[x][y] = val;
+            }
+        }
+        if(data.length === 1 && data[0].length === 1){
+            return data[0][0];
+        }
+        return data;
+    }
     self.evalJS = function(js, elem) {
         // Hack. :(
         window._tmp_elem = elem;
 
-        function c(range) {
-            var parts = range.split(':');
-            var coords = self.coordsFromLabel(parts[0]);
-            var elem = self.posToElem(coords[1], coords[0], window._tmp_elem);
-            // Prevent infinite extension.
-            if (elem == window._tmp_elem) {
-                return '';
-            }
-            var val = $(elem).text();
-            if (parseFloat(val) == val) {
-                val = parseFloat(val);
-            }
-            return val;
-        }
+        var c = self.getCellData;
         var out;
         try {
             out = eval(js);
@@ -793,7 +828,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             column += (alpha.indexOf(sym) + 1) * Math.pow(26, c.length - i - 1);
         });
 
-        return [parseInt(r) - 1, column - 1];
+        return [column - 1, parseInt(r) - 1];
     };
 
     // Return self so other modules can hook into this one.

@@ -21,7 +21,7 @@ gem 'radix62'
 gem 'pg'
 gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeline.git', :require=>'sinatra/asset_pipeline'
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
-group :development do
+group :development, :test do
     gem 'thin'
     gem 'racksh'
     gem 'pry-rescue'
@@ -39,8 +39,7 @@ group :test do
     gem 'rspec'
     gem 'rake'
     gem 'capybara'
-    #gem 'capybara-webkit'
-    #gem 'poltergeist'
+    gem 'poltergeist'
 end
 group :development, :test do
     gem 'pry'

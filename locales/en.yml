@@ -3,6 +3,7 @@ en:
     time:
         formats:
             default: "%m/%d/%y at %I:%M%p"
+        pm: "PM"
     # Layout
     layout:
         created_by: "Created by Tristan Rice"

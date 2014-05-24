@@ -49,6 +49,20 @@ class WebSync < Sinatra::Base
         set :raise_errors, true
         set :dump_errors, true
         set :show_exceptions, false
+        set :assets_debug, true
+        # This is kind of a hack. This allows dynamic files in test mode.
+        app = self
+        get '/assets/*' do |key|
+            if Sprockets::Helpers.digest
+                    key.gsub! /(-\w+)(?!.*-\w+)/, ""
+            end
+            asset = app.sprockets[key]
+            content_type asset.content_type
+            if Sprockets::Helpers.expand
+                  return asset.body
+            end
+            asset.to_s
+        end
     end
     configure do
         set :public_folder, File.dirname(__FILE__) + '/../public'

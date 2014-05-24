@@ -1,4 +1,4 @@
-#source 'https://rubygems.org'
+source 'https://rubygems.org'
 gem 'rubysl', platform: :rbx
 gem 'racc', platform: :rbx
 gem 'json'

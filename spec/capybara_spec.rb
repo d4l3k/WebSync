@@ -20,7 +20,7 @@ def loginuser
 end
 
 describe "WebSync Capybara Interface Tests", type: :feature do
-    before(:all, js: true) do
+    before(:all) do
         # Get backend path relative to binary.
         path = File.expand_path(File.dirname(__FILE__))
         backend = File.join(path, '../bin/backend.js')
@@ -31,7 +31,6 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     end
     it "should successfully pass core.js tests", :js => true do
         loginuser
-        visit '/new/1'
         visit '/new/1'
         uri = URI.parse(current_url)
         doc_id = uri.path.split("/")[1].decode62
@@ -65,7 +64,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         # Insert table
         find('#table').click
         tds = all('.page table td')
-        tds[0].trigger('click')
+        tds[0].click
         all('th', text: 'Sheet 1').length.should eq 1
 
         # Test row & column insertion

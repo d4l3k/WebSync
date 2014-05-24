@@ -103,6 +103,11 @@ task :cocomo do
     puts "Total Cost: $#{cost.to_i}"
 end
 
+task :update do
+    system("bundle update")
+    system("npm-check-updates -u")
+end
+
 require 'open3'
 def get_python2
     if a = which('python2')

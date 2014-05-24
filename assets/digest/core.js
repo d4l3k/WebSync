@@ -445,8 +445,8 @@ define('websync', {
         this.webSocketStart();
 
         // Disable Mozilla built in resizing for tables and images.
-        document.execCommand("enableObjectResizing", false, "false");
-        document.execCommand("enableInlineTableEditing", false, "false");
+        document.execCommand('enableObjectResizing', false, 'false');
+        document.execCommand('enableInlineTableEditing', false, 'false');
         $("#settingsBtn, [href='#permissions']").click(function() {
             WebSync.connection.sendJSON({
                 type: 'permission_info'

@@ -81,7 +81,7 @@ module Helpers
         end
     end
     def cache time: 3600, &block
-        if ["development", "test"].include? ENV["RACK_ENV"]
+        if "development" == ENV["RACK_ENV"]
             return yield
         end
         tag = "url:#{I18n.locale}:#{request.path}"

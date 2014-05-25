@@ -370,11 +370,11 @@ define('edit', ['websync'], function(websync) {
             //return '#000000';
         }
         var parts = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(1|0|0?\.d+))?\)$/);
-        if(!parts){
-            return "#000000";
+        if (!parts) {
+            return '#000000';
         }
         for (var i = 1; i <= 3; ++i) {
-            if(parts[i]){
+            if (parts[i]) {
                 parts[i] = parseInt(parts[i]).toString(16);
                 if (parts[i].length == 1) parts[i] = '0' + parts[i];
             }

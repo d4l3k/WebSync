@@ -19,12 +19,14 @@ def loginuser
     click_button 'Sign In'
 end
 def wait_for_edit
-    while not current_url.match /\/\S{1,3}\/edit$/
+    start = DateTime.now
+    while not current_url.match /\/\S{1,3}\/edit$/ and (DateTime.now-start) < 1
         sleep 0.01
     end
 end
 def wait_for_no_bar
-    while all(".bar").length > 0
+    start = DateTime.now
+    while all(".bar").length > 0 and (DateTime.now-start) < 1
         sleep 0.01
     end
 end

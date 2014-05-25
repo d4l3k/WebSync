@@ -45,12 +45,12 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     $('.Table [title="Delete Row"]').bind('click.Tables', function(e) {
         if (self.selected) {
             var size = self.tableSize();
-            if(size[1] > 1){
+            if (size[1] > 1) {
                 var pos = self.selectedPos();
-                var n_y = pos[1]+1;
-                if(n_y >= size[1]) n_y -= 2;
+                var n_y = pos[1] + 1;
+                if (n_y >= size[1]) n_y -= 2;
                 var n_selected = self.posToElem(pos[0], n_y);
-                $(self.selectedElem).closest("tr").remove();
+                $(self.selectedElem).closest('tr').remove();
                 self.clearSelect();
                 self.cursorSelect(n_selected);
                 self.redrawTitles();
@@ -84,13 +84,13 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             var size = self.tableSize();
             var pos = self.selectedPos();
             var parentElem = $(self.selectedElem).parent().parent();
-            if(size[0] > 1){
+            if (size[0] > 1) {
                 var pos = self.selectedPos();
-                var n_x = pos[0]+1;
-                if(n_x >= size[0]) n_x -= 2;
+                var n_x = pos[0] + 1;
+                if (n_x >= size[0]) n_x -= 2;
                 var n_selected = self.posToElem(n_x, pos[1]);
                 for (var i = 0; i < size[1]; i++) {
-                    $(parentElem).children("tr").eq(i).children("td").eq(pos[0]).remove();
+                    $(parentElem).children('tr').eq(i).children('td').eq(pos[0]).remove();
                 }
                 self.clearSelect();
                 self.cursorSelect(n_selected);
@@ -100,7 +100,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     });
     $('.Table [title="Delete Table"]').bind('click.Tables', function(e) {
         if (self.selected) {
-            $(self.selectedElem).parents("table").first().remove();
+            $(self.selectedElem).parents('table').first().remove();
             self.clearSelect();
         }
     });
@@ -435,7 +435,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     };
     self.redrawTitles = function() {
         $('.Table.axis').remove();
-        if(self.selectedElem){
+        if (self.selectedElem) {
             self.cursorSelect(self.selectedElem, true);
         }
         self.headerUpdate();

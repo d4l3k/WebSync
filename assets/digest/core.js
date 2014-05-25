@@ -458,7 +458,7 @@ define('websync', {
             });
         });
         $('#user_perms').delegate('select', 'change', function(e) {
-            var email = $(e.target).parent().parent().children().eq(0).text();
+            var email = $(this).parents("td").prev().text();
             var choice = $(e.target).val();
             WebSync.connection.sendJSON({
                 type: 'share',
@@ -467,7 +467,7 @@ define('websync', {
             });
         });
         $('#user_perms').delegate('a', 'click', function(e) {
-            var email = $(e.target).parent().parent().children().eq(0).text();
+            var email = $(this).parents("tr").children().first().text();
             WebSync.connection.sendJSON({
                 type: 'share',
                 email: email,
@@ -477,7 +477,7 @@ define('websync', {
                 WebSync.connection.sendJSON({
                     type: 'permission_info'
                 });
-            }, 200);
+            }, 100);
         });
         $('#share_with').click(function() {
             var email = $('#share_email').val();
@@ -490,7 +490,7 @@ define('websync', {
                 WebSync.connection.sendJSON({
                     type: 'permission_info'
                 });
-            }, 200);
+            }, 100);
             $('#share_email').val('');
         });
         $('#access_mode, #default_permissions').change(function() {

@@ -18,16 +18,22 @@ def loginuser
     page.first(:fillable_field, 'password').set 'testboop'
     click_button 'Sign In'
 end
+def wait_for
+    start = Time.now
+    while !yield && (Time.now-start) < 1
+        sleep 0.05
+    end
+end
 def wait_for_edit
-    start = DateTime.now
-    while not current_url.match /\/\S{1,3}\/edit$/ and (DateTime.now-start) < 1
-        sleep 0.01
+    start = Time.now
+    while !current_url.match(/\/\S{1,3}\/edit$/) && (Time.now-start) < 1
+        sleep 0.05
     end
 end
 def wait_for_no_bar
-    start = DateTime.now
-    while all(".bar").length > 0 and (DateTime.now-start) < 1
-        sleep 0.01
+    start = Time.now
+    while all(".bar").length > 0 and (Time.now-start) < 1
+        sleep 0.05
     end
 end
 describe "WebSync Capybara Interface Tests", type: :feature do
@@ -54,12 +60,48 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         # Page Test
         find(".page").click
         find(".page").set "Moooop"
+        # CSS Test
+        find('#settingsBtn').click2
+        page.evaluate_script('require("edit").editor.setValue("* { color: red; }")')
+
+        # Permissions Test
+        find('[href="#permissions"]').click2
+        find('#access_mode').select('Hidden (link only)')
+        find('#default_permissions').select('Editor')
+        find('#share_email').set('moo@websyn.ca')
+        find('#share_with').click2
+        wait_for do
+            all('#user_perms select').length >= 2
+        end
+        all('#user_perms select').first.select('Editor')
         page.evaluate_script("WS.checkDiff();")
         sleep 0.05
+        doc = doc.reload
         # Title Check
-        doc.reload.name.should eq  "Test Doc! 111"
+        doc.name.should eq  "Test Doc! 111"
         # Page Check
-        doc.reload.body.should eq({"body"=>[{"nodeName"=>"#text", "textContent"=>"Moooop"}]})
+        doc.body["body"].should eq([{"nodeName"=>"#text", "textContent"=>"Moooop"}])
+        # CSS Check
+        doc.body["custom_css"].should eq(["* { color: red; }"])
+        # Permissions Check
+        doc.visibility.should eq("hidden")
+        doc.default_level.should eq("editor")
+        perms = doc.permissions(user_email: 'moo@websyn.ca')
+        perms.length.should eq(1)
+        perms[0].level.should eq("editor")
+        all('#user_perms a').first.click2
+        wait_for do
+            all('#user_perms select').length == 1
+        end
+        all('#user_perms select').length.should eq(1)
+
+        # Changes Check
+        find('[href="#diffs"]').click2
+        wait_for do
+            all('#diffs tr').length >= 2
+        end
+        all('#diffs tr').length.should be >= 2
+
     end
     it "should successfully pass tables.js tests", :js => true do
         loginuser

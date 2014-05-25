@@ -39,17 +39,23 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             html += '</tr>';
             $(html).insertAfter(self.selectedElem.parentElement);
             self.redrawTitles();
-            self.posCache = {};
             self.cursorMove(0, 1);
         }
     });
     $('.Table [title="Delete Row"]').bind('click.Tables', function(e) {
         if (self.selected) {
-            self.selectedElem.parentElement.remove();
-            self.redrawTitles();
-            self.posCache = {};
+            var size = self.tableSize();
+            if(size[1] > 1){
+                var pos = self.selectedPos();
+                var n_y = pos[1]+1;
+                if(n_y >= size[1]) n_y -= 2;
+                var n_selected = self.posToElem(pos[0], n_y);
+                $(self.selectedElem).closest("tr").remove();
+                self.clearSelect();
+                self.cursorSelect(n_selected);
+                self.redrawTitles();
+            }
         }
-        self.clearSelect();
     });
     $('.Table [title="Insert Column Left"]').bind('click.Tables', function(e) {
         if (self.selected) {
@@ -60,7 +66,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
             self.redrawTitles();
             self.cursorMove(-1, 0);
-            self.posCache = {};
         }
     });
     $('.Table [title="Insert Column Right"]').bind('click.Tables', function(e) {
@@ -71,7 +76,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 $('<td></td>').insertAfter(self.selectedElem.parentElement.parentElement.children[i].children[pos[0]]);
             }
             self.redrawTitles();
-            self.posCache = {};
             self.cursorMove(1, 0);
         }
     });
@@ -79,18 +83,24 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         if (self.selected) {
             var size = self.tableSize();
             var pos = self.selectedPos();
-            var parentElem = self.selectedElem.parentElement.parentElement;
-            for (var i = 0; i < size[1]; i++) {
-                parentElem.children[i].children[pos[0]].remove();
+            var parentElem = $(self.selectedElem).parent().parent();
+            if(size[0] > 1){
+                var pos = self.selectedPos();
+                var n_x = pos[0]+1;
+                if(n_x >= size[0]) n_x -= 2;
+                var n_selected = self.posToElem(n_x, pos[1]);
+                for (var i = 0; i < size[1]; i++) {
+                    $(parentElem).children("tr").eq(i).children("td").eq(pos[0]).remove();
+                }
+                self.clearSelect();
+                self.cursorSelect(n_selected);
+                self.redrawTitles();
             }
-            self.redrawTitles();
-            self.posCache = {};
-            self.clearSelect();
         }
     });
     $('.Table [title="Delete Table"]').bind('click.Tables', function(e) {
         if (self.selected) {
-            self.selectedElem.parentElement.parentElement.parentElement.remove();
+            $(self.selectedElem).parents("table").first().remove();
             self.clearSelect();
         }
     });
@@ -425,7 +435,9 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
     };
     self.redrawTitles = function() {
         $('.Table.axis').remove();
-        self.cursorSelect(self.selectedElem, true);
+        if(self.selectedElem){
+            self.cursorSelect(self.selectedElem, true);
+        }
         self.headerUpdate();
     };
     // Helper methods:
@@ -795,9 +807,8 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         if (!elem) {
             elem = self.selectedElem;
         }
-        return elem.parentElement.parentElement.children[y].children[x];
+        return $(elem).parent().parent().children().eq(y).children()[x];
     };
-    self.posCache = {};
     self.selectedPos = function(targetElem) {
         var child = (targetElem || self.selectedElem);
         var column = 0;
@@ -812,7 +823,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         return [column, row];
     };
     self.tableSize = function() {
-        return [self.selectedElem.parentElement.children.length, self.selectedElem.parentElement.parentElement.children.length];
+        return [$(self.selectedElem).parent().children().length, $(self.selectedElem).parent().parent().children().length];
     };
     // Taken from Stack Overflow
     // http://stackoverflow.com/questions/8603480/how-to-create-a-function-that-converts-a-number-to-a-bijective-hexavigesimal

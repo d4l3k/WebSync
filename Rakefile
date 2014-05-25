@@ -105,6 +105,7 @@ end
 
 task :update do
     system("bundle update")
+    system("npm-check-updates")
     system("npm-check-updates -u")
 end
 

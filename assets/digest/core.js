@@ -458,7 +458,7 @@ define('websync', {
             });
         });
         $('#user_perms').delegate('select', 'change', function(e) {
-            var email = $(this).parents("td").prev().text();
+            var email = $(this).parents('td').prev().text();
             var choice = $(e.target).val();
             WebSync.connection.sendJSON({
                 type: 'share',
@@ -467,7 +467,7 @@ define('websync', {
             });
         });
         $('#user_perms').delegate('a', 'click', function(e) {
-            var email = $(this).parents("tr").children().first().text();
+            var email = $(this).parents('tr').children().first().text();
             WebSync.connection.sendJSON({
                 type: 'share',
                 email: email,

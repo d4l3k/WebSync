@@ -222,8 +222,7 @@ fs.readFile('./config/config.json', function(err, buffer) {
                         } else if (data.type == 'share') {
                             if (auth_level == 'owner') {
                                 postgres.query('DELETE FROM permissions WHERE file_id = $1 AND user_email = $2', [doc_id, data.email])
-                                    .on('error', function(err) {
-                                    })
+                                    .on('error', function(err) {})
                                     .on('end', function() {
                                         if (data.level != 'delete') {
                                             postgres.query('INSERT INTO permissions (user_email, file_id, level) VALUES ($2, $1, $3)', [doc_id, data.email, data.level]);

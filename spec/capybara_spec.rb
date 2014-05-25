@@ -20,21 +20,32 @@ def loginuser
 end
 def wait_for
     start = Time.now
-    while !yield && (Time.now-start) < 1
+    while !yield && (Time.now-start) < 5
         sleep 0.05
     end
 end
 def wait_for_edit
     start = Time.now
-    while !current_url.match(/\/\S{1,3}\/edit$/) && (Time.now-start) < 1
+    while !current_url.match(/\/\S{1,3}\/edit$/) && (Time.now-start) < 5
         sleep 0.05
     end
 end
 def wait_for_no_bar
     start = Time.now
-    while all(".bar").length > 0 and (Time.now-start) < 1
+    while all(".bar").length > 0 and (Time.now-start) < 5
         sleep 0.05
     end
+    all(".bar").length.should eq(0)
+end
+def new_doc type
+    id = AssetGroup.all(name: type).first.id
+    visit "/new/#{id}"
+    wait_for_edit
+    uri = URI.parse(current_url)
+    doc_id = uri.path.split("/")[1].decode62
+    doc = WSFile.get(doc_id)
+    wait_for_no_bar
+    doc
 end
 describe "WebSync Capybara Interface Tests", type: :feature do
     before(:all) do
@@ -46,14 +57,15 @@ describe "WebSync Capybara Interface Tests", type: :feature do
             exec "node #{backend} -p 1337"
         end
     end
+    it "should successfully load everything", js: true do
+        loginuser
+        %w{Document Spreadsheet Notebook}.each do |type|
+            new_doc type
+        end
+    end
     it "should successfully pass core.js tests", :js => true do
         loginuser
-        visit '/new/1'
-        wait_for_edit
-        uri = URI.parse(current_url)
-        doc_id = uri.path.split("/")[1].decode62
-        doc = WSFile.get(doc_id)
-        wait_for_no_bar
+        doc = new_doc 'Document'
         # Title Test
         find("#name").set "Test Doc! 111"
 
@@ -95,6 +107,13 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         end
         all('#user_perms select').length.should eq(1)
 
+        # Libraries Check
+        find('[href="#assets"]').click2
+        wait_for do
+            all('#assets tr').length >= 2
+        end
+        all('#assets tr').length.should be >= 2
+
         # Changes Check
         find('[href="#diffs"]').click2
         wait_for do
@@ -105,12 +124,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     end
     it "should successfully pass tables.js tests", :js => true do
         loginuser
-        visit '/new/1'
-        wait_for_edit
-        uri = URI.parse(current_url)
-        doc_id = uri.path.split("/")[1].decode62
-        doc = WSFile.get(doc_id)
-        wait_for_no_bar
+        doc = new_doc 'Document'
         # Table Test
         find('a', text: 'Insert').click
         find('.page').click

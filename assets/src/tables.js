@@ -516,11 +516,11 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         if (!self.selectedElem) return;
         var table = $(self.primaryTable());
         var offset = table.offset();
-        var box = table[0].getBoundingClientRect()
+        var box = table[0].getBoundingClientRect();
         $('.Table.axis#x').offset({
             left: offset.left,
             top: offset.top - 16
-        }).width(box.width-2);
+        }).width(box.width - 2);
         $('.Table.axis#y').offset({
             left: offset.left - $('.Table.axis#y').width(),
             top: offset.top - 16
@@ -537,30 +537,30 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             left: pos.left,
             top: pos.top
         })
-        .height(elem_box.height - 4)
-        .width(elem_box.width - 6)
-        .get(0).scrollIntoViewIfNeeded();
+            .height(elem_box.height - 4)
+            .width(elem_box.width - 6)
+            .get(0).scrollIntoViewIfNeeded();
 
         if ((table.css('position') == 'absolute' || pos)) {
             if (!self.disableAxisPositioning) {
                 self.axisPosition();
             }
-            var box = table[0].getBoundingClientRect()
-            $('.Table.axis#x').width(box.width-2);
+            var box = table[0].getBoundingClientRect();
+            $('.Table.axis#x').width(box.width - 2);
         }
     };
     // Accepts values in the format of "Name.A1:B6"
     self.getCellData = function(range) {
         var bits = range.split('.');
-        var table;// = self.primaryTable();
-        if(bits.length >= 2){
+        var table; // = self.primaryTable();
+        if (bits.length >= 2) {
             var name = bits[0];
-            var search = $(".content_container table[name='"+name+"']");
-            if(search.length >= 1){
+            var search = $(".content_container table[name='" + name + "']");
+            if (search.length >= 1) {
                 table = search.get(0);
-            } else if(name.match(/^Table \d+$/)){
-                var index = parseInt(name.split(" ")[1])-1;
-                table = $(".content_container table")
+            } else if (name.match(/^Table \d+$/)) {
+                var index = parseInt(name.split(' ')[1]) - 1;
+                table = $('.content_container table')
                     .get(index);
             }
         }
@@ -590,7 +590,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             bottom_right[1] - top_left[1] + 1
         ];
         var data = [];
-        var elem_in_table = $(table).find("td, th")[0] || window._tmp_elem;
+        var elem_in_table = $(table).find('td, th')[0] || window._tmp_elem;
         for (var x = 0; x < size[0]; x++) {
             for (var y = 0; y < size[1]; y++) {
                 if (!data[x]) data[x] = [];
@@ -739,14 +739,14 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             if (self.selectionEnd && self.selectionEnd !== self.selectedElem) {
                 var start_box = self.selectedElem.getBoundingClientRect();
                 var end_box = end.getBoundingClientRect();
-                var top = start_box.top < end_box.top ? start_box.top : end_box.top
-                var bottom = start_box.bottom > end_box.bottom ? start_box.bottom : end_box.bottom
-                var left = start_box.left < end_box.left ? start_box.left : end_box.left
-                var right = start_box.right > end_box.right ? start_box.right : end_box.right
+                var top = start_box.top < end_box.top ? start_box.top : end_box.top;
+                var bottom = start_box.bottom > end_box.bottom ? start_box.bottom : end_box.bottom;
+                var left = start_box.left < end_box.left ? start_box.left : end_box.left;
+                var right = start_box.right > end_box.right ? start_box.right : end_box.right;
                 $('#table_selection').show().offset({
                     left: left,
                     top: top
-                }).height(bottom-top-2).width(right-left-3);
+                }).height(bottom - top - 2).width(right - left - 3);
             } else {
                 $('#table_selection').hide();
             }

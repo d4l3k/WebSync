@@ -127,7 +127,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         find('#table').click
         tds = all('.page table td')
         tds[1].click2
-        all('th', text: 'Sheet 1').length.should eq 1
+        all('th', text: 'Table 1').length.should eq 1
 
         # Test row & column insertion
         find('[data-original-title="Insert Row Above"]').click2

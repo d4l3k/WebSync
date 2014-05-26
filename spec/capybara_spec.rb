@@ -79,7 +79,9 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         wait_for do
             all('#user_perms select').length >= 2
         end
-        all('#user_perms select').first.select('Editor')
+        all("#user_perms tr").select do |a|
+            a.all("td").length > 0 && a.all("td")[0].text == "moo@websyn.ca"
+        end[0].find("select").select('Editor')
         page.evaluate_script("WS.checkDiff();")
         sleep 0.05
         doc = doc.reload

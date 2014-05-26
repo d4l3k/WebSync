@@ -264,7 +264,7 @@ define('edit', ['websync'], function(websync) {
         }
     });
     $('#font ul').on('click.TextEdit', 'a', function(e) {
-        var font = $(e.currentTarget).text();
+        var font = $(e.currentTarget).find('.fname').text();
         console.log(e, font);
         document.execCommand('fontname', false, font);
     });
@@ -424,7 +424,7 @@ define('edit', ['websync'], function(websync) {
     for (i = 0; i < fonts.length; i++) {
         var result = d.detect(fonts[i]);
         if (result) {
-            self.available_fonts.push(fonts[i]);
+            self.available_fonts.push({name: fonts[i], source: 'local'});
         }
     }
     var webfonts = ['Ubuntu', 'Ubuntu Mono', 'Roboto', 'Oswald', 'Lato', 'Droid Sans', 'Droid Serif'];
@@ -432,12 +432,20 @@ define('edit', ['websync'], function(websync) {
         webfonts.join('|').replace(/\s+/g, '+') + "' rel='stylesheet' type='text/css'>");
     _.each(webfonts, function(font) {
         if (self.available_fonts.indexOf(font) == -1) {
-            self.available_fonts.push(font);
+            self.available_fonts.push({name: font, source: 'google'});
         }
     });
 
     _.each(self.available_fonts, function(font) {
-        font_list.push('<li><a href="#" style="font-family: \'' + font + '"\'">' + font + '</a></li>');
+        var font_entry = '<li>'
+        font_entry += '<a href="#">';
+        font_entry +=  '<span class="fname" style="font-family: \'' + font.name + '"\'">'+font.name+'</span>';
+        if(font.source == 'google'){
+            //font_entry += '<i class="fa fa-google-plus"></i>';
+            font_entry += '<span class="pull-right" title="From Google Web Fonts">G</span>';
+        }
+        font_entry += '</a></li>';
+        font_list.push(font_entry);
     });
     // TODO: Not sure if this should be here.
     self.updateStyles = function() {

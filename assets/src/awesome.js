@@ -26,11 +26,11 @@ define(['websync'], function(websync) {
         var elem = self.addCss(elemm[0]);
         self.dirty = true;
         _.delay(self.updateMenu, 50);
-        _.delay(function(){
-            self.setIndex(self.css_scene.getDescendants().length-1);
+        _.delay(function() {
+            self.setIndex(self.css_scene.getDescendants().length - 1);
         }, 100);
     });
-    $('#remSlide').click(function(e){
+    $('#remSlide').click(function(e) {
         self.css_scene.remove(self.css_scene.children[self.activeIndex]);
         self.setIndex(self.activeIndex);
         _.delay(self.updateMenu, 50);
@@ -256,9 +256,9 @@ define(['websync'], function(websync) {
 
         self.render();
         $('.content').fadeIn();
-        _.delay(function(){
+        _.delay(function() {
             self.setIndex(0);
-        },100);
+        }, 100);
         NProgress.done();
     });
     // Add a HTML node to the CSS3D renderer.
@@ -319,15 +319,18 @@ define(['websync'], function(websync) {
         $('#slideView').html('');
         $('.slide').each(function(index, slide) {
             var preview = $("<div draggable='true' class='slidePreview" + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>');
-            preview.find(".slide-content").attr('contenteditable', null)
+            preview.find('.slide-content').attr('contenteditable', null);
             preview.appendTo($('#slideView'))
-            .data({
-                index: index
+                .data({
+                    index: index
+                });
+            var ratio = $(preview).outerWidth() / $(slide).outerWidth();
+            var scale = 'scale(' + ratio.toFixed(7) + ')';
+            preview.find('.slide').css({
+                'transform': scale,
+                '-webkit-transform': scale
             });
-            var ratio = $(preview).width()/$(slide).width();
-            var scale = "scale("+ ratio.toFixed(2) + ")";
-            preview.find(".slide").css({"transform": scale, "-webkit-transform": scale});
-            preview.height(ratio*$(slide).height())
+            preview.height(ratio * $(slide).outerHeight());
         });
         var drag_elem;
         $('.slidePreview').on('dragstart', function(e) {
@@ -355,7 +358,7 @@ define(['websync'], function(websync) {
             e.preventDefault();
             self.updateMenu();
         });
-        $('.slidePreview').eq(self.activeIndex).addClass('active')
+        $('.slidePreview').eq(self.activeIndex).addClass('active');
     };
     return self;
 });

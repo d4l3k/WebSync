@@ -161,8 +161,8 @@ fs.readFile('./config/config.json', function(err, buffer) {
                                         time: new Date()
                                     };
                                     // Check for expired users (> 60 sec).
-                                    _.each(users, function(data, id){
-                                        if((new Date() - data.time) > 60){
+                                    _.each(users, function(data, id) {
+                                        if ((new Date() - data.time) > 60) {
                                             delete users[id];
                                             redis.publish('doc:' + doc_id, JSON.stringify({
                                                 type: 'client_bounce',
@@ -355,8 +355,8 @@ fs.readFile('./config/config.json', function(err, buffer) {
                                     email: user_email,
                                     time: new Date()
                                 };
-                                _.each(users, function(data, id){
-                                    if((new Date() - data.time) > 60){
+                                _.each(users, function(data, id) {
+                                    if ((new Date() - data.time) > 60) {
                                         delete users[id];
                                         redis.publish('doc:' + doc_id, JSON.stringify({
                                             type: 'client_bounce',

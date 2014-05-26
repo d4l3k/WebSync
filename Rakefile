@@ -171,3 +171,47 @@ task :hooks do
         end
     end
 end
+task :pics do
+    require 'pry'
+    require 'capybara/poltergeist'
+    require_relative './lib/models'
+    require_relative './lib/configure'
+    require_relative './lib/helpers.rb'
+    class TestHelpers
+        include Helpers
+        def initialize
+            @session = {}
+        end
+        def session
+            return @session
+        end
+        def request
+            TestRequest.new
+        end
+        def etag tag
+        end
+        def response
+            TestResponse.new
+        end
+    end
+    helpers = TestHelpers.new
+
+    user = helpers.register 'test@websyn.ca', 'testboop'
+    driver = Capybara::Poltergeist::Driver.new WebSync
+    driver.resize(1189, 640)
+    root = "http://localhost:9292"
+    driver.visit root+'/login?/settings'
+    driver.find_css("input[name='email']")[0].set 'test@websyn.ca'
+    driver.find_css("input[name='password']")[0].set 'testboop'
+    driver.find_css("button")[1].click
+    %w{Document Spreadsheet Notebook Presentation}.each do |type|
+        id = AssetGroup.all(name: type).first.id
+        driver.visit root+"/new/#{id}"
+        while !driver.current_url.match(/\/\S{1,3}\/edit$/) || driver.find_css(".bar").length > 0
+            sleep 0.05
+        end
+        driver.find_css("[contenteditable]").last.click
+        puts "Exporting: #{type}"
+        driver.save_screenshot("/tmp/websync-#{type}.png")
+    end
+end

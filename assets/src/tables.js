@@ -224,6 +224,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             self.cursorUpdate();
         }
     });
+    self.disableAxisPositioning = false;
     $(document).bind('mouseup.Tables', function(e) {
         if (self.drag) {
             console.log(e);
@@ -510,6 +511,19 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             self.cursorSelect(new_td);
         }
     };
+    self.axisPosition = function(){
+        if(!self.selectedElem) return;
+        var table = $(self.primaryTable());
+        var offset = table.offset();
+        $('.Table.axis#x').offset({
+            left: offset.left,
+            top: offset.top - 16
+        }).width(table.width());
+        $('.Table.axis#y').offset({
+            left: offset.left - $('.Table.axis#y').width(),
+            top: offset.top - 16
+        }).height(table.height());
+    }
     self.cursorUpdate = function(pos) {
         var pos = $(self.selectedElem).offset();
         pos.top += 2;
@@ -520,19 +534,13 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         $('#table_cursor').offset({
             left: pos.left,
             top: pos.top
-        }).height($(self.selectedElem).height() * WebSync.zoom - 3).width($(self.selectedElem).width() * WebSync.zoom - 2).get(0).scrollIntoViewIfNeeded();
-        if (table.css('position') == 'absolute' || pos) {
-            setTimeout(function() {
-                var offset = table.offset();
-                $('.Table.axis#x').offset({
-                    left: offset.left,
-                    top: offset.top - 16
-                }).width(table.width());
-                $('.Table.axis#y').offset({
-                    left: offset.left - $('.Table.axis#y').width(),
-                    top: offset.top - 16
-                }).height(table.height());
-            }, 1);
+        }).height($(self.selectedElem).height() * WebSync.zoom - 2).width($(self.selectedElem).width() * WebSync.zoom - 1).get(0).scrollIntoViewIfNeeded();
+        if ((table.css('position') == 'absolute' || pos)) {
+            if(!self.disableAxisPositioning){
+                self.axisPosition();
+            }
+            $('.Table.axis#x').width(table.width());
+            $('.Table.axis#y').height(table.height());
         }
     };
     // Accepts values in the format of "Name.A1:B6"

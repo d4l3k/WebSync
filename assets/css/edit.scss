@@ -404,8 +404,8 @@ nav .settings-popup {
 }
 .content-spreadsheet {
     #spreadsheetWell {
-        padding-top: 17px;
-        padding-left: 38px;
+        padding-top: 15px;
+        padding-left: 48px;
         table {
             background-color: white;
         }
@@ -780,9 +780,6 @@ nav.navbar {
                     transform-origin: top left;
                     -webkit-transform-origin: top left;
                     border: none;
-                    -user-modify: initial;
-                    -moz-user-modify: initial;
-                    -webkit-user-modify: initial;
                 }
             }
         }

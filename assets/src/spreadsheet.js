@@ -37,6 +37,7 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
         e.stopPropagation();
     });
     self.updateHeaders = function(e) {
+        tables.axisPosition();
         $('.axis#y').offset({
             left: -1
         });
@@ -44,11 +45,11 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
             top: $('.content_well').offset().top - 1
         });
         if ($('.axis#x').length > 0) {
-            var x_rect = $('.axis#x')[0].getBoundingClientRect();
-            var y_rect = $('.axis#y')[0].getBoundingClientRect();
+            var x_rect = $('.axis#x').outerHeight();
+            var y_rect = $('.axis#y').outerWidth();
             $('.content-spreadsheet #spreadsheetWell').css({
-                'padding-top': x_rect.height - 2,
-                'padding-left': y_rect.width - 2
+                'padding-top': x_rect - 2,
+                'padding-left': y_rect - 2
             });
         }
     };
@@ -59,6 +60,8 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
     });
     setTimeout(function() {
         $('#spreadsheetWell tr:first-child td:first-child').trigger('mousedown').trigger('mouseup');
+        self.updateHeaders();
     }, 100);
+    tables.disableAxisPositioning = true;
     return self;
 });

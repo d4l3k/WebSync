@@ -464,7 +464,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
                 nodes += '<th style="width: ' + (bounding.width - 1).toFixed(0) + 'px">' + self.columnLabel(i) + '</th>';
             }
             var table_count = $('.content_container table').index(self.primaryTable()) + 1;
-            var name = 'Sheet ' + table_count;
+            var name = 'Table ' + table_count;
             nodes += '</tr></thead></table><table class="Table axis" id="y"><thead><tr><th>' + name + '</th></tr>';
             for (var i = 0; i < size[1]; i++) {
                 var elem = self.posToElem(0, i);
@@ -506,6 +506,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         var pos = self.selectedPos();
         var column = pos[0];
         var row = pos[1];
+        // TODO: Redo this into a more readable form using jQuery.
         if (self.selectedElem.parentElement.parentElement.children.length > row + dRow && self.selectedElem.parentElement.parentElement.children[0].children.length > column + dColumn && row + dRow >= 0 && column + dColumn >= 0) {
             var new_td = self.selectedElem.parentElement.parentElement.children[row + dRow].children[column + dColumn];
             self.cursorSelect(new_td);
@@ -515,37 +516,54 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
         if (!self.selectedElem) return;
         var table = $(self.primaryTable());
         var offset = table.offset();
+        var box = table[0].getBoundingClientRect()
         $('.Table.axis#x').offset({
             left: offset.left,
             top: offset.top - 16
-        }).width(table.width());
+        }).width(box.width-2);
         $('.Table.axis#y').offset({
             left: offset.left - $('.Table.axis#y').width(),
             top: offset.top - 16
-        }).height(table.height());
+        });
     };
     self.cursorUpdate = function(pos) {
         var pos = $(self.selectedElem).offset();
         pos.top += 2;
         pos.left += 2;
-        //$("#table_cursor").animate({left:pos.left,top:pos.top,width:$(self.selectedElem).width()+1,height:$(self.selectedElem).height()},50,'linear').get(0).scrollIntoViewIfNeeded();
         self.updateSelectedArea();
         var table = $(self.primaryTable());
+        var elem_box = self.selectedElem.getBoundingClientRect();
         $('#table_cursor').offset({
             left: pos.left,
             top: pos.top
-        }).height($(self.selectedElem).height() * WebSync.zoom - 2).width($(self.selectedElem).width() * WebSync.zoom - 1).get(0).scrollIntoViewIfNeeded();
+        })
+        .height(elem_box.height - 4)
+        .width(elem_box.width - 6)
+        .get(0).scrollIntoViewIfNeeded();
+
         if ((table.css('position') == 'absolute' || pos)) {
             if (!self.disableAxisPositioning) {
                 self.axisPosition();
             }
-            $('.Table.axis#x').width(table.width());
-            $('.Table.axis#y').height(table.height());
+            var box = table[0].getBoundingClientRect()
+            $('.Table.axis#x').width(box.width-2);
         }
     };
     // Accepts values in the format of "Name.A1:B6"
     self.getCellData = function(range) {
         var bits = range.split('.');
+        var table;// = self.primaryTable();
+        if(bits.length >= 2){
+            var name = bits[0];
+            var search = $(".content_container table[name='"+name+"']");
+            if(search.length >= 1){
+                table = search.get(0);
+            } else if(name.match(/^Table \d+$/)){
+                var index = parseInt(name.split(" ")[1])-1;
+                table = $(".content_container table")
+                    .get(index);
+            }
+        }
         var parts = _.last(bits).split(':');
         var first = self.coordsFromLabel(parts[0]),
             second;
@@ -572,12 +590,13 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             bottom_right[1] - top_left[1] + 1
         ];
         var data = [];
+        var elem_in_table = $(table).find("td, th")[0] || window._tmp_elem;
         for (var x = 0; x < size[0]; x++) {
             for (var y = 0; y < size[1]; y++) {
                 if (!data[x]) data[x] = [];
                 var elem = self.posToElem(top_left[0] + x, top_left[1] + y,
-                    window._tmp_elem);
-                if (elem === window._tmp_elem) {
+                    elem_in_table);
+                if (window._tmp_elem && elem === window._tmp_elem) {
                     throw "Error: Cell can't select it's own content.";
                 }
                 var val = $(elem).text();
@@ -717,29 +736,17 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
             }
         } else {
             var end = self.selectionEnd || self.selectedElem;
-            var pos = $(self.selectedElem).offset();
-            var endPos = $(end).offset();
-            var baseWidth = $(end).width();
-            var baseHeight = $(end).height();
-            if (pos.left > endPos.left) {
-                var tmp_left = pos.left;
-                pos.left = endPos.left;
-                endPos.left = tmp_left;
-                baseWidth = $(self.selectedElem).width();
-            }
-            if (pos.top > endPos.top) {
-                var tmp_top = pos.top;
-                pos.top = endPos.top;
-                endPos.top = tmp_top;
-                baseHeight = $(self.selectedElem).height();
-            }
-            var height = endPos.top + baseHeight - pos.top;
-            var width = endPos.left + baseWidth - pos.left;
-            if (self.selectionEnd) {
+            if (self.selectionEnd && self.selectionEnd !== self.selectedElem) {
+                var start_box = self.selectedElem.getBoundingClientRect();
+                var end_box = end.getBoundingClientRect();
+                var top = start_box.top < end_box.top ? start_box.top : end_box.top
+                var bottom = start_box.bottom > end_box.bottom ? start_box.bottom : end_box.bottom
+                var left = start_box.left < end_box.left ? start_box.left : end_box.left
+                var right = start_box.right > end_box.right ? start_box.right : end_box.right
                 $('#table_selection').show().offset({
-                    left: pos.left,
-                    top: pos.top
-                }).height(height).width(width);
+                    left: left,
+                    top: top
+                }).height(bottom-top-2).width(right-left-3);
             } else {
                 $('#table_selection').hide();
             }

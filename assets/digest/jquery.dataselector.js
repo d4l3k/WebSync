@@ -1,6 +1,4 @@
-
 // https://stackoverflow.com/questions/2891452/jquery-data-selector
-// TODO: Move to it's own file.
 (function() {
 
     var matcher = /\s*(?:((?:(?:\\\.|[^.,])+\.?)+)\s*([!~><=]=|[><])\s*("|')?((?:\\\3|.)*?)\3|(.+?))\s*(?:,|$)/g;

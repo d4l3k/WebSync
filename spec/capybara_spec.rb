@@ -57,13 +57,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
             exec "node #{backend} -p 1337"
         end
     end
-    it "should successfully load everything", js: true do
-        loginuser
-        %w{Document Spreadsheet Notebook}.each do |type|
-            new_doc type
-        end
-    end
-    it "should successfully pass core.js tests", :js => true do
+    it "should successfully pass Document core.js tests", :js => true do
         loginuser
         doc = new_doc 'Document'
         # Title Test
@@ -152,6 +146,12 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         all('.page table td')[0].click2
         find('[data-original-title="Delete Table"]').click2
         all('.page table').length.should eq 0
+    end
+    it "should successfully load everything", js: true do
+        loginuser
+        %w{Spreadsheet Notebook}.each do |type|
+            new_doc type
+        end
     end
     after(:all) do
         Process.kill("TERM", $backend_daemon)

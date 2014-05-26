@@ -22,9 +22,18 @@ define(['websync'], function(websync) {
         left: 250
     });
     $('#addSlide').click(function(e) {
-        var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true></div></div>");
+        var elemm = $("<div class='awesome slide'><div class='slide-content' contenteditable=true></div></div>");
         var elem = self.addCss(elemm[0]);
-        setTimeout(self.updateMenu, 50);
+        self.dirty = true;
+        _.delay(self.updateMenu, 50);
+        _.delay(function(){
+            self.setIndex(self.css_scene.getDescendants().length-1);
+        }, 100);
+    });
+    $('#remSlide').click(function(e){
+        self.css_scene.remove(self.css_scene.children[self.activeIndex]);
+        self.setIndex(self.activeIndex);
+        _.delay(self.updateMenu, 50);
     });
     $('#presentation-nav #slideView').delegate('.slidePreview', 'click', function() {
         self.setIndex($(this).data().index);
@@ -36,7 +45,7 @@ define(['websync'], function(websync) {
         self.activeIndex = index;
         if (child_length == 0) return;
         $('.slidePreview.active').removeClass('active');
-        $('.slidePreview').eq(index).addClass('active');
+        $('.slidePreview').eq(index).addClass('active')[0].scrollIntoViewIfNeeded();
         self.focus(self.css_scene.children[index]);
         self.updateProperties();
     };
@@ -66,6 +75,7 @@ define(['websync'], function(websync) {
         var obj = self.css_scene.children[self.activeIndex];
         obj[prop][axis] = eval($(this).val());
         self.updateProperties();
+        self.focus(obj);
         self.dirty = true;
     });
     $(document).keydown(function(e) {
@@ -106,7 +116,7 @@ define(['websync'], function(websync) {
             self.css_scene.remove(self.css_scene.children[i]);
         }
         _.each(WebSyncData.views, function(view) {
-            var elemm = $("<div class='awesome awesome-slide'><div class='slide-content' contenteditable=true>" + WS.JSONToDOM(view.body) + '</div></div>');
+            var elemm = $("<div class='awesome slide'><div class='slide-content' contenteditable=true>" + WS.JSONToDOM(view.body) + '</div></div>');
             var elem = self.addCss(elemm[0]);
             _.each(['position', 'quaternion', 'scale'], function(prop) {
                 _.each(view[prop], function(v, k) {
@@ -160,11 +170,11 @@ define(['websync'], function(websync) {
         $('.content_container').prepend(self.css_renderer.domElement).bind('mousedown selectstart', function(e) {
             e.stopPropagation();
         });
-        $('.content_container').on('mousedown', '.awesome-slide', function(e) {
+        $('.content_container').on('mousedown', '.slide', function(e) {
             console.log(e);
-            _.each(self.css_scene.getDescendants(), function(dec) {
+            _.each(self.css_scene.getDescendants(), function(dec, i) {
                 if (dec.element == e.currentTarget) {
-                    self.focus(dec);
+                    self.setIndex(i);
                 }
             });
         });
@@ -214,13 +224,6 @@ define(['websync'], function(websync) {
         }).bind('mouseup', function(e) {
             self.active = false;
         });
-        /*var geometry = new THREE.CubeGeometry(200, 200, 200);
-        var material = new THREE.MeshLambertMaterial({
-            color: 0x00ff00
-        });
-        self.cube = new THREE.Mesh(geometry, material);
-        self.scene.add(self.cube);
-        self.cube.position.z = 200;*/
         var ambientLight = new THREE.AmbientLight(0x444444);
         self.scene.add(ambientLight);
         var light = new THREE.DirectionalLight(0xffffff);
@@ -229,6 +232,16 @@ define(['websync'], function(websync) {
         self.camera.position.z = 500;
 
         WebSync.fromJSON();
+
+        // Testing code. This is only here as a preview for similar functionality.
+        /*var geometry = new THREE.CubeGeometry(200, 200, 200);
+        var material = new THREE.MeshLambertMaterial({
+            color: 0x00ff00
+        });
+        self.cube = new THREE.Mesh(geometry, material);
+        self.scene.add(self.cube);
+        self.cube.position.z = 200;*/
+
         /*// Helicopter
         var loader = new THREE.OBJMTLLoader();
         loader.load('assets/uh60.obj', 'assets/uh60.mtl', function(object) {
@@ -239,14 +252,16 @@ define(['websync'], function(websync) {
             object.scale.multiplyScalar(50);
             self.heli = object;
             self.scene.add(object);
-
         });*/
 
         self.render();
         $('.content').fadeIn();
-        self.setIndex(0);
+        _.delay(function(){
+            self.setIndex(0);
+        },100);
         NProgress.done();
     });
+    // Add a HTML node to the CSS3D renderer.
     self.addCss = function(element) {
         var obj = new THREE.CSS3DObject(element);
         self.css_scene.add(obj);
@@ -302,10 +317,17 @@ define(['websync'], function(websync) {
     };
     self.updateMenu = function() {
         $('#slideView').html('');
-        $('.awesome-slide .slide-content').each(function(index, slide) {
-            $("<div draggable='true' class='slidePreview" + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>').attr('style', $(slide).attr('style')).appendTo($('#slideView')).data({
+        $('.slide').each(function(index, slide) {
+            var preview = $("<div draggable='true' class='slidePreview" + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>');
+            preview.find(".slide-content").attr('contenteditable', null)
+            preview.appendTo($('#slideView'))
+            .data({
                 index: index
             });
+            var ratio = $(preview).width()/$(slide).width();
+            var scale = "scale("+ ratio.toFixed(2) + ")";
+            preview.find(".slide").css({"transform": scale, "-webkit-transform": scale});
+            preview.height(ratio*$(slide).height())
         });
         var drag_elem;
         $('.slidePreview').on('dragstart', function(e) {
@@ -320,11 +342,11 @@ define(['websync'], function(websync) {
             e.preventDefault();
         }).on('drop', function(e) {
             var slide_index = $(drag_elem).data().index;
-            var slide = $('.awesome-slide').eq($(drag_elem).data().index);
+            var slide = $('.slide').eq($(drag_elem).data().index);
             var new_index = $(e.target).parents('.slidePreview').data().index;
-            var target = $('.awesome-slide')
+            var target = $('.slide')
                 .eq(new_index);
-            if ($('.awesome-slide').length == new_index - 1) {
+            if ($('.slide').length == new_index - 1) {
                 target.after(slide);
             } else {
                 target.insertBefore(slide);
@@ -333,6 +355,7 @@ define(['websync'], function(websync) {
             e.preventDefault();
             self.updateMenu();
         });
+        $('.slidePreview').eq(self.activeIndex).addClass('active')
     };
     return self;
 });

@@ -80,41 +80,36 @@ body .mathquill-rendered-math {
                 margin: 0;
                 background-color: transparent;
             }
-            .awesome-slide {
-                background-color: white;
-                padding: 10px;
-                margin: 0 auto;
-                padding: 20px;
-                border: 1px solid #aaa;
-                border-radius: 4px;
-                background-color: white;
-                font-size: 32pt;
-                line-height: 1.15;
-                & > .slide-content{
-                    -user-modify: read-write;
-                    -moz-user-modify: read-write;
-                    -webkit-user-modify: read-write;
-                    word-wrap: break-word;
-                    overflow-wrap: break-work;
-                    hyphens: auto;
-                    -webkit-hyphens: auto;
-                    -moz-hyphens: auto;
-                    -ms-hyphens: auto;
-                    width: 100%;
-                    &:empty:before {
-                        content: 'Type Here';
-                        color: lightgray;
-                    }
-                }
-                * {
-                    text-align: center;
-                }
-            }
         }
     }
-    .slidePreview > .slide,  .awesome-slide {
+    .slide {
         width: 1024px;
         height: 756px;
+        background-color: white;
+        padding: 10px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 32pt;
+        line-height: 1.15;
+        & > .slide-content{
+            word-wrap: break-word;
+            overflow-wrap: break-work;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            -moz-hyphens: auto;
+            -ms-hyphens: auto;
+            width: 100%;
+            &:empty:before {
+                content: 'Type Here';
+                color: lightgray;
+            }
+        }
+        * {
+            text-align: center;
+        }
     }
     #presentation-nav {
         #slideView {
@@ -151,7 +146,7 @@ body .mathquill-rendered-math {
             }
         }
     }
-    .awesome-slide {
+    .slide {
         display: -webkit-box;
         display: -webkit-flex;
         display: -moz-box;
@@ -773,7 +768,6 @@ nav.navbar {
                 color: black;
                 border: 1px solid #cccccc;
                 border-radius: 4px;
-                height: 1.5in;
                 margin: 5px;
                 cursor: pointer;
                 &.active {
@@ -782,14 +776,10 @@ nav.navbar {
                 }
                 overflow: hidden;
                 .slide {
+                    pointer-events: none;
                     transform-origin: top left;
-                    transform: scale(0.3) !important;
-                    -webkit-transform: scale(0.3) !important;
                     -webkit-transform-origin: top left;
-                    padding: 0;
-                    margin: 0;
                     border: none;
-                    display: block !important;
                     -user-modify: initial;
                     -moz-user-modify: initial;
                     -webkit-user-modify: initial;

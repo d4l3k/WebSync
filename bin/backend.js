@@ -45,7 +45,7 @@ fs.readFile('./config/config.json', function(err, buffer) {
             console.log('Connection! (Document: ' + doc_id + ')');
             var authenticated = false;
             var responded = true;
-            var redis_sock, client_id, user_email;
+            var redis_sock, client_id, user_email, user_id;
 
             function userAuth(callback) {
                 var info;
@@ -145,19 +145,35 @@ fs.readFile('./config/config.json', function(err, buffer) {
                             ws.on('close', close);
                             redis.expire('websocket:id:' + client_id, 60 * 60 * 24 * 7);
                             redis.expire('websocket:key:' + client_id, 60 * 60 * 24 * 7);
+                            // Get the users email. This is used for Gravatar and chat.
                             redis.get('websocket:id:' + data.id, function(err, email) {
+                                // Update document currently connected user list. The list is stored in Redis because it doesn't need to persist.
                                 redis.get('doc:' + doc_id + ':users', function(err, reply) {
                                     var users = {};
                                     if (reply) {
                                         users = JSON.parse(reply);
                                     }
                                     user_id = md5(email.trim().toLowerCase());
-                                    user_email = email;
+                                    user_email = email.trim();
                                     users[client_id] = {
                                         id: user_id,
-                                        email: email.trim()
+                                        email: email.trim(),
+                                        time: new Date()
                                     };
-                                    // TODO: Finish reimplementing the rest o' this shiz.
+                                    // Check for expired users (> 60 sec).
+                                    _.each(users, function(data, id){
+                                        if((new Date() - data.time) > 60){
+                                            delete users[id];
+                                            redis.publish('doc:' + doc_id, JSON.stringify({
+                                                type: 'client_bounce',
+                                                client: client_id,
+                                                data: JSON.stringify({
+                                                    type: 'exit_user',
+                                                    id: id
+                                                })
+                                            }));
+                                        }
+                                    });
                                     redis.set('doc:' + doc_id + ':users', JSON.stringify(users));
                                     redis.publish('doc:' + doc_id, JSON.stringify({
                                         type: 'client_bounce',
@@ -329,6 +345,31 @@ fs.readFile('./config/config.json', function(err, buffer) {
                             });
                         } else if (data.type == 'ping') {
                             responded = true;
+                            redis.get('doc:' + doc_id + ':users', function(err, reply) {
+                                var users = {};
+                                if (reply) {
+                                    users = JSON.parse(reply);
+                                }
+                                users[client_id] = {
+                                    id: user_id,
+                                    email: user_email,
+                                    time: new Date()
+                                };
+                                _.each(users, function(data, id){
+                                    if((new Date() - data.time) > 60){
+                                        delete users[id];
+                                        redis.publish('doc:' + doc_id, JSON.stringify({
+                                            type: 'client_bounce',
+                                            client: client_id,
+                                            data: JSON.stringify({
+                                                type: 'exit_user',
+                                                id: id
+                                            })
+                                        }));
+                                    }
+                                });
+                                redis.set('doc:' + doc_id + ':users', JSON.stringify(users));
+                            });
                         } else if (data.type == 'config') {
                             if (data.action == 'get') {
                                 postgres.query('SELECT config FROM ws_files WHERE id = $1', [doc_id])

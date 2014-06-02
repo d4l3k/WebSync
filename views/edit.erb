@@ -7,179 +7,210 @@
         display: block !important;
     }
 </style>
-	<nav class="navbar navbar-inverse navbar-fixed-top">
 
-      <div class="collapse navbar-collapse">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/" title="<%= t "layout.created_by" %>" data-toggle="tooltip"><span class="hidden-xs">WebSyn.ca</span><i class="fa visible-xs fa-home fa-lg"></i></a>
-      </div>
-                <ul class="nav navbar-nav">
-					<li class="active"><a id="name" contenteditable=true data-toggle="tooltip" title="<%= t "edit.edit_name" %>"><%= doc.name %></a></li>
-				</ul>
-				<ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
-				</ul>
-				<ul id="settings" class="nav navbar-nav pull-right ribbon-opt">
-                                    <li>
-                                        <a class="present" title="<%= t "edit.present" %>"><i class="fa fa-expand fa-lg"></i></a>
-                                    </li>
-                                    <li>
-                                        <a id="settingsBtn" title="<%= t "edit.settings" %>"><i class="fa fa-cog fa-lg"></i></a>
-                                    </li>
-                                    <li>
-                                        <%= render_login_button %>
-                                    </li>
-				</ul>
-                <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b><%= t "edit.settings" %></b>
-                    <ul class="nav tab-nav nav-pills">
-                        <li class="active" ><a href="#permissions" data-toggle="tab"><%= t 'edit.permissions' %></a></li>
-                        <li><a href="#config" data-toggle="tab"><%= t "edit.config" %></a></li>
-                        <li><a href="#blobs" data-toggle="tab"><%= t 'edit.resources_lab' %></a></li>
-                        <li><a href="#diffs" data-toggle="tab"><%= t 'edit.changes' %></a></li>
-                        <li><a href="#assets" data-toggle="tab"><%= t 'edit.js_libs' %></a></li>
-                    </ul>
-                    <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
-                        <div class="tab-content">
-                            <div class="tab-pane" id="assets">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th><%= t 'edit.name' %></th>
-                                            <th><%= t 'edit.description' %></th>
-                                            <th><%= t 'edit.URL' %></th>
-                                            <th><%= t 'edit.type' %></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane" id="diffs">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th><%= t 'edit.time' %></th>
-                                            <th><%= t 'edit.patch' %></th>
-                                            <th><%= t 'edit.user' %></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane active" id="permissions">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <h3><%= t 'edit.default_access' %></h3>
-                                        <%= t 'edit.access_mode' %>:
-                                        <select id="access_mode" class="form-control">
-                                            <option value="public"><%= t "edit.modes.public" %></option>
-                                            <option value="hidden"><%= t "edit.modes.hidden" %></option>
-                                            <option value="private"><%= t "edit.modes.private" %></option>
-                                        </select>
-                                        <%= t "edit.default_perm" %>
-                                        <select id="default_permissions" class="form-control">
-                                            <option value="editor"><%= t "edit.perms.editor" %></option>
-                                            <option value="viewer"><%= t "edit.perms.viewer" %></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h3><%= t "edit.user_access" %></h3>
-                                        <table id="user_perms" class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th><%= t "edit.email" %></th>
-                                                    <th><%= t "edit.access_level" %></th>
-                                                    <th><%= t "edit.actions" %></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                        <div class="input-group"><input class="form-control" placeholder="Email" type="text" id="share_email"><span class="input-group-btn"><button id="share_with" class="btn btn-default" type="button">Share</button></span></div>
-                                    </div>
+<script type="text/javascript">
+    // Variable: object WebSyncAuth;
+    // This is an internal object used for authenticating the websocket connection.
+    WebSyncAuth = {
+        // Variable: int WebSyncAuth.id;
+        // This is the websocket connection id. Each connection has a unique id.
+        id:"<%= client_id %>",
+        // Variable: int WebSyncAuth.key;
+        // This is a randomly generated string used as an API key.
+        key: "<%= client_key %>",
+        view_op: "<%= op %>",
+        websocket_port: <%= $config['websocket']['port'] %>,
+        websocket_url: "<%= $config['websocket']['url'] %>",
+        // This is the user's access level. Can be: viewer, editor, owner
+        access: "<%= access %>"
+    }
+    // Variable: object WebSyncData;
+    // This contains the data for the document. This is automatically synced with the server.
+    WebSyncData = <%= MultiJson.dump(doc.body) %>;
+
+    // Set document title.
+    document.title = <%= MultiJson.dump(doc.name + " - WebSync") %>;
+</script>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="collapse navbar-collapse">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/" title="<%= t "layout.created_by" %>" data-toggle="tooltip">
+                <span class="hidden-xs">WebSyn.ca</span>
+                <i class="fa visible-xs fa-home fa-lg"></i>
+            </a>
+        </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a id="name" contenteditable=true data-toggle="tooltip" title="<%= t "edit.edit_name" %>"><%= doc.name %></a></li>
+            </ul>
+            <ul id="ribbon_buttons" class="nav navbar-nav ribbon-opt">
+            </ul>
+            <ul id="settings" class="nav navbar-nav pull-right ribbon-opt">
+                <li>
+                    <a class="present" title="<%= t "edit.present" %>"><i class="fa fa-expand fa-lg"></i></a>
+                </li>
+                <li>
+                    <a id="settingsBtn" title="<%= t "edit.settings" %>"><i class="fa fa-cog fa-lg"></i></a>
+                </li>
+                <li>
+                    <%= render_login_button %>
+                </li>
+            </ul>
+            <div class="popover fade bottom in settings-popup" style="display: none;"><div class="arrow"></div><h3 class="popover-title"><b><%= t "edit.settings" %></b>
+                <ul class="nav tab-nav nav-pills">
+                    <li class="active" ><a href="#permissions" data-toggle="tab"><%= t 'edit.permissions' %></a></li>
+                    <li><a href="#config" data-toggle="tab"><%= t "edit.config" %></a></li>
+                    <li><a href="#blobs" data-toggle="tab"><%= t 'edit.resources_lab' %></a></li>
+                    <li><a href="#diffs" data-toggle="tab"><%= t 'edit.changes' %></a></li>
+                    <li><a href="#assets" data-toggle="tab"><%= t 'edit.js_libs' %></a></li>
+                </ul>
+                <a class="close pull-right"><i class="fa fa-times"></i></a></h3><div class="popover-content">
+                    <div class="tab-content">
+                        <div class="tab-pane" id="assets">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th><%= t 'edit.name' %></th>
+                                        <th><%= t 'edit.description' %></th>
+                                        <th><%= t 'edit.URL' %></th>
+                                        <th><%= t 'edit.type' %></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="diffs">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th><%= t 'edit.time' %></th>
+                                        <th><%= t 'edit.patch' %></th>
+                                        <th><%= t 'edit.user' %></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane active" id="permissions">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h3><%= t 'edit.default_access' %></h3>
+                                    <%= t 'edit.access_mode' %>:
+                                    <select id="access_mode" class="form-control">
+                                        <option value="public"><%= t "edit.modes.public" %></option>
+                                        <option value="hidden"><%= t "edit.modes.hidden" %></option>
+                                        <option value="private"><%= t "edit.modes.private" %></option>
+                                    </select>
+                                    <%= t "edit.default_perm" %>
+                                    <select id="default_permissions" class="form-control">
+                                        <option value="editor"><%= t "edit.perms.editor" %></option>
+                                        <option value="viewer"><%= t "edit.perms.viewer" %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <h3><%= t "edit.user_access" %></h3>
+                                    <table id="user_perms" class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th><%= t "edit.email" %></th>
+                                                <th><%= t "edit.access_level" %></th>
+                                                <th><%= t "edit.actions" %></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <div class="input-group"><input class="form-control" placeholder="Email" type="text" id="share_email"><span class="input-group-btn"><button id="share_with" class="btn btn-default" type="button">Share</button></span></div>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="blobs">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <h3><%= t "edit.upload_resources" %></h3>
-                                        <form action="upload" method="post" enctype="multipart/form-data">
-                                            <input type="file" name="files[]" id="file_input" class="form-control" multiple /><input type="submit" name="submit" class="form-control" value="<%= t "edit.upload" %>">
-                                        </form>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h3><%= t "edit.resource_list" %></h3>
-                                        <table class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th><%= t "edit.resources.file" %></th>
-                                                    <th><%= t 'edit.type' %></th>
-                                                    <th><%= t 'edit.resources.edit_time' %></th>
-                                                    <th><%= t 'edit.resources.size' %></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                        </div>
+                        <div class="tab-pane" id="blobs">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h3><%= t "edit.upload_resources" %></h3>
+                                    <form action="upload" method="post" enctype="multipart/form-data">
+                                        <input type="file" name="files[]" id="file_input" class="form-control" multiple /><input type="submit" name="submit" class="form-control" value="<%= t "edit.upload" %>">
+                                    </form>
+                                </div>
+                                <div class="col-md-9">
+                                    <h3><%= t "edit.resource_list" %></h3>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th><%= t "edit.resources.file" %></th>
+                                                <th><%= t 'edit.type' %></th>
+                                                <th><%= t 'edit.resources.edit_time' %></th>
+                                                <th><%= t 'edit.resources.size' %></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="config">
-                                At the moment this doesn't do anything.
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Property</th>
-                                            <th>Global Setting</th>
-                                            <th>Document Setting</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Use spaces instead of tabs</td>
-                                            <td><select class="form-control">
-                                                <option>True</option>
-                                                <option>False</option>
-                                            </select></td>
-                                            <td><div class='input-append'><select class="form-control">
-                                                <option>Use Global</option>
-                                                <option>True</option>
-                                                <option>False</option>
-                                            </select>
-                                            <button class="btn btn-warning">Override</button></div></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        </div>
+                        <div class="tab-pane" id="config">
+                            At the moment this doesn't do anything.
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Property</th>
+                                        <th>Global Setting</th>
+                                        <th>Document Setting</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Use spaces instead of tabs</td>
+                                        <td><select class="form-control">
+                                            <option>True</option>
+                                            <option>False</option>
+                                        </select></td>
+                                        <td><div class='input-append'><select class="form-control">
+                                            <option>Use Global</option>
+                                            <option>True</option>
+                                            <option>False</option>
+                                        </select>
+                                        <button class="btn btn-warning">Override</button></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-			</div>
+            </div>
         </div>
-		<div class="ribbon">
-			<div id="File" class="container">
-                <div class="btn-group">
-                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> <%= t 'edit.download' %> <span class="caret"></span></button>
-                    <ul class="dropdown-menu" id="download_types" role="menu">
-                        <li role="presentation" class="dropdown-header">
-                            <%= t 'edit.download_not_supported' %>
-                        </li>
-                    </ul>
-                </div>
-                <a href="json" class="btn btn-default" title="<%= t 'edit.view_json' %>" data-toggle="tooltip"><i class="fa fa-eye"></i> JSON</a>
-                <span title="<%= t "edit.zoom" %>" data-toggle="tooltip" ><input type="text" id="zoom_level" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100"></span>
-                <select id="view_mode" class="form-control" title="<%= t 'edit.view_mode' %>" class="ribbon_button">
-					<option>Normal</option>
-					<option>Zen</option>
-                    <option>Presentation</option>
-				</select>
-                <a href="delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> <%= t "files.delete" %></a>
-			</div>
-			<div id="Insert" class="container">
-				<button id="picture" title="<%= t "edit.picture" %>" class="btn btn-default"><i class="fa fa-picture-o"></i></button>
-				<button id="video" title="<%= t "edit.video" %>" class="btn btn-default"><i class="fa fa-youtube-play"></i></button>
-			</div>
-	</nav>
+    </div>
+    <div class="ribbon">
+        <div id="File" class="container">
+            <div class="btn-group">
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-cloud-download"></i>
+                    <%= t 'edit.download' %>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="download_types" role="menu">
+                    <li role="presentation" class="dropdown-header">
+                        <%= t 'edit.download_not_supported' %>
+                    </li>
+                </ul>
+            </div>
+            <a href="json" class="btn btn-default" title="<%= t 'edit.view_json' %>" data-toggle="tooltip"><i class="fa fa-eye"></i> JSON</a>
+            <span title="<%= t "edit.zoom" %>" data-toggle="tooltip" ><input type="text" id="zoom_level" class="span2" value="" data-slider-min="20" data-slider-max="250" data-slider-step="5" data-slider-value="100"></span>
+            <select id="view_mode" class="form-control" title="<%= t 'edit.view_mode' %>" class="ribbon_button">
+                <option>Normal</option>
+                <option>Zen</option>
+                <option>Presentation</option>
+            </select>
+            <a href="delete" class="btn btn-danger"><i class="fa fa-trash-o"></i> <%= t "files.delete" %></a>
+        </div>
+        <div id="Insert" class="container">
+            <button id="picture" title="<%= t "edit.picture" %>" class="btn btn-default"><i class="fa fa-picture-o"></i></button>
+            <button id="video" title="<%= t "edit.video" %>" class="btn btn-default"><i class="fa fa-youtube-play"></i></button>
+        </div>
+    </div>
+</nav>
 <div class="content_well">
     <div class="return_edit">
         <a class="menu" title="<%= t "edit.toggle_menu" %>" data-toggle="tooltip-top">

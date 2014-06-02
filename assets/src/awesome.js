@@ -346,7 +346,7 @@ define(['websync'], function(websync) {
             e.preventDefault();
         }).on('drop', function(e) {
             var slide_index = $(drag_elem).data().index;
-            var new_index = $(this).closest(".slidePreview").data().index;
+            var new_index = $(this).closest('.slidePreview').data().index;
             self.css_scene.children.move(slide_index, new_index);
             e.preventDefault();
             self.dirty = true;

@@ -1,44 +1,19 @@
 <!doctype html>
 <html>
-	<head>
-		<link rel="shortcut icon" href="/favicon.ico?v=3" />
-        <title>WebSyn.ca</title>
-        <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-        <% if !(defined?(allow_iframe) && allow_iframe) %>
-            <meta http-equiv="X-Frame-Options" content="deny" /> 
-        <% end %>
-        <%= stylesheet_tag 'default' %>
-        <% if logged_in?
-            theme = current_user.theme%>
-            <%= theme.nil? ? "" : stylesheet_tag(theme.location) %>
-        <% end %>
-        <% if defined?(edit)&&edit %>
-            <script type="text/javascript">
-            // Variable: object WebSyncAuth;
-            // This is an internal object used for authenticating the websocket connection.
-            WebSyncAuth = {
-                // Variable: int WebSyncAuth.id;
-                // This is the websocket connection id. Each connection has a unique id.
-                id:"<%= client_id %>",
-                // Variable: int WebSyncAuth.key;
-                // This is a randomly generated string used as an API key.
-                key: "<%= client_key %>",
-                view_op: "<%= op %>",
-                websocket_port: <%= $config['websocket']['port'] %>,
-                websocket_url: "<%= $config['websocket']['url'] %>",
-                // This is the user's access level. Can be: viewer, editor, owner
-                access: "<%= access %>"
-            }
-            // Variable: object WebSyncData;
-            // This contains the data for the document. This is automatically synced with the server.
-            WebSyncData = <%= MultiJson.dump(doc.body) %>;
-
-            // Set document title.
-            document.title = <%= MultiJson.dump(doc.name + " - WebSync") %>;
-            </script>
-        <% end %>
-	</head>
-	<body class="<%= (defined?(op) && op)=="view" ? "view" : "edit" %>">
+<head>
+    <title>WebSyn.ca</title>
+    <link rel="shortcut icon" href="/favicon.ico?v=3">
+    <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <% if !(defined?(allow_iframe) && allow_iframe) %>
+        <meta http-equiv="X-Frame-Options" content="deny" /> 
+    <% end %>
+    <% if logged_in?
+        theme = current_user.theme%>
+        <%= theme.nil? ? "" : stylesheet_tag(theme.location) %>
+    <% end %>
+</head>
+<body class="<%= (defined?(op) && op)=="view" ? "view" : "edit" %>">
+    <%= stylesheet_tag 'default' %>
     <div class="flash">
         <% flash.each do |type, message| %>
             <div class="alert alert-<%= type.to_s %> alert-dismissable">
@@ -47,8 +22,7 @@
             </div>
         <% end %>
     </div>
-        <% if !(defined?(no_menu)&&no_menu) %>
-
+    <% if !(defined?(no_menu)&&no_menu) %>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
       <div class="navbar-header">

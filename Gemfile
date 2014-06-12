@@ -26,6 +26,7 @@ group :development, :test do
     gem 'racksh'
     gem 'pry-rescue'
     gem 'pry-stack_explorer'
+    #gem 'ruby-prof'
 end
 group :production do
     gem 'unicorn'

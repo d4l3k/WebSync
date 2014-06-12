@@ -2,13 +2,14 @@ require 'mime/types'
 class WSFileResource < DAV4Rack::Resource
     include DAV4Rack::Utils
     ROOT = :root
-    attr_accessor :file
+    attr_accessor :file, :ws_user
     def initialize(public_path, path, request, response, options)
         super(public_path, path, request, response, options)
         @local_path = public_path.gsub(/^#{root[0..-2]}/,"")
         if @local_path.length == 0
             @local_path = "/"
         end
+        @ws_user ||= options[:ws_user]
         if options[:object]
             @file = options[:object]
         elsif @local_path.length <= 1
@@ -78,8 +79,8 @@ class WSFileResource < DAV4Rack::Resource
     def get(request, response)
         raise NotFound unless exist?
         if collection?
-            response.body = "<html><head><style>* {font-family: monospace;} body{background-image: url(/img/logo-github.png);background-repeat:no-repeat;background-position: center center;}section{background-color: rgba(255,255,255,0.8)}</style><body><section>"
-            response.body << "<h2>Index of #{file_path.escape_html}</h2><hr><table><thead><th>Name</th><th>Size</th><th>Last Modified</th></thead><tbody>"
+            response.body = "<html><head><style>* {font-family: monospace;} body{background-image: url(/img/logo-github.png);background-repeat:no-repeat;background-position: center center;}section{background-color: rgba(255,255,255,0.8)}td, th{padding-right: 5px;}th{text-align: left;}</style><body><section>"
+            response.body << "<h2>Index of #{file_path.escape_html}</h2><hr><table><thead><th>Name</th><th>Size</th><th>Last Modified</th><th>Content Type</th></thead><tbody>"
             if @file != ROOT
                 response.body << "<tr><td><a href='..'>..</a></td></tr>"
             end
@@ -87,13 +88,15 @@ class WSFileResource < DAV4Rack::Resource
                 response.body << "<tr><td>"
                 name = child.file_path.split("/").last.escape_html
                 path = child.public_path
+                file = child.file
+                content_type = file.content_type
                 if child.collection?
                     name += "/"
                     path += "/"
-                elsif child.file.content_type.nil? and child.file.body.length > 0 or child.file.content_type == "text/websync"
-                    path = "/#{child.file.id.encode62}/edit"
+                elsif content_type.to_s.empty? and file.body_size > 0 or file.content_type == "text/websync"
+                    path = "/#{file.id.encode62}/edit"
                 end
-                response.body << "<a href='" + path + "'>" + name + "</a></td><td>#{child.file.as_size}</td><td>#{child.file.edit_time}</td></tr>"
+                response.body << "<a href='#{ path }'>#{ name }</a></td><td>#{file.as_size}</td><td>#{file.edit_time}</td><td>#{ content_type }</td></tr>"
             end
             response.body << '</tbody></table><hr><p>Copyright (c) 2014 Tristan Rice. WebSync is licensed under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p></body></section></html>'
             response['Content-Length'] = response.body.bytesize.to_s
@@ -105,12 +108,36 @@ class WSFileResource < DAV4Rack::Resource
 
     end
     def move dest, overwrite=false
-        parent = dest.parent
-        raise NotFound if not parent.exist?
-        parent = parent.file == ROOT ? nil : parent.file
-        @file.parent = parent
-        @file.save
-        Created
+        path = dest.path
+        # Enforce a '/' at the front.
+        if path[0] != "/"
+            path = "/"+path
+        end
+        # Remove dest if it exists
+        file = file_by_path path
+        if overwrite && file
+            tries = 0
+            # TODO: Figure out why this is needed. The file isn't being destroyed on the first pass.
+            while !file.destroy_cascade && tries < 3
+                file.reload
+                tries += 1
+            end
+        end
+        # Only copy if the destination doesn't exist.
+        if not file_by_path path
+            parts = path.split("/")
+            parent = file_by_path parts[0..-2].join("/")
+            # If it has a parent, or is moving to root.
+            if parent || parts.length == 2
+                a = @file
+                a.parent = parent
+                a.name = parts.last
+                a.save
+                overwrite ? NoContent : Created
+            end
+        else
+            PreconditionFailed
+        end
     end
     def copy dest, overwrite=false
         path = dest.path
@@ -121,7 +148,12 @@ class WSFileResource < DAV4Rack::Resource
         # Remove dest if it exists
         file = file_by_path path
         if overwrite && file
-            file.destroy_cascade
+            tries = 0
+            # TODO: Figure out why this is needed. The file isn't being destroyed on the first pass.
+            while !file.destroy_cascade && tries < 3
+                file.reload
+                tries += 1
+            end
         end
         # Only copy if the destination doesn't exist.
         if not file_by_path path
@@ -132,12 +164,12 @@ class WSFileResource < DAV4Rack::Resource
                 a.parent = parent
                 a.name = parts.last
                 a.save
-                Created
+                overwrite ? NoContent : Created
             else
                 Conflict
             end
         else
-            412
+            PreconditionFailed
         end
     end
     def put(request, response)
@@ -183,7 +215,8 @@ class WSFileResource < DAV4Rack::Resource
     end
     def file_by_path path
         parts = path.split("/")
-        _find_child parts[1..-1]
+        parts.delete("")
+        _find_child(parts)
     end
     def _find_child dirs, parent=nil
         if not dirs
@@ -191,7 +224,7 @@ class WSFileResource < DAV4Rack::Resource
         end
         kids = []
         if not parent
-            kids = @ws_user.files(parent: parent, name: dirs.first)
+            kids = @ws_user.files(parent: nil, name: dirs.first)
         else
             kids = parent.children(name: dirs.first)
         end
@@ -230,6 +263,17 @@ class WSFileResource < DAV4Rack::Resource
     def post(request, response)
         Forbidden
     end
+    # Properties
+    def set_property(element, value)
+        #puts "SET PROP: #{element} = #{value}"
+        f = @file.reload
+        f.property_set(element[:name], value)
+        f.save
+    end
+    def get_property(element)
+        #puts "GET PROP: #{element}"
+        @file.reload.file_properties[element[:name]]
+    end
     def content_type
         if @file.respond_to?(:content_type)
             @file.content_type
@@ -266,9 +310,6 @@ class WSFileResource < DAV4Rack::Resource
             "#{@file.id}-#{@file.edit_time}"
         end
     end
-    def write io
-        puts "WRITING KSDJFLSKDJFLKSDJFLSKDJFLSKDJF"
-    end
     def authenticate user, pass
         # Try to authenticate based on cookies set by the main app.
         session = Rack::Session::Cookie::Base64::Marshal.new.decode(request.cookies["rack.session"])
@@ -301,6 +342,7 @@ class WSFileResource < DAV4Rack::Resource
         public_path = @options[:root_uri_path]+public_path
         public_path += path
         @options[:object] = entry
+        @options[:ws_user] = @ws_user
         self.class.new(public_path, path, @request, @response, @options)
     end
 end

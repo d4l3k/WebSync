@@ -101,6 +101,7 @@ class WSFile
     property :visibility,       String,     :default=>"private"
     property :default_level,    String,     :default=>"viewer"
     property :config,           Json,       :default=>{}
+    property :file_properties,       Json,       :default=>{}
     property :deleted,          Boolean,    :default=>false
     has n, :asset_ws_files, 'AssetWSFile', child_key: [ :file_id ]
     has n, :assets, through: :asset_ws_files
@@ -116,6 +117,10 @@ class WSFile
         response = $postgres.exec_prepared('wsfile_get', [self.id], 1)
         response.to_a.length==1 && response[0]["data"] || ""
     end
+    def body_size
+        request = $postgres.exec_prepared('wsfile_body_size', [self.id])
+        request[0].map{|k,v| v.to_i || 0}.inject(:+)
+    end
     def owner
         permission = self.permissions(level: 'owner')[0]
         if permission
@@ -129,6 +134,11 @@ class WSFile
         n_config[key]=value
         self.config= n_config
     end
+    def property_set key, value
+        n_file_properties = file_properties.dup
+        n_file_properties[key]=value
+        self.file_properties= n_file_properties
+    end
     def size
         size = 0
         request = $postgres.exec_prepared('wsfile_size', [self.id])
@@ -137,6 +147,7 @@ class WSFile
         size
     end
     def destroy_cascade
+        self.save
         self.children.each do |child|
             child.destroy_cascade
         end
@@ -258,6 +269,7 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 $postgres.prepare("wsfile_size", "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE id=$1 LIMIT 1")
+$postgres.prepare("wsfile_body_size", "SELECT octet_length(body) FROM ws_files WHERE id=$1 LIMIT 1")
 $postgres.prepare("wsfile_update", "UPDATE ws_files SET data = $2 WHERE id = $1")
 $postgres.prepare("wsfile_get", "SELECT data::bytea FROM ws_files WHERE id::int = $1 LIMIT 1")
 

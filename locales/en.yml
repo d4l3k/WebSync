@@ -3,6 +3,7 @@ en:
     time:
         formats:
             default: "%m/%d/%y at %I:%M%p"
+        am: "AM"
         pm: "PM"
     # Layout
     layout:

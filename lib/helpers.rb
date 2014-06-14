@@ -6,7 +6,7 @@ module Helpers
         I18n.t(token)
     end
     def l time
-        I18n.l(Time.now)
+        I18n.l(time)
     end
     def find_template(views, name, engine, &block)
         I18n.fallbacks[I18n.locale].each { |locale|

@@ -79,7 +79,7 @@ class WSFileResource < DAV4Rack::Resource
     def get(request, response)
         raise NotFound unless exist?
         if collection?
-            response.body = "<html><head><style>* {font-family: monospace;} body{background-image: url(/img/logo-github.png);background-repeat:no-repeat;background-position: center center;}section{background-color: rgba(255,255,255,0.8)}td, th{padding-right: 5px;}th{text-align: left;}</style><body><section>"
+            response.body = "<html><head><style>* {font-family: monospace;} body{background-image: url(/img/logo-github.png);background-repeat:no-repeat;background-position: center center;background-attachment: fixed;}section{background-color: rgba(255,255,255,0.8)}td, th{padding-right: 5px;}th{text-align: left;}</style><body><section>"
             response.body << "<h2>Index of #{file_path.escape_html}</h2><hr><table><thead><th>Name</th><th>Size</th><th>Last Modified</th><th>Content Type</th></thead><tbody>"
             if @file != ROOT
                 response.body << "<tr><td><a href='..'>..</a></td></tr>"
@@ -93,7 +93,7 @@ class WSFileResource < DAV4Rack::Resource
                 if child.collection?
                     name += "/"
                     path += "/"
-                elsif content_type.to_s.empty? and file.body_size > 0 or file.content_type == "text/websync"
+                elsif content_type.to_s.empty? and file.body_size > 0 or content_type == "text/websync"
                     path = "/#{file.id.encode62}/edit"
                 end
                 response.body << "<a href='#{ path }'>#{ name }</a></td><td>#{file.as_size}</td><td>#{file.edit_time}</td><td>#{ content_type }</td></tr>"

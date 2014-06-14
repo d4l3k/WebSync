@@ -1,6 +1,6 @@
 require './lib/main'
 
-#use Rack::Profiler if ENV['RACK_ENV'] == 'development'
+use Rack::MiniProfiler if ENV.has_key?("PROFILE")
 
 %w{w webdav}.each do |point|
     map "/#{point}/" do

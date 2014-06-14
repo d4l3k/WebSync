@@ -24,9 +24,9 @@ gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 group :development, :test do
     gem 'thin'
     gem 'racksh'
+    gem 'pry'
     gem 'pry-rescue'
     gem 'pry-stack_explorer'
-    #gem 'ruby-prof'
 end
 group :production do
     gem 'unicorn'
@@ -42,8 +42,9 @@ group :test do
     gem 'capybara'
     gem 'poltergeist'
 end
-group :development, :test do
-    gem 'pry'
+group :development do
+    gem 'rack-mini-profiler'
+    gem 'flamegraph'
 end
 
 gem 'omniauth'

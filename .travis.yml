@@ -11,7 +11,7 @@ postgres:
 services:
   - redis-server
 before_install:
-  - sudo apt-get install libpq-dev libpq5 postgresql-server-dev-9.1
+  - sudo apt-get install libpq-dev libpq5 postgresql-server-dev-9.1 litmus
 before_script:
   - "psql -c 'create database websync;' -U postgres"
   - npm install

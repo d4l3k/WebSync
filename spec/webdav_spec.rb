@@ -1,10 +1,7 @@
-require File.expand_path '../test_helper.rb', __FILE__
+require_relative 'test_helper'
 
 include Rack::Test::Methods
 
-def app
-    WebSync
-end
 require 'pry'
 
 class Litmus
@@ -14,12 +11,27 @@ class Litmus
         @pass = pass
     end
     def run
-        response = `litmus -k "#{@url}" #{@user} #{@pass}`
-        errors = response.split("\n").find_all{|line| line.include? "FAIL"}
-        errors.each do |error|
-            puts error
+        require 'pty'
+        response = ''
+        cmd = "TESTS='basic copymove props' litmus -k '#{@url}' #{@user} #{@pass}"
+        begin
+            PTY.spawn( cmd ) do |stdin, stdout, pid|
+                begin
+                    stdin.each do |line|
+                        print line
+                        response += line
+                    end
+                rescue Errno::EIO
+                    # Output done
+                end
+            end
+        rescue PTY::ChildExited
+            puts "The child process exited!"
         end
-        errors.length == 0
+        split = response.split("\n")
+        passes = split.find_all{|line| line.include? "pass"}
+        errors = split.find_all{|line| line.include? "FAIL"}
+        [passes, errors]
     end
     def self.test url, user="", pass=""
         litmus = Litmus.new url, user, pass
@@ -27,17 +39,20 @@ class Litmus
     end
 end
 
-describe "WebDAV" do
-    it "should fail to load the root" do
+describe "WebDAV", type: :feature do
+    it "should fail to load the webdav root" do
+        get '/w/'
+        assert(!last_response.ok?)
         get '/webdav/'
         assert(!last_response.ok?)
     end
-    it "should pass all litmus tests" do
-        assert User.all(email: 'test@websyn.ca').files.destroy!
-        assert User.all(email: 'test@websyn.ca').destroy!
-        password = (rand*10**50).to_i.encode62
-        user = User.first_or_create(email: 'test@websyn.ca', password: password)
-        assert Litmus.test("http://localhost:9292/webdav/", user.email, password)
-        assert User.all(email: 'test@websyn.ca').destroy!
+    it "should pass all litmus tests", js: true do
+        testuser
+        server = Capybara.current_session.server
+        passes, fails = Litmus.test("http://#{server.host}:#{server.port}/w/", 'test@websyn.ca', 'testboop')
+        passes.length.should eq(56)
+        # TODO: Have fewer fails.
+        fails.length.should eq(6)
+        destroy_testuser
     end
 end

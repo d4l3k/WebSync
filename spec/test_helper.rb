@@ -35,6 +35,7 @@ end
 $helpers = TestHelpers.new
 
 def testuser
+    destroy_testuser
     user = $helpers.register 'test@websyn.ca', 'testboop'
     post '/login', {
         email: 'test@websyn.ca',
@@ -50,7 +51,9 @@ def destroy_testuser
     user = User.get('test@websyn.ca')
     if user
         user.permissions.destroy!
-        user.files.destroy!
+        user.files.each do |f|
+            f.destroy_cascade
+        end
         user.destroy!
     end
 end
@@ -59,3 +62,13 @@ def assert condition, reason=""
 end
 require File.expand_path '../../lib/main.rb', __FILE__
 require File.expand_path '../../lib/models.rb', __FILE__
+
+require 'capybara/rspec'
+require 'capybara/poltergeist'
+Capybara.javascript_driver = (ENV["DRIVER"] || :poltergeist).to_sym
+$config_ru = eval "Rack::Builder.new {( " + File.read(File.dirname(__FILE__) + '/../config.ru') + "\n )}"
+
+Capybara.app = $config_ru
+def app
+    $config_ru
+end

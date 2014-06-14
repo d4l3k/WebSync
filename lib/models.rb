@@ -139,12 +139,38 @@ class WSFile
         n_file_properties[key]=value
         self.file_properties= n_file_properties
     end
-    def size
-        size = 0
+    def size(children: true)
+        c_size = 0
         request = $postgres.exec_prepared('wsfile_size', [self.id])
-        size += request[0].map{|k,v| v.to_i || 0}.inject(:+)
-        size += self.children.map{|child| child.size || 0}.inject(:+) || 0
-        size
+        c_size += request[0].map{|k,v| v.to_i }.inject(:+)
+        c_size += self.children.map{|child| child.size}.inject(:+) || 0 if children
+        c_size
+    end
+    def child_ids
+        ids = [self.id]
+        self.children.each do |child|
+            ids += child.child_ids
+        end
+        ids
+    end
+    # fast_size is actually slower than size for an element with no children. Otherwise, it's faster. My theory is that looking the child ids up in memory client side is faster than querying the database for them.
+    def fast_size
+        c_size = 0
+        ids = self.child_ids
+        q = "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE id in (#{ ids.join(", ")})"
+        request = $postgres.exec(q)
+        request.each do |req|
+            c_size += req.map{|k,v| v.to_i }.inject(:+)
+        end
+        c_size
+    end
+    # fast_size2 is slightly slower than fast_size
+    def fast_size2
+        c_size = 0
+        $postgres.exec_prepared('wsfile_size_multi', [self.id]).each do |row|
+            c_size += row.except('id').map{|k,v| v.to_i}.inject(:+)
+        end
+        c_size
     end
     def destroy_cascade
         self.save
@@ -157,8 +183,12 @@ class WSFile
         self.destroy
     end
     UNITS = %W(B KB MB GB TB).freeze
-    def as_size
-        number = self.size
+    def as_size children: true
+        number = if !children
+            self.size children: false
+        else
+            self.fast_size
+        end
         if number.to_i < 1000
             exponent = 0
         else
@@ -269,6 +299,18 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 $postgres.prepare("wsfile_size", "SELECT octet_length(data), octet_length(body) AS octet_length2 FROM ws_files WHERE id=$1 LIMIT 1")
+$postgres.prepare("wsfile_size_multi", %w{
+WITH RECURSIVE children AS (
+    SELECT id, octet_length(data) as dl, octet_length(body) AS bl
+        FROM ws_files
+        WHERE id = $1
+    UNION All
+        SELECT a.id, octet_length(data) as dl, octet_length(body) AS bl
+        FROM ws_files a
+        JOIN children b ON(a.parent_id = b.id)
+)
+SELECT * FROM children;
+}.join("\n"))
 $postgres.prepare("wsfile_body_size", "SELECT octet_length(body) FROM ws_files WHERE id=$1 LIMIT 1")
 $postgres.prepare("wsfile_update", "UPDATE ws_files SET data = $2 WHERE id = $1")
 $postgres.prepare("wsfile_get", "SELECT data::bytea FROM ws_files WHERE id::int = $1 LIMIT 1")

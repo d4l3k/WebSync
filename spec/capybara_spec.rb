@@ -1,10 +1,5 @@
 require File.expand_path '../test_helper.rb', __FILE__
 
-require 'capybara/rspec'
-require 'capybara/poltergeist'
-Capybara.javascript_driver = (ENV["DRIVER"] || :poltergeist).to_sym
-Capybara.app = WebSync
-
 include Rack::Test::Methods
 
 def app

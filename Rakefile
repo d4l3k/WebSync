@@ -47,6 +47,19 @@ module AssetPipeline
 end
 AssetPipeline::Task.define! WebSync
 
+task :deploy do
+  Rake::Task["assets:clean"].invoke
+  Rake::Task["assets:precompile"].invoke
+  Rake::Task["cachebust"].invoke
+end
+
+task :cachebust do
+  require './lib/models'
+  puts "Busted: #{$redis.keys("url:*").each do |url|
+    $redis.del url
+  end.length} keys"
+end
+
 namespace :admin do
     task :add, :email do |task, args|
         require './lib/models'

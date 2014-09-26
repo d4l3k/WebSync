@@ -65,6 +65,10 @@ require File.expand_path '../../lib/models.rb', __FILE__
 
 require 'capybara/rspec'
 require 'capybara/poltergeist'
+Capybara.default_wait_time = 15
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, timeout: 15)
+end
 Capybara.javascript_driver = (ENV["DRIVER"] || :poltergeist).to_sym
 $config_ru = eval "Rack::Builder.new {( " + File.read(File.dirname(__FILE__) + '/../config.ru') + "\n )}"
 

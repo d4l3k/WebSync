@@ -34,6 +34,7 @@ def new_doc type
     id = AssetGroup.all(name: type).first.id
     visit "/new/#{id}"
     wait_for_edit
+    visit current_url
     uri = URI.parse(current_url)
     doc_id = uri.path.split("/")[1].decode62
     doc = WSFile.get(doc_id)
@@ -53,6 +54,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     it "should successfully pass Document core.js tests", :js => true do
         loginuser
         doc = new_doc 'Document'
+        sleep 0.5
         # Title Test
         find("#name").set "Test Doc! 111"
 
@@ -75,6 +77,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         all("#user_perms tr").select do |a|
             a.all("td").length > 0 && a.all("td")[0].text == "moo@websyn.ca"
         end[0].find("select").select('Editor')
+        sleep 0.05
         page.evaluate_script("WS.checkDiff();")
         sleep 0.05
         doc = doc.reload

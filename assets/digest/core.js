@@ -827,7 +827,7 @@ define('websync', {
   // Function: void WebSync.checkDiff();
   // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
   checkDiff: function() {
-    if(!WebSync.oldData){
+    if (!WebSync.oldData) {
       WebSync.oldDataString = JSON.stringify(WebSyncData);
       WebSync.oldData = JSON.parse(WebSync.oldDataString);
     }
@@ -835,10 +835,10 @@ define('websync', {
       WebSync.toJSON();
     }
     var stringWebSync = JSON.stringify(WebSyncData);
-    if(stringWebSync!=WebSync.oldDataString){
+    if (stringWebSync != WebSync.oldDataString) {
       var patches = jsonpatch.compare(WebSync.oldData, WebSyncData);
       if (WebSyncAuth.access == 'viewer' && patches.length > 0) {
-        if(!WS.tmp.permissionAlerted) {
+        if (!WS.tmp.permissionAlerted) {
           WebSync.error("<b>Error</b> You don't have permission to make changes.");
           WS.tmp.permissionAlerted = true;
         }

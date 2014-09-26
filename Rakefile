@@ -137,7 +137,7 @@ task :beautify do
     end
     # Use the version in node_modules
     js_beautify_path = "node_modules/js-beautify/js/bin/js-beautify.js"
-    system("#{js_beautify_path} -r #{paths.join " "}")
+    system("#{js_beautify_path} -s 2 -r #{paths.join " "}")
 
     # Closure-linter screws up the first line of bin/backend.js
     backend = File.readlines("bin/backend.js")

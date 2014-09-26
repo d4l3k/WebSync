@@ -1,0 +1,23 @@
+{
+  "name": "WebSync",
+  "version": "0.0.0",
+  "homepage": "https://github.com/d4l3k/WebSync",
+  "authors": [
+    "Tristan Rice <rice@outerearth.net>"
+  ],
+  "moduleType": [
+    "amd",
+    "es6"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fast-json-patch": "~0.4.0"
+  }
+}

@@ -658,7 +658,6 @@ define('websync', {
     // TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
     this.resize();
     $(window).resize(this.resize);
-    WebSync.patchObserver = jsonpatch.observe(WebSyncData);
     //this.setupWebRTC();
     clearTimeout(window.initError);
     window.initError = true;

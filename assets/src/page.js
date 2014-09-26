@@ -23,12 +23,10 @@ define('/assets/page.js', ['websync'], function(websync) {
   });
   $(document).on('modules_loaded', function() {
     WebSync.fromJSON();
-    WebSync.checkDiff();
     if (WebSyncData.html) {
       $('.content .page').first().append(WebSyncData.html);
       delete WebSyncData.html;
     }
-    WebSync.checkDiff();
     NProgress.done();
   });
   $('.content_well').children().bind('mousedown selectstart', function(e) {

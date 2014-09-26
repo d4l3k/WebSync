@@ -15,3 +15,6 @@ before_install:
 before_script:
   - "psql -c 'create database websync;' -U postgres"
   - npm install
+install: bundle install
+gemfile:
+  - Gemfile

@@ -20,15 +20,13 @@ def wait_for
     end
 end
 def wait_for_edit
-    start = Time.now
-    while !current_url.match(/\/\S{1,3}\/edit$/) && (Time.now-start) < 5
-        sleep 0.05
+    wait_for do
+        current_url.match(/\/\S{1,3}\/edit$/)
     end
 end
 def wait_for_no_bar
-    start = Time.now
-    while all(".bar").length > 0 and (Time.now-start) < 5
-        sleep 0.05
+    wait_for do
+        all(".bar").length == 0
     end
     all(".bar").length.should eq(0)
 end

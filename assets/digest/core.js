@@ -85,12 +85,12 @@ define('websync', {
         });
         // Make sure there aren't any outstanding changes that need to be sent before patching document.
         WebSync.checkDiff();
-        jsonpatch.unobserve(WebSyncData, WebSync.patchObserver);
         jsonpatch.apply(WebSyncData, data.patch);
-        WebSync.patchObserver = jsonpatch.observe(WebSyncData);
         if (WebSync.fromJSON) {
           WebSync.fromJSON(data.patch);
         }
+        WebSync.oldDataString = JSON.stringify(WebSyncData);
+        WebSync.oldData = JSON.parse(WebSync.oldDataString);
         $(document).trigger('patched');
         WebSync.selectionRestore(WebSync.tmp.range);
       } else if (data.type == 'name_update') {
@@ -814,9 +814,9 @@ define('websync', {
       });
       // TODO: Center zoomed out
       /*var side = container.parent().width() - container.width()*WebSync.zoom;
-      if(side > 0){
-        container.css({"margin-left":  side/2});
-      }*/
+    if(side > 0){
+    container.css({"margin-left":  side/2});
+    }*/
     } else {
       container.removeClass('left');
       container.css({
@@ -827,28 +827,31 @@ define('websync', {
   // Function: void WebSync.checkDiff();
   // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
   checkDiff: function() {
-    //if(!WebSync.oldData){
-    //  WebSync.oldDataString = JSON.stringify(WebSyncData);
-    //  WebSync.oldData = JSON.parse(WebSync.oldDataString);
-    //}
+    if(!WebSync.oldData){
+      WebSync.oldDataString = JSON.stringify(WebSyncData);
+      WebSync.oldData = JSON.parse(WebSync.oldDataString);
+    }
     if (WebSync.toJSON) {
       WebSync.toJSON();
     }
-    //var stringWebSync = JSON.stringify(WebSyncData);
-    //if(stringWebSync!=WebSync.oldDataString){
-    //}
-    var patches = jsonpatch.generate(WebSync.patchObserver);
-    if (WebSyncAuth.access == 'viewer' && patches.length > 0) {
-      WebSync.error("<b>Error</b> You don't have permission to make changes.");
-    } else if (patches.length > 0) {
-      console.log('DIFF', patches);
-      $(document).trigger('diffed');
-      WebSync.connection.sendJSON({
-        type: 'data_patch',
-        patch: patches
-      });
-      //WebSync.oldDataString = stringWebSync;
-      //WebSync.oldData = JSON.parse(stringWebSync);
+    var stringWebSync = JSON.stringify(WebSyncData);
+    if(stringWebSync!=WebSync.oldDataString){
+      var patches = jsonpatch.compare(WebSync.oldData, WebSyncData);
+      if (WebSyncAuth.access == 'viewer' && patches.length > 0) {
+        if(!WS.tmp.permissionAlerted) {
+          WebSync.error("<b>Error</b> You don't have permission to make changes.");
+          WS.tmp.permissionAlerted = true;
+        }
+      } else if (patches.length > 0) {
+        console.log('DIFF', patches);
+        $(document).trigger('diffed');
+        WebSync.connection.sendJSON({
+          type: 'data_patch',
+          patch: patches
+        });
+        WebSync.oldDataString = stringWebSync;
+        WebSync.oldData = JSON.parse(stringWebSync);
+      }
     }
   },
   // Function: void WebSync.insertAtCursor(jQuery node);
@@ -871,8 +874,8 @@ define('websync', {
   // Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.
   getCss: function() {
     /*WebSync.applier.toggleSelection();
-      if($(".tmp").length==0) return {};
-      return $(".tmp").removeClass("tmp").getStyleObject();*/
+    if($(".tmp").length==0) return {};
+    return $(".tmp").removeClass("tmp").getStyleObject();*/
     var selection = getSelection();
     if (selection.type == 'None') {
       return {};
@@ -943,9 +946,9 @@ define('websync', {
     return cur;
   },
   // Applies patches directly to the HTML.
-  //    patch: the list of changes
-  //    root: the path of the base of the JSON html. eg. "/body/"
-  //    root_dom: the root DOM element.
+  //  patch: the list of changes
+  //  root: the path of the base of the JSON html. eg. "/body/"
+  //  root_dom: the root DOM element.
   applyPatch: function(patch, root, root_dom) {
     var dom = root_dom.childNodes;
     var exemptions = {};

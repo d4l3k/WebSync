@@ -1,8 +1,70 @@
-// json-patch-duplex.js 0.3.6
-// (c) 2013 Joachim Wester
-// MIT license
+/*!
+* json-patch-duplex.js 0.4.0
+* (c) 2013 Joachim Wester
+* MIT license
+*/
+
 var jsonpatch;
 (function (jsonpatch) {
+    var _objectKeys = (function () {
+        if (Object.keys)
+            return Object.keys;
+
+        return function (o) {
+            var keys = [];
+            for (var i in o) {
+                if (o.hasOwnProperty(i)) {
+                    keys.push(i);
+                }
+            }
+            return keys;
+        };
+    })();
+
+    function _equals(a, b) {
+        switch (typeof a) {
+            case 'undefined':
+            case 'boolean':
+            case 'string':
+            case 'number':
+                return a === b;
+            case 'object':
+                if (a === null)
+                    return b === null;
+                if (_isArray(a)) {
+                    if (!_isArray(b) || a.length !== b.length)
+                        return false;
+
+                    for (var i = 0, l = a.length; i < l; i++)
+                        if (!_equals(a[i], b[i]))
+                            return false;
+
+                    return true;
+                }
+
+                var bKeys = _objectKeys(b);
+                var bLength = bKeys.length;
+                if (_objectKeys(a).length !== bLength)
+                    return false;
+
+                for (var i = 0; i < bLength; i++)
+                    if (!_equals(a[i], b[i]))
+                        return false;
+
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    /* We use a Javascript hash to store each
+    function. Each hash entry (property) uses
+    the operation identifiers specified in rfc6902.
+    In this way, we can map each patch operation
+    to its dedicated function in efficient way.
+    */
+    /* The operations applicable to an object */
     var objOps = {
         add: function (obj, key) {
             obj[key] = this.value;
@@ -36,15 +98,19 @@ var jsonpatch;
             return true;
         },
         test: function (obj, key) {
-            return (JSON.stringify(obj[key]) === JSON.stringify(this.value));
+            return _equals(obj[key], this.value);
         },
         _get: function (obj, key) {
             this.value = obj[key];
         }
     };
 
+    /* The operations applicable to an array. Many are the same as for the object */
     var arrOps = {
         add: function (arr, i) {
+            if (i > arr.length) {
+                throw new Error("The specified index MUST NOT be greater than the number of elements in the array.");
+            }
             arr.splice(i, 0, this.value);
             return true;
         },
@@ -62,13 +128,48 @@ var jsonpatch;
         _get: objOps._get
     };
 
+    /* The operations applicable to object root. Many are the same as for the object */
+    var rootOps = {
+        add: function (obj) {
+            rootOps.remove.call(this, obj);
+            for (var key in this.value) {
+                if (this.value.hasOwnProperty(key)) {
+                    obj[key] = this.value[key];
+                }
+            }
+            return true;
+        },
+        remove: function (obj) {
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    objOps.remove.call(this, obj, key);
+                }
+            }
+            return true;
+        },
+        replace: function (obj) {
+            apply(obj, [
+                { op: "remove", path: this.path }
+            ]);
+            apply(obj, [
+                { op: "add", path: this.path, value: this.value }
+            ]);
+            return true;
+        },
+        move: objOps.move,
+        copy: objOps.copy,
+        test: function (obj) {
+            return (JSON.stringify(obj) === JSON.stringify(this.value));
+        },
+        _get: objOps._get
+    };
+
     var observeOps = {
         add: function (patches, path) {
             var patch = {
                 op: "add",
                 path: path + escapePathComponent(this.name),
-                value: this.object[this.name]
-            };
+                value: this.object[this.name] };
             patches.push(patch);
         },
         'delete': function (patches, path) {
@@ -238,7 +339,7 @@ var jsonpatch;
         } else {
             observer = {};
 
-            mirror.value = JSON.parse(JSON.stringify(obj));
+            mirror.value = JSON.parse(JSON.stringify(obj)); // Faster than ES5 clone - http://jsperf.com/deep-cloning-of-objects/5
 
             if (callback) {
                 //callbacks.push(callback); this has no purpose
@@ -345,21 +446,6 @@ var jsonpatch;
     }
     jsonpatch.generate = generate;
 
-    var _objectKeys;
-    if (Object.keys) {
-        _objectKeys = Object.keys;
-    } else {
-        _objectKeys = function (obj) {
-            var keys = [];
-            for (var o in obj) {
-                if (obj.hasOwnProperty(o)) {
-                    keys.push(o);
-                }
-            }
-            return keys;
-        };
-    }
-
     // Dirty check if obj is different from mirror, generate patches and update mirror
     function _generate(mirror, obj, patches, path) {
         var newKeys = _objectKeys(obj);
@@ -384,7 +470,7 @@ var jsonpatch;
             } else {
                 patches.push({ op: "remove", path: path + "/" + escapePathComponent(key) });
                 delete mirror[key];
-                deleted = true;
+                deleted = true; // property has been deleted
             }
         }
 
@@ -410,43 +496,89 @@ var jsonpatch;
         };
     }
 
+    //3x faster than cached /^\d+$/.test(str)
+    function isInteger(str) {
+        var i = 0;
+        var len = str.length;
+        var charCode;
+        while (i < len) {
+            charCode = str.charCodeAt(i);
+            if (charCode >= 48 && charCode <= 57) {
+                i++;
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
     /// Apply a json-patch operation on an object tree
     function apply(tree, patches) {
         var result = false, p = 0, plen = patches.length, patch;
         while (p < plen) {
             patch = patches[p];
+            p++;
 
             // Find the object
             var keys = patch.path.split('/');
             var obj = tree;
             var t = 1;
             var len = keys.length;
+
+            if (patch.value === undefined && (patch.op === "add" || patch.op === "replace" || patch.op === "test")) {
+                throw new Error("'value' MUST be defined");
+            }
+            if (patch.from === undefined && (patch.op === "copy" || patch.op === "move")) {
+                throw new Error("'from' MUST be defined");
+            }
+
             while (true) {
                 if (_isArray(obj)) {
-                    var index = parseInt(keys[t], 10);
+                    var index;
+                    if (keys[t] === '-') {
+                        index = obj.length;
+                    } else if (isInteger(keys[t])) {
+                        index = parseInt(keys[t], 10);
+                    } else {
+                        throw new Error("Expected an unsigned base-10 integer value, making the new referenced value the array element with the zero-based index");
+                    }
                     t++;
                     if (t >= len) {
-                        result = arrOps[patch.op].call(patch, obj, index, tree);
+                        result = arrOps[patch.op].call(patch, obj, index, tree); // Apply patch
                         break;
                     }
                     obj = obj[index];
                 } else {
                     var key = keys[t];
-                    if (key.indexOf('~') != -1)
-                        key = key.replace(/~1/g, '/').replace(/~0/g, '~');
-                    t++;
-                    if (t >= len) {
-                        result = objOps[patch.op].call(patch, obj, key, tree);
-                        break;
+                    if (key !== undefined) {
+                        if (key && key.indexOf('~') != -1)
+                            key = key.replace(/~1/g, '/').replace(/~0/g, '~'); // escape chars
+                        t++;
+                        if (t >= len) {
+                            result = objOps[patch.op].call(patch, obj, key, tree); // Apply patch
+                            break;
+                        }
+                    } else {
+                        t++;
+                        if (t >= len) {
+                            result = rootOps[patch.op].call(patch, obj, key, tree); // Apply patch
+                            break;
+                        }
                     }
                     obj = obj[key];
                 }
             }
-            p++;
         }
         return result;
     }
     jsonpatch.apply = apply;
+
+    function compare(tree1, tree2) {
+        var patches = [];
+        _generate(tree1, tree2, patches, '');
+        return patches;
+    }
+    jsonpatch.compare = compare;
 })(jsonpatch || (jsonpatch = {}));
 
 if (typeof exports !== "undefined") {
@@ -454,4 +586,6 @@ if (typeof exports !== "undefined") {
     exports.observe = jsonpatch.observe;
     exports.unobserve = jsonpatch.unobserve;
     exports.generate = jsonpatch.generate;
+    exports.compare = jsonpatch.compare;
 }
+//# sourceMappingURL=json-patch-duplex.js.map

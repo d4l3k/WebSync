@@ -9,11 +9,11 @@ define('/assets/page.js', ['websync'], function(websync) {
         $('.page').attr('contenteditable', true);
     }
     WebSync.toJSON = function() {
-        WebSyncData.body = WS.DOMToJSON($('.page').get(0).childNodes);
+        WebSyncData.body = WS.DOMToJSON($('.content .page').get(0).childNodes);
     };
     WebSync.fromJSON = function(patch) {
         if (patch) {
-            WebSync.applyPatch(patch, '/body/', $('.page').get(0));
+            WebSync.applyPatch(patch, '/body/', $('.content .page').get(0));
         } else {
             $('.content .page').get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
         }

@@ -50,14 +50,18 @@ define('/assets/presentation.js', ['websync'], function(websync) {
         WebSyncData.body = WS.DOMToJSON($('#slides').get(0).childNodes);
         setTimeout(self.updateMenu, 50);
     };
-    WebSync.fromJSON = function() {
-        $('.content_well #slides').get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
-        // TODO: Get rid of the cause of this patch.
-        //$(".slide").appendTo($("#slides"));
-        if (WebSyncAuth.view_op == 'edit') {
-            $('#slides .slide').attr('contenteditable', true);
+    WebSync.fromJSON = function(patch) {
+        if (patch) {
+          WebSync.applyPatch(patch, '/body/', $('.content_well #slides').get(0));
+        } else {
+          $('.content_well #slides').get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
+          // TODO: Get rid of the cause of this patch.
+          //$(".slide").appendTo($("#slides"));
+          if (WebSyncAuth.view_op == 'edit') {
+              $('#slides .slide').attr('contenteditable', true);
+          }
+          setTimeout(self.updateScale, 200);
         }
-        setTimeout(self.updateScale, 200);
     };
     $('#presentation-nav #slideView').delegate('.slidePreview', 'click', function() {
         $('.slide.active').removeClass('active');

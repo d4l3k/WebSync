@@ -25,12 +25,8 @@ describe "WebSync Frontend Helpers" do
         expect($helpers.logged_in?).to eq(true)
     end
     it "should be able to cache and restore" do
-        expect($helpers.cache time: 60 do
-            'test'
-        end).to eq('test')
-        expect($helpers.cache do
-            'nottest'
-        end).to eq('test')
+        expect($helpers.cache(time: 60) {'test'}).to eq('test')
+        expect($helpers.cache{'nottest'}).to eq('test')
         ttl = $redis.ttl("url:#{I18n.locale}:/test")
         expect(ttl).to be <= 60
         expect(ttl).to be > 0

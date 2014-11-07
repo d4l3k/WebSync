@@ -58,7 +58,7 @@ def destroy_testuser
     end
 end
 def assert condition, reason=""
-    condition.should eql(true)
+    expect(condition).to eql(true)
 end
 require File.expand_path '../../lib/main.rb', __FILE__
 require File.expand_path '../../lib/models.rb', __FILE__

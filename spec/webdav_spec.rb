@@ -50,9 +50,9 @@ describe "WebDAV", type: :feature do
         testuser
         server = Capybara.current_session.server
         passes, fails = Litmus.test("http://#{server.host}:#{server.port}/w/", 'test@websyn.ca', 'testboop')
-        passes.length.should eq(56)
+        expect(passes.length).to eq(56)
         # TODO: Have fewer fails.
-        fails.length.should eq(6)
+        expect(fails.length).to eq(6)
         destroy_testuser
     end
 end

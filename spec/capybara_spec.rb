@@ -28,7 +28,7 @@ def wait_for_no_bar
     wait_for do
         all(".bar").length == 0
     end
-    all(".bar").length.should eq(0)
+    expect(all(".bar").length).to eq(0)
 end
 def new_doc type
     id = AssetGroup.all(name: type).first.id
@@ -82,36 +82,36 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         sleep 0.05
         doc = doc.reload
         # Title Check
-        doc.name.should eq  "Test Doc! 111"
+        expect(doc.name).to eq  "Test Doc! 111"
         # Page Check
-        doc.body["body"].should eq([{"nodeName"=>"#text", "textContent"=>"Moooop"}])
+        expect(doc.body["body"]).to eq([{"nodeName"=>"#text", "textContent"=>"Moooop"}])
         # CSS Check
-        doc.body["custom_css"].should eq(["* { color: red; }"])
+        expect(doc.body["custom_css"]).to eq(["* { color: red; }"])
         # Permissions Check
-        doc.visibility.should eq("hidden")
-        doc.default_level.should eq("editor")
+        expect(doc.visibility).to eq("hidden")
+        expect(doc.default_level).to eq("editor")
         perms = doc.permissions(user_email: 'moo@websyn.ca')
-        perms.length.should eq(1)
-        perms[0].level.should eq("editor")
+        expect(perms.length).to eq(1)
+        expect(perms[0].level).to eq("editor")
         all('#user_perms a').first.click2
         wait_for do
             all('#user_perms select').length == 1
         end
-        all('#user_perms select').length.should eq(1)
+        expect(all('#user_perms select').length).to eq(1)
 
         # Libraries Check
         find('[href="#assets"]').click2
         wait_for do
             all('#assets tr').length >= 2
         end
-        all('#assets tr').length.should be >= 2
+        expect(all('#assets tr').length).to be >= 2
 
         # Changes Check
         find('[href="#diffs"]').click2
         wait_for do
             all('#diffs tr').length >= 2
         end
-        all('#diffs tr').length.should be >= 2
+        expect(all('#diffs tr').length).to be >= 2
 
     end
     it "should successfully pass tables.js tests", :js => true do
@@ -125,25 +125,25 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         find('#table').click
         tds = all('.page table td')
         tds[1].click2
-        all('th', text: 'Table 1').length.should eq 1
+        expect(all('th', text: 'Table 1').length).to eq 1
 
         # Test row & column insertion
         find('[data-original-title="Insert Row Above"]').click2
-        all('.page table td').length.should eq 6
+        expect(all('.page table td').length).to eq 6
         find('[data-original-title="Insert Row Below"]').click2
-        all('.page table td').length.should eq 8
+        expect(all('.page table td').length).to eq 8
         find('[data-original-title="Delete Row"]').click2
-        all('.page table td').length.should eq 6
+        expect(all('.page table td').length).to eq 6
         all('.page table td')[0].click2
         find('[data-original-title="Insert Column Left"]').click2
-        all('.page table td').length.should eq 9
+        expect(all('.page table td').length).to eq 9
         find('[data-original-title="Insert Column Right"]').click2
-        all('.page table td').length.should eq 12
+        expect(all('.page table td').length).to eq 12
         find('[data-original-title="Delete Column"]').click2
-        all('.page table td').length.should eq 9
+        expect(all('.page table td').length).to eq 9
         all('.page table td')[0].click2
         find('[data-original-title="Delete Table"]').click2
-        all('.page table').length.should eq 0
+        expect(all('.page table').length).to eq 0
     end
     it "should successfully load everything", js: true do
         loginuser

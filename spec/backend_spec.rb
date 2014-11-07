@@ -52,21 +52,21 @@ describe "WebSync Backend" do
                 data = MultiJson.load(event.data)
                 #p [:message, data]
                 if count < counts.length
-                    counts[count].should eq(data["type"])
+                    expect(counts[count]).to eq(data["type"])
                     count += 1
                 end
                 if data["type"] == "info"
                     # MD5 of email. Used for gravatar
-                    data["user_id"].should eq("9c99794b1873845c864617eb2a7986a2")
+                    expect(data["user_id"]).to eq("9c99794b1873845c864617eb2a7986a2")
                     ws.sendJSON({type: 'load_scripts'})
                 elsif data["type"] == "ping"
                     ws.sendJSON({type: 'ping'})
                 elsif data["type"] == "scripts"
-                    data["css"].should eq([])
+                    expect(data["css"]).to eq([])
                     scripts = AssetGroup.get(1).assets
-                    scripts.length.should eq(data["js"].length)
+                    expect(scripts.length).to eq(data["js"].length)
                     scripts.each do |script|
-                        data["js"].index("/assets/tables.js").should be >= 0
+                        expect(data["js"].index("/assets/tables.js")).to be >= 0
                     end
                     # TODO: Finish testing the backend.
                     ws.close

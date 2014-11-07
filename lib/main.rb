@@ -54,7 +54,7 @@ class WebSync < Sinatra::Base
         app = self
         get '/assets/*' do |key|
             if Sprockets::Helpers.digest
-                    key.gsub! /(-\w+)(?!.*-\w+)/, ""
+                    key.gsub!(/(-\w+)(?!.*-\w+)/, "")
             end
             asset = app.sprockets[key]
             content_type asset.content_type
@@ -76,7 +76,7 @@ class WebSync < Sinatra::Base
         set :template_engine, :erb
 
         I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
-        I18n.enforce_available_locales = true
+        I18n.enforce_available_locales = false
         I18n.load_path = Dir[File.join(settings.root, '..', 'locales', '*.yml')]
         I18n.backend.load_translations
         register Sinatra::AssetPipeline
@@ -360,7 +360,8 @@ class WebSync < Sinatra::Base
         )
         doc.assets = group.assets
         doc.save
-        perm = Permission.create(user: current_user, file: doc, level: "owner")
+        # TODO: Handle errors
+        Permission.create(user: current_user, file: doc, level: "owner")
         redirect "/#{doc.id.encode62}/edit"
     end
     get '/upload' do
@@ -454,10 +455,10 @@ class WebSync < Sinatra::Base
     end
     # This doesn't need to verify authentication because the token is a 16 byte string.
     get '/:doc/download/:id' do
-        doc_id, doc = document_auth
-        response = $redis.get "websync:document_export:#{ params[:doc].decode62}:#{params[:id]}"
+        _, doc = document_auth
+        response = $redis.get "websync:document_export:#{params[:doc].decode62}:#{params[:id]}"
         if response
-            ext = $redis.get "websync:document_export:#{ params[:doc].decode62}:#{params[:id]}:extension"
+            ext = $redis.get "websync:document_export:#{params[:doc].decode62}:#{params[:id]}:extension"
             attachment(doc.name+'.'+ext)
             content_type 'application/octet_stream'
             response
@@ -466,12 +467,12 @@ class WebSync < Sinatra::Base
         end
     end
     get '/:doc/json' do
-        doc_id, doc = document_auth
+        doc = document_auth
         content_type 'application/json'
         MultiJson.dump(doc.body)
     end
     get '/:doc/delete' do
-        doc_id, doc = document_auth
+        _, doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             doc.update(deleted: true)
             flash[:danger] = "Document moved to trash."
@@ -481,7 +482,7 @@ class WebSync < Sinatra::Base
         redirect '/'
     end
     get '/:doc/undelete' do
-        doc_id, doc = document_auth
+        doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             doc.update(deleted: false)
             flash[:success] = "Document restored."
@@ -491,7 +492,7 @@ class WebSync < Sinatra::Base
         redirect '/'
     end
     get '/:doc/destroy' do
-        doc_id, doc = document_auth
+        doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             erb :destroy, locals: {doc: doc}
         else
@@ -499,7 +500,7 @@ class WebSync < Sinatra::Base
         end
     end
     post '/:doc/destroy' do
-        doc_id, doc = document_auth
+        doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             if current_user.password == params[:password]
                 doc.destroy_cascade
@@ -513,7 +514,7 @@ class WebSync < Sinatra::Base
             halt 403
         end
     end
-    get // do
+    get(//) do
         parts = request.path_info.split("/")
         pass unless parts.length >=3
         doc = parts[1]
@@ -522,7 +523,7 @@ class WebSync < Sinatra::Base
         if op == "upload"
             redirect "/#{doc}/edit"
         end
-        doc_id, doc = document_auth doc
+        doc = document_auth doc
         if parts[2] == "assets"
             if parts.length > 3
                 cache do
@@ -549,13 +550,13 @@ class WebSync < Sinatra::Base
         access = user.level if user
         access ||= doc.default_level
         $redis.set "websocket:id:#{client_id}",current_user.email
-        $redis.set "websocket:key:#{client_id}", client_key+":#{doc_id}"
+        $redis.set "websocket:key:#{client_id}", client_key+":#{doc.id}"
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
         erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op, access: access, allow_iframe: true}
     end
     post "/:doc/upload" do
-        doc_id, doc = document_auth
+        doc = document_auth
         editor! doc
         files = []
         if params.has_key? "files"
@@ -577,8 +578,8 @@ class WebSync < Sinatra::Base
                 blob = WSFile.create(parent: doc, name: file[:filename], content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
                 blob.data = file[:tempfile].read
             end
-            $redis.del "url:/#{doc_id.encode62}/assets/#{URI.encode(file[:filename])}"
-            redirect "/#{doc_id.encode62}/edit"
+            $redis.del "url:/#{doc.id.encode62}/assets/#{URI.encode(file[:filename])}"
+            redirect "/#{doc.id.encode62}/edit"
         end
         if request.xhr?
             content_type  "application/json"

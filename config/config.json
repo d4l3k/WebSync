@@ -68,7 +68,7 @@
 // These represent different document types and the scripts they should load.
 "default_asset_groups": [{
     "name": "Document",
-    "description": "Format similar to Microsoft Word or LibreOffice Writer.",
+    "description": "Similar to Microsoft Word or LibreOffice Writer.",
     "assets": [
         "Tables",
         "Chat",
@@ -79,7 +79,7 @@
     ]
 }, {
     "name": "Presentation",
-    "description": "Format similar to Microsoft PowerPoint or LibreOffice Impress.",
+    "description": "Similar to Microsoft PowerPoint or LibreOffice Impress.",
     "assets": [
         "Tables",
         "Chat",
@@ -90,7 +90,7 @@
     ]
 }, {
     "name": "Spreadsheet",
-    "description": "Format similar to Microsoft Excel or LibreOffice Calc.",
+    "description": "Similar to Microsoft Excel or LibreOffice Calc.",
     "assets": [
         "Tables",
         "Chat",
@@ -100,7 +100,7 @@
     ]
 }, {
     "name": "Notebook",
-    "description": "Format similar to Microsoft OneNote.",
+    "description": "Similar to Microsoft OneNote.",
     "assets": [
         "Tables",
         "Chat",
@@ -111,7 +111,7 @@
     ]
 }, {
     "name": "Awe",
-    "description": "Format similar to Prezi but in 3D.",
+    "description": "Similar to Prezi but in 3D.",
     "assets": [
         "Tables",
         "Chat",

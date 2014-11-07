@@ -117,7 +117,7 @@ module Helpers
                 halt 403
             end
         end
-        return doc_id, doc
+        return doc
     end
     def editor! doc
         if doc.default_level == "owner" or doc.default_level == "editor"

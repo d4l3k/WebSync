@@ -455,7 +455,7 @@ class WebSync < Sinatra::Base
     end
     # This doesn't need to verify authentication because the token is a 16 byte string.
     get '/:doc/download/:id' do
-        _, doc = document_auth
+        doc = document_auth
         response = $redis.get "websync:document_export:#{params[:doc].decode62}:#{params[:id]}"
         if response
             ext = $redis.get "websync:document_export:#{params[:doc].decode62}:#{params[:id]}:extension"
@@ -472,7 +472,7 @@ class WebSync < Sinatra::Base
         MultiJson.dump(doc.body)
     end
     get '/:doc/delete' do
-        _, doc = document_auth
+        doc = document_auth
         if doc.permissions(level: "owner").user[0]==current_user
             doc.update(deleted: true)
             flash[:danger] = "Document moved to trash."

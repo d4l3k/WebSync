@@ -15,7 +15,7 @@ gem 'sinatra', :require=>'sinatra/base'
 gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'nokogiri'
 gem 'multi_json'
-gem 'i18n', require: ['i18n', 'i18n/backend/fallbacks']
+gem 'i18n', require: ['i18n', 'i18n/backend/fallbacks', 'i18n/backend/simple']
 gem 'rack-contrib'
 gem 'radix62'
 gem 'pg'

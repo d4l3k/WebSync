@@ -12,6 +12,7 @@ def loginuser
     page.first(:fillable_field, 'email').set 'test@websyn.ca'
     page.first(:fillable_field, 'password').set 'testboop'
     click_button 'Sign In'
+    user
 end
 def wait_for
     start = Time.now
@@ -77,9 +78,9 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         all("#user_perms tr").select do |a|
             a.all("td").length > 0 && a.all("td")[0].text == "moo@websyn.ca"
         end[0].find("select").select('Editor')
-        sleep 0.05
+        sleep 0.1
         page.evaluate_script("WS.checkDiff();")
-        sleep 0.05
+        sleep 0.1
         doc = doc.reload
         # Title Check
         expect(doc.name).to eq  "Test Doc! 111"
@@ -93,7 +94,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
         perms = doc.permissions(user_email: 'moo@websyn.ca')
         expect(perms.length).to eq(1)
         expect(perms[0].level).to eq("editor")
-        all('#user_perms a').first.click2
+        all('#user_perms a:not([disabled])').first.click2
         wait_for do
             all('#user_perms select').length == 1
         end
@@ -116,7 +117,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     end
     it "should successfully pass tables.js tests", :js => true do
         loginuser
-        doc = new_doc 'Document'
+        new_doc 'Document'
         # Table Test
         find('a', text: 'Insert').click
         find('.page').click
@@ -160,7 +161,7 @@ end
 class Capybara::Node::Element
     def click2
         self.click
-    rescue => e
+    rescue
         self.trigger("click")
     end
 end

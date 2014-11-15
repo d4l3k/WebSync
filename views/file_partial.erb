@@ -49,14 +49,19 @@ end if sort == "owner"
 
 
 headers = %w{name owner recent size}
+
+def path p
+  request.path == p ? 'class="active"' : ''
+end
+
 %>
 <div class="file_list">
   <div class="menu">
     <ul class="nav nav-pills nav-stacked">
       <%= erb :upload_buttons %>
-      <li role="presentation" class="active"><a href="/">My Files</a></li>
-      <li role="presentation"><a href="/public">Publicly Shared</a></li>
-      <li role="presentation"><a href="/deleted">Trash</a></li>
+      <li role="presentation" <%= path '/' %> ><a href="/"><%= t "files.mine" %></a></li>
+      <li role="presentation" <%= path '/public' %> ><a href="/public"><%= t "files.public" %></a></li>
+      <li role="presentation" <%= path '/deleted' %> ><a href="/deleted"><%= t "recover" %></a></li>
     </ul>
   </div>
   <div class="files">
@@ -83,7 +88,7 @@ headers = %w{name owner recent size}
                 <tr>
                     <td><a href="<%= path %>"><%= doc.name.length > 0 ? h(doc.name) : "<i>Unnamed File</i>" %><%= doc.directory? ? "/" : "" %></a></td>
                     <% owner = doc.permissions(level: "owner").user %>
-                    <td><%= doc.permissions(level: "owner").user[0]==current_user ? "You" : (owner.length > 0 ? h(owner[0].email) : "<i>Orphaned</i>") %></td>
+                    <td><%= doc.permissions(level: "owner").user[0]==current_user ? t("you") : (owner.length > 0 ? h(owner[0].email) : "<i>#{t "files.orphaned"}</i>") %></td>
                     <td><%= l doc.edit_time %></td>
                     <td><%= doc.as_size %></td>
                     <td class="actions">

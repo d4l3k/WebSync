@@ -1,3 +1,5 @@
+@import 'nprogress';
+
 $blue: #08c;
  @mixin ex($key, $val...) {
     -moz-#{$key}: $val;
@@ -1026,7 +1028,6 @@ ul.nav.nav-list {
                 background-color: transparent !important;
             }
             border-right: 1px solid #333333;
-            font-weight: bold;
         }
         ul.nav.nav-list {
             margin-left: -5px;

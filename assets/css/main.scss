@@ -1,4 +1,5 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+//@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400);
 
 $font-dark: rgb(51, 51, 51);
 
@@ -11,16 +12,25 @@ $font-dark: rgb(51, 51, 51);
 
 
 
+
 html,
 body {
   height: 100%;
   -webkit-font-smoothing: antialiased;
+  font-family: 'Lato', 'Droid Sans', 'Segoe UI', 'Arial', 'Sans';
+  nav .navbar-brand, .n av a {
+    font-weight: 400;
+  }
+}
+h1, h2, h3, h4, h5 {
+  font-weight: 300;
+  font-family: 'Lato', 'Droid Sans', 'Segoe UI', 'Arial', 'Sans';
 }
 
 .navbar-nav.navbar-right:last-child {
   margin-right: 0;
 }
-.btn, .btn-group, select, input, a, .panel, .popover {
+.btn, .btn-group, select, input, a, .panel, .popover, .img-thumbnail, .dropdown-menu {
   border-radius: 0 !important;
 }
 
@@ -46,7 +56,7 @@ body {
     padding: 10px;
     left: 0;
     width: $width;
-    font-family: 'Open Sans Light', 'Droid Sans', 'Segoe UI Light', 'Arial', 'Sans';
+    font-weight: 100;
     .nav {
       margin: -10px;
       .btn {
@@ -172,17 +182,6 @@ footer {
   p {
     text-align: center;
   }
-}
-h1, h2, h3, h4,, h5, .navbar-brand {
-  font-family: 'Open Sans Light', 'Droid Sans', 'Segoe UI Light', 'Arial', 'Sans';
-  font-weight: 200;
-}
-.btn {
-
-  font-family: 'Open Sans', 'Droid Sans', 'Segoe UI', 'Arial', 'Sans';
-}
-.navbar-brand {
-  font-weight: bold;
 }
 .row {
   margin: 0 !important;
@@ -421,13 +420,18 @@ body > .container-fluid {
   border: 0;
   z-index: 10;
 }
-.head-content .or {
-  display: inline;
-  position: relative;
-  top: 5px;
-}
-.head-content .btn {
-  margin-top: 10px;
+.head-content {
+  b {
+    font-weight: 400;
+  }
+  .or {
+    display: inline;
+    position: relative;
+    top: 5px;
+  }
+  .btn {
+    margin-top: 10px;
+  }
 }
 /* MARKETING CONTENT
   -------------------------------------------------- */
@@ -460,7 +464,6 @@ body > .container-fluid {
 .featurette-image {
   margin-top: -120px;
   /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
-  border-radius: 4px;
 }
 /* Give some space on the sides of the floated elements so text doesn't run right into it. */
 

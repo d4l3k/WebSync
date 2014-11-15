@@ -114,7 +114,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
       setTimeout(function() {
         self.headerUpdate();
       }, 2);
-      self.lasttSize = bounding_data;
+      self.lastSize = bounding_data;
     }
   };
   $('.content').delegate('table', 'click.Tables', function(e) {

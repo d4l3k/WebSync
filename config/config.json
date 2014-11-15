@@ -63,6 +63,10 @@
     "name": "Awesome",
     "description": "Awesome presentation layout.",
     "url": "/assets/awesome.js"
+}, {
+    "name": "Charts",
+    "description": "Adds basic chart support using the library Chart.JS. Requires tables.",
+    "url": "/assets/charts.js"
 }],
 
 // These represent different document types and the scripts they should load.

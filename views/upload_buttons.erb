@@ -1,0 +1,16 @@
+<%
+if defined?(big) && big
+  properties = "btn-lg"
+else
+  properties = ""
+end
+%>
+<div class="btn-group">
+  <button class="btn btn-primary <%= properties %> dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file"></i> <%= t "nicehead.create" %>
+<span class="caret"></span></button>
+    <ul class="dropdown-menu">
+        <% AssetGroup.each do |ass| %>
+            <li><a href="/new/<%= ass.id %>"><%= ass.name %>&#151;<%= ass.description %></a></li>
+        <% end %>
+    </ul>
+</div> <a href="/upload" class='btn <%= properties %> btn-default'><i class="fa fa-cloud-upload"></i> <%= t "nicehead.upload" %></a>

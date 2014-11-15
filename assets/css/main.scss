@@ -1,21 +1,104 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+$font-dark: rgb(51, 51, 51);
+
 * {
   margin: 0;
   padding: 0;
   outline: none;
   border: none;
 }
+
+
+
 html,
 body {
   height: 100%;
   -webkit-font-smoothing: antialiased;
 }
+
+.navbar-nav.navbar-right:last-child {
+  margin-right: 0;
+}
+.btn, .btn-group, select, input, a, .panel, .popover {
+  border-radius: 0 !important;
+}
+
 .btn-login {
   color: white;
   font-weight: bold;
   border: none;
   &:hover {
     opacity: 0.8;
+  }
+}
+.file_list {
+  $width: 200px;
+  .menu, .files {
+    position: absolute;
+    top: 51px;
+    bottom: 0;
+    background-color: white;
+    border-right: 1px solid #ccc;
+  }
+  .menu {
+    background-color: #eee;
+    padding: 10px;
+    left: 0;
+    width: $width;
+    font-family: 'Open Sans Light', 'Droid Sans', 'Segoe UI Light', 'Arial', 'Sans';
+    .nav {
+      margin: -10px;
+      .btn {
+        padding: 10px 15px;
+      }
+      .btn, .btn-group {
+        text-align: left;
+        width: 100%;
+        border: 0;
+      }
+      li a {
+        color: $font-dark;
+      }
+      li.active {
+        a {
+          border-left: 5px solid $font-dark;
+          background-color: transparent;
+        }
+      }
+      li:not(.active) a:hover {
+        background-color: #ddd;
+      }
+    }
+  }
+  .files {
+    left: $width;
+    right: 0;
+    overflow-y: auto;
+    table {
+      margin: 0;
+      th {
+        border-bottom: 1px solid #ccc;
+        padding: 0;
+        & > a, & > span {
+          display: block !important;
+          color: $font-dark;
+          padding: 5px 8px 4px;
+        }
+        a:hover {
+          background-color: #eee;
+          text-decoration: none;
+        }
+      }
+      td {
+        a.btn {
+          margin: -5px;
+        }
+        .btn + .btn {
+          margin-left: 0;
+        }
+      }
+    }
   }
 }
 @media (max-width: 979px) {

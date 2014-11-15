@@ -19,7 +19,7 @@ define('/assets/page.js', ['websync'], function(websync) {
     }
   };
   WebSync.setupDownloads('document', function() {
-    return '<html><head><style>' + escapeHTML(WebSyncData.custom_css.join('\n')) + '</style></head><body>' + JSONToDOM(WebSyncData.body) + '</body></html>';
+    return '<html><head><style>' + WebSyncData.custom_css.join('\n') + '</style></head><body>' + WS.JSONToDOM(WebSyncData.body) + '</body></html>';
   });
   $(document).on('modules_loaded', function() {
     WebSync.fromJSON();

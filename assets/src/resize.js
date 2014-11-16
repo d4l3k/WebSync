@@ -1,4 +1,4 @@
-define(['websync'], function() {
+define(['websync'], function(WS) {
   var self = {};
   $('#Text').append('<button id="floatElement" title="Toggle Float" class="btn btn-default"><i class="fa fa-arrows"></i></button>');
   $('#floatElement').click(function() {
@@ -14,7 +14,7 @@ define(['websync'], function() {
 
   // Bind mouse to the content container. This waits to make sure that the .content_container has been added (happens in the layout plugin).
   $(document).on('modules_loaded', function() {
-    $('.content_container').delegate('img, iframe, table, .note-page section, canvas', 'click.Resize', function(e) {
+    $('.content_container').delegate('img:not(.noresize), iframe:not(.noresize), table:not(.noresize), .note-page section:not(.noresize), canvas:not(.noresize), .resizable', 'click.Resize', function(e) {
       if (WebSyncAuth.view_op == 'edit' && WebSyncAuth.access != 'viewer') {
         self.resizeOn(this);
         e.stopPropagation();
@@ -59,10 +59,10 @@ define(['websync'], function() {
   $(document).bind('mousemove.Resize', function(e) {
     if (self.drag) {
       if (self.origY) {
-        $(self.active).outerHeight((e.pageY - self.origY) / WebSync.zoom + self.origHeight);
+        $(self.active).outerHeight((e.pageY - self.origY) / WS.zoom + self.origHeight);
       }
       if (self.origX) {
-        $(self.active).outerWidth((e.pageX - self.origX) / WebSync.zoom + self.origWidth);
+        $(self.active).outerWidth((e.pageX - self.origX) / WS.zoom + self.origWidth);
       }
       if (self.origMove) {
         var x_offset = e.pageX - self.origMouse.left;
@@ -145,16 +145,16 @@ define(['websync'], function() {
         left: offset.left - 4
       });
       $('.Resize.handle.right').offset({
-        left: offset.left + $(self.active).outerWidth() * WebSync.zoom - 3
+        left: offset.left + $(self.active).outerWidth() * WS.zoom - 3
       });
       $('.Resize.handle.bottom').offset({
-        top: offset.top + $(self.active).outerHeight() * WebSync.zoom - 3
+        top: offset.top + $(self.active).outerHeight() * WS.zoom - 3
       });
       $('.Resize.handle.right.middle, .Resize.handle.left.middle').offset({
-        top: offset.top + $(self.active).outerHeight() * WebSync.zoom / 2 - 4
+        top: offset.top + $(self.active).outerHeight() * WS.zoom / 2 - 4
       });
       $('.Resize.handle.top.middle, .Resize.handle.bottom.middle').offset({
-        left: offset.left + $(self.active).outerWidth() * WebSync.zoom / 2 - 4
+        left: offset.left + $(self.active).outerWidth() * WS.zoom / 2 - 4
       });
       $('.Resize.handle.top.left.dragable').offset({
         left: offset.left - 8,

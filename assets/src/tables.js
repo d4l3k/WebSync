@@ -406,7 +406,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
       html += '</tr>';
     });
     html += '</tbody></table>';
-    console.log('RESTORING', html);
     _.defer(self.checkForJS);
     return html;
   });

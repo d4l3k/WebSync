@@ -63,6 +63,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
   });
   $('.content').delegate('td', 'mouseup.Chart', function(e) {
     if (insertChart) {
+      console.log("CONTAINER FUCKERS!", e.currentTarget, e);
       $('#insertChartModal .Chart').appendTo(e.currentTarget);
       insertChart = false;
     }
@@ -100,6 +101,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       var canvasHeight = height - chart.find('h3:not(.y)').height() -
         (options.legend ? 20 : 0) -
         chart.find('h2').height();
+      console.log(height, width, canvasHeight);
       $canvas[0].width = chartObj.chart.width = canvasWidth;
       $canvas[0].height = chartObj.chart.height = canvasHeight;
       $canvas.width(canvasWidth).height(canvasHeight);
@@ -204,6 +206,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       }
     });
 
+    console.log(options);
     makeChart($('.ChartContainer'), options, {
       width: 558,
       height: 300

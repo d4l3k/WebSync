@@ -315,11 +315,14 @@ define(['websync'], function(websync) {
     new TWEEN.Tween(self.camera.quaternion).to(obj.quaternion, time)
       .easing(TWEEN.Easing.Quadratic.InOut).onUpdate(markDirty).start();
   };
+  $(document).on('diffed', function(e) {
+    self.updateMenu();
+  });
   self.updateMenu = function() {
     $('#slideView').html('');
     $(self.css_scene.children).each(function(index, slide_obj) {
       var slide = slide_obj.element;
-      var preview = $("<div draggable='true' class='slidePreview" + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>');
+      var preview = $("<div draggable='true' class='slidePreview " + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>');
       preview.find('.slide-content').attr('contenteditable', null);
       preview.appendTo($('#slideView'))
         .data({

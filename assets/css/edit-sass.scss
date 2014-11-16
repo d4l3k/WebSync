@@ -69,7 +69,7 @@ body .mathquill-rendered-math {
         white-space: nowrap;
     }
 }
-.layout-awesome {
+.layout-awesome, .layout-presentation {
     .content-awesome {
         overflow: hidden;
         .content_container {
@@ -113,6 +113,21 @@ body .mathquill-rendered-math {
         * {
             text-align: center;
         }
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -moz-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -moz-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
     }
     #presentation-nav {
         #slideView {
@@ -148,23 +163,6 @@ body .mathquill-rendered-math {
                 font-size: 10pt;
             }
         }
-    }
-    .slide {
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-        -webkit-align-items: center;
-        -moz-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-        -webkit-box-pack: center;
-        -webkit-justify-content: center;
-        -moz-box-pack: center;
-        -ms-flex-pack: center;
-        justify-content: center;
     }
 }
 .noedit {
@@ -368,42 +366,21 @@ nav .settings-popup {
     }
 }
 .layout-presentation {
-    //box-shadow: 0 0 8px #aaa;
-    #slides {
-        display: table;
-        margin: 0 auto;
-    }
+  #slides {
+    display: table;
+    margin: 0 auto;
     .slide {
-        height: 6in;
-        width: 8in;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #aaa;
-        border-radius: 4px;
-        background-color: white;
-        font-size: 24px;
-        line-height: 1.15;
+      &:not(.active) {
         display: none;
-        -user-modify: read-write;
-        @include ex(user-modify, read-write);
-        word-wrap: break-word;
-        overflow-wrap: break-work;
-        @include ex(hyphens, auto);
-        &.active {
-            display: block;
-        }
+      }
     }
-    .content_well {
-        left: 240px;
-    }
-    &.view {
-        .content_well {
-            left: 0;
-        }
-        #presentation-nav {
-            display: none;
-        }
-    }
+  }
+  .content_well {
+    left: 240px;
+  }
+  #slideView {
+    bottom: 0 !important;
+  }
 }
 .content-spreadsheet {
     #spreadsheetWell {

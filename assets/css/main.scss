@@ -30,8 +30,12 @@ h1, h2, h3, h4, h5 {
 .navbar-nav.navbar-right:last-child {
   margin-right: 0;
 }
-.btn, .btn-group, select, input, a, .panel, .popover, .img-thumbnail, .dropdown-menu {
+.btn, .btn-group, select, input, a, .panel, .popover, .img-thumbnail, .dropdown-menu, .modal-content {
   border-radius: 0 !important;
+}
+
+.modal-footer {
+  margin: 0;
 }
 
 .btn-login {

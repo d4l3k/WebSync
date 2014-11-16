@@ -29,6 +29,9 @@ html {
 .modal-body :first-child {
     margin-top: 0;
 }
+.modal-footer {
+  margin: 0;
+}
 #image_modal {
     .progress {
         margin-top: 20px;

@@ -61,10 +61,16 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
     WS.info('Click to insert the chart.');
     insertChart = true;
   });
-  $('.content_container').on('click.Chart', function(e) {
-    var sel = WS.selectionSave();
-    console.log("CONTAINER FUCKERS!", sel, e);
+  $('.content').delegate('td', 'mouseup.Chart', function(e) {
     if (insertChart) {
+      console.log("CONTAINER FUCKERS!", e.currentTarget, e);
+      $('#insertChartModal .Chart').appendTo(e.currentTarget);
+      insertChart = false;
+    }
+  });
+  $('.content_container').on('click.Chart', function(e) {
+    if (insertChart) {
+      var sel = WS.selectionSave();
       $('#insertChartModal .Chart').appendTo(sel.endContainer);
       insertChart = false;
     }
@@ -72,10 +78,10 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
   // Create a chart in a container with options and size.
   function makeChart(container, options, size) {
     var chart = $('<div class="Chart resizable" contenteditable="false">' +
-        (chartTitle ? '<h2>' + options.chartTitle + '</h2>' : '')+
-        '<h3 class="y">' + options.chartYTitle + '</h3>' +
+        (chartTitle ? '<h2>' + _.escape(options.chartTitle) + '</h2>' : '')+
+        '<h3 class="y">' + _.escape(options.chartYTitle) + '</h3>' +
         '<canvas class="noresize"></canvas>' +
-        '<h3>' + options.chartXTitle + '</h3>' +
+        '<h3>' + _.escape(options.chartXTitle) + '</h3>' +
         '<div class="legend"></div>' +
         '</div>');
     var chartObj;
@@ -87,7 +93,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
     });
     var $canvas = chart.find('canvas');
 
-
+    var timeout = -1;
     function resize() {
       var height = chart.height();
       var width = chart.width();
@@ -96,22 +102,20 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
         (options.legend ? 20 : 0) -
         chart.find('h2').height();
       console.log(height, width, canvasHeight);
-      $canvas[0].width = canvasWidth;
-      $canvas[0].height = canvasHeight;
+      $canvas[0].width = chartObj.chart.width = canvasWidth;
+      $canvas[0].height = chartObj.chart.height = canvasHeight;
+      $canvas.width(canvasWidth).height(canvasHeight);
       chart.find('h3.y').width(canvasHeight);
-    }
-
-    resize();
-
-    var timeout = -1;
-    chart.on('resize.Chart', function(e) {
-      resize();
       clearTimeout(timeout);
       timeout = setTimeout(function() {
-        chartObj.stop();
         chartObj.reflow();
         chartObj.render();
       }, 100);
+    }
+
+
+    chart.on('resize.Chart', function(e) {
+      resize();
     });
 
     var cellData = tables.getCellData(options.dataRange);
@@ -166,6 +170,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
         chart.find('.legend').html(chartObj.generateLegend());
       }, 100);
     }
+    resize();
     return [chart, chartObj];
   }
   // Reset the chart insertion modal.
@@ -217,7 +222,8 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
   WS.registerDOMException('.Chart', function(obj) {
     return {
       options: $(obj).data('chartOptions'),
-      style: $(obj).attr('style')
+      style: $(obj).attr('style'),
+      class: $(obj).attr('class')
     };
   }, function(json) {
     var id = 'tmp' + (Math.random()*10000000 | 0);
@@ -229,6 +235,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       $('#' + id).replaceWith(chart[0]);
       chart[0].attr('style', json.style);
       chart[0].resize();
+      chart[0].attr('class', json.class);
     }, 1);
     return '<div id="'+id+'"></div>';
   });

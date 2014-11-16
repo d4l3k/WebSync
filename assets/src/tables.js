@@ -146,7 +146,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     }
   });
   $('.content').delegate('td', 'mousedown.Tables', function(e) {
-    console.log(e);
     if (this != self.selectedElem) {
       self.cursorSelect(this);
       self.selectedElem.contentEditable = true;
@@ -213,13 +212,11 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
       if (self.origX) {
         $(self.active).width(e.pageX - self.origX + self.origWidth);
         var pos = self.selectedPos(self.active);
-        console.log(pos);
         $(self.posToElem(pos[0], 0)).width(e.pageX - self.origX + self.origWidth);
       }
       if (self.origY) {
         $(self.active).height(e.pageY - self.origY + self.origHeight);
         var pos = self.selectedPos(self.active);
-        console.log(pos);
         $(self.posToElem(0, pos[1]).parentElement).height(e.pageY - self.origY + self.origHeight);
       }
       self.cursorUpdate();
@@ -228,7 +225,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
   self.disableAxisPositioning = false;
   $(document).bind('mouseup.Tables', function(e) {
     if (self.drag) {
-      console.log(e);
       e.preventDefault();
       self.origX = null;
       self.origY = null;
@@ -239,7 +235,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
   });
   $('.content').delegate(".Table.axis#x th:not('resize')", 'click.Tables', function(e) {
     var pos = self.selectedPos(this);
-    console.log('POS', pos);
     var size = self.tableSize();
     self.cursorSelect(self.posToElem(pos[0], 0));
     if (!e.shiftKey) {
@@ -264,7 +259,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
         rows = nodes.filter('table').find('tr');
         var pos = self.selectedPos();
         _.each(rows, function(row, i) {
-          console.log(row, i);
           _.each($(row).children(), function(element, j) {
             // TODO: Finish up pasting.
             var html = $(element).html();
@@ -703,7 +697,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     }
   };
   self.enterTable = function(table) {
-    console.log('Entering');
     //$(table).children().on("keydown.TablesTemp", self.keypressHandler);
     $(document).on('keydown.TablesTemp', self.keypressHandler);
     $('.content_container').delegate('resize.Tables', 'table', function(e) {
@@ -712,7 +705,6 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     });
   };
   self.leaveTable = function(table) {
-    console.log('Leaving');
     $(table).unbind('.TablesTemp');
     $(table).undelegate('.TablesTemp');
     $(table).off('.TablesTemp');

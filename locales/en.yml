@@ -50,7 +50,7 @@ en:
             desc: "WebSync uses Gravatar allowing you to use the same profile and photo across numerous sites."
         equations:
             name: "Equations"
-            desc: "The equation plugin allows you to seamlessly use L<sup>A</sup>T<sub>E</sub>X notation in all of your documents. This is powered by <a href='http://mathquill.com/'>MathQuill</a>&emdash;an interactive editor library."
+            desc: "The equation plugin allows you to seamlessly use L<sup>A</sup>T<sub>E</sub>X notation in all of your documents. This is powered by <a href='http://mathquill.com/'>MathQuill</a>&mdash;an interactive editor library."
         plugin_based:
             name: "Plugin Based"
             desc: "WebSync is a plugin based system. All of the editing tools and document types are in their own files. This allows the same code to work on all of your documents, or just on the ones you specify."
@@ -72,6 +72,9 @@ en:
         i18n:
             name: "Any Language"
             desc: "WebSync uses i18n allowing for easy translation to any language. We're currently looking for people willing to translate."
+        charts:
+            name: "Interactive Charts"
+            desc: "Put interactive documents in your spreadsheet and documents! WebSync's chart plugin implements <a href='http://www.chartjs.org/'>Chart.js</a>."
     login:
         sign_in: "Sign In"
         email: "Email"

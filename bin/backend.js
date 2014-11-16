@@ -37,7 +37,10 @@ fs.readFile('./config/config.json', function(err, buffer) {
     var base = url.split('?')[0];
     var parts = base.split('/');
     ws.sendJSON = function(json) {
-      this.send(JSON.stringify(json));
+      this.send(JSON.stringify(json), function(err) {
+        if (err)
+          console.error('WS ERROR', err);
+      });
     };
     console.log(parts);
     if (parts[2] == 'edit' || parts[2] == 'view') {
@@ -184,11 +187,11 @@ fs.readFile('./config/config.json', function(err, buffer) {
                       user: users[client_id]
                     })
                   }));
-                  ws.send(JSON.stringify({
+                  ws.sendJSON({
                     type: 'info',
                     user_id: user_id,
                     users: users
-                  }));
+                  });
                   console.log('[Websocket Client Authed] ID: ' + client_id + ', Email: ' + email);
                 });
               });
@@ -376,13 +379,13 @@ fs.readFile('./config/config.json', function(err, buffer) {
                   .on('row', function(row) {
                     if (data.space == 'document') {
                       var doc_data = JSON.parse(row.config);
-                      ws.send(JSON.stringify({
+                      ws.sendJSON({
                         type: 'config',
                         action: 'get',
                         space: data.space,
                         value: doc_data[data.property],
                         id: data.id
-                      }));
+                      });
 
                     }
                     //TODO: Implement user config
@@ -408,10 +411,10 @@ fs.readFile('./config/config.json', function(err, buffer) {
                     }));
                   } catch (e) {
                     console.log('[data_patch] Error:', e);
-                    ws.send(JSON.stringify({
+                    ws.sendJSON({
                       type: 'error',
                       reason: 'Bad patch'
-                    }));
+                    });
                   }
                 });
             } else if (data.type == 'name_update' && editor) {
@@ -439,14 +442,14 @@ fs.readFile('./config/config.json', function(err, buffer) {
               if (data.action == 'list') {
                 postgres.query('SELECT * FROM assets ORDER BY name')
                   .on('row', function(row) {
-                    ws.send(JSON.stringify({
+                    ws.sendJSON({
                       type: 'asset_list',
                       id: row.id,
                       name: row.name,
                       description: row.description,
                       url: row.url,
                       atype: row.type
-                    }));
+                    });
                   });
               } else if (data.action == 'add' && editor) {
                 postgres.query('INSERT INTO asset_ws_files (file_id, asset_id) VALUES ($1, $2)', [doc_id, data.id]);
@@ -460,10 +463,10 @@ fs.readFile('./config/config.json', function(err, buffer) {
                   .on('row', function(row) {
                     patches.push(row);
                   }).on('end', function() {
-                    ws.send(JSON.stringify({
+                    ws.sendJSON({
                       type: 'diff_list',
                       patches: patches
-                    }));
+                    });
                   });
               }
             }

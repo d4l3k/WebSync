@@ -111,6 +111,8 @@ GEM
     ffi2-generators (0.1.1)
     flamegraph (0.0.5)
       fast_stack
+    font-awesome-sass (4.2.2)
+      sass (~> 3.2)
     git (1.2.8)
     git_time_extractor (0.2.3)
       git (~> 1.2.6)
@@ -455,6 +457,7 @@ DEPENDENCIES
   erubis
   faye-websocket
   flamegraph
+  font-awesome-sass
   git_time_extractor
   hiredis
   i18n

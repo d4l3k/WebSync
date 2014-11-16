@@ -19,7 +19,7 @@ gem 'i18n', require: ['i18n', 'i18n/backend/fallbacks', 'i18n/backend/simple', '
 gem 'rack-contrib'
 gem 'radix62'
 gem 'pg'
-gem 'sinatra-asset-pipeline', :git=>'git://github.com/d4l3k/sinatra-asset-pipeline.git', :require=>'sinatra/asset_pipeline'
+gem 'sinatra-asset-pipeline', git: 'git://github.com/d4l3k/sinatra-asset-pipeline.git', require: ['sinatra/asset_pipeline', 'sprockets/environment']
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 group :development, :test do
     gem 'thin'

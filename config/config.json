@@ -79,13 +79,15 @@
         "Page Layout",
         "Equations",
         "Drawing",
-        "Resize"
+        "Resize",
+        "Charts"
     ]
 }, {
     "name": "Presentation",
     "description": "Similar to Microsoft PowerPoint or LibreOffice Impress.",
     "assets": [
         "Tables",
+        "Charts",
         "Chat",
         "Presentation Layout",
         "Equations",
@@ -97,6 +99,7 @@
     "description": "Similar to Microsoft Excel or LibreOffice Calc.",
     "assets": [
         "Tables",
+        "Charts",
         "Chat",
         "Spreadsheet Layout",
         "Equations",
@@ -107,6 +110,7 @@
     "description": "Similar to Microsoft OneNote.",
     "assets": [
         "Tables",
+        "Charts",
         "Chat",
         "Note Layout",
         "Equations",
@@ -122,6 +126,7 @@
         "Awesome",
         "Equations",
         "Drawing",
+        "Charts",
         "Resize"
     ]
 }],

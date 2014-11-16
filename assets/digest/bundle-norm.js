@@ -1,4 +1,3 @@
-//=require require
-//=require jquery-1.9.1.min.js
-//=require bootstrap
-//=require nprogress
+//=require jquery/dist/jquery.min.js
+//=require bootstrap/dist/js/bootstrap.min.js
+//=require nprogress/nprogress.js

@@ -1,12 +1,12 @@
-//= require bootstrap-contextmenu.js
+//= require bootstrap-contextmenu/bootstrap-contextmenu.js
 //= require bootstrapSwitch.js
-//= require bootstrap-slider.js
+//= require seiyria-bootstrap-slider/dist/bootstrap-slider.min.js
 //= require jquery.computedstyles.js
-//= require rangy-core.js
-//= require rangy-cssclassapplier.js
+//= require rangy/rangy-core.js
+//= require rangy/rangy-cssclassapplier.js
 //= require fullscreen.js
 //= require fontdetect.js
-//= require underscore-min.js
+//= require lodash/dist/lodash.min.js
 //= require levenshtein.js
 //= require jquery.transform2d.js
 //= require jquery.dataselector.js
@@ -14,5 +14,6 @@
 //= require jsondiffpatch.js
 //= require json-patch-duplex.js
 //= require polyfill-scrollintoviewifneeded.js
+//= require requirejs
 //= require edit.js
 //= require core.js

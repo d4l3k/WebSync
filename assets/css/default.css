@@ -1,6 +1,6 @@
 /*
- *= require bs3/css/bootstrap.css
- *= require slider.css
+ *= require bootstrap/dist/css/bootstrap.min.css
+ *= require seiyria-bootstrap-slider/sass/slider.scss
  *= require bootstrapSwitch.css
  *= require main.scss
  */

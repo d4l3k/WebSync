@@ -82,6 +82,7 @@ class WebSync < Sinatra::Base
         register Sinatra::AssetPipeline
         #sprockets.append_path File.join(root, 'assets', 'css')
         sprockets.append_path File.join(root, 'assets', 'digest')
+        sprockets.append_path File.join(root, 'assets', 'bower_components')
         sprockets.append_path File.join(root, 'assets', 'src')
         sprockets.append_path File.join(root, 'assets', 'lib')
 

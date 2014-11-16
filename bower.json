@@ -18,6 +18,14 @@
     "tests"
   ],
   "dependencies": {
-    "fast-json-patch": "~0.4.0"
+    "fast-json-patch": "~0.4.1",
+    "bootstrap": "~3.3.1",
+    "requirejs": "~2.1.15",
+    "jquery": "~2.1.1",
+    "rangy": "~1.2.3",
+    "lodash": "~2.4.1",
+    "bootstrap-contextmenu": "~0.2.0",
+    "seiyria-bootstrap-slider": "~4.2.0",
+    "nprogress": "~0.1.6"
   }
 }

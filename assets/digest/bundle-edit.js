@@ -1,19 +1,19 @@
 //= require bootstrap-contextmenu/bootstrap-contextmenu.js
-//= require bootstrapSwitch.js
+//= require bootstrap-switch/dist/js/bootstrap-switch.min.js
 //= require seiyria-bootstrap-slider/dist/bootstrap-slider.min.js
-//= require jquery.computedstyles.js
 //= require rangy/rangy-core.js
 //= require rangy/rangy-cssclassapplier.js
+//= require lodash/dist/lodash.min.js
+//= require jquery-transform/jquery.transform2d.js
+//= require fast-json-patch/dist/json-patch-duplex.min.js
+
+//= require jquery.computedstyles.js
 //= require fullscreen.js
 //= require fontdetect.js
-//= require lodash/dist/lodash.min.js
 //= require levenshtein.js
-//= require jquery.transform2d.js
 //= require jquery.dataselector.js
-//= require diff_match_patch.js
-//= require jsondiffpatch.js
-//= require json-patch-duplex.js
 //= require polyfill-scrollintoviewifneeded.js
-//= require requirejs
+
+//= require requirejs/require.js
 //= require edit.js
 //= require core.js

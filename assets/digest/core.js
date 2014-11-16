@@ -229,15 +229,15 @@ define('websync', {
           data: data.data
         });
       } else if (data.type == 'asset_list') {
-        var row = $("<tr><td></td><td></td><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' " + (($("script[src='" + data.url + "']").length > 0) ? 'checked' : '') + '/></div></td></tr>');
+        var row = $("<tr><td></td><td></td><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' /></div></td></tr>");
         row.get(0).dataset.id = data.id;
         var children = row.children();
         children.get(0).innerText = data.name;
         children.get(1).innerText = data.description;
         children.get(2).innerText = data.url;
         children.get(3).innerText = data.atype;
-        $($(children.get(4)).children().get(0)).bootstrapSwitch();
         $('#assets tbody').append(row);
+        $(children).find('input').bootstrapSwitch('state', ($("script[src='" + data.url + "']").length > 0), true);
       } else if (data.type == 'diff_list') {
         WebSync.patches = data.patches;
         _.each(WebSync.patches, function(patch) {
@@ -246,7 +246,6 @@ define('websync', {
           children.get(0).innerText = patch.time;
           children.get(1).innerText = patch.patch;
           children.get(2).innerText = patch.user_email;
-          $($(children.get(4)).children().get(0)).bootstrapSwitch();
           $('#diffs tbody').prepend(row);
         });
       }
@@ -629,15 +628,15 @@ define('websync', {
         action: 'list'
       });
     });
-    $('.tab-pane#assets').delegate('.switch', 'switch-change', function(e, data) {
-      var id = e.target.parentElement.parentElement.dataset.id;
-      var url = e.target.parentElement.parentElement.children[2].innerText;
+    $('.tab-pane#assets').delegate('.switch', 'switchChange.bootstrapSwitch', function(e, data) {
+      var id = $(e.target).parents('tr').data().id;
+      var url = $(e.target).parents('tr')[0].children[2].innerText;
       WebSync.connection.sendJSON({
         type: 'assets',
-        action: (data.value ? 'add' : 'delete'),
+        action: (data ? 'add' : 'delete'),
         id: id
       });
-      if (data.value) {
+      if (data) {
         require([url]);
       } else {
         require(url).disable();
@@ -1085,7 +1084,6 @@ define('websync', {
       }
     });
   },
-  dmp: (new diff_match_patch()),
   NODEtoJSON: function(obj) {
     var jso = {
       nodeName: obj.nodeName,

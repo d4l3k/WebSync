@@ -48,8 +48,12 @@ end
 AssetPipeline::Task.define! WebSync
 
 task :deploy do
+  system('bundle')
+  system('npm install')
+  system('bower install')
   Rake::Task["assets:clean"].invoke
   Rake::Task["assets:precompile"].invoke
+  system('killall -s HUP unicorn')
   Rake::Task["cachebust"].invoke
 end
 

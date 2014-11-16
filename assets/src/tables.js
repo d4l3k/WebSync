@@ -2,7 +2,8 @@
 // WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
 // pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
-define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
+define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
+  'use strict';
   var self = {};
   // Save all variables and information to the self object.
 
@@ -14,7 +15,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
   $('#Insert').append($('<button id="table" title="Table" class="btn btn-default Table"><i class="fa fa-table"></i></button>'));
   $('#table').bind('click.Tables', function(e) {
     var new_table = $('<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>');
-    WebSync.insertAtCursor(new_table);
+    WS.insertAtCursor(new_table);
   });
   $('.Table [title="Insert Row Above"]').bind('click.Tables', function(e) {
     if (self.selected) {
@@ -424,13 +425,13 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
       }
     });
   };
-  WebSync.updateRibbon();
+  WS.updateRibbon();
   $("#ribbon_buttons a:contains('Table')").parent().hide();
   // Function: void [plugin=edit].disable();
   // Disables the plugin. This has to be set for possible plugin unloading.
   self.disable = function() {
     var elem = $('.Table').remove();
-    WebSync.updateRibbon();
+    WS.updateRibbon();
     $('*').unbind('.Tables');
     $('*').undelegate('.Tables');
   };
@@ -846,7 +847,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, websync) {
   self.columnLabel = function(a) {
     // First figure out how many digits there are.
     a += 1; // This line is funky
-    c = 0;
+    var c = 0;
     var x = 1;
     while (a >= x) {
       c++;

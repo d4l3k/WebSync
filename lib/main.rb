@@ -40,9 +40,6 @@ class WebSync < Sinatra::Base
         Bundler.require(:production)
         set :assets_css_compressor, :sass
         set :assets_js_compressor, :closure
-        set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
-        no_digest = Dir.glob(File.join(root, 'assets', 'js', '{src,lib}', "*.js")).map{|f| f.split("/").last}
-        set :assets_precompile_no_digest, no_digest
         OmniAuth.config.full_host = $config["host_url"]
     end
     configure :test do
@@ -85,6 +82,10 @@ class WebSync < Sinatra::Base
         sprockets.append_path File.join(root, 'assets', 'bower_components')
         sprockets.append_path File.join(root, 'assets', 'src')
         sprockets.append_path File.join(root, 'assets', 'lib')
+        set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
+        path = File.join(root, '../assets', '{src,lib}', "*.js")
+        no_digest = Dir.glob(path).map{|f| f.split("/").last}
+        set :assets_precompile_no_digest, no_digest
 
         # OmniAuth configuration
         use OmniAuth::Builder do

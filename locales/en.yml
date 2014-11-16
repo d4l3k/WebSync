@@ -82,7 +82,7 @@ en:
         social_login: "Social Login"
         register: "Register"
     nicehead:
-        tag: "An open source self hostable document editing tool created by <a href='http://tristanrice.name'>Tristan Rice</a>."
+        tag: "An open source self hostable document editing tool created by <a href='https://fn.lc'>Tristan Rice</a>."
         create: "Create a File"
         upload: "Upload a File"
         view_code: "View the Code"

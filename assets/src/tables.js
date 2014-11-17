@@ -108,7 +108,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
   self.lastSize = '';
   self.observer = function() {
     var bounding_data = JSON.stringify(self.selectedElem.getBoundingClientRect());
-    if (bounding_data != self.lastSize) {
+    if (bounding_data !== self.lastSize) {
       setTimeout(function() {
         self.cursorUpdate();
       }, 1);
@@ -119,7 +119,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     }
   };
   $('.content').delegate('table', 'click.Tables', function(e) {
-    if (!self.selectedElem || self.selectedElem.contentEditable != 'true') {
+    if (!self.selectedElem || self.selectedElem.contentEditable !== 'true') {
       $('a:contains("Table")').click();
     }
     e.stopPropagation();
@@ -146,7 +146,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     }
   });
   $('.content').delegate('td', 'mousedown.Tables', function(e) {
-    if (this != self.selectedElem) {
+    if (this !== self.selectedElem) {
       self.cursorSelect(this);
       self.selectedElem.contentEditable = true;
       self.setEndOfContenteditable(self.selectedElem);
@@ -158,7 +158,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     //e.preventDefault();
   });
   $('.content').bind('mousemove.Tables', function(e) {
-    if (self.selectionActive && self.selectedElem && self.selectedElem.contentEditable != 'true') {
+    if (self.selectionActive && self.selectedElem && self.selectedElem.contentEditable !== 'true') {
       e.preventDefault();
     }
   });
@@ -173,16 +173,16 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     self.clearSelect();
   });
   $('.content').delegate('td', 'contextmenu.Tables', function(e) {
-    if (this != self.selectedElem) {
+    if (this !== self.selectedElem) {
       self.cursorSelect(this);
     }
-    if (self.selectedElem.contentEditable != 'true') {
+    if (self.selectedElem.contentEditable !== 'true') {
       //e.preventDefault();
       //$(this).contextmenu();
     }
   });
   $('.content').delegate('td', 'dblclick.Tables', function(e) {
-    if (self.selectedElem.contentEditable != 'true') {
+    if (self.selectedElem.contentEditable !== 'true') {
       self.selectedEditable(true);
     }
   });
@@ -275,39 +275,39 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
       if (self.selected) { //&&!e.shiftKey){
         var editting = false;
         if (self.selectedElem.contentEditable) {
-          editting = self.selectedElem.contentEditable == 'true';
+          editting = self.selectedElem.contentEditable === 'true';
         }
-        if (e.keyCode == 13 && !e.shiftKey) {
+        if (e.keyCode === 13 && !e.shiftKey) {
           self.cursorMove(0, 1);
-        } else if (e.keyCode == 9) {
+        } else if (e.keyCode === 9) {
           // Tab key
           self.selectedEditable(false);
           self.cursorMove(1 - 2 * e.shiftKey, 0);
           e.preventDefault();
-        } else if (e.keyCode == 27) {
+        } else if (e.keyCode === 27) {
           // Escape
           self.selectedEditable(false);
-        } else if (e.keyCode == 37 && !editting) {
+        } else if (e.keyCode === 37 && !editting) {
           // Left arrow
           self.cursorMove(-1, 0);
           e.preventDefault();
-        } else if (e.keyCode == 39 && !editting) {
+        } else if (e.keyCode === 39 && !editting) {
           // Right arrow
           self.cursorMove(1, 0);
           e.preventDefault();
-        } else if (e.keyCode == 38 && !editting) {
+        } else if (e.keyCode === 38 && !editting) {
           // Up arrow
           self.cursorMove(0, -1);
           e.preventDefault();
-        } else if (e.keyCode == 40 && !editting) {
+        } else if (e.keyCode === 40 && !editting) {
           // Down a1rrow
           self.cursorMove(0, 1);
           e.preventDefault();
-        } else if (e.keyCode == 46 && !editting) { // Delete key
+        } else if (e.keyCode === 46 && !editting) { // Delete key
           self.emptySelection();
           e.preventDefault();
         } else {
-          if ((!self.selectedElem.contentEditable || self.selectedElem.contentEditable == 'inherit') && _.indexOf([16, 17, 18, 91, 92], e.keyCode) == -1 && !(e.keyCode == 67 && e.ctrlKey)) {
+          if ((!self.selectedElem.contentEditable || self.selectedElem.contentEditable === 'inherit') && _.indexOf([16, 17, 18, 91, 92], e.keyCode) === -1 && !(e.keyCode === 67 && e.ctrlKey)) {
             self.selectedEditable(true);
 
             $(self.selectedElem).focus();
@@ -316,7 +316,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
           setTimeout(self.cursorUpdate, 1);
         }
       } else {
-        if (!self.selectedElem.contentEditable || self.selectedElem.contentEditable == 'false') {
+        if (!self.selectedElem.contentEditable || self.selectedElem.contentEditable === 'false') {
           self.selectedEditable(true);
 
           $(self.selectedElem).focus();
@@ -366,8 +366,8 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
         for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
           attr = attrs.item(i);
           // Ignore attribute if it's set by the table.
-          if (attr.nodeName != 'data-content' &&
-            attr.nodeName != 'contenteditable') {
+          if (attr.nodeName !== 'data-content' &&
+            attr.nodeName !== 'contenteditable') {
             if (!cell_out.attrs)
               cell_out.attrs = {};
             cell_out.attrs[attr.nodeName] = attr.nodeValue;
@@ -449,7 +449,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     self.selectedEditable(false);
     //self.observer.observe(self.selectedElem,{characterData:true});
     self.selectedElem.addEventListener('DOMSubtreeModified', self.observer);
-    if ($('.Table.axis').length == 0) {
+    if ($('.Table.axis').length === 0) {
       var size = self.tableSize();
       var nodes = '<table class="Table axis" id="x"><thead><tr>';
       for (var i = 0; i < size[0]; i++) {
@@ -535,7 +535,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
       .width(elem_box.width - 6)
       .get(0).scrollIntoViewIfNeeded();
 
-    if ((table.css('position') == 'absolute' || pos)) {
+    if ((table.css('position') === 'absolute' || pos)) {
       if (!self.disableAxisPositioning) {
         self.axisPosition();
       }
@@ -561,7 +561,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     var parts = _.last(bits).split(':');
     var first = self.coordsFromLabel(parts[0]),
       second;
-    if (parts.length == 2) {
+    if (parts.length === 2) {
       second = self.coordsFromLabel(parts[1]);
     }
     var top_left, bottom_right, size;
@@ -682,7 +682,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
   self.enterLeaveBinds = function() {
     if (self.selected) {
       var primary = self.primaryTable();
-      if (primary != self.table) {
+      if (primary !== self.table) {
         if (self.table) {
           self.leaveTable(self.table);
         }
@@ -720,7 +720,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
   });
   self.updateSelectedArea = function() {
     $('.Table.axis th').removeClass('active');
-    if (!self.selected || self.primaryTable() != self.primaryTable(self.selectionEnd)) {
+    if (!self.selected || self.primaryTable() !== self.primaryTable(self.selectionEnd)) {
       $('#table_selection').hide();
       if (self.selected) {
         $($('.Table.axis#x').children().children().children()[self.selectedPos()[0]]).addClass('active');
@@ -762,7 +762,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
       }
       selection_html += '</tbody></table>';
       $('#table_clip').html(selection_html);
-      if (self.selectedElem.contentEditable != 'true') {
+      if (self.selectedElem.contentEditable !== 'true') {
         // Hidden selection area for copying.
         var range = rangy.createRange();
         range.selectNodeContents($('#table_clip').get(0));
@@ -819,13 +819,13 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
   self.selectedPos = function(targetElem) {
     var child = (targetElem || self.selectedElem);
     var column = 0;
-    while ((child = child.previousSibling) != null) {
-      if (child.nodeName == 'TD' || child.nodeName == 'TH')
+    while ((child = child.previousSibling) !== null) {
+      if (child.nodeName === 'TD' || child.nodeName === 'TH')
         column++;
     }
     child = (targetElem || self.selectedElem).parentElement;
     var row = 0;
-    while ((child = child.previousSibling) != null)
+    while ((child = child.previousSibling) !== null)
       row++;
     return [column, row];
   };
@@ -861,7 +861,7 @@ define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
     var r = '',
       c = '';
     _.each(label, function(sym) {
-      if (alpha.indexOf(sym) != -1) {
+      if (alpha.indexOf(sym) !== -1) {
         c += sym;
       } else {
         r += sym;

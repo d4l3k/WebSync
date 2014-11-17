@@ -1,5 +1,6 @@
 // WebSync: Text Editing Plugin
-define('edit', ['websync'], function(websync) {
+define('edit', ['websync'], function(WS) {
+  'use strict';
   var self = {};
   // Plugins should use a jQuery namespace for ease of use.
   // Bind Example: $(document).bind("click.Tables", clickHandler);
@@ -257,7 +258,7 @@ define('edit', ['websync'], function(websync) {
       if (command) e.preventDefault();
     }
     if (e.ctrlKey && e.keyCode == 83) { // S
-      WebSync.info('<b>Saved</b> WebSync automatically saves your changes.');
+      WS.info('<b>Saved</b> WebSync automatically saves your changes.');
       $('#ribbon_buttons a:contains(File)').click();
       $('#File .btn-group button').click();
       e.preventDefault();
@@ -271,13 +272,13 @@ define('edit', ['websync'], function(websync) {
   $('#font_size').change(function() {
     var size = $('#font_size').val();
     console.log(size);
-    WebSync.applyCssToSelection({
+    WS.applyCssToSelection({
       'font-size': size
     });
   });
   // Picture, video and link insertion.
   $('#picture').click(function() {
-    self.selection = WebSync.selectionSave();
+    self.selection = WS.selectionSave();
     console.log(self.selection);
     $('#image_modal').modal();
   });
@@ -285,7 +286,7 @@ define('edit', ['websync'], function(websync) {
     var url = $('#image_modal input[type=text]').val();
     if (url.length > 0) {
       $('#image_modal').modal('hide');
-      WebSync.selectionRestore(self.selection);
+      WS.selectionRestore(self.selection);
       delete self.selection;
       $('#image_modal input[type=text]').val('');
       document.execCommand('insertImage', false, url);
@@ -294,7 +295,7 @@ define('edit', ['websync'], function(websync) {
       if (files.length > 0) {
         $('#image_modal .progress').slideDown();
         var name = files[0].name;
-        WebSync.uploadResource(files[0], function(e) {
+        WS.uploadResource(files[0], function(e) {
           var pc = parseInt(100 - (e.loaded / e.total * 100));
           $('#image_modal .progress-bar').css('width', pc + '%');
         }, function(xhr) {
@@ -302,17 +303,17 @@ define('edit', ['websync'], function(websync) {
             $('#image_modal .progress-bar').css('width', '100%');
             $('#image_modal .progress').slideUp();
             if (xhr.status == 200)
-              WebSync.success('<strong>Success!</strong> File uploaded successfully.');
+              WS.success('<strong>Success!</strong> File uploaded successfully.');
             else
-              WebSync.error('<strong>Error!</strong> File failed to upload.');
+              WS.error('<strong>Error!</strong> File failed to upload.');
             $('#image_modal input[type=file]').val('');
             $('#image_modal').modal('hide');
-            WebSync.selectionRestore(self.selection);
+            WS.selectionRestore(self.selection);
             document.execCommand('insertImage', false, 'assets/' + name);
           }
         });
       } else {
-        WebSync.error('<strong>Error!</strong> You need to input a file or URL.');
+        WS.error('<strong>Error!</strong> You need to input a file or URL.');
       }
     }
   });
@@ -322,12 +323,12 @@ define('edit', ['websync'], function(websync) {
   });
   $('#line_spacing a').click(function(e) {
     var width = $(this).text();
-    WebSync.applyCssToSelection({
+    WS.applyCssToSelection({
       'line-height': width + 'em'
     });
   });
   $('#video').click(function() {
-    self.selection = WebSync.selectionSave();
+    self.selection = WS.selectionSave();
     $('#youtube_modal').modal();
     /*var url = prompt("Video URL (Youtube)");
         if (url.indexOf("youtu") != -1) {
@@ -349,7 +350,7 @@ define('edit', ['websync'], function(websync) {
     $('#youtube_modal input').val('');
     var youtube_id = self.youtube_parser(url);
     var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>';
-    WebSync.selectionRestore(self.selection);
+    WS.selectionRestore(self.selection);
     delete self.selection;
     document.execCommand('insertHTML', false, html);
   });
@@ -384,13 +385,13 @@ define('edit', ['websync'], function(websync) {
   // Disables the TextEdit plugin.
   self.disable = function() {
     var elem = $('.Text').remove();
-    WebSync.updateRibbon();
+    WS.updateRibbon();
     $('*').unbind('.TextEdit');
     $('*').undelegate('.TextEdit');
   };
   // Handling function for displaying accurate information about text in ribbon.
   self.selectHandler = function() {
-    var style = WebSync.getCss();
+    var style = WS.getCss();
     $('#fontColor')[0].value = self.rgb_to_hex(style.color);
     $('#hilightColor')[0].value = self.rgb_to_hex(style.backgroundColor);
     $('#font_size').val(Math.round(parseInt(style.fontSize) * (0.75)) + 'pt');
@@ -496,6 +497,6 @@ define('edit', ['websync'], function(websync) {
     self.updateStyles();
   });
   $('#font .dropdown-menu').html(font_list.join('\n'));
-  WebSync.updateRibbon();
+  WS.updateRibbon();
   return self;
 });

@@ -19,6 +19,9 @@ def wait_for
     while !yield && (Time.now-start) < 5
         sleep 0.05
     end
+    if Time.now-start >= 5
+        puts "WAIT FOR TIMED OUT!"
+    end
 end
 def wait_for_edit
     wait_for do

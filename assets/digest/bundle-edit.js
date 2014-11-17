@@ -1,3 +1,4 @@
+//= require polyfill-bind.js
 //= require bootstrap-contextmenu/bootstrap-contextmenu.js
 //= require bootstrap-switch/dist/js/bootstrap-switch.min.js
 //= require seiyria-bootstrap-slider/dist/bootstrap-slider.min.js

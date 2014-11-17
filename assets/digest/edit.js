@@ -422,7 +422,7 @@ define('edit', ['websync'], function(WS) {
     return 0;
   });
   self.available_fonts = [];
-  for (i = 0; i < fonts.length; i++) {
+  for (var i = 0; i < fonts.length; i++) {
     var result = d.detect(fonts[i]);
     if (result) {
       self.available_fonts.push({

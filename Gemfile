@@ -15,13 +15,13 @@ gem 'sinatra', :require=>'sinatra/base'
 gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'nokogiri'
 gem 'multi_json'
-gem 'i18n'
+gem 'i18n', require: ['i18n', 'i18n/backend', 'i18n/backend/simple', 'i18n/backend/fallbacks', 'i18n/config']
 gem 'rack-contrib'
 gem 'radix62'
 gem 'pg'
 gem 'font-awesome-sass'
 gem 'compass'
-gem 'sinatra-asset-pipeline', git: 'git://github.com/d4l3k/sinatra-asset-pipeline.git', require: ['sinatra/asset_pipeline']
+gem 'sinatra-asset-pipeline', git: 'git://github.com/d4l3k/sinatra-asset-pipeline.git', require: ['sinatra/asset_pipeline', 'sprockets/environment', 'sprockets/manifest']
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 group :development, :test do
     gem 'thin'
@@ -49,6 +49,6 @@ group :development do
     gem 'flamegraph'
 end
 
-gem 'omniauth'
+gem 'omniauth', require: ['omniauth/builder']
 gem 'omniauth-facebook'
 gem 'omniauth-gplus'

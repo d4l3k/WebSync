@@ -6,10 +6,11 @@ ENV["CONFIGMODE"] = "y"
 
 require './lib/main'
 task :spec do
-    require './lib/models'
-    require './lib/configure'
-    system("hooks/pre-push.sh")
-    Process::exit $?.exitstatus
+  Bundler.require
+  require './lib/models'
+  require './lib/configure'
+  system("hooks/pre-push.sh")
+  Process::exit $?.exitstatus
 end
 
 task default: :spec

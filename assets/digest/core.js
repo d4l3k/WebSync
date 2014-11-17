@@ -542,8 +542,7 @@ define('websync', function() {
       $('#name, #permissions input[type=text]').bind('mousedown selectstart', function(e) {
         e.stopPropagation();
       });
-      $('#zoom_level').slider()
-        .on('slide', function(e) {
+      $('#zoom_level').slider().on('slide', function(e) {
           WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
 
         });
@@ -600,7 +599,7 @@ define('websync', function() {
         console.log(this);
         var patches = [];
         var c_div = this.parentElement.parentElement;
-        var id = parseInt($(this).data('id'));
+        var id = parseInt($(this).data('id'), 10);
         // TODO: Tree based patches.
         for (var i = 0; i < WebSync.patches.length; i++) {
           patches.push(WebSync.patches[i]);
@@ -1217,7 +1216,7 @@ define('websync', function() {
       });
       return html;
     }
-  }
+  };
   WS.initialize();
   return WebSync;
 });
@@ -1235,11 +1234,11 @@ String.prototype.capitalize = function() {
   // This is used to know when all modules are loaded. It uses a sketchy internal function subject to change.
   requirejs.onResourceLoad = function(context, map, depArray) {
     if (done) return;
-    var context = requirejs.s.contexts._;
+    var requirejs_context = requirejs.s.contexts._;
     var loaded = 0;
     var total = 0;
-    _.each(context.urlFetched, function(fetched, script) {
-      if (fetched && context.defined[script]) {
+    _.each(requirejs_context.urlFetched, function(fetched, script) {
+      if (fetched && requirejs_context.defined[script]) {
         loaded += 1;
       }
       total += 1;

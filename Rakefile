@@ -90,7 +90,7 @@ task :time, :email do |task, args|
     puts "Number of Commits: #{commits}, Hours: #{time/60.0}"
 end
 task :loc do
-    system("cloc lib/* Gemfile Rakefile config.ru views/* assets/css/{main,edit}.scss bin/* --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src locales/* config/config.json Dockerfile config spec/* hooks/*")
+    system("cloc lib Gemfile Rakefile config.ru views assets/css/{main,edit-sass}.scss bin --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src locales config/config.json Dockerfile config spec hooks")
 end
 # Calculates the time taken using the COCOMO basic organic software project model.
 task :cocomo do
@@ -104,7 +104,7 @@ task :cocomo do
     c_b = 2.5
     d_b = 0.38
 
-    csv = `cloc lib/* Gemfile Rakefile config.ru views/* assets/css/{main,edit}.scss bin/* --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src locales/* config/config.json Dockerfile config spec/* hooks/* --csv`.split("\n\n").last
+    csv = `cloc lib/* Gemfile Rakefile config.ru views/* assets/css/{main,edit-sass}.scss bin/* --force-lang=html,erb --force-lang=ruby,Rakefile assets/digest/{edit,core,bundle-edit,bundle-norm}.js assets/src locales/* config/config.json Dockerfile config spec/* hooks/* --csv`.split("\n\n").last
     data = CSV.parse(csv)
     lines = data.map{|a|a[4].to_i}.inject(:+)
     kloc = lines/1000.0

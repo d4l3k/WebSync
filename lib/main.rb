@@ -99,6 +99,6 @@ class WebSync < Sinatra::Base
   end
 end
 
-Dir.glob('routes/*.rb').each do |file|
-  require_relative file
+Dir.glob('lib/routes/*.rb').each do |file|
+  require_relative '../'+file
 end

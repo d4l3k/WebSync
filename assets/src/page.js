@@ -1,28 +1,35 @@
 // WebSync: Page layout handler
-define('/assets/page.js', ['websync'], function(websync) {
-  var self = this;
-  $('.content').hide().append($('<div class="content_container"><div class="page"></div></div>')).addClass('content-page').fadeIn();
+define('/assets/page.js', ['websync'], function(WS) {
+  'use strict';
+  var self = {};
+  $('.content').hide()
+    .append($('<div class="content_container"><div class="page"></div></div>'))
+    .addClass('content-page').fadeIn();
   if (!WebSyncData.body) {
     WebSyncData.body = [];
   }
-  if (WebSyncAuth.view_op == 'edit' && WebSyncAuth.access != 'viewer') {
+  if (WebSyncAuth.view_op === 'edit' && WebSyncAuth.access !== 'viewer') {
     $('.page').attr('contenteditable', true);
   }
-  WebSync.toJSON = function() {
+  WS.toJSON = function() {
     WebSyncData.body = WS.DOMToJSON($('.content .page').get(0).childNodes);
   };
-  WebSync.fromJSON = function(patch) {
+  WS.fromJSON = function(patch) {
     if (patch) {
-      WebSync.applyPatch(patch, '/body/', $('.content .page').get(0));
+      WS.applyPatch(patch, '/body/', $('.content .page').get(0));
     } else {
       $('.content .page').get(0).innerHTML = WS.JSONToDOM(WebSyncData.body);
     }
   };
-  WebSync.setupDownloads('document', function() {
-    return '<html><head><style>' + WebSyncData.custom_css.join('\n') + '</style></head><body>' + WS.JSONToDOM(WebSyncData.body) + '</body></html>';
+  WS.setupDownloads('document', function() {
+    return '<html><head><style>' +
+      (WebSyncData.custom_css || []).join('\n') +
+      '</style></head><body>' +
+      WS.JSONToDOM(WebSyncData.body) +
+      '</body></html>';
   });
   $(document).on('modules_loaded', function() {
-    WebSync.fromJSON();
+    WS.fromJSON();
     if (WebSyncData.html) {
       $('.content .page').first().append(WebSyncData.html);
       delete WebSyncData.html;

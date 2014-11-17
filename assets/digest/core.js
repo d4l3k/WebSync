@@ -11,6 +11,7 @@
 
 // This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
 define('websync', function() {
+  'use strict';
   var WebSync, WS;
   WebSync = WS = {
     // Variable: object WebSync.tmp;
@@ -75,7 +76,7 @@ define('websync', function() {
         setTimeout(WebSync.webSocketStart, 2000);
       },
       onmessage: function(e) {
-        data = JSON.parse(e.data);
+        var data = JSON.parse(e.data);
         console.log('MESSAGE', data);
         if (data.type === 'scripts') {
           // Load scripts from server.

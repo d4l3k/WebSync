@@ -158,7 +158,7 @@ define('edit', ['websync'], function(WS) {
     var text = $('.content_container').text();
     var seltext = rangy.getSelection().toString();
     table.find('tr').eq(1).find('td').eq(0).text(text.split(/\s+/).length);
-    table.find('tr').eq(1).find('td').eq(1).text(seltext == '' ? 0 : seltext.split(/\s+/).length);
+    table.find('tr').eq(1).find('td').eq(1).text(seltext === '' ? 0 : seltext.split(/\s+/).length);
     table.find('tr').eq(2).find('td').eq(0).text(text.length);
     table.find('tr').eq(2).find('td').eq(1).text(seltext.length);
     table.find('tr').eq(3).find('td').eq(0).text(text.split(' ').join('').length);
@@ -197,10 +197,10 @@ define('edit', ['websync'], function(WS) {
   });
   // List indentation
   $('.content_well').bind('keydown.TextEdit', function(e) {
-    if (e.keyCode == 9) {
+    if (e.keyCode === 9) {
       var node = $(getSelection().anchorNode);
       var parent = node.parent();
-      if ($(getSelection().baseNode).closest('li').length == 1) {
+      if ($(getSelection().baseNode).closest('li').length === 1) {
         if (e.shiftKey) {
           document.execCommand('outdent');
         } else {
@@ -208,7 +208,7 @@ define('edit', ['websync'], function(WS) {
         }
       } else {
         if (e.shiftKey) {
-          if (parent.css('text-indent') != '0px') {
+          if (parent.css('text-indent') !== '0px') {
             parent.css({
               'text-indent': ''
             });
@@ -217,8 +217,8 @@ define('edit', ['websync'], function(WS) {
           }
           // No indentation inside a table.
         } else if (!parent.is('td, th')) {
-          if (parent.css('text-indent') == '0px') {
-            if (parent.attr('contenteditable') == 'true') {
+          if (parent.css('text-indent') === '0px') {
+            if (parent.attr('contenteditable') === 'true') {
               node.wrap("<div style='text-indent: 40px'></div>");
             } else {
               parent.css({
@@ -234,30 +234,30 @@ define('edit', ['websync'], function(WS) {
     }
     if (e.shiftKey && e.ctrlKey) {
       var command = true;
-      if (e.keyCode == 54) { // Key 6
+      if (e.keyCode === 54) { // Key 6
         document.execCommand('superscript');
-      } else if (e.keyCode == 55) { // Key 7
+      } else if (e.keyCode === 55) { // Key 7
         document.execCommand('insertunorderedlist');
-      } else if (e.keyCode == 56) { // Key 8
+      } else if (e.keyCode === 56) { // Key 8
         document.execCommand('insertorderedlist');
-      } else if (e.keyCode == 69) { // E
+      } else if (e.keyCode === 69) { // E
         document.execCommand('justifycenter');
-      } else if (e.keyCode == 74) { // J
+      } else if (e.keyCode === 74) { // J
         document.execCommand('justifyfull');
-      } else if (e.keyCode == 76) { // L
+      } else if (e.keyCode === 76) { // L
         document.execCommand('justifyleft');
-      } else if (e.keyCode == 82) { // R
+      } else if (e.keyCode === 82) { // R
         document.execCommand('justifyright');
-      } else if (e.keyCode == 189) { // -
+      } else if (e.keyCode === 189) { // -
         document.execCommand('subscript');
-      } else if (e.keyCode == 220) { // \
+      } else if (e.keyCode === 220) { // \
         document.execCommand('removeFormat');
       } else {
         command = false;
       }
       if (command) e.preventDefault();
     }
-    if (e.ctrlKey && e.keyCode == 83) { // S
+    if (e.ctrlKey && e.keyCode === 83) { // S
       WS.info('<b>Saved</b> WebSync automatically saves your changes.');
       $('#ribbon_buttons a:contains(File)').click();
       $('#File .btn-group button').click();
@@ -299,10 +299,10 @@ define('edit', ['websync'], function(WS) {
           var pc = parseInt(100 - (e.loaded / e.total * 100));
           $('#image_modal .progress-bar').css('width', pc + '%');
         }, function(xhr) {
-          if (xhr.readyState == 4) {
+          if (xhr.readyState === 4) {
             $('#image_modal .progress-bar').css('width', '100%');
             $('#image_modal .progress').slideUp();
-            if (xhr.status == 200)
+            if (xhr.status === 200)
               WS.success('<strong>Success!</strong> File uploaded successfully.');
             else
               WS.error('<strong>Error!</strong> File failed to upload.');
@@ -331,7 +331,7 @@ define('edit', ['websync'], function(WS) {
     self.selection = WS.selectionSave();
     $('#youtube_modal').modal();
     /*var url = prompt("Video URL (Youtube)");
-        if (url.indexOf("youtu") != -1) {
+        if (url.indexOf("youtu") !== -1) {
             var youtube_id = self.youtube_parser(url);
             console.log("Youtube id", youtube_id);
             var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
@@ -358,7 +358,7 @@ define('edit', ['websync'], function(WS) {
   self.youtube_parser = function(url) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
-    if (match && match[2].length == 11) {
+    if (match && match[2].length === 11) {
       return match[2];
     } else {
       alert('Invalid URL');
@@ -366,8 +366,8 @@ define('edit', ['websync'], function(WS) {
   };
   // Helper function to convert rgba(r, g, b, a) to #RRGGBB
   self.rgb_to_hex = function(rgb) {
-    if (rgb == 'rgba(0, 0, 0, 0)') return '#FFFFFF';
-    if (rgb.indexOf('rgba') != -1) {
+    if (rgb === 'rgba(0, 0, 0, 0)') return '#FFFFFF';
+    if (rgb.indexOf('rgba') !== -1) {
       //return '#000000';
     }
     var parts = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(1|0|0?\.d+))?\)$/);
@@ -377,7 +377,7 @@ define('edit', ['websync'], function(WS) {
     for (var i = 1; i <= 3; ++i) {
       if (parts[i]) {
         parts[i] = parseInt(parts[i]).toString(16);
-        if (parts[i].length == 1) parts[i] = '0' + parts[i];
+        if (parts[i].length === 1) parts[i] = '0' + parts[i];
       }
     }
     return '#' + parts.slice(1, 4).join('').toUpperCase();
@@ -435,7 +435,7 @@ define('edit', ['websync'], function(WS) {
   $('head').append("<link href='https://fonts.googleapis.com/css?family=" +
     webfonts.join('|').replace(/\s+/g, '+') + "' rel='stylesheet' type='text/css'>");
   _.each(webfonts, function(font) {
-    if (self.available_fonts.indexOf(font) == -1) {
+    if (self.available_fonts.indexOf(font) === -1) {
       self.available_fonts.push({
         name: font,
         source: 'google'
@@ -447,7 +447,7 @@ define('edit', ['websync'], function(WS) {
     var font_entry = '<li>';
     font_entry += '<a href="#">';
     font_entry += '<span class="fname" style="font-family: \'' + font.name + '"\'">' + font.name + '</span>';
-    if (font.source == 'google') {
+    if (font.source === 'google') {
       //font_entry += '<i class="fa fa-google-plus"></i>';
       font_entry += '<span class="pull-right" title="From Google Web Fonts">G</span>';
     }
@@ -477,7 +477,7 @@ define('edit', ['websync'], function(WS) {
   document.body.appendChild(tag);
   $("a[href='#css']").click();
   var check = function() {
-    if (typeof ace != 'undefined') {
+    if (typeof ace !== 'undefined') {
       self.editor = window.ace.edit('css-editor');
       //self.editor.setTheme("ace/theme/monokai");
       self.editor.getSession().setMode('ace/mode/css');

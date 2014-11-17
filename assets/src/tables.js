@@ -2,7 +2,7 @@
 // WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
 // pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
-define('/assets/tables.js', ['edit', 'websync'], function(edit, WS) {
+define('/assets/tables.js', ['websync'], function(WS) {
   'use strict';
   var self = {};
   // Save all variables and information to the self object.

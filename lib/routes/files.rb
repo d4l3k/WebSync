@@ -1,21 +1,25 @@
-class WebSync < Sinatra::Base
-    get '/' do
+module WebSync
+  module Routes
+    class Files < Base
+      get '/' do
         @javascripts = []
         if logged_in?
-            erb :file_list
+          erb :file_list
         else
-            cache do
-                erb :index
-            end
+          cache do
+            erb :index
+          end
         end
-    end
-    get '/deleted' do
+      end
+      get '/deleted' do
         login_required
         erb :deleted
-    end
-    get '/public' do
+      end
+      get '/public' do
         cache time: 30 do
-            erb :public
+          erb :public
         end
+      end
     end
+  end
 end

@@ -8,5 +8,5 @@ use Rack::MiniProfiler if ENV.has_key?("PROFILE")
     end
 end
 map '/' do
-    run WebSync
+    run WebSync::App
 end

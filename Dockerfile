@@ -54,7 +54,7 @@ ENV HOME /home
 RUN cd /src; bundle install --deployment; npm install
 
 #USER daemon
-RUN cd /src; rake assets:clean assets:precompile
+RUN cd /src; rake deploy
 
 ENV PATH /src/bin:$PATH
 

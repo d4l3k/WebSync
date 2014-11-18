@@ -16,7 +16,7 @@ class TestResponse
     end
 end
 class TestHelpers
-    include Helpers
+    include WebSync::Helpers
     def initialize
         @session = {}
     end

@@ -1,3 +1,6 @@
+/*jslint browser: true*/
+/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
+
 /*
   WebSync: Core.js
   This is the core file that runs the WebSync editor.
@@ -38,7 +41,7 @@ define('websync', function() {
     // Variable: object WebSync.webSocketCallbacks;
     // An object with all of the callbacks for a websocket connection.
     webSocketCallbacks: {
-      onopen: function(e) {
+      onopen: function() {
         WebSync.diffInterval = setInterval(WebSync.checkDiff, 1000);
         $('nav').removeClass('no-connection');
         $(document).trigger('connection');
@@ -443,229 +446,6 @@ define('websync', function() {
         space: space,
         id: id
       });
-    },
-    // Function: void WebSync.initialize();
-    // This is where the core of WebSync initializes.
-    initialize: function() {
-      NProgress.start();
-      this.webSocketStart();
-
-      // Disable Mozilla built in resizing for tables and images.
-      document.execCommand('enableObjectResizing', false, 'false');
-      document.execCommand('enableInlineTableEditing', false, 'false');
-      $("#settingsBtn, [href='#permissions']").click(function() {
-        WebSync.connection.sendJSON({
-          type: 'permission_info'
-        });
-      });
-      $("#settingsBtn, [href='#blobs']").click(function() {
-        WebSync.connection.sendJSON({
-          type: 'blob_info'
-        });
-      });
-      $('#user_perms').delegate('select', 'change', function(e) {
-        var email = $(this).parents('td').prev().text();
-        var choice = $(e.target).val();
-        WebSync.connection.sendJSON({
-          type: 'share',
-          email: email,
-          level: choice
-        });
-      });
-      $('#user_perms').delegate('a', 'click', function(e) {
-        var email = $(this).parents('tr').children().first().text();
-        WebSync.connection.sendJSON({
-          type: 'share',
-          email: email,
-          level: 'delete'
-        });
-        setTimeout(function() {
-          WebSync.connection.sendJSON({
-            type: 'permission_info'
-          });
-        }, 100);
-      });
-      $('#share_with').click(function() {
-        var email = $('#share_email').val();
-        WebSync.connection.sendJSON({
-          type: 'share',
-          email: email,
-          level: 'viewer'
-        });
-        setTimeout(function() {
-          WebSync.connection.sendJSON({
-            type: 'permission_info'
-          });
-        }, 100);
-        $('#share_email').val('');
-      });
-      $('#access_mode, #default_permissions').change(function() {
-        if (WebSyncAuth.access === 'owner') {
-          WebSync.connection.sendJSON({
-            type: 'default_permissions',
-            visibility: $('#access_mode').val(),
-            default_level: $('#default_permissions').val()
-          });
-        } else {
-          WebSync.error('Invalid permissions.');
-        }
-      });
-      $('#name').blur(function() {
-        var name = $(this).text();
-        document.title = name + ' - WebSync';
-        WebSync.connection.sendJSON({
-          type: 'name_update',
-          name: name
-        });
-      });
-      $('#name').keydown(function(e) {
-        e.stopPropagation();
-      });
-      $('#name').focus(function() {
-        if (this.innerText.indexOf('Unnamed') === 0) {
-          setTimeout(function() {
-            document.execCommand('selectAll');
-          }, 100);
-        }
-      });
-      $('.settings-popup #config').delegate('button', 'click', function() {
-        $(this.parentElement.children[0]).prop('disabled', function(_, val) {
-          return !val;
-        });
-        $(this).toggleClass('active');
-      });
-      $('nav, .content_well').bind('mousedown selectstart', function(e) {
-        if (e.target.tagName !== 'SELECT') {
-          return false;
-        }
-      });
-      $('#name, #permissions input[type=text]').bind('mousedown selectstart', function(e) {
-        e.stopPropagation();
-      });
-      $('#zoom_level').slider().on('slide', function(e) {
-          WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
-
-        });
-      $('body').mousemove(function(e) {
-        if (WebSync.viewMode === 'Zen') {
-          if (e.pageY < 85 && !WebSync.menuVisible) {
-            $('nav').animate({
-              top: 0
-            }, 200);
-            WebSync.menuVisible = true;
-          } else if (e.pageY > 85 && WebSync.menuVisible) {
-            $('nav').animate({
-              top: -96
-            }, 200);
-            WebSync.menuVisible = false;
-          }
-        }
-      });
-      if (WebSyncAuth.access === 'viewer') {
-        $('body').addClass('noedit');
-      }
-      WebSync.urlChange();
-      $(window).bind('popstate', function(e) {
-        WebSync.urlChange();
-      });
-      $('#view_mode').change(WebSync.updateViewMode);
-      $('.present').click(function() {
-        $('#view_mode').val('Presentation');
-        WebSync.updateViewMode();
-      });
-      $('.return').click(function() {
-        $('#view_mode').val('Normal');
-        WebSync.updateViewMode();
-      });
-      $('.fullscreen').click(function() {
-        if (fullScreenApi.isFullScreen())
-          fullScreenApi.cancelFullScreen();
-        else
-          fullScreenApi.requestFullScreen(document.body);
-      });
-      require(['edit']);
-      this.updateRibbon();
-      rangy.init();
-      $('#settingsBtn').click(function() {
-        $(this.parentElement).toggleClass('active');
-        $('.settings-popup').toggle();
-        WebSync.resize();
-      });
-      $('.settings-popup .close').click(function() {
-        $($('#settingsBtn').get(0).parentElement).toggleClass('active');
-        $('.settings-popup').toggle();
-      });
-      $('.settings-popup #diffs').delegate('button', 'click', function(e) {
-        console.log(this);
-        var patches = [];
-        var c_div = this.parentElement.parentElement;
-        var id = parseInt($(this).data('id'), 10);
-        // TODO: Tree based patches.
-        for (var i = 0; i < WebSync.patches.length; i++) {
-          patches.push(WebSync.patches[i]);
-          if (WebSync.patches[i].id === id) {
-            i = WebSync.patches.length;
-          }
-        }
-        console.log(patches.length);
-        var new_body = {
-          body: []
-        };
-        _.each(patches, function(patch) {
-          jsonpatch.apply(new_body, JSON.parse(patch.patch));
-        });
-        console.log(new_body);
-        _.each(WebSyncData, function(v, k) {
-          delete WebSyncData[k];
-        });
-        _.each(new_body, function(v, k) {
-          WebSyncData[k] = v;
-        });
-        WebSyncData = new_body;
-        if (WebSync.fromJSON) {
-          WebSync.fromJSON();
-        }
-        WebSync.checkDiff();
-      });
-      $("a[href='#assets']").click(function() {
-        $('#assets tbody').html('');
-        WebSync.connection.sendJSON({
-          type: 'assets',
-          action: 'list'
-        });
-      });
-      $('.tab-pane#assets').delegate('.switch', 'switchChange.bootstrapSwitch', function(e, data) {
-        var id = $(e.target).parents('tr').data().id;
-        var url = $(e.target).parents('tr')[0].children[2].innerText;
-        WebSync.connection.sendJSON({
-          type: 'assets',
-          action: (data ? 'add' : 'delete'),
-          id: id
-        });
-        if (data) {
-          require([url]);
-        } else {
-          require(url).disable();
-          requirejs.undef(url);
-        }
-      });
-      $("a[href='#diffs']").click(function() {
-        $('#diffs tbody').html('');
-        WebSync.connection.sendJSON({
-          type: 'diffs',
-          action: 'list'
-        });
-      });
-      $(document).on('online', function() {
-        NProgress.done();
-      });
-      this.applier = rangy.createCssClassApplier('tmp');
-      // TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
-      this.resize();
-      $(window).resize(this.resize);
-      //this.setupWebRTC();
-      clearTimeout(window.initError);
-      window.initError = true;
     },
     // Variable: object WebSync.domExceptions;
     // This is where registerDOMException stores it's internal data. You probably shouldn't modify this directly.
@@ -1217,7 +997,225 @@ define('websync', function() {
       return html;
     }
   };
-  WS.initialize();
+  // Initialize
+  NProgress.start();
+  WS.webSocketStart();
+
+  // Disable Mozilla built in resizing for tables and images.
+  document.execCommand('enableObjectResizing', false, 'false');
+  document.execCommand('enableInlineTableEditing', false, 'false');
+  $("#settingsBtn, [href='#permissions']").click(function() {
+    WebSync.connection.sendJSON({
+      type: 'permission_info'
+    });
+  });
+  $("#settingsBtn, [href='#blobs']").click(function() {
+    WebSync.connection.sendJSON({
+      type: 'blob_info'
+    });
+  });
+  $('#user_perms').delegate('select', 'change', function(e) {
+    var email = $(this).parents('td').prev().text();
+    var choice = $(e.target).val();
+    WebSync.connection.sendJSON({
+      type: 'share',
+      email: email,
+      level: choice
+    });
+  });
+  $('#user_perms').delegate('a', 'click', function(e) {
+    var email = $(this).parents('tr').children().first().text();
+    WebSync.connection.sendJSON({
+      type: 'share',
+      email: email,
+      level: 'delete'
+    });
+    setTimeout(function() {
+      WebSync.connection.sendJSON({
+        type: 'permission_info'
+      });
+    }, 100);
+  });
+  $('#share_with').click(function() {
+    var email = $('#share_email').val();
+    WebSync.connection.sendJSON({
+      type: 'share',
+      email: email,
+      level: 'viewer'
+    });
+    setTimeout(function() {
+      WebSync.connection.sendJSON({
+        type: 'permission_info'
+      });
+    }, 100);
+    $('#share_email').val('');
+  });
+  $('#access_mode, #default_permissions').change(function() {
+    if (WebSyncAuth.access === 'owner') {
+      WebSync.connection.sendJSON({
+        type: 'default_permissions',
+        visibility: $('#access_mode').val(),
+        default_level: $('#default_permissions').val()
+      });
+    } else {
+      WebSync.error('Invalid permissions.');
+    }
+  });
+  $('#name').blur(function() {
+    var name = $(this).text();
+    document.title = name + ' - WebSync';
+    WebSync.connection.sendJSON({
+      type: 'name_update',
+      name: name
+    });
+  });
+  $('#name').keydown(function(e) {
+    e.stopPropagation();
+  });
+  $('#name').focus(function() {
+    if (this.innerText.indexOf('Unnamed') === 0) {
+      setTimeout(function() {
+        document.execCommand('selectAll');
+      }, 100);
+    }
+  });
+  $('.settings-popup #config').delegate('button', 'click', function() {
+    $(this.parentElement.children[0]).prop('disabled', function(_, val) {
+      return !val;
+    });
+    $(this).toggleClass('active');
+  });
+  $('nav, .content_well').bind('mousedown selectstart', function(e) {
+    if (e.target.tagName !== 'SELECT') {
+      return false;
+    }
+  });
+  $('#name, #permissions input[type=text]').bind('mousedown selectstart', function(e) {
+    e.stopPropagation();
+  });
+  $('#zoom_level').slider().on('slide', function(e) {
+      WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
+
+    });
+  $('body').mousemove(function(e) {
+    if (WebSync.viewMode === 'Zen') {
+      if (e.pageY < 85 && !WebSync.menuVisible) {
+        $('nav').animate({
+          top: 0
+        }, 200);
+        WebSync.menuVisible = true;
+      } else if (e.pageY > 85 && WebSync.menuVisible) {
+        $('nav').animate({
+          top: -96
+        }, 200);
+        WebSync.menuVisible = false;
+      }
+    }
+  });
+  if (WebSyncAuth.access === 'viewer') {
+    $('body').addClass('noedit');
+  }
+  WebSync.urlChange();
+  $(window).bind('popstate', WebSync.urlChange);
+  $('#view_mode').change(WebSync.updateViewMode);
+  $('.present').click(function() {
+    $('#view_mode').val('Presentation');
+    WebSync.updateViewMode();
+  });
+  $('.return').click(function() {
+    $('#view_mode').val('Normal');
+    WebSync.updateViewMode();
+  });
+  $('.fullscreen').click(function() {
+    if (fullScreenApi.isFullScreen())
+      fullScreenApi.cancelFullScreen();
+    else
+      fullScreenApi.requestFullScreen(document.body);
+  });
+  require(['edit']);
+  WS.updateRibbon();
+  rangy.init();
+  $('#settingsBtn').click(function() {
+    $(this.parentElement).toggleClass('active');
+    $('.settings-popup').toggle();
+    WebSync.resize();
+  });
+  $('.settings-popup .close').click(function() {
+    $($('#settingsBtn').get(0).parentElement).toggleClass('active');
+    $('.settings-popup').toggle();
+  });
+  $('.settings-popup #diffs').delegate('button', 'click', function(e) {
+    console.log(this);
+    var patches = [];
+    var c_div = this.parentElement.parentElement;
+    var id = parseInt($(this).data('id'), 10);
+    // TODO: Tree based patches.
+    for (var i = 0; i < WebSync.patches.length; i++) {
+      patches.push(WebSync.patches[i]);
+      if (WebSync.patches[i].id === id) {
+        i = WebSync.patches.length;
+      }
+    }
+    console.log(patches.length);
+    var new_body = {
+      body: []
+    };
+    _.each(patches, function(patch) {
+      jsonpatch.apply(new_body, JSON.parse(patch.patch));
+    });
+    console.log(new_body);
+    _.each(WebSyncData, function(v, k) {
+      delete WebSyncData[k];
+    });
+    _.each(new_body, function(v, k) {
+      WebSyncData[k] = v;
+    });
+    WebSyncData = new_body;
+    if (WebSync.fromJSON) {
+      WebSync.fromJSON();
+    }
+    WebSync.checkDiff();
+  });
+  $("a[href='#assets']").click(function() {
+    $('#assets tbody').html('');
+    WebSync.connection.sendJSON({
+      type: 'assets',
+      action: 'list'
+    });
+  });
+  $('.tab-pane#assets').delegate('.switch', 'switchChange.bootstrapSwitch', function(e, data) {
+    var id = $(e.target).parents('tr').data().id;
+    var url = $(e.target).parents('tr')[0].children[2].innerText;
+    WebSync.connection.sendJSON({
+      type: 'assets',
+      action: (data ? 'add' : 'delete'),
+      id: id
+    });
+    if (data) {
+      require([url]);
+    } else {
+      require(url).disable();
+      requirejs.undef(url);
+    }
+  });
+  $("a[href='#diffs']").click(function() {
+    $('#diffs tbody').html('');
+    WebSync.connection.sendJSON({
+      type: 'diffs',
+      action: 'list'
+    });
+  });
+  $(document).on('online', function() {
+    NProgress.done();
+  });
+  WS.applier = rangy.createCssClassApplier('tmp');
+  // TODO: Better polyfil for firefox not recognizing -moz-user-modify: read-write
+  WS.resize();
+  $(window).resize(WS.resize);
+  //this.setupWebRTC();
+  clearTimeout(window.initError);
+  window.initError = true;
+
   return WebSync;
 });
 

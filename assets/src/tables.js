@@ -1,3 +1,6 @@
+/*jslint browser: true*/
+/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
+
 // WebSync: Tables Plugin
 // WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
@@ -12,8 +15,8 @@ define('/assets/tables.js', ['websync'], function(WS) {
   // Unbind Example: $("*").unbind(".Tables");
   $('.ribbon').append($('<div id="Table" class="Table container" style="display: none;"><button class="btn btn-default" title="Delete Table"><i class="fa fa-trash-o"></i> Table</button> <div class="btn-group"><button class="btn btn-default" type="button" title="Insert Row Above"><i class="fa fa-plus"></i></button></span><button class="btn btn-default" type="button" title="Delete Row"><i class="fa fa-trash"></i> Row</button><button class="btn btn-default" type="button" title="Insert Row Below"><i class="fa fa-plus"></i></button></div>     <div class="btn-group"><button class="btn btn-default" type="button" title="Insert Column Left"><i class="fa fa-plus"></i></button></span><button class="btn btn-default" type="button" title="Delete Column"><i class="fa fa-trash"></i> Column</button><button class="btn btn-default" type="button" title="Insert Column Right"><i class="fa fa-plus"></i></button></div></div>'));
   $('.content').append($('<div id="table_cursor" class="Table"></div><div id="table_selection" class="Table"></div><div id="table_clip" style="position:absolute; left:-1000px;top:-1000px;"></div>'));
-  $('#Insert').append($('<button id="table" title="Table" class="btn btn-default Table"><i class="fa fa-table"></i></button>'));
-  $('#table').bind('click.Tables', function(e) {
+  $('#Insert').append(' <button id="table" title="Table" class="btn btn-default Table"><i class="fa fa-table"></i></button>');
+  $('#table').bind('click.Tables', function() {
     var new_table = $('<table><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>');
     WS.insertAtCursor(new_table);
   });

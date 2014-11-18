@@ -38,7 +38,6 @@ def new_doc type
     id = AssetGroup.all(name: type).first.id
     visit "/new/#{id}"
     wait_for_edit
-    visit current_url
     uri = URI.parse(current_url)
     doc_id = uri.path.split("/")[1].decode62
     doc = WSFile.get(doc_id)

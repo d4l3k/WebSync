@@ -38,6 +38,7 @@ module WebSync
     use Routes::Errors
     use Routes::Files
     use Routes::Settings
+    use Routes::UploadDownload
     use Routes::XHR
   end
 end

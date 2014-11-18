@@ -101,7 +101,7 @@ describe "WebSync Frontend" do
       assert last_response.redirect?
       follow_redirect!
       assert last_request.path == "/"
-      assert last_response.body.index("Document erased.") >= 0,
+      assert !last_response.body.index("Document erased.").nil?,
         "Document obliterate flash"
     end
   end

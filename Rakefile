@@ -7,8 +7,8 @@ ENV["CONFIGMODE"] = "y"
 require './lib/main'
 task :spec do
   Bundler.require
-  require './lib/models'
-  require './lib/configure'
+  require_relative 'lib/models'
+  require_relative 'lib/first_time'
   system("hooks/pre-push.sh")
   Process::exit $?.exitstatus
 end

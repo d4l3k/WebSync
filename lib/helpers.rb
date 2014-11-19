@@ -85,7 +85,7 @@ module WebSync
       return yield if 'development' == ENV['RACK_ENV']
 
       key = "url:#{I18n.locale}:#{request.path}"
-      page = $redis.get(key) or yield
+      page = $redis.get(key) || yield
       etag Digest::SHA1.hexdigest(page)
 
       if page

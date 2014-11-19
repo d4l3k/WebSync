@@ -82,19 +82,17 @@ module WebSync
       end
     end
     def cache time: 3600, &block
-      if "development" == ENV["RACK_ENV"]
-        return yield
-      end
-      tag = "url:#{I18n.locale}:#{request.path}"
-      page = $redis.get(tag)
+      return yield if 'development' == ENV['RACK_ENV']
+
+      key = "url:#{I18n.locale}:#{request.path}"
+      page = $redis.get(key) or yield
+      etag Digest::SHA1.hexdigest(page)
+
       if page
-        etag Digest::SHA1.hexdigest(page)
         ttl = $redis.ttl(tag)
         response.header['redis-ttl'] = ttl.to_s
         response.header['redis'] = 'HIT'
       else
-        page = yield
-        etag Digest::SHA1.hexdigest(page)
         response.header['redis'] = 'MISS'
         $redis.setex(tag, time, page)
       end
@@ -102,23 +100,19 @@ module WebSync
     end
     def document_auth doc_id=nil
       doc_id ||= params[:doc]
-      if doc_id.is_a? String
-        doc_id = doc_id.decode62
-      end
+      doc_id = doc_id.decode62 if doc_id.is_a? String
+
       doc = WSFile.get doc_id
-      if doc.nil?
-        halt 404
-      end
-      if doc.visibility=="private"
+      halt 404 if doc.nil?
+      if doc.visibility == 'private'
         perms = doc.permissions(user:current_user)
         if not logged_in?
           redirect "/login?#{env["REQUEST_PATH"]}"
-        elsif perms.length==0 # isn't on the permission list
-          status 403
+        elsif perms.empty? # isn't on the permission list
           halt 403
         end
       end
-      return doc
+      doc
     end
     def editor! doc
       if doc.default_level == "owner" or doc.default_level == "editor"

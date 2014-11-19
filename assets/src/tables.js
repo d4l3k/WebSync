@@ -531,9 +531,9 @@ define('/assets/tables.js', ['websync'], function(WS) {
     var table = $(self.primaryTable());
     var elem_box = self.selectedElem.getBoundingClientRect();
     $('#table_cursor').offset({
-      left: pos.left,
-      top: pos.top
-    })
+        left: pos.left,
+        top: pos.top
+      })
       .height(elem_box.height - 4)
       .width(elem_box.width - 6)
       .get(0).scrollIntoViewIfNeeded();

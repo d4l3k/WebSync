@@ -40,7 +40,7 @@ define('/assets/presentation.js', ['websync'], function(WS) {
       hidden = true;
       $('#presentation-nav .toggle-sidebar').click();
     }
-  }
+  };
   $(document).on('viewmode', self.updateViewmode);
   $('#remSlide').click(function() {
     var prev = $('.slide.active').prev();
@@ -69,7 +69,7 @@ define('/assets/presentation.js', ['websync'], function(WS) {
   };
   self.updateEditable = function() {
     $('#slides .slide-content').attr('contenteditable', WebSyncAuth.view_op == 'edit');
-  }
+  };
   $('#presentation-nav #slideView').delegate('.slidePreview', 'click', function() {
     $('.slide.active').removeClass('active');
     $('.slidePreview.active').removeClass('active');

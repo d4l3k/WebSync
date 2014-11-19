@@ -1094,9 +1094,9 @@ define('websync', function() {
     e.stopPropagation();
   });
   $('#zoom_level').slider().on('slide', function(e) {
-      WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
+    WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
 
-    });
+  });
   $('body').mousemove(function(e) {
     if (WebSync.viewMode === 'Zen') {
       if (e.pageY < 85 && !WebSync.menuVisible) {

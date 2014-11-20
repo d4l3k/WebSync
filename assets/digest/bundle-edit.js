@@ -7,6 +7,7 @@
 //= require lodash/dist/lodash.min.js
 //= require jquery-transform/jquery.transform2d.js
 //= require fast-json-patch/dist/json-patch-duplex.min.js
+//= require openpgp/dist/openpgp.js
 
 //= require jquery.computedstyles.js
 //= require fullscreen.js
@@ -17,4 +18,5 @@
 
 //= require requirejs/require.js
 //= require edit.js
+//= require crypto.js
 //= require core.js

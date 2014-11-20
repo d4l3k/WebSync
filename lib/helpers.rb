@@ -89,12 +89,12 @@ module WebSync
       etag Digest::SHA1.hexdigest(page)
 
       if page
-        ttl = $redis.ttl(tag)
+        ttl = $redis.ttl(key)
         response.header['redis-ttl'] = ttl.to_s
         response.header['redis'] = 'HIT'
       else
         response.header['redis'] = 'MISS'
-        $redis.setex(tag, time, page)
+        $redis.setex(key, time, page)
       end
       page
     end

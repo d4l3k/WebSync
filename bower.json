@@ -28,7 +28,8 @@
     "seiyria-bootstrap-slider": "~4.2.0",
     "nprogress": "~0.1.6",
     "bootstrap-switch": "~3.2.2",
-    "jquery-transform": "*"
+    "jquery-transform": "*",
+    "openpgp": "~0.8.2"
   },
   "resolutions": {
     "jquery": "~2.1.1"

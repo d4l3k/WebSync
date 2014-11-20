@@ -13,7 +13,7 @@
 */
 
 // This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
-define('websync', function() {
+define('websync', ['crypto'], function(crypto) {
   'use strict';
   var WebSync, WS;
   WebSync = WS = {
@@ -1000,6 +1000,8 @@ define('websync', function() {
   // Initialize
   NProgress.start();
   WS.webSocketStart();
+
+  crypto.checkKeys();
 
   // Disable Mozilla built in resizing for tables and images.
   document.execCommand('enableObjectResizing', false, 'false');

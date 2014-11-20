@@ -48,14 +48,19 @@ module AssetPipeline
 end
 AssetPipeline::Task.define! WebSync
 
-task :deploy do
+task :dependencies do
   system('bundle')
   system('npm install')
   system('bower install')
-  Rake::Task["assets:clean"].invoke
-  Rake::Task["assets:precompile"].invoke
+  system('cd assets/bower_components/openpgp&&npm install&&grunt&&cd ../../..')
+end
+
+task :deploy do
+  Rake::Task['dependencies'].invoke
+  Rake::Task['assets:clean'].invoke
+  Rake::Task['assets:precompile'].invoke
   system('kill -HUP `cat tmp/pids/unicorn.pid`')
-  Rake::Task["cachebust"].invoke
+  Rake::Task['cachebust'].invoke
 end
 
 task :cachebust do

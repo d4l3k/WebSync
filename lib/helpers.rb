@@ -85,10 +85,11 @@ module WebSync
       return yield if 'development' == ENV['RACK_ENV']
 
       key = "url:#{I18n.locale}:#{request.path}"
-      page = $redis.get(key) || yield
+      cached = $redis.get(key)
+      page = cached || yield
       etag Digest::SHA1.hexdigest(page)
 
-      if page
+      if cached
         ttl = $redis.ttl(key)
         response.header['redis-ttl'] = ttl.to_s
         response.header['redis'] = 'HIT'

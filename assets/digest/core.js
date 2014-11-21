@@ -1001,7 +1001,9 @@ define('websync', ['crypto'], function(crypto) {
   NProgress.start();
   WS.webSocketStart();
 
-  crypto.checkKeys();
+  if (_.include(window.location.hash, 'crypto')) {
+    crypto.checkKeys();
+  }
 
   // Disable Mozilla built in resizing for tables and images.
   document.execCommand('enableObjectResizing', false, 'false');

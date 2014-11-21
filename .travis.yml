@@ -18,6 +18,7 @@ before_script:
   - npm install
   - npm install -g bower
   - bower install
+  - bundle exec rake dependencies
   - ls -a
 gemfile:
   - Gemfile

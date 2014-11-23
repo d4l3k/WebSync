@@ -51,6 +51,7 @@ def destroy_testuser
     user = User.get('test@websyn.ca')
     if user
         user.permissions.destroy!
+        user.keys.destroy!
         user.files.each do |f|
             f.destroy_cascade
         end

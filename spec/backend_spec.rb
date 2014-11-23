@@ -27,7 +27,7 @@ describe "WebSync Backend" do
     id = last_response.body.match(%r{id: *"\d+"})[0]
       .split(":").last.strip.gsub('"', '').to_i
     key = last_response.body.match(%r{key: *"\S+"})[0]
-      .split(":").last.strip.gsub('"', '')
+      .split(':').last.strip.gsub('"', '')
     counts = %w(connected info)
     count = 0
     sleep 0.1
@@ -40,29 +40,53 @@ describe "WebSync Backend" do
           id: id,
           key: key
         })
-        puts "OPEN"
+        puts 'OPEN'
         open = true
       end
       ws.on :message do |event|
         data = MultiJson.load(event.data)
         #p [:message, data]
         if count < counts.length
-          expect(counts[count]).to eq(data["type"])
+          expect(counts[count]).to eq(data['type'])
           count += 1
         end
-        if data["type"] == "info"
+        type = data['type']
+        if type == 'info'
           # MD5 of email. Used for gravatar
-          expect(data["user_id"]).to eq("9c99794b1873845c864617eb2a7986a2")
+          expect(data['user_id']).to eq('9c99794b1873845c864617eb2a7986a2')
           ws.sendJSON({type: 'load_scripts'})
-        elsif data["type"] == "ping"
+        elsif type == 'ping'
           ws.sendJSON({type: 'ping'})
-        elsif data["type"] == "scripts"
-          expect(data["css"]).to eq([])
+        elsif type == 'scripts'
+          expect(data['css']).to eq([])
           scripts = AssetGroup.get(1).assets
-          expect(scripts.length).to eq(data["js"].length)
+          expect(scripts.length).to eq(data['js'].length)
           scripts.each do |script|
-            expect(data["js"].index("/assets/tables.js")).to be >= 0
+            expect(data['js'].index('/assets/tables.js')).to be >= 0
           end
+          ws.sendJSON({
+            type: 'keys',
+            action: 'add',
+            keys: {
+              public: ['pubkey', 'woofkey'],
+              private: ['privkey', 'meowkey']
+            }
+          })
+          ws.sendJSON({
+            type: 'keys',
+            action: 'get'
+          })
+        elsif type == 'keys'
+          keys = data['keys']
+          pub = keys['public']
+          priv = keys['private']
+          expect(pub.length).to eq(2)
+          expect(priv.length).to eq(2)
+          expect(pub[0]['body']).to eq('woofkey')
+          expect(pub[1]['body']).to eq('pubkey')
+          expect(priv[0]['body']).to eq('meowkey')
+          expect(priv[1]['body']).to eq('privkey')
+
           # TODO: Finish testing the backend.
           ws.close
         end

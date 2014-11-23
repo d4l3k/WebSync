@@ -246,6 +246,7 @@ class Key
     property :id, Serial
     property :type, String
     property :body, Text, unique: true
+    property :created, DateTime
     belongs_to :user
 end
 class Theme

@@ -677,6 +677,7 @@ nav.navbar {
         height: 51px;
         overflow-y: hidden;
         white-space: nowrap;
+        visibility: visible !important;
         & > * {
             display: inline-block;
         }

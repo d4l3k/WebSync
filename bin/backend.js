@@ -469,6 +469,14 @@ fs.readFile('./config/config.json', function(err, buffer) {
                     });
                   });
               }
+            } else if(data.type == 'keys') {
+              if (data.action == 'add') {
+                _.each(data.keys, function(keys, type) {
+                  _.each(keys, function(key) {
+                    postgres.query('INSERT INTO keys (type, body, user_email) VALUES ($1, $2, $3)', [type, key, user_email]);
+                  });
+                });
+              }
             }
           });
         }

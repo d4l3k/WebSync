@@ -230,6 +230,7 @@ class User
     has n, :permissions
     has n, :files, model: WSFile, :through => :permissions
     has n, :changes
+    has n, :keys
     property :config, Json, :default=>{}
     # Used for OmniAuth
     property :origin, String, :default=>'local'
@@ -239,6 +240,13 @@ class User
         n_config[key]=value
         self.config= n_config
     end
+end
+class Key
+    include DataMapper::Resource
+    property :id, Serial
+    property :type, String
+    property :body, Text, unique: true
+    belongs_to :user
 end
 class Theme
     include DataMapper::Resource

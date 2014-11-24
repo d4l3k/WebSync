@@ -30,7 +30,8 @@
     "bootstrap-switch": "~3.2.2",
     "jquery-transform": "*",
     "openpgp": "~0.8.2",
-    "jquery-validation": "~1.13.1"
+    "jquery-validation": "~1.13.1",
+    "moment": "~2.8.4"
   },
   "resolutions": {
     "jquery": "~2.1.1"

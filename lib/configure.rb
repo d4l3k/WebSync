@@ -58,6 +58,7 @@ module WebSync
       sprockets.append_path File.join(root, 'assets', 'digest')
       sprockets.append_path File.join(root, 'assets', 'bower_components')
       sprockets.append_path File.join(root, 'assets', 'src')
+      sprockets.append_path File.join(root, 'assets', 'templates')
       sprockets.append_path File.join(root, 'assets', 'lib')
       set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
       path = File.join(root, '../assets', '{src,lib}', "*.js")

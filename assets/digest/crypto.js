@@ -1,6 +1,9 @@
 /*jslint browser: true*/
 /*global define, $, _, openpgp, escape, FileReader*/
-define('crypto', ['websync'], function(WS) {
+
+//= require templates/crypto
+
+define('crypto', function() {
   var self = {};
   var key;
 
@@ -14,80 +17,7 @@ define('crypto', ['websync'], function(WS) {
     pom.click();
   }
 
-  $(document.body).append('<div class="modal fade" id="encryptionModal" tabindex="-1" role="dialog" aria-labelledby="insertModalLabel" aria-hidden="true">' +
-    '<div class="modal-dialog">' +
-    '<div class="modal-content">' +
-    '<div class="modal-header">' +
-    '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
-    '<h4 class="modal-title">Create or Upload Encryption Keys</h4>' +
-    '</div>' +
-    '<div class="modal-body">' +
-      '<div class="0">' +
-      '<p>Hi! To configure end-to-end encryption in WebSync</p>' +
-      '<button type="button" class="btn btn-primary btn-block" id="genKey">Generate a Key</button>' +
-      '<button type="button" class="btn btn-default btn-block" id="uploadKey">Upload a Key</button>' +
-      '</div>' +
-      '<div class="genKey">' +
-        '<form>' +
-        '<p>' +
-          '<label for="realName">Your Real Name</label>' +
-          '<input type="text" class="form-control" id="realName" required minlength="2">' +
-        '</p>' +
-        '<p>' +
-          '<label for="password">Passphrase</label>' +
-          '<input type="password" class="form-control" id="password" required minlength="6">' +
-        '</p>' +
-        '<p>' +
-          '<label for="password2">Repeat Passphrase</label>' +
-          '<input type="password" class="form-control" id="password2" required minlength="6" equalTo="#password">' +
-        '</p>' +
-        '<p>' +
-          '<label for="keySize">RSA Key Size</label>' +
-          '<select class="form-control" id="keySize">' +
-          _.map([1024, 2048, 4096], function(type) {
-            return '<option>' + type + ' bit</option>';
-          }).join('') +
-          '</select>' +
-        '</p>' +
-        ' <input type="submit" class="btn btn-primary btn-block" id="doGenKey" value="Generate"></input>' +
-        '</form>' +
-      '</div>' +
-      '<div class="doGenKey">' +
-        '<p>Generating key...</p>' +
-      '</div>' +
-      '<div class="saveOptions">' +
-        '<p>Done. Please save these somewhere safe.</p>' +
-        '<a class="btn btn-default btn-block" id="publicKey" target="_blank" download="websync-publickey.key">Public Key</a>' +
-        '<a class="btn btn-default btn-block" id="privateKey" target="_blank" download="websync-publickey.key">Private Key</a>' +
-        '<p>In addition to storing the encrypted keys in the browser, WebSync can also store them on the server. This makes using multiple computer easier and makes it so you can retrieve them in case you ever lose them.' +
-        '<div class="checkbox">' +
-          '<label>' +
-            '<input type="checkbox" id="storePrivOnServer" checked> Store encrypted keys on server.' +
-          '</label>' +
-        '</div>' +
-        ' <button class="btn btn-primary btn-block" id="saveAndFinish">Finish</button>' +
-      '</div>' +
-      '<div class="uploadKey">' +
-        '<p>Upload an existing key.</p>' +
-        '<form>' +
-        '<p>' +
-        '<label for="publicKey">Public Key <input id="pubkeyfile" type="file"/></label>' +
-        '<textarea id="publicKey" class="form-control" required/>' +
-        '</p>' +
-        '<p>' +
-        '<label for="privateKey">Private Key <input id="privkeyfile" type="file"/></label>' +
-        '<textarea id="privateKey" class="form-control" required/>' +
-        '</p>' +
-        ' <input type="submit" class="btn btn-primary btn-block" id="doUploadKey" value="Upload"></input>' +
-        '</form>' +
-      '</div>' +
-    '</div>' +
-    '<div class="modal-footer">' +
-      '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>' +
-    '</div>' +
-    '</div>' +
-    '</div>' +
-    '</div>');
+  $(document.body).append(JST['templates/crypto']({}));
   self.stage = 0;
   self.$modal = $('#encryptionModal');
   self.updateStage = function(stage) {
@@ -178,6 +108,28 @@ define('crypto', ['websync'], function(WS) {
   });
   self.genKeyValidator = $('#encryptionModal .genKey form').validate();
   self.uploadKeyValidator = $('#encryptionModal .uploadKey form').validate();
+  _.delay(function() {
+    require('websync').registerMessageEvent('keys', function(data) {
+      console.log(data);
+      var $tbody = $('#keys tbody').html('');
+      _.each(_.union(data.keys.public, data.keys.private), function(data) {
+        var unarmored = openpgp.key.readArmored(data.body);
+        var userid = unarmored.keys[0].users[0].userId.userid;
+        $tbody.append('<tr><td>' +
+          data.type +
+          '</td><td>' +
+          userid +
+          '</td><td>' +
+          moment(data.created) +
+          '</td><tr>');
+      });
+    }).registerMessageEvent('info', function(data) {
+      require('websync').connection.sendJSON({
+        type: 'keys',
+        action: 'get'
+      });
+    });
+  }, 1);
   self.checkKeys = function() {
     if (!(window.localStorage.hasOwnProperty('websync-key-private') &&
         window.localStorage.hasOwnProperty('websync-key-public') &&

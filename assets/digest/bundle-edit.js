@@ -8,6 +8,7 @@
 //= require jquery-transform/jquery.transform2d.js
 //= require fast-json-patch/dist/json-patch-duplex.min.js
 //= require openpgp/dist/openpgp.js
+//= require moment/moment.js
 
 //= require jquery.computedstyles.js
 //= require fullscreen.js

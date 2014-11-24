@@ -81,6 +81,12 @@ define('websync', ['crypto'], function(crypto) {
       onmessage: function(e) {
         var data = JSON.parse(e.data);
         console.log('MESSAGE', data);
+        var events = WS.registeredMessageEvents[data.type];
+        if (!_.isEmpty(events)) {
+          _.each(events, function(e) {
+            e(data);
+          });
+        }
         if (data.type === 'scripts') {
           // Load scripts from server.
           require(data.js);
@@ -264,6 +270,16 @@ define('websync', ['crypto'], function(crypto) {
         console.log(e);
       }
 
+    },
+    // Register an event for the websocket connection.
+    registeredMessageEvents: {},
+    registerMessageEvent: function(name, callback) {
+      var events = WS.registeredMessageEvents[name];
+      if (!events) {
+        WS.registeredMessageEvents[name] = [];
+      }
+      WS.registeredMessageEvents[name].push(callback);
+      return WS;
     },
     // This function is used to output byte lengths in a more human understandable format.
     byteLengthPretty: function(length) {
@@ -1002,7 +1018,9 @@ define('websync', ['crypto'], function(crypto) {
   WS.webSocketStart();
 
   if (_.include(window.location.hash, 'crypto')) {
-    crypto.checkKeys();
+    _.delay(function() {
+      crypto.checkKeys();
+    });
   }
 
   // Disable Mozilla built in resizing for tables and images.

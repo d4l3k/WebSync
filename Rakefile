@@ -46,7 +46,7 @@ module AssetPipeline
       end
     end
 end
-AssetPipeline::Task.define! WebSync
+AssetPipeline::Task.define! WebSync::App
 
 task :dependencies do
   system('bundle')
@@ -167,7 +167,7 @@ task :beautify do
     # Make sure Python2 exists on the system.
     python = get_python2
     fixjsstyle_path = "node_modules/closure-linter-wrapper/tools/fixjsstyle.py"
-    system(python+" "+fixjsstyle_path +" "+paths.join(" "))
+    system([python, fixjsstyle_path].concat(paths).join(" "))
     fixed_backend = File.readlines("bin/backend.js")
     fixed_backend[0] = backend[0]
     File.write("bin/backend.js", fixed_backend.join(""))

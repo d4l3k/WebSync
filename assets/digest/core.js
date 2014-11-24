@@ -1255,7 +1255,7 @@ if (window.JST === undefined) {
 }
 window.JST.get = function(template) {
   if (JST[template] === undefined) {
-    $('body').append('<script src="/assets/'+template+'.js?body=1"></script>');
+    $('body').append('<script src="/assets/' + template + '.js?body=1"></script>');
   }
   return JST[template];
 };

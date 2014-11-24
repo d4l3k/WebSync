@@ -82,10 +82,8 @@ describe "WebSync Backend" do
           priv = keys['private']
           expect(pub.length).to eq(2)
           expect(priv.length).to eq(2)
-          expect(pub[0]['body']).to eq('woofkey')
-          expect(pub[1]['body']).to eq('pubkey')
-          expect(priv[0]['body']).to eq('meowkey')
-          expect(priv[1]['body']).to eq('privkey')
+          expect([pub[0]['body'], pub[1]['body']].sort).to eq(['pubkey', 'woofkey'])
+          expect([priv[0]['body'], priv[1]['body']].sort).to eq(['meowkey', 'privkey'])
 
           # TODO: Finish testing the backend.
           ws.close

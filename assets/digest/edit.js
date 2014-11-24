@@ -1,5 +1,9 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace*/
+/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace, JST*/
+
+//= require templates/edit-ribbon
+//= require templates/edit-body
+//= require templates/edit-wordcount
 
 // WebSync: Text Editing Plugin
 define('edit', ['websync'], function(WS) {
@@ -10,132 +14,8 @@ define('edit', ['websync'], function(WS) {
   // Unbind Example: $("*").unbind(".Tables");
 
   // Add Text menu to the ribbon.
-  $('.ribbon').append('<div id="Text" class="Text container"> ' +
-    '<button id="bold" title="Bold (Ctrl-B)" class="btn btn-default"><i class="fa fa-bold"></i></button> ' +
-    '<button id="italic" title="Italic (Ctrl-I)" class="btn btn-default"><i class="fa fa-italic"></i></button> ' +
-    '<button id="strikethrough" title="Strikethrough" class="btn btn-default"><i class="fa fa-strikethrough"></i></button> ' +
-    '<button id="underline" title="Underline (Ctrl-U)" class="btn btn-default"><i class="fa fa-underline"></i></button> ' +
-    '<button id="createLink" title="Hyperlink" class="btn btn-default"><i class="fa fa-link"></i></button> ' +
-    '<div id="font" class="dropdown btn-group"> ' +
-    '<button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="name">Font</span> <i class="fa fa-caret-down"></i></button> ' +
-    '<ul class="dropdown-menu" role="menu"> ' +
-    '</ul> ' +
-    '</div> ' +
-    '<select id="font_size" title="Font Size" class="form-control ribbon_button"> ' +
-    '<option>8pt</option> ' +
-    '<option>9pt</option> ' +
-    '<option>10pt</option> ' +
-    '<option>11pt</option> ' +
-    '<option>12pt</option> ' +
-    '<option>13pt</option> ' +
-    '<option>14pt</option> ' +
-    '<option>15pt</option> ' +
-    '<option>16pt</option> ' +
-    '<option>17pt</option> ' +
-    '<option>18pt</option> ' +
-    '<option>19pt</option> ' +
-    '<option>20pt</option> ' +
-    '<option>21pt</option> ' +
-    '<option>22pt</option> ' +
-    '<option>23pt</option> ' +
-    '<option>24pt</option> ' +
-    '<option>25pt</option> ' +
-    '<option>26pt</option> ' +
-    '<option>27pt</option> ' +
-    '<option>28pt</option> ' +
-    '<option>29pt</option> ' +
-    '<option>30pt</option> ' +
-    '<option>31pt</option> ' +
-    '<option>32pt</option> ' +
-    '<option>33pt</option> ' +
-    '<option>34pt</option> ' +
-    '<option>35pt</option> ' +
-    '<option>36pt</option> ' +
-    '<option>37pt</option> ' +
-    '<option>38pt</option> ' +
-    '<option>39pt</option> ' +
-    '<option>40pt</option> ' +
-    '<option>41pt</option> ' +
-    '<option>42pt</option> ' +
-    '<option>43pt</option> ' +
-    '<option>44pt</option> ' +
-    '<option>45pt</option> ' +
-    '<option>46pt</option> ' +
-    '<option>47pt</option> ' +
-    '<option>48pt</option> ' +
-    '<option>72pt</option> ' +
-    '</select> ' +
-    '<div class="btn-group"> ' +
-    '<button id="justifyleft" title="Justify Left (Ctrl-Shift-L)" class="btn btn-default"><i class="fa fa-align-left"></i></button> ' +
-    '<button id="justifycenter" title="Justify Center (Ctrl-Shift-E)" class="btn btn-default"><i class="fa fa-align-center"></i></button> ' +
-    '<button id="justifyright" title="Justify Right (Ctrl-Shift-R)" class="btn btn-default"><i class="fa fa-align-right"></i></button> ' +
-    '<button id="justifyfull" title="Justify Full (Ctrl-Shift-J)" class="btn btn-default"><i class="fa fa-align-justify"></i></button> ' +
-    '</div> ' +
-    '<div class="btn-group" id="line_spacing"> ' +
-    '<button  title="Line Spacing" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-text-height"></i></button> ' +
-    '<ul class="dropdown-menu" role="menu"> ' +
-    '<li role="presentation" class="dropdown-header">Line Spacing</li> ' +
-    '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">1</a></li> ' +
-    '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">1.15</a></li> ' +
-    '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">1.5</a></li> ' +
-    '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">2</a></li> ' +
-    '</ul> ' +
-    '</div> ' +
-    '<button id="insertunorderedlist" title="Unordered List (Ctrl-Shift-7)" class="btn btn-default"><i class="fa fa-list-ul"></i></button> ' +
-    '<button id="insertorderedlist" title="Ordered List (Ctrl-Shift-8)" class="btn btn-default"><i class="fa fa-list-ol"></i></button> ' +
-    '<button id="outdent" title="Outdent (Shift-Tab)" class="btn btn-default"><i class="fa fa-outdent"></i></button> ' +
-    '<button id="indent" title="Indent (Tab)" class="btn btn-default"><i class="fa fa-indent"></i></button> ' +
-    '<button id="superscript" title="Superscript (Ctrl-Shift-^)" class="btn btn-default"><i class="fa fa-superscript"></i></button> ' +
-    '<button id="subscript" title="Subscript (Ctrl-Shift-_)" class="btn btn-default"><i class="fa fa-subscript"></i></button> ' +
-    '<input id="fontColor" title="Font Color" class="form-control" type="color"></input> ' +
-    '<input id="hilightColor" title="Text Background Color" class="form-control" type="color" value="#FFFFFF"></input> ' +
-    '<button id="insertHorizontalRule" title="Insert Horizontal Rule" class="btn btn-default">&mdash;</button> ' +
-    '<button id="removeFormat" title="Clear Formatting (Ctrl-Shift-\\)" class="btn btn-default"><i class="fa fa-unlink"></i></button> ' +
-    '</div>');
-  $('body').append('<div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-hidden="true"> ' +
-    '<div class="modal-dialog"> ' +
-    '<div class="modal-content"> ' +
-    '<div class="modal-header"> ' +
-    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> ' +
-    '<h4 class="modal-title">Insert Image</h4> ' +
-    '</div> ' +
-    '<div class="modal-body"> ' +
-    '<h3>Insert Image from URL</h3> ' +
-    '<p>This does not upload the file to the server. Viewers will pull it directly from the specified URL.</p> ' +
-    '<input type="text" id="image_url" class="form-control"/> ' +
-    '<h3>Upload Image</h3> ' +
-    '<input type="file" name="files[]" accept="image/*" id="file_input" class="form-control" /> ' +
-    '<div class="progress progress-striped active" style="display: none;"> ' +
-    '<div class="progress-bar"  role="progressbar" style="width: 1%"> ' +
-    '</div> ' +
-    '</div> ' +
-    '</div> ' +
-    '<div class="modal-footer"> ' +
-    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button> ' +
-    '<button type="button" id="insert_image" class="btn btn-primary">Insert</button> ' +
-    '</div> ' +
-    '</div> ' +
-    '</div> ' +
-    '</div> ' +
-    '<div class="modal fade" id="youtube_modal" tabindex="-1" role="dialog" aria-hidden="true"> ' +
-    '<div class="modal-dialog"> ' +
-    '<div class="modal-content"> ' +
-    '<div class="modal-header"> ' +
-    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> ' +
-    '<h4 class="modal-title">Insert YouTube Video</h4> ' +
-    '</div> ' +
-    '<div class="modal-body"> ' +
-    '<p>Enter the youtube URL:</p> ' +
-    '<input type="text" id="youtube_url" class="form-control"/> <br ' +
-    '<div id="youtube-preview"></div> ' +
-    '</div> ' +
-    '<div class="modal-footer"> ' +
-    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button> ' +
-    '<button type="button" id="insert_video" class="btn btn-primary">Insert</button> ' +
-    '</div> ' +
-    '</div> ' +
-    '</div> ' +
-    '</div>');
+  $('.ribbon').append(JST['templates/edit-ribbon']({}));
+  $('body').append(JST['templates/edit-body']({}));
   // List of buttons that can be clicked in the Text menu.
   self.text_buttons = ['bold', 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'removeFormat', 'insertorderedlist', 'insertunorderedlist', 'superscript', 'subscript', 'insertHorizontalRule', 'indent', 'outdent'];
   // Bind the basic text editing commands to the buttons.
@@ -154,24 +34,18 @@ define('edit', ['websync'], function(WS) {
       'max-width': 500,
       'z-index': 10000
     });
-    table.parents('.popover-content').css({
-      padding: 0
-    });
     var text = $('.content_container').text();
     var seltext = rangy.getSelection().toString();
-    var $trs = table.find('tr'),
-      $tr1s = $trs.eq(1).find('td'),
-      $tr2s = $trs.eq(2).find('td'),
-      $tr3s = $trs.eq(3).find('td');
-    // Word count
-    $tr1s.eq(0).text(text.split(/\s+/).length);
-    $tr1s.eq(1).text(seltext === '' ? 0 : seltext.split(/\s+/).length);
-    // Character count
-    $tr2s.eq(0).text(text.length);
-    $tr2s.eq(1).text(seltext.length);
-    // Character count, no spaces
-    $tr3s.eq(0).text(text.replace(/\s+/g, '').length);
-    $tr3s.eq(1).text(seltext.replace(/\s+/g, '').length);
+    table.parents('.popover-content').css({
+      padding: 0
+    }).html(JST['templates/edit-wordcount']({
+      wordsDocument: text.split(/\s+/).length,
+      wordsSelection: seltext === '' ? 0 : seltext.split(/\s+/).length,
+      characterDocument: text.length,
+      characterSelection: seltext.length,
+      characterDocumentNoSpaces: text.replace(/\s+/g, '').length,
+      characterSelectionNoSpaces: seltext.replace(/\s+/g, '').length
+    }));
   };
   var live_update = false;
   $(document).on('selectionchange.Text', function() {
@@ -188,7 +62,14 @@ define('edit', ['websync'], function(WS) {
     placement: 'bottom',
     html: true,
     container: 'body',
-    content: "<table id='word_count_info' class='table' style='margin: 0'><thead><tr><th></th><th>Document</th><th>Selection</th></tr></thead><tbody><tr><th>Words</th><td></td><td></td></tr><tr><th>Characters</th><td></td><td></td></tr><tr><th>... (no spaces)</th><td></td><td></td></tr></tbody></table>"
+    content: JST['templates/edit-wordcount']({
+      wordsDocument: 0,
+      wordsSelection: 0,
+      characterDocument: 0,
+      characterSelection: 0,
+      characterDocumentNoSpaces: 0,
+      characterSelectionNoSpaces: 0
+    })
   }).popover('show').popover('hide');
 
   // Text styling handlers

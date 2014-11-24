@@ -1249,6 +1249,17 @@ String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
+// load template if not found
+if (window.JST === undefined) {
+  window.JST = {};
+}
+window.JST.get = function(template) {
+  if (JST[template] === undefined) {
+    $('body').append('<script src="/assets/'+template+'.js?body=1"></script>');
+  }
+  return JST[template];
+};
+
 (function() {
   var done = false;
   // This is used to know when all modules are loaded. It uses a sketchy internal function subject to change.

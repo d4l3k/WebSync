@@ -1,5 +1,9 @@
 // WebSync: Charts for Spreadsheets
-define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables, charts) {
+/*global define, $, _, openpgp, escape, FileReader, JST*/
+
+//= require templates/chart
+
+define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables, Chart) {
   'use strict';
   var self = {};
 
@@ -7,52 +11,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
   $('#Insert').append(" <button id='insert_chart' class='btn btn-default Chart' title='Insert Chart'><i class='fa fa-picture-o'></i></button>");
 
   // Insert Modal
-  $(document.body).append('<div class="modal fade" id="insertChartModal" tabindex="-1" role="dialog" aria-labelledby="insertModalLabel" aria-hidden="true">' +
-    '<div class="modal-dialog">' +
-    '<div class="modal-content">' +
-    '<div class="modal-header">' +
-    '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
-    '<h4 class="modal-title" id="insertModalLabel">Insert a Chart</h4>' +
-    '</div>' +
-    '<div class="modal-body">' +
-    '<label for="chartType">Chart Type</label>' +
-    '<select id="chartType" class="form-control">' +
-    _.map(['Line', 'Bar', 'Radar', 'Polar Area', 'Pie', 'Doughnut'], function(type) {
-      return '<option>' + type + '</option>';
-    }).join('') +
-    '</select>' +
-    '<div class="ChartContainer"></div>' +
-    '<div class="options All">' +
-    '<label for="chartTitle">Chart Title</label>' +
-    '<input type="text" id="chartTitle" class="form-control">' +
-    '<label for="chartXTitle">X-Axis Title</label>' +
-    '<input type="text" id="chartXTitle" class="form-control">' +
-    '<label for="chartYTitle">Y-Axis Title</label>' +
-    '<input type="text" id="chartYTitle" class="form-control">' +
-    '<label for="dataRange">Data Range</label>' +
-    '<input type="text" id="dataRange" class="form-control">' +
-    '<label>' +
-    '<input type="checkbox" id="legend" checked> Legend' +
-    '</label>' +
-    '</div>' +
-    '<div class="options Line Bar Radar">' +
-    '<label>' +
-    '<input type="checkbox" id="firstRowAsTitles" checked> Use first row as titles' +
-    '</label>' +
-    '</div>' +
-    '<div class="options Line">' +
-    '<label>' +
-    '<input type="checkbox" id="bezierCurve"> Smooth Curve (Bezier)' +
-    '</label>' +
-    '</div>' +
-    '</div>' +
-    '<div class="modal-footer">' +
-    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
-    '<button type="button" class="btn btn-primary" data-dismiss="modal" id="insertChartBtn">Insert</button>' +
-    '</div>' +
-    '</div>' +
-    '</div>' +
-    '</div>');
+  $(document.body).append(JST.get('templates/chart')());
   $('#insertChartModal').find('input, select').change(function(e) {
     updateModal();
   });

@@ -2,6 +2,10 @@
 // WebSync uses RequireJS for modules.
 // define( [pluginName], [requiredModules], definition);
 // pluginName is an optional argument that should only be used if the module is being bundled/loaded without RequireJS. It should match the path it's being required as.
+
+/*global define, $, document, _, JST, WebSyncAuth, window*/
+//= require templates/chat-sidebar
+
 define(['websync'], function(WS) {
   var self = {};
   // Save all variables and information to the self object.
@@ -10,7 +14,7 @@ define(['websync'], function(WS) {
   // Bind Example: $(document).bind("click.Tables", clickHandler);
   // Unbind Example: $("*").unbind(".Tables");
   self.open = false;
-  $('body').append($('<div id="chat" class="sidebar"><div id="user_list"></div><div id="chat_well" class="panel panel-default"></div><div class="chat_input input-group"><input class="form-control" id="appendedInputButton" type="text" ><span class="input-group-btn"><button id="msg_btn" class="btn btn-default" type="button">Send</button></span></div></div>'));
+  $('body').append(JST.get('templates/chat-sidebar'));
   $('#settings').prepend($('<li><a id="chat_btn" title="Chat"><i class="fa fa-comment fa-lg"></i> <span id="user_count" class="badge">1</span></a></li>'));
   $('#chat').css({
     right: -252
@@ -19,8 +23,8 @@ define(['websync'], function(WS) {
   $(document).bind('client_load.Chat', function(e, data) {
     var client = data.client;
     var client_dom = $('#client_' + client);
-    var user = WebSync.clients[client];
-    var user_info = WebSync.users[user.id];
+    var user = WS.clients[client];
+    var user_info = WS.users[user.id];
     if (client_dom.length > 0) {
       if (user_info.displayName) {
         var display_name = user_info.displayName + ' (' + user.email + ')';
@@ -35,7 +39,7 @@ define(['websync'], function(WS) {
     self.msg();
   });
   $('.chat_input input').bind('keypress.Chat', function(e) {
-    if (e.which == 13) {
+    if (e.which === 13) {
       self.msg();
     }
   });
@@ -45,21 +49,22 @@ define(['websync'], function(WS) {
   self.msg = function() {
     var msg = $('.chat_input input').val();
     if (msg.length > 0) {
-      WebSync.broadcastEvent('chat_msg', msg);
+      WS.broadcastEvent('chat_msg', msg);
       self.clientMsg(WebSyncAuth.id, msg);
       $('.chat_input input').val('');
     }
   };
   self.addUser = function(client) {
-    var user = WebSync.clients[client];
-    var user_info = WebSync.users[user.id];
+    var user = WS.clients[client];
+    var user_info = WS.users[user.id];
     var display_name = user_info.displayName;
-    if (!display_name)
+    if (!display_name) {
       display_name = user.email;
-    else
+    } else {
       display_name += ' (' + user.email + ')';
+    }
     display_name = _.escape(display_name);
-    var style = user.email == 'anon@websyn.ca' ? 'mm' : 'retro';
+    var style = user.email === 'anon@websyn.ca' ? 'mm' : 'retro';
     $('#user_list').append('<a target="_blank" id="client_' + client + '" href="https://secure.gravatar.com/' + user.id + '"><img data-toggle="tooltip" data-placement="bottom" title="' + display_name + '" src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img></a>').children().last().children().tooltip();
   };
   $(document).bind('client_leave.Chat', function(e, data) {
@@ -73,21 +78,21 @@ define(['websync'], function(WS) {
   });
   self.updateUserList = function() {
     setTimeout(function() {
-      $('#user_count').text(_.size(WebSync.clients));
+      $('#user_count').text(_.size(WS.clients));
       $('#chat_well').css({
         top: $('#user_list').height() - 5
       });
     }, 100);
   };
   self.clientMsg = function(client, msg) {
-    var user = WebSync.clients[client];
-    var user_info = WebSync.users[user.id];
+    var user = WS.clients[client];
+    var user_info = WS.users[user.id];
     var display_name = user_info.displayName;
     if (!display_name) {
       display_name = user.email;
     }
     display_name = _.escape(display_name);
-    var style = user.email == 'anon@websyn.ca' ? 'mm' : 'retro';
+    var style = user.email === 'anon@websyn.ca' ? 'mm' : 'retro';
     $('#chat_well').append('<p><a target="_blank" href="https://secure.gravatar.com/' + user.id + '"><img src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img><span>' + display_name + ':</span></a> ' + _.escape(msg) + '</p>');
     if (!self.open) {
       $('#user_count').addClass('badge-pulse');
@@ -135,7 +140,7 @@ define(['websync'], function(WS) {
     $('*').unbind('.Chat');
     $('*').undelegate('.Chat');
   };
-  $.each(WebSync.clients, function(k, v) {
+  $.each(WS.clients, function(k, v) {
     self.addUser(k);
     self.updateUserList();
   });

@@ -259,7 +259,6 @@ class SymmetricKey
   property :body, Text
   property :created, DateTime
   belongs_to :user
-  belongs_to 'WSFile'
 end
 class Theme
     include DataMapper::Resource

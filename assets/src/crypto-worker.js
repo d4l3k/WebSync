@@ -14,7 +14,7 @@ var MIN_SIZE_RANDOM_BUFFER = 40000;
 var MAX_SIZE_RANDOM_BUFFER = 60000;
 
 window.openpgp.crypto.random.randomBuffer.init(MAX_SIZE_RANDOM_BUFFER);
-window.openpgp.config.commentstring = 'a'
+window.openpgp.config.commentstring = 'a';
 
 self.seedRandom = function(buf) {
   if (!(buf instanceof Uint8Array)) {
@@ -81,7 +81,7 @@ self.signAndEncryptWithSymmetricKey = function(text) {
   return msg.armor();
 };
 
-onmessage = function (oEvent) {
+onmessage = function(oEvent) {
   var event = oEvent.data;
 
   postMessage({
@@ -90,6 +90,8 @@ onmessage = function (oEvent) {
   });
 
   if (window.openpgp.crypto.random.randomBuffer.size < MIN_SIZE_RANDOM_BUFFER) {
-    postMessage({event: 'request-seed'});
+    postMessage({
+      event: 'request-seed'
+    });
   }
 };

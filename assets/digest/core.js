@@ -266,7 +266,7 @@ define('websync', ['crypto'], function(crypto) {
       }
 
     },
-    applyJSONPatch: function (patch) {
+    applyJSONPatch: function(patch) {
       WebSync.tmp.range = WebSync.selectionSave();
       $(document).trigger('data_patch', {
         patch: patch

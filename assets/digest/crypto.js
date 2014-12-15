@@ -257,20 +257,21 @@ define('crypto', function() {
     }
   };
 
-  var worker = new Worker("/assets/crypto-worker.js");
+  var worker = new Worker('/assets/crypto-worker.js');
   var callbacks = {};
   worker.onmessage = function(oEvent) {
     var event = oEvent.data;
     if (event.event === 'request-seed') {
       self.seedRandom(RANDOM_SEED_REQUEST);
     } else {
-      var callback = callbacks[event.id]
+      var callback = callbacks[event.id];
       if (callback) {
         callback(event.resp);
         delete callbacks[event.id];
       }
     }
-  }
+  };
+
   function execute(func, args, callback) {
     var id = btoa(Math.random());
     if (callback) {
@@ -284,32 +285,32 @@ define('crypto', function() {
   }
 
   var INITIAL_RANDOM_SEED = 50000, // random bytes seeded to worker
-      RANDOM_SEED_REQUEST = 20000; // random bytes seeded after worker request
+    RANDOM_SEED_REQUEST = 20000; // random bytes seeded after worker request
 
   self.seedRandom = function(size) {
     var buf = new Uint8Array(size);
     openpgp.crypto.random.getRandomValues(buf);
     execute('seedRandom', [buf]);
-  }
+  };
   self.seedRandom(INITIAL_RANDOM_SEED);
 
   self.setPrivateKey = function() {
     execute('setPrivateKey', [privateKey.armor()]);
-  }
+  };
 
   self.decryptPrivateKey = function(passphrase) {
     execute('decryptPrivateKey', [passphrase]);
-  }
+  };
 
   self.decryptWithSymmetricKey = function(msg, callback) {
     execute('decryptWithSymmetricKey', [msg], callback);
-  }
+  };
 
   self.setSessionKey = function(key, algo) {
     sessionKey = key;
     sessionKeyAlgorithm = algo;
     execute('setSessionKey', [key, algo]);
-  }
+  };
 
   self.encryptWithSymmetricKey = function(msg, callback) {
     execute('encryptWithSymmetricKey', [msg], callback);

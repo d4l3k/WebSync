@@ -15,6 +15,7 @@ $config = MultiJson.load(
 # Don't load databases if running rake tasks.
 if not ENV["CONFIGMODE"]
   require_relative 'models'
+  require_relative 'first_time'
 end
 require_relative 'util'
 require_relative 'helpers'

@@ -29,7 +29,7 @@
     "nprogress": "~0.1.6",
     "bootstrap-switch": "~3.2.2",
     "jquery-transform": "*",
-    "openpgp": "~0.8.2",
+    "openpgp": "~0.9.0",
     "jquery-validation": "~1.13.1",
     "moment": "~2.8.4",
     "bootstrap-material-design": "~0.1.6"

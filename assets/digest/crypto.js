@@ -18,7 +18,7 @@ define('crypto', function() {
   'use strict';
 
   var self = {};
-  var privateKey, publicKey, sessionKey;
+  var privateKey, publicKey, sessionKey, sessionKeyAlgorithm;
 
   // Add a comment to the generated pgp keys.
   openpgp.config.commentstring += ' - Generated for https://WebSyn.ca';
@@ -102,6 +102,7 @@ define('crypto', function() {
     window.localStorage['websync-key-private'] = prKey;
     privateKey = openpgp.key.readArmored(prKey).keys[0];
     publicKey = openpgp.key.readArmored(puKey).keys[0];
+    self.setPrivateKey();
     self.updateStage('saveOptions');
     e.preventDefault();
   });
@@ -118,6 +119,7 @@ define('crypto', function() {
       }).then(function(result) {
         self.updateStage('keyGenerated');
         privateKey = result.key;
+        self.setPrivateKey();
         var puKey = result.publicKeyArmored;
         var prKey = result.privateKeyArmored;
         window.localStorage['websync-key-public'] = puKey;
@@ -141,6 +143,7 @@ define('crypto', function() {
     var storePass = $('#encryptionModal #storePassPhrase').val() === 'on';
     var success = privateKey.decrypt(pass);
     if (success) {
+      self.decryptPrivateKey(pass);
       if (storePass) {
         window.localStorage['websync-passphrase'] = window.btoa(pass);
       }
@@ -187,9 +190,11 @@ define('crypto', function() {
     } else {
       privateKey = openpgp.key.readArmored(window.localStorage['websync-key-private']).keys[0];
       publicKey = openpgp.key.readArmored(window.localStorage['websync-key-public']).keys[0];
+      self.setPrivateKey();
       if (window.localStorage.hasOwnProperty('websync-passphrase')) {
-        var pass = window.localStorage['websync-passphrase'];
-        privateKey.decrypt(atob(pass));
+        var pass = atob(window.localStorage['websync-passphrase']);
+        privateKey.decrypt(pass);
+        self.decryptPrivateKey(pass);
       }
       if (!self.keyIsDecrypted(privateKey)) {
         self.updateStage('decrypt');
@@ -207,7 +212,7 @@ define('crypto', function() {
   };
   self.wrapSymmetricForKey = function(key) {
     var packetlist = new openpgp.packet.List();
-    var symAlgo = openpgp.key.getPreferredSymAlgo([key]);
+    var symAlgo = sessionKeyAlgorithm;
     var encryptionKeyPacket = key.getEncryptionKeyPacket();
     var pkESKeyPacket = new openpgp.packet.PublicKeyEncryptedSessionKey();
     pkESKeyPacket.publicKeyId = encryptionKeyPacket.getKeyId();
@@ -219,13 +224,19 @@ define('crypto', function() {
     return new openpgp.message.Message(packetlist);
   };
   self.decodeSymmetricKeys = function(keys) {
+    var decrypted = false;
     _.each(keys, function(key) {
       var symKey = self.decryptSymmetricKey(key);
       if (symKey) {
-        sessionKey = symKey;
+        self.setSessionKey(
+          symKey.sessionKey,
+          symKey.sessionKeyAlgorithm);
+        decrypted = true;
       }
     });
+    return decrypted;
   };
+
   self.decryptSymmetricKey = function(msg) {
     var message = openpgp.message.readArmored(msg);
     var encryptionKeyIds = message.getEncryptionKeyIds();
@@ -240,41 +251,74 @@ define('crypto', function() {
       }
     }
     if (pkESKeyPacket) {
-      return pkESKeyPacket.sessionKey;
+      return pkESKeyPacket;
     } else {
       return false;
     }
   };
-  self.decryptWithSymmetricKey = function(msg) {
 
-  };
-  self.signAndEncryptWithSymmetricKey = function(text) {
-    var msg = openpgp.message.fromText(text);
-    msg = msg.sign([privateKey]);
-    msg = self.encryptWithSymmetricKey(msg);
-    return msg.armor();
-  };
-  // Encrypts a message or text with the symmetric sessionKey.
-  self.encryptWithSymmetricKey = function(msg) {
-    if (_.isString(msg)) {
-      msg = openpgp.message.fromText(msg);
-    }
-    var packetlist = new openpgp.packet.List();
-    var symAlgo = openpgp.key.getPreferredSymAlgo([privateKey]);
-
-    var symEncryptedPacket;
-    if (config.integrity_protect) {
-      symEncryptedPacket = new openpgp.packet.SymEncryptedIntegrityProtected();
+  var worker = new Worker("/assets/crypto-worker.js");
+  var callbacks = {};
+  worker.onmessage = function(oEvent) {
+    var event = oEvent.data;
+    if (event.event === 'request-seed') {
+      self.seedRandom(RANDOM_SEED_REQUEST);
     } else {
-      symEncryptedPacket = new openpgp.packet.SymmetricallyEncrypted();
+      var callback = callbacks[event.id]
+      if (callback) {
+        callback(event.resp);
+        delete callbacks[event.id];
+      }
     }
-    symEncryptedPacket.packets = msg.packets;
-    symEncryptedPacket.encrypt(openpgp.enums.read(openpgp.enums.symmetric, symAlgo), sessionKey);
-    packetlist.push(symEncryptedPacket);
-    // remove packets after encryption
-    symEncryptedPacket.packets = new openpgp.packet.List();
-    return new openpgp.message.Message(packetlist);
+  }
+  function execute(func, args, callback) {
+    var id = btoa(Math.random());
+    if (callback) {
+      callbacks[id] = callback;
+    }
+    worker.postMessage({
+      id: id,
+      func: func,
+      args: args
+    });
+  }
+
+  var INITIAL_RANDOM_SEED = 50000, // random bytes seeded to worker
+      RANDOM_SEED_REQUEST = 20000; // random bytes seeded after worker request
+
+  self.seedRandom = function(size) {
+    var buf = new Uint8Array(size);
+    openpgp.crypto.random.getRandomValues(buf);
+    execute('seedRandom', [buf]);
+  }
+  self.seedRandom(INITIAL_RANDOM_SEED);
+
+  self.setPrivateKey = function() {
+    execute('setPrivateKey', [privateKey.armor()]);
+  }
+
+  self.decryptPrivateKey = function(passphrase) {
+    execute('decryptPrivateKey', [passphrase]);
+  }
+
+  self.decryptWithSymmetricKey = function(msg, callback) {
+    execute('decryptWithSymmetricKey', [msg], callback);
+  }
+
+  self.setSessionKey = function(key, algo) {
+    sessionKey = key;
+    sessionKeyAlgorithm = algo;
+    execute('setSessionKey', [key, algo]);
+  }
+
+  self.encryptWithSymmetricKey = function(msg, callback) {
+    execute('encryptWithSymmetricKey', [msg], callback);
   };
+
+  self.signAndEncryptWithSymmetricKey = function(msg, callback) {
+    execute('signAndEncryptWithSymmetricKey', [msg], callback);
+  };
+
   self.encryptDocument = function() {
     self.checkKeys();
 
@@ -285,21 +329,25 @@ define('crypto', function() {
 
     // Generate symmetric key
     var symAlgo = openpgp.key.getPreferredSymAlgo([privateKey]);
-    sessionKey = openpgp.crypto.generateSessionKey(openpgp.enums.read(openpgp.enums.symmetric, symAlgo));
+    self.setSessionKey(
+      openpgp.crypto.generateSessionKey(openpgp.enums.read(openpgp.enums.symmetric, symAlgo)),
+      symAlgo);
     var wrappedSym = self.wrapSymmetricForKey(publicKey);
 
     // To encrypt the document we need to encrypt the blob, patches and shared list.
     // TODO: Encrypt patches and shared list.
     WebSyncData.encryption_date = new Date();
-    WS.connection.sendJSON({
-      type: 'encrypt_document',
-      body: {
-        encrypted_blob: self.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData))
-      },
-      symmetricKey: {
-        publicKey: publicKey.armor(),
-        key: wrappedSym.armor()
-      }
+    self.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData), function(blob) {
+      WS.connection.sendJSON({
+        type: 'encrypt_document',
+        body: {
+          encrypted_blob: blob
+        },
+        symmetricKey: {
+          publicKey: publicKey.armor(),
+          key: wrappedSym.armor()
+        }
+      });
     });
   };
   return self;

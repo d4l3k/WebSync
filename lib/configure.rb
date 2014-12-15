@@ -32,6 +32,7 @@ module WebSync
         end
         asset = app.sprockets[key]
         content_type asset.content_type
+        binding.pry
         if Sprockets::Helpers.expand
           return asset.body
         end

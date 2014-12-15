@@ -380,8 +380,13 @@ function wsConnection(ws) {
             on('row', function(row) {
               var body = JSON.parse(row.body);
               try {
-                jsonpatch.apply(body, data.patch);
-                postgres.query('UPDATE ws_files SET body=$2,edit_time=$3 WHERE id = $1', [doc_id, JSON.stringify(body), new Date()]);
+                if (data.encrypted) {
+
+                } else {
+                  // Apply the patch directly if not encrypted.
+                  jsonpatch.apply(body, data.patch);
+                  postgres.query('UPDATE ws_files SET body=$2,edit_time=$3 WHERE id = $1', [doc_id, JSON.stringify(body), new Date()]);
+                }
                 var id = -1;
                 postgres.query('SELECT id FROM changes WHERE file_id=$1 ORDER BY time DESC LIMIT 1;', [doc_id]).on('row', function(row) {
                   id = row.id;

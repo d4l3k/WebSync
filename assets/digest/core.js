@@ -42,7 +42,7 @@ define('websync', ['crypto'], function(crypto) {
     // An object with all of the callbacks for a websocket connection.
     webSocketCallbacks: {
       onopen: function() {
-        WebSync.diffInterval = setInterval(WebSync.checkDiff, 1000);
+        WebSync.diffInterval = setInterval(WebSync.checkDiff, 500);
         $('nav').removeClass('no-connection');
         $(document).trigger('connection');
         $('#connection_msg').remove();
@@ -91,20 +91,13 @@ define('websync', ['crypto'], function(crypto) {
           // Load scripts from server.
           require(data.js);
         } else if (data.type === 'data_patch') {
-          WebSync.tmp.range = WebSync.selectionSave();
-          $(document).trigger('data_patch', {
-            patch: data.patch
-          });
-          // Make sure there aren't any outstanding changes that need to be sent before patching document.
-          WebSync.checkDiff();
-          jsonpatch.apply(WebSyncData, data.patch);
-          if (WebSync.fromJSON) {
-            WebSync.fromJSON(data.patch);
+          if (WebSyncAuth.encrypted) {
+            crypto.decryptWithSymmetricKey(data.patch, function(patch) {
+              WS.applyJSONPatch(JSON.parse(patch));
+            });
+          } else {
+            WS.applyJSONPatch(data.patch);
           }
-          WebSync.oldDataString = JSON.stringify(WebSyncData);
-          WebSync.oldData = JSON.parse(WebSync.oldDataString);
-          $(document).trigger('patched');
-          WebSync.selectionRestore(WebSync.tmp.range);
         } else if (data.type === 'name_update') {
           $('#name').text(data.name);
         } else if (data.type === 'ping') {
@@ -125,13 +118,15 @@ define('websync', ['crypto'], function(crypto) {
             html += '>';
             _.each(['viewer', 'editor', 'owner'], function(level) {
               html += "<option value='" + level + "'";
-              if (level === user.level) html += ' selected';
+              if (level === user.level) {
+                html += ' selected';
+              }
               html += '>';
               html += level.charAt(0).toUpperCase() + level.slice(1);
               html += '</option>';
             });
             html += "</select></td><td><a class='btn btn-danger'";
-            if (WebSync.clients[WebSyncAuth.id].email == user.user_email) {
+            if (WebSync.clients[WebSyncAuth.id].email === user.user_email) {
               html += ' disabled';
             }
             html += "><i class='fa fa-trash-o visible-xs fa-lg'></i> <span class='hidden-xs'>Delete</span></a></td>";
@@ -144,7 +139,7 @@ define('websync', ['crypto'], function(crypto) {
           var html = '';
           _.each(data.resources, function(resource) {
             html += '<tr>';
-            html += "<td><a href='assets/" + escape(resource.name) + "'>" + resource.name + '</a></td>';
+            html += "<td><a href='assets/" + window.escape(resource.name) + "'>" + resource.name + '</a></td>';
             html += '<td>' + resource.content_type + '</td>';
             html += '<td>' + resource.edit_time + '</td>';
             html += '<td>' + WebSync.byteLengthPretty(resource.octet_length) + '</td>';
@@ -270,6 +265,22 @@ define('websync', ['crypto'], function(crypto) {
         console.log(e);
       }
 
+    },
+    applyJSONPatch: function (patch) {
+      WebSync.tmp.range = WebSync.selectionSave();
+      $(document).trigger('data_patch', {
+        patch: patch
+      });
+      // Make sure there aren't any outstanding changes that need to be sent before patching document.
+      WebSync.checkDiff();
+      jsonpatch.apply(WebSyncData, patch);
+      if (WebSync.fromJSON) {
+        WebSync.fromJSON(patch);
+      }
+      WebSync.oldDataString = JSON.stringify(WebSyncData);
+      WebSync.oldData = JSON.parse(WebSync.oldDataString);
+      $(document).trigger('patched');
+      WebSync.selectionRestore(WebSync.tmp.range);
     },
     // Register an event for the websocket connection.
     registeredMessageEvents: {},
@@ -645,10 +656,20 @@ define('websync', ['crypto'], function(crypto) {
         } else if (patches.length > 0) {
           console.log('DIFF', patches);
           $(document).trigger('diffed');
-          WebSync.connection.sendJSON({
-            type: 'data_patch',
-            patch: patches
-          });
+          if (WebSyncAuth.encrypted) {
+            crypto.signAndEncryptWithSymmetricKey(JSON.stringify(patches), function(patch) {
+              WebSync.connection.sendJSON({
+                type: 'data_patch',
+                encrypted: true,
+                patch: patch
+              });
+            });
+          } else {
+            WebSync.connection.sendJSON({
+              type: 'data_patch',
+              patch: patches
+            });
+          }
           WebSync.oldDataString = stringWebSync;
           WebSync.oldData = JSON.parse(stringWebSync);
         }
@@ -1016,9 +1037,12 @@ define('websync', ['crypto'], function(crypto) {
       if (WebSyncAuth.encrypted) {
         // TODO: Load encrypted document.
         crypto.checkKeys(function() {
-          var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetricKeys);
+          var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetric_keys);
           if (success) {
-            WebSyncBody = crypto.decryptWithSymmetricKey(WebSyncBody.encrypted_blob);
+            crypto.decryptWithSymmetricKey(WebSyncData.encrypted_blob, function(blob) {
+              WebSyncData = JSON.parse(blob);
+              $(document).trigger('modules_loaded');
+            });
           } else {
             WS.error('ERROR: Unable to decrypt the symmetric key!');
           }

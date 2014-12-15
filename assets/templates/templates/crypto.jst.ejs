@@ -73,6 +73,26 @@
           <input type="submit" class="btn btn-primary btn-block" id="doUploadKey" value="Upload"></input>
           </form>
         </div>
+        <div class="decrypt">
+          <p>Enter your passphrase to decrypt your private key.</p>
+          <form>
+          <p>
+            <label for="passphrase">Passphrase</label>
+            <input type="password" class="form-control" id="passphrase" required>
+          </p>
+          <p class="decrypt error">
+          </p>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="storePassPhrase"> Remember passphrase on this computer.
+            </label>
+          </div>
+          <p class="remember error" style="display: none;">
+            WARNING: Remembering your passphrase severely decreases the security of your encryption keys!
+          </p>
+          <input type="submit" class="btn btn-primary btn-block" id="doDecryptPassphrase" value="Decrypt"/>
+          </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

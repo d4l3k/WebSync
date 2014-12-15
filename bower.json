@@ -31,7 +31,8 @@
     "jquery-transform": "*",
     "openpgp": "~0.8.2",
     "jquery-validation": "~1.13.1",
-    "moment": "~2.8.4"
+    "moment": "~2.8.4",
+    "bootstrap-material-design": "~0.1.6"
   },
   "resolutions": {
     "jquery": "~2.1.1"

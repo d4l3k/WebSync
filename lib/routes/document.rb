@@ -107,7 +107,18 @@ module WebSync
         $redis.set "websocket:key:#{client_id}", client_key+":#{doc.id}"
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
-        erb :edit, locals:{no_bundle_norm: true, doc: doc, no_menu: true, edit: true, client_id: client_id, client_key: client_key, op: op, access: access, allow_iframe: true}
+        erb :edit, locals: {
+          user: user,
+          no_bundle_norm: true,
+          doc: doc,
+          no_menu: true,
+          edit: true,
+          client_id: client_id,
+          client_key: client_key,
+          op: op,
+          access: access,
+          allow_iframe: true
+        }
       end
       post "/:doc/upload" do
         doc = document_auth

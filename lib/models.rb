@@ -97,19 +97,23 @@ class WSFile
     property :edit_time, DateTime
     property :create_time, DateTime
     property :directory, Boolean, default: false
-    property :body,             Json,       :default=>{}, :lazy=>true
-    property :visibility,       String,     :default=>"private"
-    property :default_level,    String,     :default=>"viewer"
-    property :config,           Json,       :default=>{}
-    property :file_properties,       Json,       :default=>{}
-    property :deleted,          Boolean,    :default=>false
+    property :body,             Json,       default: {}, lazy: true
+    property :visibility,       String,     default: "private"
+    property :default_level,    String,     default: "viewer"
+    property :config,           Json,       default: {}
+    property :file_properties,  Json,       default: {}
+    property :deleted,          Boolean,    default: false
+    property :encrypted,        Boolean,    default: false
+
     has n, :asset_ws_files, 'AssetWSFile', child_key: [ :file_id ]
     has n, :assets, through: :asset_ws_files
     has n, :changes, child_key: [ :file_id ]
-    has n, :permissions, child_key: [ :file_id ]
-    has n, :users, model: 'User', :through => :permissions
     has n, :children, self, child_key: [ :parent_id ]
+    has n, :permissions, child_key: [ :file_id ]
+    has n, :users, model: 'User', through:  :permissions
+    has n, :symmetric_keys
     belongs_to :parent, self, required: false
+
     def data= blob
         $postgres.exec_prepared('wsfile_update', [self.id, {value: blob, format: 1}])
     end
@@ -247,7 +251,16 @@ class Key
     property :type, String
     property :body, Text, unique: true
     property :created, DateTime
+    has n, :symmetric_keys
     belongs_to :user
+end
+class SymmetricKey
+  include DataMapper::Resource
+  property :id, Serial
+  property :body, Text
+  property :created, DateTime
+  belongs_to :key
+  belongs_to :user
 end
 class Theme
     include DataMapper::Resource

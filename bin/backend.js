@@ -476,6 +476,20 @@ function wsConnection(ws) {
                 });
               });
             }
+          } else if (data.type === 'encrypt_document') {
+            var key_id;
+            postgres.query('SELECT id FROM keys WHERE body=$1', [data.symmetricKey.publicKey]).on('row', function(key) {
+              key_id = key.id;
+              console.log('FOUND ID', JSON.stringify(key));
+            }).on('end', function() {
+              if (!key_id) {
+                console.log("FAILED TO FIND!");
+                return;
+              }
+              postgres.query('INSERT INTO symmetric_keys (body, created, key_id, user_email, ws_file_id) VALUES ($1, $2, $3, $4, $5)', [data.symmetricKey.key, new Date(), key_id, user_email, doc_id]);
+                postgres.query('UPDATE ws_files SET body=$2,edit_time=$3,encrypted=true WHERE id = $1', [doc_id, JSON.stringify(data.body), new Date()]);
+              // TODO: encrypt patches
+            });
           }
         });
       }

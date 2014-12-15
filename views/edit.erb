@@ -22,7 +22,16 @@
         websocket_port: <%= $config['websocket']['port'] %>,
         websocket_url: "<%= $config['websocket']['url'] %>",
         // This is the user's access level. Can be: viewer, editor, owner
-        access: "<%= access %>"
+        access: "<%= access %>",
+        // Encryption state
+        encrypted: <%= doc.encrypted %>,
+        <% if doc.encrypted
+          key = doc.symmetric_keys(user: user).first %>
+          symetric_key: {
+            public: "<%= key.key.body %>"
+            key: "<%= key.body %>"
+          }
+      <% end %>
     }
     // Variable: object WebSyncData;
     // This contains the data for the document. This is automatically synced with the server.

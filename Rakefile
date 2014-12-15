@@ -149,7 +149,7 @@ def get_python2
 end
 task :beautify do
     files = %w(
-        assets/digest/{edit,core}.js
+        assets/digest/{edit,core,crypto}.js
         assets/src/*.js
         bin/backend.js
         package.json

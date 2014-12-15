@@ -371,7 +371,7 @@ body > .container-fluid {
 #alert_well {
   position: fixed;
   text-align: left;
-  z-index: 500;
+  z-index: 5000;
   bottom: 0;
   left: 0;
   margin-left: 10px;
@@ -667,23 +667,6 @@ body > .container-fluid {
 
 table.table-click {
   margin-top: 15px;
-}
-.forest {
-  width: 100%;
-  background: #1c1c1e url("/img/forest.png") 50% 100% no-repeat fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  height: 500px;
-  overflow: hidden;
-  .phone {
-    height: 800px;
-    float: right;
-  }
-  iframe {
-    float: right;
-  }
 }
 form .error {
   border-color: #a94442;

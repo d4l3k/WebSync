@@ -251,7 +251,6 @@ class Key
     property :type, String
     property :body, Text, unique: true
     property :created, DateTime
-    has n, :symmetric_keys
     belongs_to :user
 end
 class SymmetricKey
@@ -259,8 +258,8 @@ class SymmetricKey
   property :id, Serial
   property :body, Text
   property :created, DateTime
-  belongs_to :key
   belongs_to :user
+  belongs_to 'WSFile'
 end
 class Theme
     include DataMapper::Resource

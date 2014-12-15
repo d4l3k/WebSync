@@ -108,7 +108,7 @@ module WebSync
         $redis.expire "websocket:id:#{client_id}", 60*60*24*7
         $redis.expire "websocket:key:#{client_id}", 60*60*24*7
         erb :edit, locals: {
-          user: user,
+          user: current_user,
           no_bundle_norm: true,
           doc: doc,
           no_menu: true,

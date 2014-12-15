@@ -26,11 +26,9 @@
         // Encryption state
         encrypted: <%= doc.encrypted %>,
         <% if doc.encrypted
-          key = doc.symmetric_keys(user: user).first %>
-          symetric_key: {
-            public: "<%= key.key.body %>"
-            key: "<%= key.body %>"
-          }
+          puts user
+          keys = doc.symmetric_keys(user: user) %>
+          symmetric_keys: <%= MultiJson.dump(keys.map(&:body)) %>
       <% end %>
     }
     // Variable: object WebSyncData;

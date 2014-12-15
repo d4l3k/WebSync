@@ -1011,17 +1011,26 @@ define('websync', ['crypto'], function(crypto) {
         html += WebSync.NODEtoDOM(elem);
       });
       return html;
+    },
+    modulesLoaded: function() {
+      if (WebSyncAuth.encrypted) {
+        // TODO: Load encrypted document.
+        crypto.checkKeys(function() {
+          var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetricKeys);
+          if (success) {
+            WebSyncBody = crypto.decryptWithSymmetricKey(WebSyncBody.encrypted_blob);
+          } else {
+            WS.error('ERROR: Unable to decrypt the symmetric key!');
+          }
+        });
+      } else {
+        $(document).trigger('modules_loaded');
+      }
     }
   };
   // Initialize
   NProgress.start();
   WS.webSocketStart();
-
-  if (_.include(window.location.hash, 'crypto')) {
-    _.delay(function() {
-      crypto.checkKeys();
-    });
-  }
 
   // Disable Mozilla built in resizing for tables and images.
   document.execCommand('enableObjectResizing', false, 'false');
@@ -1275,7 +1284,7 @@ window.JST.get = function(template) {
       total += 1;
     });
     if (loaded === total && total > 0) {
-      $(document).trigger('modules_loaded');
+      WS.modulesLoaded();
       done = true;
     }
   };

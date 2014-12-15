@@ -26,9 +26,10 @@ define('crypto', function() {
   function encodeDownload(text) {
     return 'data:application/octet-stream;charset=utf-8,' + encodeURIComponent(text);
   }
+
   function download(filename, text) {
     var pom = document.createElement('a');
-    pom.setAttribute('href',encodeDownload(text));
+    pom.setAttribute('href', encodeDownload(text));
     pom.setAttribute('download', filename);
     pom.click();
   }
@@ -44,12 +45,12 @@ define('crypto', function() {
       var puKey = window.localStorage['websync-key-public'];
       var prKey = window.localStorage['websync-key-private'];
       self.$modal.find('#publicKey').
-        attr('href', encodeDownload(puKey));
+      attr('href', encodeDownload(puKey));
       self.$modal.find('#privateKey').
-        attr('href', encodeDownload(prKey));
+      attr('href', encodeDownload(prKey));
     }
     $('#encryptionModal .modal-body').children().hide();
-    $('#encryptionModal .modal-body .'+self.stage).show();
+    $('#encryptionModal .modal-body .' + self.stage).show();
   };
   $('#encryptionModal #genKey').on('click', function() {
     self.updateStage('genKey');
@@ -86,6 +87,11 @@ define('crypto', function() {
         public: puKeys,
         private: prKeys
       }
+    });
+    var callbacks = self.checkKeysCallback;
+    self.checkKeysCallback = [];
+    _.each(callbacks, function(cb) {
+      cb();
     });
     self.$modal.modal('hide');
   });
@@ -124,7 +130,7 @@ define('crypto', function() {
     e.preventDefault();
   });
   $('#encryptionModal #storePassPhrase').on('click', function() {
-    if($(this).val() === 'on') {
+    if ($(this).val() === 'on') {
       $('#encryptionModal .decrypt .remember.error').show();
     } else {
       $('#encryptionModal .decrypt .remember.error').hide();
@@ -168,12 +174,16 @@ define('crypto', function() {
       });
     });
   }, 1);
-  self.checkKeys = function() {
+  self.checkKeysCallback = [];
+  self.checkKeys = function(callback) {
     if (!(window.localStorage.hasOwnProperty('websync-key-private') &&
         window.localStorage.hasOwnProperty('websync-key-public') &&
         !_.include(window.location.hash, 'cryptoclean'))) {
       self.updateStage(0);
       $('#encryptionModal').modal();
+      if (callback) {
+        self.checkKeysCallback.push(callback);
+      }
     } else {
       privateKey = openpgp.key.readArmored(window.localStorage['websync-key-private']).keys[0];
       publicKey = openpgp.key.readArmored(window.localStorage['websync-key-public']).keys[0];
@@ -184,6 +194,9 @@ define('crypto', function() {
       if (!self.keyIsDecrypted(privateKey)) {
         self.updateStage('decrypt');
         $('#encryptionModal').modal();
+      }
+      if (callback) {
+        callback();
       }
     }
   };
@@ -205,6 +218,14 @@ define('crypto', function() {
     packetlist.push(pkESKeyPacket);
     return new openpgp.message.Message(packetlist);
   };
+  self.decodeSymmetricKeys = function(keys) {
+    _.each(keys, function(key) {
+      var symKey = self.decryptSymmetricKey(key);
+      if (symKey) {
+        sessionKey = symKey;
+      }
+    });
+  };
   self.decryptSymmetricKey = function(msg) {
     var message = openpgp.message.readArmored(msg);
     var encryptionKeyIds = message.getEncryptionKeyIds();
@@ -218,8 +239,15 @@ define('crypto', function() {
         break;
       }
     }
-    return pkESKeyPacket.sessionKey;
-  }
+    if (pkESKeyPacket) {
+      return pkESKeyPacket.sessionKey;
+    } else {
+      return false;
+    }
+  };
+  self.decryptWithSymmetricKey = function(msg) {
+
+  };
   self.signAndEncryptWithSymmetricKey = function(text) {
     var msg = openpgp.message.fromText(text);
     msg = msg.sign([privateKey]);
@@ -246,7 +274,7 @@ define('crypto', function() {
     // remove packets after encryption
     symEncryptedPacket.packets = new openpgp.packet.List();
     return new openpgp.message.Message(packetlist);
-  }
+  };
   self.encryptDocument = function() {
     self.checkKeys();
 
@@ -266,11 +294,11 @@ define('crypto', function() {
     WS.connection.sendJSON({
       type: 'encrypt_document',
       body: {
-        encrypted_blob: self.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData)),
+        encrypted_blob: self.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData))
       },
       symmetricKey: {
         publicKey: publicKey.armor(),
-        key: wrappedSym.armor(),
+        key: wrappedSym.armor()
       }
     });
   };

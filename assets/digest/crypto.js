@@ -157,7 +157,6 @@ define('crypto', function() {
   self.uploadKeyValidator = $('#encryptionModal .uploadKey form').validate();
   _.delay(function() {
     require('websync').registerMessageEvent('keys', function(data) {
-      console.log(data);
       var $tbody = $('#keys tbody').html('');
       _.each(_.union(data.keys.public, data.keys.private), function(data) {
         var unarmored = openpgp.key.readArmored(data.body);
@@ -212,13 +211,12 @@ define('crypto', function() {
   };
   self.wrapSymmetricForKey = function(key) {
     var packetlist = new openpgp.packet.List();
-    var symAlgo = sessionKeyAlgorithm;
     var encryptionKeyPacket = key.getEncryptionKeyPacket();
     var pkESKeyPacket = new openpgp.packet.PublicKeyEncryptedSessionKey();
     pkESKeyPacket.publicKeyId = encryptionKeyPacket.getKeyId();
     pkESKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.algorithm;
     pkESKeyPacket.sessionKey = sessionKey;
-    pkESKeyPacket.sessionKeyAlgorithm = openpgp.enums.read(openpgp.enums.symmetric, symAlgo);
+    pkESKeyPacket.sessionKeyAlgorithm = sessionKeyAlgorithm;
     pkESKeyPacket.encrypt(encryptionKeyPacket);
     packetlist.push(pkESKeyPacket);
     return new openpgp.message.Message(packetlist);
@@ -308,8 +306,12 @@ define('crypto', function() {
 
   self.setSessionKey = function(key, algo) {
     sessionKey = key;
-    sessionKeyAlgorithm = algo;
-    execute('setSessionKey', [key, algo]);
+    if (_.isNumber(algo)) {
+      sessionKeyAlgorithm = openpgp.enums.read(openpgp.enums.symmetric, algo);
+    } else {
+      sessionKeyAlgorithm = algo;
+    }
+    execute('setSessionKey', [key, sessionKeyAlgorithm]);
   };
 
   self.encryptWithSymmetricKey = function(msg, callback) {
@@ -330,9 +332,10 @@ define('crypto', function() {
 
     // Generate symmetric key
     var symAlgo = openpgp.key.getPreferredSymAlgo([privateKey]);
+    var symAlgoName = openpgp.enums.read(openpgp.enums.symmetric, symAlgo);
     self.setSessionKey(
-      openpgp.crypto.generateSessionKey(openpgp.enums.read(openpgp.enums.symmetric, symAlgo)),
-      symAlgo);
+      openpgp.crypto.generateSessionKey(symAlgoName),
+      symAlgoName);
     var wrappedSym = self.wrapSymmetricForKey(publicKey);
 
     // To encrypt the document we need to encrypt the blob, patches and shared list.
@@ -349,6 +352,7 @@ define('crypto', function() {
           key: wrappedSym.armor()
         }
       });
+      WebSyncAuth.encrypted = true;
     });
   };
   return self;

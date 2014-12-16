@@ -419,15 +419,11 @@ function wsConnection(ws) {
               data: message
             }));
           } else if (data.type === 'client_event') {
+            data.from = client_id;
             redis.publish('doc:' + doc_id, JSON.stringify({
               type: 'client_bounce',
               client: client_id,
-              data: JSON.stringify({
-                type: 'client_event',
-                event: data.event,
-                from: client_id,
-                data: data.data
-              })
+              data: JSON.stringify(data)
             }));
           } else if (data.type === 'assets') {
             if (data.action === 'list') {

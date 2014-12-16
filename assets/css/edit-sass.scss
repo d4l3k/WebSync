@@ -528,15 +528,13 @@ a#name {
     margin-top: 0px !important;
     width: auto !important;
   }
-  select {
-    position: relative;
-    top: 1px;
-  }
-  input[type="color"] {
-    padding: 2px 4px !important;
-    width: 38px;
-    position: relative;
-    top: 5px;
+  input, select{
+    &[type="color"] {
+      padding: 2px 4px !important;
+      width: 38px;
+    }
+    cursor: pointer;
+    vertical-align: middle;
   }
 }
 .content {

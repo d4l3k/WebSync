@@ -9,6 +9,7 @@
     "docco": "^0.6.3",
     "fast-json-patch": "^0.5.0",
     "js-beautify": "^1.5.4",
+    "jsdoc": "^3.3.0-alpha11",
     "pg": "^4.1.0",
     "redis": "^0.12.1",
     "strip-json-comments": "^1.0.2",

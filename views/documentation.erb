@@ -1,38 +1,37 @@
 <div class="container">
-    <div class="page-header"><h1><%= t 'documentation.head' %></h1></div>
-    <%= t 'documentation.desc' %>
+  <div class="page-header"><h1><%= t 'documentation.head' %></h1></div>
+  <%= t 'documentation.desc' %>
 <br>
 <br>
-    <%
-    groups = {
-        client: %w{assets/digest/{core,edit}.js assets/src/*.js},
-        server: %w{bin/backend.js lib/*.rb}
-    }
-    groups.each do |name, glob_list|
-        files = []
-        glob_list.each do |file|
-            files += Dir.glob(file)
-        end
-    %>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <%= t("documentation.#{name}.head") %>
-            </div>
-            <div class="panel-body">
-                <%= t("documentation.#{name}.desc") %>
-            </div>
-            <div class="panel-footer">
-                <ul class="list-inline">
-                    <%
-                    files.each do |file|
-                        if File.exists? file
-                            doc = file.split("/").last
-                    %>
-                        <li><a class="" href="/documentation/<%= doc %>"><%= file %></a></li>
-                    <%  end
-                    end %>
-                </ul>
-            </div>
-        </div>
-    <% end %>
+  <%
+  groups = {
+    server: %w{bin/backend.js lib/**/*.rb},
+    client: %w{assets/digest/{core,edit,crypto}.js assets/src/*.js}
+  }
+  groups.each do |name, glob_list|
+    files = []
+    glob_list.each do |file|
+      files += Dir.glob(file)
+    end
+%>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <%= t("documentation.#{name}.head") %>
+      </div>
+      <div class="panel-body">
+        <%= t("documentation.#{name}.desc") %>
+      </div>
+      <div class="panel-footer">
+        <ul class="list-inline">
+          <%
+          files.each do |file|
+            if File.exists? file
+              doc = file.split("/").last.split('.').first %>
+              <li><a class="" href="/docco/<%= doc %>.html"><%= file %></a></li>
+          <%end
+          end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
 </div>

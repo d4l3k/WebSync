@@ -16,35 +16,35 @@ end
 task default: :spec
 
 module AssetPipeline
-    class Task < Rake::TaskLib
-      def initialize(app)
-        namespace :assets do
-          desc "Precompile assets"
-          task :precompile do
-             Rake::Task["documentation"].invoke
-            environment = app.sprockets
-            manifest = Sprockets::Manifest.new(environment.index, app.assets_path)
-            manifest.compile(app.assets_precompile)
-            # Output non-digested funcs.
-            paths = manifest.environment.each_logical_path(app.assets_precompile_no_digest).to_a
-            paths.each do |path|
-                asset = manifest.environment.find_asset(path)
-                target = File.join(manifest.dir, asset.logical_path)
-                asset.write_to target
-            end
-          end
-
-          desc "Clean assets"
-          task :clean do
-            FileUtils.rm_rf(app.assets_path)
+  class Task < Rake::TaskLib
+    def initialize(app)
+      namespace :assets do
+        desc "Precompile assets"
+        task :precompile do
+           Rake::Task["documentation"].invoke
+          environment = app.sprockets
+          manifest = Sprockets::Manifest.new(environment.index, app.assets_path)
+          manifest.compile(app.assets_precompile)
+          # Output non-digested funcs.
+          paths = manifest.environment.each_logical_path(app.assets_precompile_no_digest).to_a
+          paths.each do |path|
+            asset = manifest.environment.find_asset(path)
+            target = File.join(manifest.dir, asset.logical_path)
+            asset.write_to target
           end
         end
-      end
 
-      def self.define!(app)
-        self.new app
+        desc "Clean assets"
+        task :clean do
+          FileUtils.rm_rf(app.assets_path)
+        end
       end
     end
+
+    def self.define!(app)
+      self.new app
+    end
+  end
 end
 AssetPipeline::Task.define! WebSync::App
 
@@ -71,14 +71,14 @@ task :cachebust do
 end
 
 namespace :admin do
-    task :add, :email do |task, args|
-        require './lib/models'
-        User.get(args[:email]).update(group:"admin")
-    end
-    task :remove, :email do |task, args|
-        require './lib/models'
-        User.get(args[:email]).update(group:"user")
-    end
+  task :add, :email do |task, args|
+    require './lib/models'
+    User.get(args[:email]).update(group:"admin")
+  end
+  task :remove, :email do |task, args|
+    require './lib/models'
+    User.get(args[:email]).update(group:"user")
+  end
 end
 
 task :time, :email do |task, args|
@@ -172,19 +172,34 @@ task :beautify do
     fixed_backend[0] = backend[0]
     File.write("bin/backend.js", fixed_backend.join(""))
 end
-task :documentation do
-    files = %w(
-        assets/digest/{edit,core}.js
-        assets/src/*.js
-        lib/*.rb
-        bin/backend.js
-        )
-    paths = []
-    files.each do |file|
-        paths += Dir.glob(file)
-    end
-    system("node_modules/docco/bin/docco #{paths.join " "}")
+task :jsdoc do
+  files = %w(
+    assets/digest/{edit,core,crypto}.js
+    assets/src/*.js
+    bin/backend.js
+  )
+  paths = []
+  files.each do |file|
+      paths += Dir.glob(file)
+  end
+  system("node_modules/jsdoc/jsdoc.js -d ./public/jsdoc/ #{paths.join " "} README.md")
 end
+task :docco do
+  files = %w(
+    assets/digest/{edit,core,crypto}.js
+    assets/src/*.js
+    lib/**/*.rb
+    bin/backend.js
+  )
+  paths = []
+  files.each do |file|
+    paths += Dir.glob(file)
+  end
+  system("node_modules/docco/bin/docco -o public/docco/ #{paths.join " "}")
+end
+
+task documentation: [:docco, :jsdoc]
+
 task :hooks do
     %w(pre-commit pre-push).each do |hook|
         unless File.exists? ".git/hooks/#{ hook }"

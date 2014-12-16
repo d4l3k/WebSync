@@ -12,19 +12,28 @@
   http://tristanrice.name/
 */
 
+
 // This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
 define('websync', ['crypto'], function(crypto) {
+  /**
+   * The core of WebSync
+   * @exports websync
+   * @module websync
+   * @version 1.0
+   */
+
   'use strict';
+
   var WebSync, WS;
-  WebSync = WS = {
-    // Variable: object WebSync.tmp;
-    // Provides a location for temporary data to be stored.
+
+  var exports = {
+    /** Provides a location for temporary data to be stored. */
     tmp: {},
-    // Variable: boolean WebSync.webSocketFirstTime;
-    // Websocket first connection?
+
+    /** Websocket first connection? */
     webSocketFirstTime: true,
-    // Function: void WebSync.webSocketStart();
-    // Creates the websocket for communication.
+
+    /** Creates the websocket for communication. */
     webSocketStart: function() {
       var protocol = 'ws';
       var path = window.location.hostname + ':' + WebSyncAuth.websocket_port;
@@ -38,8 +47,8 @@ define('websync', ['crypto'], function(crypto) {
       WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;
       WebSync.connection.onerror = WebSync.webSocketCallbacks.onerror;
     },
-    // Variable: object WebSync.webSocketCallbacks;
-    // An object with all of the callbacks for a websocket connection.
+
+    /** An object with all of the callbacks for a websocket connection. */
     webSocketCallbacks: {
       onopen: function() {
         WebSync.diffInterval = setInterval(WebSync.checkDiff, 500);
@@ -235,10 +244,21 @@ define('websync', ['crypto'], function(crypto) {
             client: data.id
           });
         } else if (data.type === 'client_event') {
-          $(document).trigger('client_event_' + data.event, {
-            from: data.from,
-            data: data.data
-          });
+          var announceEvent = function(data) {
+            $(document).trigger('client_event_' + data.event, {
+              from: data.from,
+              data: data.data
+            });
+          };
+          if (WebSyncAuth.encrypted) {
+            crypto.decryptWithSymmetricKey(data.encrypted_blob, function(blob) {
+              var decrypted = JSON.parse(blob);
+              decrypted.from = data.from;
+              announceEvent(data);
+            });
+          } else {
+            announceEvent(data);
+          }
         } else if (data.type === 'asset_list') {
           var row = $("<tr><td></td><td></td><td></td><td></td><td width='102px'><div class='switch' ><input type='checkbox' /></div></td></tr>");
           row.get(0).dataset.id = data.id;
@@ -266,6 +286,11 @@ define('websync', ['crypto'], function(crypto) {
       }
 
     },
+    /**
+     * Apply a JSON patch to the DOM.
+     * @function
+     * @param {JSON} patch - A JSON patch in the format of jsonpatch.
+     */
     applyJSONPatch: function(patch) {
       WebSync.tmp.range = WebSync.selectionSave();
       $(document).trigger('data_patch', {
@@ -282,8 +307,17 @@ define('websync', ['crypto'], function(crypto) {
       $(document).trigger('patched');
       WebSync.selectionRestore(WebSync.tmp.range);
     },
-    // Register an event for the websocket connection.
+
+    /** Message events handler location. */
     registeredMessageEvents: {},
+
+    /**
+     * Register an event for the websocket connection.
+     * @function
+     * @param {String} name
+     * @param {Function} callback
+     * @returns {websync}
+     */
     registerMessageEvent: function(name, callback) {
       var events = WS.registeredMessageEvents[name];
       if (!events) {
@@ -292,7 +326,11 @@ define('websync', ['crypto'], function(crypto) {
       WS.registeredMessageEvents[name].push(callback);
       return WS;
     },
-    // This function is used to output byte lengths in a more human understandable format.
+    /**
+     * This function is used to output byte sizes in a more human understandable format.
+     * @param {Integer} length - The number of bytes.
+     * @returns {String}
+     */
     byteLengthPretty: function(length) {
       var UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
       var exponent = 0;
@@ -308,6 +346,10 @@ define('websync', ['crypto'], function(crypto) {
       if (Math.floor(length) !== length) fix = 1;
       return length.toFixed(fix) + ' ' + UNITS[exponent];
     },
+
+    /**
+     * TODO: Document
+     */
     uploadResource: function(file, progress, done) {
       var xhr = new XMLHttpRequest();
       if (xhr.upload) {
@@ -337,6 +379,11 @@ define('websync', ['crypto'], function(crypto) {
         });
       }
     },
+
+    /**
+     * Returns the current selection.
+     * @returns {Object}
+     */
     selectionSave: function() {
       // Get start selection.
       var sel = getSelection();
@@ -357,6 +404,11 @@ define('websync', ['crypto'], function(crypto) {
       }
       return obj;
     },
+
+    /**
+     * Restores a selection using the output from selectionSave.
+     * @param {Object} sel - The selection to restore.
+     */
     selectionRestore: function(sel) {
       if (sel.active) {
         // Find all #text nodes.
@@ -408,14 +460,38 @@ define('websync', ['crypto'], function(crypto) {
         window.getSelection().addRange(range);
       }
     },
+
+    /**
+     * Broadcasts an event to other connected clients.
+     * @param {String} event - The name of the event.
+     * @param {Object} data - The data to send with the event.
+     */
     broadcastEvent: function(event, data) {
-      WebSync.connection.sendJSON({
-        type: 'client_event',
-        event: event,
-        data: data
-      });
+      if (WebSyncAuth.encrypted) {
+        var blob = JSON.stringify({
+          event: event,
+          data: data
+        });
+        crypto.signAndEncryptWithSymmetricKey(blob, function(encrypted_blob) {
+          WebSync.connection.sendJSON({
+            type: 'client_event',
+            encrypted_blob: encrypted_blob
+          });
+        });
+      } else {
+        WebSync.connection.sendJSON({
+          type: 'client_event',
+          event: event,
+          data: data
+        });
+      }
     },
-    // Configures the html exporter for document downloads. Type can be [document, graphics, presentation, spreadsheet]
+
+    /**
+     * Configures the html exporter for document downloads.
+     * @param {String} type - document, graphics, presentation, spreadsheet
+     * @param {Function} export_to_html - A function that returns the HTML data.
+     */
     setupDownloads: function(type, export_to_html) {
       var types = [
         ['Microsoft Word', 'docx'],
@@ -440,10 +516,20 @@ define('websync', ['crypto'], function(crypto) {
         });
       });
     },
+
+    /** Stores the currently connected users. */
     users: {},
+
+    /** Configuration callbacks */
     _config_callbacks: {},
-    // Function: void WebSync.config_set(string key, object value, string space);
-    // Sends a request to the server to set config[key] to value. Space can be "user" or "document".
+
+    /**
+     * Sends a request to the server to set config[key] to value.
+     * This isn't really implemented on the backend. The canonical way to set parameters is to store it in WebSyncData.
+     * @param {String} key - The key to set.
+     * @param {Object} value - The value to set to the key.
+     * @param {String} space - Space can be "user" or "document".
+     */
     config_set: function(key, value, space) {
       if (space === null) {
         space = 'document';
@@ -456,8 +542,13 @@ define('websync', ['crypto'], function(crypto) {
         space: space
       });
     },
-    // Function: void WebSync.config_get(string key, string space);
-    // Sends a request to the server for the key value. Space can be "user" or "document".
+
+    /** Sends a request to the server for the key value.
+     * This isn't really implemented on the backend. The canonical way to set parameters is to store it in WebSyncData.
+     * @param {String} key - The key to set.
+     * @param {Object} value - The value to set to the key.
+     * @param {String} space - Space can be "user" or "document".
+     */
     config_get: function(key, callback, space) {
       var id = btoa(Date.now());
       if (callback) {
@@ -474,30 +565,42 @@ define('websync', ['crypto'], function(crypto) {
         id: id
       });
     },
-    // Variable: object WebSync.domExceptions;
-    // This is where registerDOMException stores it's internal data. You probably shouldn't modify this directly.
+
+    /** This is where registerDOMException stores it's internal data. You probably shouldn't modify this directly. */
     domExceptions: {},
-    // Function: void WebSync.registerDOMException(string Class, function Export, function Import);
-    // This registers outside functions to handle the serialization & parsing of certain classes. Used for modifyable content that can't be serialized directly to HTML. Ex: the equation plugin.
-    registerDOMException: function(watchClass, exportFunc, importFunc) {
-      WebSync.domExceptions[watchClass] = {
+
+    /**
+     * This registers outside functions to handle the serialization & parsing of certain elements. Used for modifyable content that can't be serialized directly to HTML. Ex: the equation plugin.
+     * @param {String} watchQuery - A query to watch elements.
+     * @param {Function} exportFunc - A function to serialize the excepted element.
+     * @param {Function} importFunc - A function to deserialize the excepted element.
+     */
+    registerDOMException: function(watchQuery, exportFunc, importFunc) {
+      WebSync.domExceptions[watchQuery] = {
         dump: exportFunc,
         load: importFunc
       };
     },
+
     // Function: void WebSync.unregisterDOMException(string Class);
-    // Stops monitoring certain classes.
-    unregisterDOMException: function(watchClass) {
-      delete WebSync.domExceptions[watchClass];
+    /**
+     * Stops monitoring certain queries.
+     * @param {String} watchQuery - A query to watch elements.
+     */
+    unregisterDOMException: function(watchQuery) {
+      delete WebSync.domExceptions[watchQuery];
     },
-    // Variable: string WebSync.viewMode;
-    // This is the current visual mode. This can be either 'zen' or 'normal'
+
+    /** This is the current visual mode. This can be either 'zen' or 'normal' */
     viewMode: 'normal',
-    // Variable: boolean WebSync.menuVisible;
-    // This tells you if the menu ribbon is visible or not. In zen mode it can disappear.
+
+    /** This tells you if the menu ribbon is visible or not. In zen mode it can disappear. */
     menuVisible: true,
-    // WARNING: Experimental & Unsupported in many browsers!
-    // WebRTC Peer functionality. This will be used for communication between Clients. Video + Text chat hopefully.
+
+    /**
+     * Sets the zoom level on the document.
+     * @param {Float} zoom - A number representing the current zoom level. Ex. 1.0 == 100%
+     */
     setZoom: function(zoom) {
       WebSync.zoom = zoom;
       $('#zoom_level').data('slider').setValue(zoom * 100);
@@ -508,6 +611,10 @@ define('websync', ['crypto'], function(crypto) {
       WebSync.updateOrigin();
       $(document).trigger('zoom');
     },
+
+    /**
+     * Triggers an update for the menu and the current view mode on url change.
+     */
     urlChange: function() {
       var current = window.location.pathname.split('/')[2].toLowerCase();
       if (current === 'zen')
@@ -518,6 +625,12 @@ define('websync', ['crypto'], function(crypto) {
         $('#view_mode').val('Normal');
       WebSync.updateViewMode(null, true);
     },
+
+    /**
+     * Triggers an update of the current view mode.
+     * @param {Event} e - The event that triggered the change in view.
+     * @param {Boolean} dontPush - Controls whether the change is put into history or not.
+     */
     updateViewMode: function(e, dontPush) {
       var mode = $('#view_mode').val();
       WebSync.viewMode = mode;
@@ -564,8 +677,8 @@ define('websync', ['crypto'], function(crypto) {
       }
       $(document).trigger('viewmode');
     },
-    // Function: void WebSync.updateRibbon();
-    // This updates the ribbon buttons based on the content in the ribbon bar. TODO: Use registration system & persist menu between updates.
+
+    /** This updates the ribbon buttons based on the content in the ribbon bar. TODO: Use registration system & persist menu between updates. */
     updateRibbon: function() {
       var menu_buttons = '';
       var active = $('#ribbon_buttons .active').text();
@@ -581,29 +694,15 @@ define('websync', ['crypto'], function(crypto) {
       });
       if (active === '') $('#ribbon_buttons li:contains(Text)').click();
     },
-    // Function: void WebSync.loadScripts();
-    // Checks server for plugin scripts to load.
+
+    /** Checks server for plugin scripts to load. */
     loadScripts: function() {
       WebSync.connection.sendJSON({
         type: 'load_scripts'
       });
     },
-    // Function: void WebSync.showHTML();
-    // Converts visible text to HTML. TODO: Delete/figure something out.
-    showHTML: function() {
-      $('.page').html('<code>' + WebSync.getHTML() + '</code>');
-    },
-    // Function: string WebSync.getHTML();
-    // This will return sanitized document HTML. TODO: This should be migrated into the page handler.
-    getHTML: function() {
-      $('.page').get(0).normalize();
-      var html = $('.page').html().trim();
-      // Remove other cursors.
-      html = html.replace(/\<cursor[^\/]+\/?\<\/cursor\>/g, '');
-      return html;
-    },
-    // Function: void WebSync.resize();
-    // Event handler for when the window resizes. This is an internal method.
+
+    /** Event handler for when the window resizes. This is an internal method. */
     resize: function() {
       //$(".content_well").height(window.innerHeight-$(".content_well").position().top);
       $('.arrow').offset({
@@ -615,8 +714,8 @@ define('websync', ['crypto'], function(crypto) {
       WebSync.updateRibbon();
       WebSync.updateOrigin();
     },
-    // Function: void WebSync.updateOrigin();
-    // Changes the transform origin based on the content_container dimensions.
+
+    /** Changes the transform origin based on the content_container dimensions. */
     updateOrigin: function() {
       var container = $('.content_container');
       if (container.width() > container.parent().width() || container.parent().get(0) && container.parent().get(0).scrollWidth - 2 > container.parent().width()) {
@@ -635,8 +734,8 @@ define('websync', ['crypto'], function(crypto) {
         });
       }
     },
-    // Function: void WebSync.checkDiff();
-    // This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit.
+
+    /** This is an internal method that executes every couple of seconds while the client is connected to the server. It checks to see if there have been any changes to document. If there are any changes it sends a message to a Web Worker to create a patch to transmit. */
     checkDiff: function() {
       if (!WebSync.oldData) {
         WebSync.oldDataString = JSON.stringify(WebSyncData);
@@ -675,8 +774,11 @@ define('websync', ['crypto'], function(crypto) {
         }
       }
     },
-    // Function: void WebSync.insertAtCursor(jQuery node);
-    // Inserts a DOM element at selection cursor. This is probably going to be deprecated.
+
+    /**
+     * Inserts a DOM element at selection cursor. This is probably going to be deprecated.
+     * @param {Element} node - The DOM element to insert at cursor.
+     */
     insertAtCursor: function(node) {
       node = node.get(0);
       var sel, range, html;
@@ -691,8 +793,11 @@ define('websync', ['crypto'], function(crypto) {
         document.selection.createRange().html = node;
       }
     },
-    // Function: object WebSync.getCss();
-    // Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.
+
+    /**
+     * Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.
+     * @returns {Object}
+     */
     getCss: function() {
       /*WebSync.applier.toggleSelection();
       if($(".tmp").length==0) return {};
@@ -711,34 +816,52 @@ define('websync', ['crypto'], function(crypto) {
         return css_object;
       }
     },
-    // Function: void WebSync.applyCssToSelection(object css);
-    // Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.
+
+    /**
+     * Applies css to the selection. Uses jQuery css object format. Warning: This is rather slow and shouldn't be overly used.
+     * @param {Object} css - An object with parameters corresponding to the jQuery 'css' function.
+     */
     applyCssToSelection: function(css) {
       WebSync.applier.toggleSelection();
       $('.tmp').css(css).removeClass('tmp');
     },
-    // Function: void WebSync.alert(string Message);
-    // Displays an alert message in the lower right hand corner of the window.
+
+    /**
+     * Displays an alert message in the lower right hand corner of the window.
+     * @param {String} message - The message to display.
+     */
     alert: function(msg) {
       return WebSync.alertMessage(msg, 'alert-warning');
     },
-    // Function: void WebSync.error(string Message);
-    // Displays an error message in the lower right hand corner of the window.
+
+    /**
+     * Displays an error message in the lower right hand corner of the window.
+     * @param {String} message - The message to display.
+     */
     error: function(msg) {
       return WebSync.alertMessage(msg, 'alert-danger');
     },
-    // Function: void WebSync.success(string Message);
-    // Displays a success message in the lower right hand corner of the window.
+
+    /**
+     * Displays a success message in the lower right hand corner of the window.
+     * @param {String} message - The message to display.
+     */
     success: function(msg) {
       return WebSync.alertMessage(msg, 'alert-success');
     },
-    // Function: void WebSync.info(string Message);
-    // Displays an info message in the lower right hand corner of the window.
+    /**
+     * Displays an info message in the lower right hand corner of the window.
+     * @param {String} message - The message to display.
+     */
     info: function(msg) {
       return WebSync.alertMessage(msg, 'alert-info');
     },
-    // Function: void WebSync.alertMessage(string Message, string Classes);
-    // Displays an message in the lower right hand corner of the window with css classes.
+
+    /**
+     * Displays an message in the lower right hand corner of the window with css classes.
+     * @param {String} message - The message to display.
+     * @param {String} classes - The classes to add to the alert.
+     */
     alertMessage: function(msg, classes) {
       var div = $('<div class="alert ' + classes + '"><a class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
       $('#alert_well').prepend(div);
@@ -747,17 +870,26 @@ define('websync', ['crypto'], function(crypto) {
       }, 10000);
       return div;
     },
-    // Function: void WebSync.fatalError(string Message);
-    // Displays a large error banner. Should only be displayed for unrecoverable or interface blocking errors.
+
+    /**
+     * Displays a large error banner. Should only be displayed for unrecoverable or interface blocking errors.
+     * @param {String} message - The message to display.
+     */
     fatalError: function(msg) {
       if (msg) $('#error_message').text(msg);
       $('#fatal_error').fadeIn();
     },
-    // Function void WebSync.fatalHide();
-    // Hides the fatal error banner.
+
+    /** Hides the fatal error banner. */
     fatalHide: function() {
       $('#fatal_error').fadeOut();
     },
+
+    /**
+     * Returns the object matching the path in WebSyncData
+     * @param {String} path - This is a JSON path. Ex: '/body/0/banana'
+     * @returns {Object}
+     */
     getJsonFromPath: function(path) {
       var parts = path.split('/');
       var cur = WebSyncData;
@@ -766,10 +898,13 @@ define('websync', ['crypto'], function(crypto) {
       });
       return cur;
     },
-    // Applies patches directly to the HTML.
-    //  patch: the list of changes
-    //  root: the path of the base of the JSON html. eg. "/body/"
-    //  root_dom: the root DOM element.
+
+    /**
+     * Applies patches directly to the HTML.
+     * @param {Array} patch - The list of changes.
+     * @param {String} root - The path of the base of the JSON html. Ex: '/body/'.
+     * @param {Element} root_dom - The root DOM element.
+     */
     applyPatch: function(patch, root, root_dom) {
       var dom = root_dom.childNodes;
       var exemptions = {};
@@ -866,6 +1001,7 @@ define('websync', ['crypto'], function(crypto) {
             } else if (last === 'exempt') {
               cur.innerHTML = '';
               var attrs = cur.attributes;
+              var i;
               for (i = attrs.length - 1; i >= 0; i--) {
                 $(cur).attr(attrs[i].name, null);
               }
@@ -907,6 +1043,12 @@ define('websync', ['crypto'], function(crypto) {
         }
       });
     },
+
+    /**
+     * Converts a DOM node into a JSON object.
+     * @param {Node} node - The DOM node.
+     * @return {Object}
+     */
     NODEtoJSON: function(obj) {
       var jso = {
         nodeName: obj.nodeName,
@@ -961,6 +1103,12 @@ define('websync', ['crypto'], function(crypto) {
       }
       return jso;
     },
+
+    /**
+     * Converts an array of DOM elements/nodes into an JSON object.
+     * @object {Array} nodes - An array of DOM nodes.
+     * @returns {Object}
+     */
     DOMToJSON: function(obj) {
       var jso = [];
       _.each(obj, function(elem, index) {
@@ -969,6 +1117,12 @@ define('websync', ['crypto'], function(crypto) {
       });
       return jso;
     },
+
+    /**
+     * Converts text into an alpha numeric string. Ex. 'a-**#(19' -> 'a19'
+     * @param {String} text - The text to convert
+     * @returns {String}
+     */
     alphaNumeric: function(text) {
       var match = text.match(/[a-zA-Z0-9\-]+/g);
       if (!match) {
@@ -976,6 +1130,12 @@ define('websync', ['crypto'], function(crypto) {
       }
       return match.join('');
     },
+
+    /**
+     * Converts a JSON object into an HTML string. The JSON object should be in the format produced by NODEToJSON.
+     * @param {Object} obj - The JSON object to convert.
+     * @returns {String}
+     */
     NODEtoDOM: function(obj) {
       var html = '';
       // Some basic cross site scripting attack prevention.
@@ -1026,6 +1186,12 @@ define('websync', ['crypto'], function(crypto) {
       }
       return html;
     },
+
+    /**
+     * Converts a JSON array into a HTML string. The JSON object should be in the format produced by DOMToJSON.
+     * @param {Array} nodes - The JSON objects to convert.
+     * @returns {String}
+     */
     JSONToDOM: function(obj) {
       var html = '';
       _.each(obj, function(elem, index) {
@@ -1033,6 +1199,8 @@ define('websync', ['crypto'], function(crypto) {
       });
       return html;
     },
+
+    /** A function that is called when all the RequireJS modules are loaded. */
     modulesLoaded: function() {
       if (WebSyncAuth.encrypted) {
         // TODO: Load encrypted document.
@@ -1041,6 +1209,7 @@ define('websync', ['crypto'], function(crypto) {
           if (success) {
             crypto.decryptWithSymmetricKey(WebSyncData.encrypted_blob, function(blob) {
               WebSyncData = JSON.parse(blob);
+              delete WebSync.oldData;
               $(document).trigger('modules_loaded');
             });
           } else {
@@ -1052,6 +1221,8 @@ define('websync', ['crypto'], function(crypto) {
       }
     }
   };
+  WebSync = WS = exports;
+
   // Initialize
   NProgress.start();
   WS.webSocketStart();
@@ -1271,13 +1442,21 @@ define('websync', ['crypto'], function(crypto) {
   clearTimeout(window.initError);
   window.initError = true;
 
-  return WebSync;
+  return exports;
 });
 
-// Helper method for sending JSON over a websocket.
+/**
+ * Helper method for sending JSON over a WebSocket.
+ * @param {object} json - The JSON to send over the WebSocket.
+ */
 WebSocket.prototype.sendJSON = function(object) {
   this.send(JSON.stringify(object));
 };
+
+/**
+ * Helper method to capitalize a String.
+ * @returns {String}
+ */
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };

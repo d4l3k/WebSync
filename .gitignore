@@ -4,6 +4,8 @@ node_modules
 .*.swo
 *.db
 public/assets
+public/jsdoc
+public/docco
 assets/bower_components
 *~
 *.log

@@ -114,10 +114,10 @@ en:
     recover: "Trash"
     documentation:
         head: "Documentation"
-        desc: "If you're interested in running WebSync you should look at the <a href='https://github.com/d4l3k/WebSync'>README</a>. However, if you're interested in the code, WebSync uses Docco to automatically generate nicely formatted annotated source which is helpfully provided below. If there isn't anything below, you or the server administrator should run the command <code>rake documentation</code> in the WebSync root directory."
+        desc: "If you're interested in running WebSync you should look at the <a href='https://github.com/d4l3k/WebSync'>README</a>. However, if you're interested in the code, you should look at the <a href='/jsdoc/index.html'>Javascript Documentation</a>. WebSync also uses Docco to automatically generate nicely formatted annotated source which is helpfully provided below. This is an alternative for the frontend and currently the only option for the backend. If there isn't anything below, you or the server administrator should run the command <code>rake documentation</code> in the WebSync root directory."
         client:
             head: "Client Side"
-            desc: "These are the javascript files that power the front end on the client side."
+            desc: "These are the javascript files that power the front end on the client side. You should look at the <a href='/jsdoc/index.html'>JSDoc</a> instead."
         server:
             head: "Server Side"
             desc: "These are the files that are on the backend."

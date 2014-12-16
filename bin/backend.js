@@ -381,7 +381,7 @@ function wsConnection(ws) {
               var body = JSON.parse(row.body);
               try {
                 if (data.encrypted) {
-
+                  postgres.query('UPDATE ws_files SET edit_time=$2 WHERE id = $1', [doc_id, new Date()]);
                 } else {
                   // Apply the patch directly if not encrypted.
                   jsonpatch.apply(body, data.patch);
@@ -391,7 +391,11 @@ function wsConnection(ws) {
                 postgres.query('SELECT id FROM changes WHERE file_id=$1 ORDER BY time DESC LIMIT 1;', [doc_id]).on('row', function(row) {
                   id = row.id;
                 }).on('end', function() {
-                  postgres.query('INSERT INTO changes (time, patch, file_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)', [doc_id, JSON.stringify(data.patch), new Date(), user_email, id]);
+                  var patch = data.patch;
+                  if (!_.isString(patch)) {
+                    patch = JSON.stringify(data.patch);
+                  }
+                  postgres.query('INSERT INTO changes (time, patch, file_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)', [doc_id, patch, new Date(), user_email, id]);
                 });
                 redis.publish('doc:' + doc_id, JSON.stringify({
                   type: 'client_bounce',
@@ -446,11 +450,12 @@ function wsConnection(ws) {
           } else if (data.type === 'diffs') {
             if (data.action === 'list') {
               var patches = [];
-              postgres.query('SELECT time, patch, user_email, id, parent FROM changes WHERE file_id=$1 ORDER BY time ASC', [doc_id]).on('row', function(row) {
+              postgres.query('SELECT time, patch, user_email, id, parent FROM changes WHERE file_id=$1 AND time>$2 ORDER BY time ASC', [doc_id, new Date(data.after || 0)]).on('row', function(row) {
                 patches.push(row);
               }).on('end', function() {
                 ws.sendJSON({
                   type: 'diff_list',
+                  req_id: data.req_id,
                   patches: patches
                 });
               });

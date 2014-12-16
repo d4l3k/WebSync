@@ -378,11 +378,26 @@ define('crypto', function() {
 
   /**
    * Decrypts a message with the symmetric key.
-   * @params {String} message - The armored message.
+   * @params {String | Array} message - The armored message, or list of messages.
    * @params {Function} callback - The function to call with the decrypted message.
    */
   exports.decryptWithSymmetricKey = function(msg, callback) {
-    execute('decryptWithSymmetricKey', [msg], callback);
+    if (_.isString(msg)) {
+      execute('decryptWithSymmetricKey', [msg], callback);
+    } else {
+      var count = msg.length;
+      var num_decrypted = 0;
+      var decrypted = new Array(count);
+      _.each(msg, function(msg, i) {
+        execute('decryptWithSymmetricKey', [msg], function(decrypted_msg) {
+          decrypted[i] = decrypted_msg;
+          num_decrypted += 1;
+          if (num_decrypted === count) {
+            callback(decrypted);
+          }
+        });
+      });
+    }
   };
 
   /**

@@ -41,10 +41,9 @@ define('websync', ['crypto'], function(crypto) {
         path = WebSyncAuth.websocket_url;
       }
       WebSync.connection = new WebSocket(protocol + '://' + path + window.location.pathname);
-      WebSync.connection.onopen = WebSync.webSocketCallbacks.onopen;
-      WebSync.connection.onclose = WebSync.webSocketCallbacks.onclose;
-      WebSync.connection.onmessage = WebSync.webSocketCallbacks.onmessage;
-      WebSync.connection.onerror = WebSync.webSocketCallbacks.onerror;
+      _.each(WebSync.webSocketCallbacks, function(f, n) {
+        WebSync.connection[n] = f;
+      });
     },
 
     /** An object with all of the callbacks for a websocket connection. */
@@ -94,6 +93,10 @@ define('websync', ['crypto'], function(crypto) {
           _.each(events, function(e) {
             e(data);
           });
+        }
+        if (data.req_id && WS.backendCommandCallBacks[data.req_id]) {
+          WS.backendCommandCallBacks[data.req_id](data);
+          delete WS.backendCommandCallBacks[data.req_id];
         }
         if (data.type === 'scripts') {
           // Load scripts from server.
@@ -268,16 +271,33 @@ define('websync', ['crypto'], function(crypto) {
           children.get(3).innerText = data.atype;
           $('#assets tbody').append(row);
           $(children).find('input').bootstrapSwitch('state', ($("script[src='" + data.url + "']").length > 0), true);
-        } else if (data.type === 'diff_list') {
-          WebSync.patches = data.patches;
-          _.each(WebSync.patches, function(patch) {
-            var row = $("<tr><td></td><td></td><td></td><td><button class='btn btn-warning' data-id='" + patch.id + "'>Revert To</button></td></tr>");
-            var children = row.children();
-            children.get(0).innerText = patch.time;
-            children.get(1).innerText = patch.patch;
-            children.get(2).innerText = patch.user_email;
-            $('#diffs tbody').prepend(row);
-          });
+        } else if (data.type === 'diff_list' && !data.req_id) {
+          var processPatches = function(patches) {
+            WebSync.patches = patches;
+            _.each(WebSync.patches, function(patch) {
+              var row = $("<tr><td></td><td></td><td></td><td><button class='btn btn-warning' data-id='" + patch.id + "'>Revert To</button></td></tr>");
+              var children = row.children();
+              children.get(0).innerText = patch.time;
+              children.get(1).innerText = patch.patch;
+              children.get(2).innerText = patch.user_email;
+              $('#diffs tbody').prepend(row);
+            });
+          };
+          // Decrypt all of the patches.
+          if (WebSyncAuth.encrypted) {
+            var meta = _.filter(data.patches, function(patch) {
+              return _.include(patch.patch, 'BEGIN PGP MESSAGE');
+            });
+            var patches = _.pluck(meta, 'patch');
+            crypto.decryptWithSymmetricKey(patches, function(patches) {
+              processPatches(_.map(meta, function(p, i) {
+                p.patch = patches[i];
+                return p;
+              }));
+            });
+          } else {
+            processPatches(data.patches);
+          }
         }
       },
       onerror: function(e) {
@@ -417,7 +437,7 @@ define('websync', ['crypto'], function(crypto) {
         var startNode, endNode;
 
         // Initialize Levenshtein distances to be sufficiently high.
-        var endNodeDist = 99999
+        var endNodeDist = 99999;
         var startNodeDist = 99999;
 
         // Check to see if the original start and end nodes are still in the document.
@@ -694,6 +714,21 @@ define('websync', ['crypto'], function(crypto) {
         $('#' + $(this).text()).show();
       });
       if (active === '') $('#ribbon_buttons li:contains(Text)').click();
+    },
+
+    /** A storage element for backend command callbacks. */
+    backendCommandCallBacks: {},
+
+    /**
+     * Execute a backend command with an object and a callback.
+     * @param {Object} obj - The json object containing the command.
+     * @param {Function} callback - The callback to the function.
+     */
+    backendCommand: function(obj, callback) {
+      var id = btoa(Math.random());
+      obj.req_id = id;
+      WebSync.connection.sendJSON(obj);
+      WS.backendCommandCallBacks[id] = callback;
     },
 
     /** Checks server for plugin scripts to load. */
@@ -1204,14 +1239,29 @@ define('websync', ['crypto'], function(crypto) {
     /** A function that is called when all the RequireJS modules are loaded. */
     modulesLoaded: function() {
       if (WebSyncAuth.encrypted) {
-        // TODO: Load encrypted document.
         crypto.checkKeys(function() {
           var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetric_keys);
           if (success) {
             crypto.decryptWithSymmetricKey(WebSyncData.encrypted_blob, function(blob) {
-              WebSyncData = JSON.parse(blob);
-              delete WebSync.oldData;
-              $(document).trigger('modules_loaded');
+              var new_body = JSON.parse(blob);
+              WebSync.backendCommand({
+                type: 'diffs',
+                action: 'list',
+                after: new_body.encryption_date
+              }, function(diffs) {
+                // Get rid of any unencrypted patches since they may be malicious or old.
+                var patches = _.filter(_.pluck(diffs.patches, 'patch'), function(patch) {
+                  return _.include(patch, 'BEGIN PGP MESSAGE');
+                });
+                crypto.decryptWithSymmetricKey(patches, function(decrypted) {
+                  _.each(decrypted, function(patch) {
+                    jsonpatch.apply(new_body, JSON.parse(patch));
+                  });
+                  WebSyncData = new_body;
+                  delete WebSync.oldData;
+                  $(document).trigger('modules_loaded');
+                });
+              });
             });
           } else {
             WS.error('ERROR: Unable to decrypt the symmetric key!');

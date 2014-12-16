@@ -19,7 +19,6 @@ define('websync', ['crypto'], function(crypto) {
    * The core of WebSync
    * @exports websync
    * @module websync
-   * @version 1.0
    */
 
   'use strict';

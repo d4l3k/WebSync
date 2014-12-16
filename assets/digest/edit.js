@@ -7,8 +7,14 @@
 
 // WebSync: Text Editing Plugin
 define('edit', ['websync'], function(WS) {
+  /**
+   * The primary text editor for WebSync
+   * @exports edit
+   * @module edit
+   */
+
   'use strict';
-  var self = {};
+  var exports = {};
   // Plugins should use a jQuery namespace for ease of use.
   // Bind Example: $(document).bind("click.Tables", clickHandler);
   // Unbind Example: $("*").unbind(".Tables");
@@ -16,10 +22,12 @@ define('edit', ['websync'], function(WS) {
   // Add Text menu to the ribbon.
   $('.ribbon').append(JST['templates/edit-ribbon']({}));
   $('body').append(JST['templates/edit-body']({}));
-  // List of buttons that can be clicked in the Text menu.
-  self.text_buttons = ['bold', 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'removeFormat', 'insertorderedlist', 'insertunorderedlist', 'superscript', 'subscript', 'insertHorizontalRule', 'indent', 'outdent'];
+
+  /** List of buttons that can be clicked in the Text menu. */
+  exports.text_buttons = ['bold', 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'removeFormat', 'insertorderedlist', 'insertunorderedlist', 'superscript', 'subscript', 'insertHorizontalRule', 'indent', 'outdent'];
+
   // Bind the basic text editing commands to the buttons.
-  self.text_buttons.forEach(function(elem) {
+  exports.text_buttons.forEach(function(elem) {
     $('button#' + elem).bind('click.TextEdit', function() {
       document.execCommand(elem);
       //$(this).toggleClass("active");
@@ -81,8 +89,8 @@ define('edit', ['websync'], function(WS) {
   });
   // Reflects text in menu at top
   $(document).bind('selectionchange.TextEdit', function() {
-    if (!self._selectTimeout) {
-      self._selectTimeout = setTimeout(self.selectHandler, 200);
+    if (!exports._selectTimeout) {
+      exports._selectTimeout = setTimeout(exports.selectHandler, 200);
     }
   });
   // List indentation
@@ -170,16 +178,16 @@ define('edit', ['websync'], function(WS) {
   });
   // Picture, video and link insertion.
   $('#picture').click(function() {
-    self.selection = WS.selectionSave();
-    console.log(self.selection);
+    exports.selection = WS.selectionSave();
+    console.log(exports.selection);
     $('#image_modal').modal();
   });
   $('#insert_image').click(function() {
     var url = $('#image_modal input[type=text]').val();
     if (url.length > 0) {
       $('#image_modal').modal('hide');
-      WS.selectionRestore(self.selection);
-      delete self.selection;
+      WS.selectionRestore(exports.selection);
+      delete exports.selection;
       $('#image_modal input[type=text]').val('');
       document.execCommand('insertImage', false, url);
     } else {
@@ -201,7 +209,7 @@ define('edit', ['websync'], function(WS) {
             }
             $('#image_modal input[type=file]').val('');
             $('#image_modal').modal('hide');
-            WS.selectionRestore(self.selection);
+            WS.selectionRestore(exports.selection);
             document.execCommand('insertImage', false, 'assets/' + name);
           }
         });
@@ -221,19 +229,13 @@ define('edit', ['websync'], function(WS) {
     });
   });
   $('#video').click(function() {
-    self.selection = WS.selectionSave();
+    /** The temporarily saved selection */
+    exports.selection = WS.selectionSave();
     $('#youtube_modal').modal();
-    /*var url = prompt("Video URL (Youtube)");
-        if (url.indexOf("youtu") !== -1) {
-            var youtube_id = self.youtube_parser(url);
-            console.log("Youtube id", youtube_id);
-            var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>'
-            document.execCommand("insertHTML", false, html);
-        }*/
   });
   $('#youtube_modal input').change(function() {
     var url = $('#youtube_modal input').val();
-    var youtube_id = self.youtube_parser(url);
+    var youtube_id = exports.youtube_parser(url);
     var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>';
     $('#youtube_modal #youtube-preview').html(html);
   });
@@ -241,14 +243,19 @@ define('edit', ['websync'], function(WS) {
     $('#youtube_modal').modal('hide');
     var url = $('#youtube_modal input').val();
     $('#youtube_modal input').val('');
-    var youtube_id = self.youtube_parser(url);
+    var youtube_id = exports.youtube_parser(url);
     var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>';
-    WS.selectionRestore(self.selection);
-    delete self.selection;
+    WS.selectionRestore(exports.selection);
+    delete exports.selection;
     document.execCommand('insertHTML', false, html);
   });
-  // Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
-  self.youtube_parser = function(url) {
+
+  /**
+   * Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
+   * @param {String} url - The url to parse.
+   * @return {String} The youtube video ID.
+   */
+  exports.youtube_parser = function(url) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
     if (match && match[2].length === 11) {
@@ -257,8 +264,13 @@ define('edit', ['websync'], function(WS) {
     alert('Invalid URL');
     return '';
   };
-  // Helper function to convert rgba(r, g, b, a) to #RRGGBB
-  self.rgb_to_hex = function(rgb) {
+
+  /**
+   * Helper function to convert rgba(r, g, b, a) to #RRGGBB
+   * @param {String} rgb - The RGBA string. Ex: 'rgb(255,128,0)'
+   * @return {String}
+   */
+  exports.rgb_to_hex = function(rgb) {
     if (rgb === 'rgba(0, 0, 0, 0)') {
       return '#FFFFFF';
     }
@@ -277,22 +289,24 @@ define('edit', ['websync'], function(WS) {
     }
     return '#' + parts.slice(1, 4).join('').toUpperCase();
   };
-  // Disables the TextEdit plugin.
-  self.disable = function() {
+
+  /** Disables the TextEdit plugin. */
+  exports.disable = function() {
     $('.Text').remove();
     WS.updateRibbon();
     $('*').unbind('.TextEdit');
     $('*').undelegate('.TextEdit');
   };
-  // Handling function for displaying accurate information about text in ribbon.
-  self.selectHandler = function() {
+
+  /** Handling function for displaying accurate information about text in ribbon. */
+  exports.selectHandler = function() {
     var style = WS.getCss();
-    $('#fontColor')[0].value = self.rgb_to_hex(style.color);
-    $('#hilightColor')[0].value = self.rgb_to_hex(style.backgroundColor);
+    $('#fontColor')[0].value = exports.rgb_to_hex(style.color);
+    $('#hilightColor')[0].value = exports.rgb_to_hex(style.backgroundColor);
     var fontSizePt = parseInt(style.fontSize, 10) * 0.75 | 0;
     $('#font_size').val(fontSizePt + 'pt');
 
-    self.text_buttons.forEach(function(elem) {
+    exports.text_buttons.forEach(function(elem) {
       var button = $('button#' + elem);
       if (document.queryCommandState(elem)) {
         button.addClass('active');
@@ -305,8 +319,8 @@ define('edit', ['websync'], function(WS) {
     $('#font .name').text(font).css({
       'font-family': font
     });
-    clearTimeout(self._selectTimeout);
-    self._selectTimeout = null;
+    clearTimeout(exports._selectTimeout);
+    exports._selectTimeout = null;
   };
   // Sets up the list of fonts
   var fonts = ['Cursive', 'Monospace', 'Serif', 'Sans-serif', 'Fantasy', 'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Bookman Old Style', 'Bradley Hand ITC', 'Century', 'Century Gothic', 'Comic Sans MS', 'Droid Sans', 'Courier', 'Courier New', 'Georgia', 'Gentium', 'Impact', 'King', 'Lucida Console', 'Lalit', 'Modena', 'Monotype Corsiva', 'Papyrus', 'TeX', 'Times', 'Times New Roman', 'Trebuchet MS', 'Tahoma', 'Verdana', 'Verona', 'Helvetica', 'Segoe', 'Open Sans'];
@@ -321,12 +335,14 @@ define('edit', ['websync'], function(WS) {
     }
     return 0;
   });
-  self.available_fonts = [];
+
+  /** The available fonts on the clients system. */
+  exports.available_fonts = [];
   var i, result;
   for (i = 0; i < fonts.length; i++) {
     result = d.detect(fonts[i]);
     if (result) {
-      self.available_fonts.push({
+      exports.available_fonts.push({
         name: fonts[i],
         source: 'local'
       });
@@ -336,15 +352,15 @@ define('edit', ['websync'], function(WS) {
   $('head').append("<link href='https://fonts.googleapis.com/css?family=" +
     webfonts.join('|').replace(/\s+/g, '+') + "' rel='stylesheet' type='text/css'>");
   _.each(webfonts, function(font) {
-    if (self.available_fonts.indexOf(font) === -1) {
-      self.available_fonts.push({
+    if (exports.available_fonts.indexOf(font) === -1) {
+      exports.available_fonts.push({
         name: font,
         source: 'google'
       });
     }
   });
 
-  _.each(self.available_fonts, function(font) {
+  _.each(exports.available_fonts, function(font) {
     var font_entry = '<li>';
     font_entry += '<a href="#">';
     font_entry += '<span class="fname" style="font-family: \'' + font.name + '"\'">' + font.name + '</span>';
@@ -355,19 +371,24 @@ define('edit', ['websync'], function(WS) {
     font_entry += '</a></li>';
     font_list.push(font_entry);
   });
-  // TODO: Not sure if this should be here.
-  self.updateStyles = function() {
-    self.stylesheet.innerHTML = (WebSyncData.custom_css || []).join('\n');
+  /**
+   * A function to update the styles on the page from the custom css.
+   * TODO: Not sure if this should be here.
+   */
+  exports.updateStyles = function() {
+    exports.stylesheet.innerHTML = (WebSyncData.custom_css || []).join('\n');
   };
+  /** The Ace editor used for custom css. */
+  exports.editor = null;
 
-  // Create the <style> tag
-  self.stylesheet = document.createElement('style');
+  /** The custom stylesheet element */
+  exports.stylesheet = document.createElement('style');
   // WebKit hack :(
-  self.stylesheet.appendChild(document.createTextNode(''));
+  exports.stylesheet.appendChild(document.createTextNode(''));
   // Add the <style> element to the page
-  document.head.appendChild(self.stylesheet);
+  document.head.appendChild(exports.stylesheet);
 
-  self.updateStyles();
+  exports.updateStyles();
   $('.settings-popup .tab-content').append('<div class="tab-pane active" id="css"><h3>Custom CSS Styling</h3><div id="css-editor"></div></div>');
   $('<li><a href="#css" data-toggle="tab">Custom CSS</a></li>').prependTo($('.settings-popup ul.nav-pills'));
   var tag = document.createElement('script');
@@ -376,14 +397,14 @@ define('edit', ['websync'], function(WS) {
   $("a[href='#css']").click();
   var check = function() {
     if (typeof ace !== 'undefined') {
-      self.editor = window.ace.edit('css-editor');
-      self.editor.getSession().setMode('ace/mode/css');
-      self.editor.setValue((WebSyncData.custom_css || []).join('\n'));
+      exports.editor = window.ace.edit('css-editor');
+      exports.editor.getSession().setMode('ace/mode/css');
+      exports.editor.setValue((WebSyncData.custom_css || []).join('\n'));
       // Could look at "changes"
-      self.editor.on('change', function() {
+      exports.editor.on('change', function() {
         // We split it into lines so we can do easier diffs.
-        WebSyncData.custom_css = self.editor.getValue().split('\n');
-        self.updateStyles();
+        WebSyncData.custom_css = exports.editor.getValue().split('\n');
+        exports.updateStyles();
       });
     } else {
       setTimeout(check, 100);
@@ -391,10 +412,10 @@ define('edit', ['websync'], function(WS) {
   };
   check();
   $(document).on('patched', function() {
-    self.editor.setValue((WebSyncData.custom_css || []).join('\n'));
-    self.updateStyles();
+    exports.editor.setValue((WebSyncData.custom_css || []).join('\n'));
+    exports.updateStyles();
   });
   $('#font .dropdown-menu').html(font_list.join('\n'));
   WS.updateRibbon();
-  return self;
+  return exports;
 });

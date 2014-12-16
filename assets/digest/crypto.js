@@ -3,30 +3,38 @@
 
 //= require templates/crypto
 
-/*
- * There's a few things you should know before you encrypt a WebSync document and how it operates.
- * 1. It uses OpenPGP.JS
- * 2. It ONLY encrypts the actual content of the document.
- * 3. It does NOT encrypt the metadata and related content. This consists of:
- *      Title
- *      Users who can view/edit
- *      Creation/Last edit dates
- *      Images uploaded
- */
-
 define('crypto', function() {
   'use strict';
 
-  var self = {};
+  /**
+   * The crypto end-to-end encryption module for WebSync. Uses openpgp.js.
+   *
+   * There's a few things you should know before you encrypt a WebSync document and how it operates.
+   * 1. It uses OpenPGP.JS
+   * 2. It ONLY encrypts the actual content of the document.
+   * 3. It does NOT encrypt the metadata and related content. This consists of:
+   *      Title
+   *      Users who can view/edit
+   *      Creation/Last edit dates
+   *      Images uploaded
+   * @exports crypto
+   * @module crypto
+   */
+
+  var exports = {};
+
+  // Variables to store the keys and the decrypted session key.
   var privateKey, publicKey, sessionKey, sessionKeyAlgorithm;
 
   // Add a comment to the generated pgp keys.
   openpgp.config.commentstring += ' - Generated for https://WebSyn.ca';
 
+  /** Encodes a key into a URL that can be downloaded. */
   function encodeDownload(text) {
     return 'data:application/octet-stream;charset=utf-8,' + encodeURIComponent(text);
   }
 
+  /** Downloads a file to the browser. */
   function download(filename, text) {
     var pom = document.createElement('a');
     pom.setAttribute('href', encodeDownload(text));
@@ -35,25 +43,33 @@ define('crypto', function() {
   }
 
   $(document.body).append(JST['templates/crypto']({}));
-  self.stage = 0;
-  self.$modal = $('#encryptionModal');
-  self.updateStage = function(stage) {
+
+  /** The current stage the crypto dialog is in. */
+  exports.stage = 0;
+  /** The encryption dialog modal. */
+  exports.$modal = $('#encryptionModal');
+
+  /**
+   * Sets the current stage the crypto dialog is in.
+   * @param {String/Number} stage
+   */
+  exports.updateStage = function(stage) {
     if (stage !== undefined) {
-      self.stage = stage;
+      exports.stage = stage;
     }
     if (stage === 'saveOptions') {
       var puKey = window.localStorage['websync-key-public'];
       var prKey = window.localStorage['websync-key-private'];
-      self.$modal.find('#publicKey').
+      exports.$modal.find('#publicKey').
       attr('href', encodeDownload(puKey));
-      self.$modal.find('#privateKey').
+      exports.$modal.find('#privateKey').
       attr('href', encodeDownload(prKey));
     }
     $('#encryptionModal .modal-body').children().hide();
-    $('#encryptionModal .modal-body .' + self.stage).show();
+    $('#encryptionModal .modal-body .' + exports.stage).show();
   };
   $('#encryptionModal #genKey').on('click', function() {
-    self.updateStage('genKey');
+    exports.updateStage('genKey');
   });
   $('#encryptionModal #pubkeyfile').on('change', function(e) {
     var f = e.target.files[0];
@@ -88,12 +104,12 @@ define('crypto', function() {
         private: prKeys
       }
     });
-    var callbacks = self.checkKeysCallback;
-    self.checkKeysCallback = [];
+    var callbacks = exports.checkKeysCallback;
+    exports.checkKeysCallback = [];
     _.each(callbacks, function(cb) {
       cb();
     });
-    self.$modal.modal('hide');
+    exports.$modal.modal('hide');
   });
   $('#encryptionModal #doUploadKey').on('click', function(e) {
     var puKey = $('textarea#publicKey').val();
@@ -102,24 +118,24 @@ define('crypto', function() {
     window.localStorage['websync-key-private'] = prKey;
     privateKey = openpgp.key.readArmored(prKey).keys[0];
     publicKey = openpgp.key.readArmored(puKey).keys[0];
-    self.setPrivateKey();
-    self.updateStage('saveOptions');
+    exports.setPrivateKey();
+    exports.updateStage('saveOptions');
     e.preventDefault();
   });
   $('#encryptionModal #uploadKey').on('click', function() {
-    self.updateStage('uploadKey');
+    exports.updateStage('uploadKey');
   });
   $('#encryptionModal #doGenKey').on('click', function(e) {
-    if (self.genKeyValidator.valid()) {
+    if (exports.genKeyValidator.valid()) {
       var $form = $('#encryptionModal .genKey form');
       openpgp.generateKeyPair({
         numBits: parseInt($form.find('select').val(), 10),
         userId: $form.find('#realName').val(),
         passphrase: $form.find('#password').val()
       }).then(function(result) {
-        self.updateStage('keyGenerated');
+        exports.updateStage('keyGenerated');
         privateKey = result.key;
-        self.setPrivateKey();
+        exports.setPrivateKey();
         var puKey = result.publicKeyArmored;
         var prKey = result.privateKeyArmored;
         window.localStorage['websync-key-public'] = puKey;
@@ -127,7 +143,7 @@ define('crypto', function() {
         download('websync-publickey.key', puKey);
         download('websync-privatekey.key', prKey);
       });
-      self.updateStage('saveOptions');
+      exports.updateStage('saveOptions');
     }
     e.preventDefault();
   });
@@ -143,18 +159,23 @@ define('crypto', function() {
     var storePass = $('#encryptionModal #storePassPhrase').val() === 'on';
     var success = privateKey.decrypt(pass);
     if (success) {
-      self.decryptPrivateKey(pass);
+      exports.decryptPrivateKey(pass);
       if (storePass) {
         window.localStorage['websync-passphrase'] = window.btoa(pass);
       }
-      self.$modal.modal('hide');
+      exports.$modal.modal('hide');
     } else {
       $('#encryptionModal .decrypt .decrypt.error').text('Invalid passphrase!');
     }
     e.preventDefault();
   });
-  self.genKeyValidator = $('#encryptionModal .genKey form').validate();
-  self.uploadKeyValidator = $('#encryptionModal .uploadKey form').validate();
+
+  /** The generation key form validator. */
+  exports.genKeyValidator = $('#encryptionModal .genKey form').validate();
+
+  /** The upload key form validator. */
+  exports.uploadKeyValidator = $('#encryptionModal .uploadKey form').validate();
+
   _.delay(function() {
     require('websync').registerMessageEvent('keys', function(data) {
       var $tbody = $('#keys tbody').html('');
@@ -176,27 +197,34 @@ define('crypto', function() {
       });
     });
   }, 1);
-  self.checkKeysCallback = [];
-  self.checkKeys = function(callback) {
+  /** An array for the check keys callbacks to be stored in. */
+  exports.checkKeysCallback = [];
+
+  /**
+   * Checks to see if the keys are present and decrypted. If not it will prompt the user.
+   * Once the keys are available it will call the callback.
+   * @param {Function} callback - The function to be called once the keys are ready.
+   */
+  exports.checkKeys = function(callback) {
     if (!(window.localStorage.hasOwnProperty('websync-key-private') &&
         window.localStorage.hasOwnProperty('websync-key-public') &&
         !_.include(window.location.hash, 'cryptoclean'))) {
-      self.updateStage(0);
+      exports.updateStage(0);
       $('#encryptionModal').modal();
       if (callback) {
-        self.checkKeysCallback.push(callback);
+        exports.checkKeysCallback.push(callback);
       }
     } else {
       privateKey = openpgp.key.readArmored(window.localStorage['websync-key-private']).keys[0];
       publicKey = openpgp.key.readArmored(window.localStorage['websync-key-public']).keys[0];
-      self.setPrivateKey();
+      exports.setPrivateKey();
       if (window.localStorage.hasOwnProperty('websync-passphrase')) {
         var pass = atob(window.localStorage['websync-passphrase']);
         privateKey.decrypt(pass);
-        self.decryptPrivateKey(pass);
+        exports.decryptPrivateKey(pass);
       }
-      if (!self.keyIsDecrypted(privateKey)) {
-        self.updateStage('decrypt');
+      if (!exports.keyIsDecrypted(privateKey)) {
+        exports.updateStage('decrypt');
         $('#encryptionModal').modal();
       }
       if (callback) {
@@ -204,12 +232,24 @@ define('crypto', function() {
       }
     }
   };
-  self.keyIsDecrypted = function(key) {
+
+  /**
+   * Checks if a key and all of its sub keys are decrypted.
+   * @param {openpgp.key.Key} key - The key to check.
+   * @return {Boolean}
+   */
+  exports.keyIsDecrypted = function(key) {
     return _.reduce(key.getAllKeyPackets(), function(decrypted, packet) {
       return decrypted && packet.isDecrypted;
     });
   };
-  self.wrapSymmetricForKey = function(key) {
+
+  /**
+   * Encrypts a session key for the specified public key.
+   * @param {openpgp.key.Key} key - The public key to encrypt the session key for.
+   * @return {openpgp.message.Message}
+   */
+  exports.wrapSymmetricForKey = function(key) {
     var packetlist = new openpgp.packet.List();
     var encryptionKeyPacket = key.getEncryptionKeyPacket();
     var pkESKeyPacket = new openpgp.packet.PublicKeyEncryptedSessionKey();
@@ -221,12 +261,18 @@ define('crypto', function() {
     packetlist.push(pkESKeyPacket);
     return new openpgp.message.Message(packetlist);
   };
-  self.decodeSymmetricKeys = function(keys) {
+
+  /**
+   * Scans a number of encrypted session keys until it finds one it can decrypt and returns it.
+   * @param {Array} keys - The encrypted session keys.
+   * @return {String}
+   */
+  exports.decodeSymmetricKeys = function(keys) {
     var decrypted = false;
     _.each(keys, function(key) {
-      var symKey = self.decryptSymmetricKey(key);
+      var symKey = exports.decryptSymmetricKey(key);
       if (symKey) {
-        self.setSessionKey(
+        exports.setSessionKey(
           symKey.sessionKey,
           symKey.sessionKeyAlgorithm);
         decrypted = true;
@@ -235,13 +281,18 @@ define('crypto', function() {
     return decrypted;
   };
 
-  self.decryptSymmetricKey = function(msg) {
+  /**
+   * Decrypts a symmetric key using the current private key.
+   * @param {String} message - The armored encrypted key message.
+   * @return {openpgp.key.Key | false}
+   */
+  exports.decryptSymmetricKey = function(msg) {
     var message = openpgp.message.readArmored(msg);
     var encryptionKeyIds = message.getEncryptionKeyIds();
     var privateKeyPacket = privateKey.getKeyPacket(encryptionKeyIds);
     var pkESKeyPacketlist = message.packets.filterByTag(openpgp.enums.packet.publicKeyEncryptedSessionKey);
-    var pkESKeyPacket;
-    for (var i = 0; i < pkESKeyPacketlist.length; i++) {
+    var pkESKeyPacket, i;
+    for (i = 0; i < pkESKeyPacketlist.length; i++) {
       if (pkESKeyPacketlist[i].publicKeyId.equals(privateKeyPacket.getKeyId())) {
         pkESKeyPacket = pkESKeyPacketlist[i];
         pkESKeyPacket.decrypt(privateKeyPacket);
@@ -250,9 +301,8 @@ define('crypto', function() {
     }
     if (pkESKeyPacket) {
       return pkESKeyPacket;
-    } else {
-      return false;
     }
+    return false;
   };
 
   var worker = new Worker('/assets/crypto-worker.js');
@@ -260,7 +310,7 @@ define('crypto', function() {
   worker.onmessage = function(oEvent) {
     var event = oEvent.data;
     if (event.event === 'request-seed') {
-      self.seedRandom(RANDOM_SEED_REQUEST);
+      exports.seedRandom(RANDOM_SEED_REQUEST);
     } else {
       var callback = callbacks[event.id];
       if (callback) {
@@ -285,26 +335,38 @@ define('crypto', function() {
   var INITIAL_RANDOM_SEED = 50000, // random bytes seeded to worker
     RANDOM_SEED_REQUEST = 20000; // random bytes seeded after worker request
 
-  self.seedRandom = function(size) {
+  /**
+   * Seeds the crypto worker with the needed random values.
+   * @param {Integer} size - The number of bytes to send.
+   */
+  exports.seedRandom = function(size) {
     var buf = new Uint8Array(size);
     openpgp.crypto.random.getRandomValues(buf);
     execute('seedRandom', [buf]);
   };
-  self.seedRandom(INITIAL_RANDOM_SEED);
+  exports.seedRandom(INITIAL_RANDOM_SEED);
 
-  self.setPrivateKey = function() {
+  /**
+   * Sends the private key to the web worker so it can decrypt messages.
+   */
+  exports.setPrivateKey = function() {
     execute('setPrivateKey', [privateKey.armor()]);
   };
 
-  self.decryptPrivateKey = function(passphrase) {
+  /**
+   * Decrypts the private key on the web worker.
+   * @param {String} passphrase - The passphrase to the private key.
+   */
+  exports.decryptPrivateKey = function(passphrase) {
     execute('decryptPrivateKey', [passphrase]);
   };
 
-  self.decryptWithSymmetricKey = function(msg, callback) {
-    execute('decryptWithSymmetricKey', [msg], callback);
-  };
-
-  self.setSessionKey = function(key, algo) {
+  /**
+   * Sets the symmetric key locally and on the web worker.
+   * @params {String} key - The session key
+   * @params {String | Integer} algorithm - The algorithm used for the session key. Ex: 'aes256' or 9.
+   */
+  exports.setSessionKey = function(key, algo) {
     sessionKey = key;
     if (_.isNumber(algo)) {
       sessionKeyAlgorithm = openpgp.enums.read(openpgp.enums.symmetric, algo);
@@ -314,16 +376,38 @@ define('crypto', function() {
     execute('setSessionKey', [key, sessionKeyAlgorithm]);
   };
 
-  self.encryptWithSymmetricKey = function(msg, callback) {
+  /**
+   * Decrypts a message with the symmetric key.
+   * @params {String} message - The armored message.
+   * @params {Function} callback - The function to call with the decrypted message.
+   */
+  exports.decryptWithSymmetricKey = function(msg, callback) {
+    execute('decryptWithSymmetricKey', [msg], callback);
+  };
+
+  /**
+   * Encrypts a message with the symmetric key.
+   * @params {String} message - The message.
+   * @params {Function} callback - The function to call with the encrypted message.
+   */
+  exports.encryptWithSymmetricKey = function(msg, callback) {
     execute('encryptWithSymmetricKey', [msg], callback);
   };
 
-  self.signAndEncryptWithSymmetricKey = function(msg, callback) {
+  /**
+   * Encrypts and signs a message with the symmetric key.
+   * @params {String} message - The message.
+   * @params {Function} callback - The function to call with the encrypted message.
+   */
+  exports.signAndEncryptWithSymmetricKey = function(msg, callback) {
     execute('signAndEncryptWithSymmetricKey', [msg], callback);
   };
 
-  self.encryptDocument = function() {
-    self.checkKeys();
+  /**
+   * Converts the current document into an encrypted one.
+   */
+  exports.encryptDocument = function() {
+    exports.checkKeys();
 
     if (sessionKey || WebSyncAuth.encrypted) {
       console.warn('crypto: encryptDocument called on an already encrypted document');
@@ -333,15 +417,15 @@ define('crypto', function() {
     // Generate symmetric key
     var symAlgo = openpgp.key.getPreferredSymAlgo([privateKey]);
     var symAlgoName = openpgp.enums.read(openpgp.enums.symmetric, symAlgo);
-    self.setSessionKey(
+    exports.setSessionKey(
       openpgp.crypto.generateSessionKey(symAlgoName),
       symAlgoName);
-    var wrappedSym = self.wrapSymmetricForKey(publicKey);
+    var wrappedSym = exports.wrapSymmetricForKey(publicKey);
 
     // To encrypt the document we need to encrypt the blob, patches and shared list.
     // TODO: Encrypt patches and shared list.
     WebSyncData.encryption_date = new Date();
-    self.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData), function(blob) {
+    exports.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData), function(blob) {
       WS.connection.sendJSON({
         type: 'encrypt_document',
         body: {
@@ -355,5 +439,5 @@ define('crypto', function() {
       WebSyncAuth.encrypted = true;
     });
   };
-  return self;
+  return exports;
 });

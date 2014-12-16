@@ -316,7 +316,7 @@ define('websync', ['crypto'], function(crypto) {
      * @function
      * @param {String} name
      * @param {Function} callback
-     * @returns {websync}
+     * @return {websync}
      */
     registerMessageEvent: function(name, callback) {
       var events = WS.registeredMessageEvents[name];
@@ -329,7 +329,7 @@ define('websync', ['crypto'], function(crypto) {
     /**
      * This function is used to output byte sizes in a more human understandable format.
      * @param {Integer} length - The number of bytes.
-     * @returns {String}
+     * @return {String}
      */
     byteLengthPretty: function(length) {
       var UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -382,7 +382,7 @@ define('websync', ['crypto'], function(crypto) {
 
     /**
      * Returns the current selection.
-     * @returns {Object}
+     * @return {Object}
      */
     selectionSave: function() {
       // Get start selection.
@@ -796,7 +796,7 @@ define('websync', ['crypto'], function(crypto) {
 
     /**
      * Returns the calculated CSS for the current selection. Warning: This can cause the client to run slowly if used too much.
-     * @returns {Object}
+     * @return {Object}
      */
     getCss: function() {
       /*WebSync.applier.toggleSelection();
@@ -888,7 +888,7 @@ define('websync', ['crypto'], function(crypto) {
     /**
      * Returns the object matching the path in WebSyncData
      * @param {String} path - This is a JSON path. Ex: '/body/0/banana'
-     * @returns {Object}
+     * @return {Object}
      */
     getJsonFromPath: function(path) {
       var parts = path.split('/');
@@ -1107,7 +1107,7 @@ define('websync', ['crypto'], function(crypto) {
     /**
      * Converts an array of DOM elements/nodes into an JSON object.
      * @object {Array} nodes - An array of DOM nodes.
-     * @returns {Object}
+     * @return {Object}
      */
     DOMToJSON: function(obj) {
       var jso = [];
@@ -1121,7 +1121,7 @@ define('websync', ['crypto'], function(crypto) {
     /**
      * Converts text into an alpha numeric string. Ex. 'a-**#(19' -> 'a19'
      * @param {String} text - The text to convert
-     * @returns {String}
+     * @return {String}
      */
     alphaNumeric: function(text) {
       var match = text.match(/[a-zA-Z0-9\-]+/g);
@@ -1134,7 +1134,7 @@ define('websync', ['crypto'], function(crypto) {
     /**
      * Converts a JSON object into an HTML string. The JSON object should be in the format produced by NODEToJSON.
      * @param {Object} obj - The JSON object to convert.
-     * @returns {String}
+     * @return {String}
      */
     NODEtoDOM: function(obj) {
       var html = '';
@@ -1190,7 +1190,7 @@ define('websync', ['crypto'], function(crypto) {
     /**
      * Converts a JSON array into a HTML string. The JSON object should be in the format produced by DOMToJSON.
      * @param {Array} nodes - The JSON objects to convert.
-     * @returns {String}
+     * @return {String}
      */
     JSONToDOM: function(obj) {
       var html = '';
@@ -1455,7 +1455,7 @@ WebSocket.prototype.sendJSON = function(object) {
 
 /**
  * Helper method to capitalize a String.
- * @returns {String}
+ * @return {String}
  */
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);

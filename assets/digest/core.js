@@ -285,15 +285,21 @@ define('websync', ['crypto'], function(crypto) {
           };
           // Decrypt all of the patches.
           if (WebSyncAuth.encrypted) {
-            var meta = _.filter(data.patches, function(patch) {
+            // Separate the encrypted and unencrypted patches if there are any.
+            var patchesUnencrypted = _.filter(data.patches, function(patch) {
+              return !_.include(patch.patch, 'BEGIN PGP MESSAGE');
+            });
+            var patchesEncrypted = _.filter(data.patches, function(patch) {
               return _.include(patch.patch, 'BEGIN PGP MESSAGE');
             });
-            var patches = _.pluck(meta, 'patch');
+            var patches = _.pluck(patchesEncrypted, 'patch');
             crypto.decryptWithSymmetricKey(patches, function(patches) {
-              processPatches(_.map(meta, function(p, i) {
+              var decryptedWithMeta = _.map(patchesEncrypted, function(p, i) {
                 p.patch = patches[i];
                 return p;
-              }));
+              });
+              var allPatches = patchesUnencrypted.concat(decryptedWithMeta);
+              processPatches(allPatches);
             });
           } else {
             processPatches(data.patches);

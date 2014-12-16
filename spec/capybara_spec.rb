@@ -6,10 +6,13 @@ $config['websocket']['port'] = 1337
 def loginuser
   user = $helpers.register 'test@websyn.ca', 'testboop'
   visit '/login?/settings'
+  fill_login
+  user
+end
+def fill_login
   page.first(:fillable_field, 'email').set 'test@websyn.ca'
   page.first(:fillable_field, 'password').set 'testboop'
   click_button 'Sign In'
-  user
 end
 def wait_for
   start = Time.now
@@ -17,13 +20,20 @@ def wait_for
     sleep 0.05
   end
   if Time.now-start >= 5
-    puts "WAIT FOR TIMED OUT!"
+    raise "WAIT FOR TIMED OUT! #{current_url}"
   end
 end
 def wait_for_edit
   wait_for do
+    # Just in case the user wasn't logged in.
+    if current_url.match(/\/login/)
+      url = current_url.split('?').last
+      fill_login
+      visit url
+    end
     current_url.match(/\/\S{1,3}\/edit$/)
   end
+  puts current_url
 end
 def wait_for_no_bar
   wait_for do
@@ -54,7 +64,9 @@ describe "WebSync Capybara Interface Tests", type: :feature do
   it "should successfully pass Document core.js tests", :js => true do
     loginuser
     doc = new_doc 'Document'
-    sleep 0.5
+    wait_for do
+      all('#name').length == 1
+    end
     # Title Test
     find("#name").set "Test Doc! 111"
 
@@ -125,6 +137,9 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     find('#table').click
     tds = all('.page table td')
     tds[1].click2
+    if all('th', text: 'Table 1').length == 0
+      tds[0].click2
+    end
     expect(all('th', text: 'Table 1').length).to eq 1
 
     # Test row & column insertion

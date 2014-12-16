@@ -5,16 +5,6 @@
 
 $font-dark: rgb(51, 51, 51);
 
-* {
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: none;
-}
-
-
-
-
 html,
 body {
   height: 100%;
@@ -367,6 +357,12 @@ body > .container-fluid {
 }
 .navbar-brand {
   color: white !important;
+}
+.alert {
+  border-radius: 0 !important;
+  a.close {
+    margin-left: 5px;
+  }
 }
 #alert_well {
   position: fixed;

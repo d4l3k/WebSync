@@ -93,6 +93,29 @@
           <input type="submit" class="btn btn-primary btn-block" id="doDecryptPassphrase" value="Decrypt"/>
           </form>
         </div>
+        <div class="encrypt">
+          <p>You are about to encrypt this document.
+           There's a few things you should know before you encrypt a WebSync document and how it operates.
+          </p>
+          <p>
+          <ol>
+            <span style="color: red">
+              <li>There is no way to recover your documents if you lose your encryption keys.</li>
+              <li>This is VERY experimental and you may lose this file.</li>
+            </span>
+            <li>It ONLY encrypts the actual content of the document, the changes made and messages between clients.</li>
+            <li>It does NOT encrypt the metadata and related content. This consists of:
+              <ul>
+                <li>Title</li>
+                <li>List of users who can view/edit</li>
+                <li>Creation/Last edit dates</li>
+                <li>Images uploaded</li>
+              </ul>
+            </li>
+          </ol>
+          </p>
+          <input type="submit" class="btn btn-danger btn-block" id="doEncryptDocument" value="Encrypt"/>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

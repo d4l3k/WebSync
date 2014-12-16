@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global define, $, _, openpgp, escape, FileReader, JST, WebSyncAuth, moment*/
+/*global define, $, _, openpgp, escape, FileReader, JST, WebSyncAuth, WebSyncData, WS, moment*/
 
 //= require templates/crypto
 
@@ -9,14 +9,6 @@ define('crypto', function() {
   /**
    * The crypto end-to-end encryption module for WebSync. Uses openpgp.js.
    *
-   * There's a few things you should know before you encrypt a WebSync document and how it operates.
-   * 1. It uses OpenPGP.JS
-   * 2. It ONLY encrypts the actual content of the document.
-   * 3. It does NOT encrypt the metadata and related content. This consists of:
-   *      Title
-   *      Users who can view/edit
-   *      Creation/Last edit dates
-   *      Images uploaded
    * @exports crypto
    * @module crypto
    */
@@ -422,6 +414,7 @@ define('crypto', function() {
    * Converts the current document into an encrypted one.
    */
   exports.encryptDocument = function() {
+    WS.info('Encrypting the document...');
     exports.checkKeys();
 
     if (sessionKey || WebSyncAuth.encrypted) {
@@ -439,6 +432,7 @@ define('crypto', function() {
 
     // To encrypt the document we need to encrypt the blob, patches and shared list.
     // TODO: Encrypt patches and shared list.
+    WebSyncAuth.encrypted = true;
     WebSyncData.encryption_date = new Date();
     exports.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData), function(blob) {
       WS.connection.sendJSON({
@@ -451,8 +445,34 @@ define('crypto', function() {
           key: wrappedSym.armor()
         }
       });
-      WebSyncAuth.encrypted = true;
+      WS.success('This document is now encrypted!');
+      exports.updateLockButton();
     });
   };
+
+  /** Updates the icon and tooltip on the lock button. */
+  exports.updateLockButton = function() {
+    if (WebSyncAuth.encrypted) {
+      $('#cryptoBtn i').removeClass('fa-unlock');
+      $('#cryptoBtn').attr('title', 'Encrypted');
+    }
+  };
+  $('nav #settings').prepend('<li>' +
+    '<a id="cryptoBtn" title="Click to Encrypt"><i class="fa fa-lock fa-unlock fa-lg"></i></a>' +
+    '</li>');
+  exports.updateLockButton();
+  $('#cryptoBtn').click(function() {
+    if (!WebSyncAuth.encrypted) {
+      exports.checkKeys(function() {
+        exports.updateStage('encrypt');
+        $('#encryptionModal').modal();
+      });
+    }
+  });
+  $('#doEncryptDocument').click(function(e) {
+    exports.encryptDocument();
+    $('#encryptionModal').modal('hide');
+    e.preventDefault();
+  });
   return exports;
 });

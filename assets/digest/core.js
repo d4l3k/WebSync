@@ -253,7 +253,7 @@ define('websync', ['crypto'], function(crypto) {
             crypto.decryptWithSymmetricKey(data.encrypted_blob, function(blob) {
               var decrypted = JSON.parse(blob);
               decrypted.from = data.from;
-              announceEvent(data);
+              announceEvent(decrypted);
             });
           } else {
             announceEvent(data);
@@ -417,7 +417,8 @@ define('websync', ['crypto'], function(crypto) {
         var startNode, endNode;
 
         // Initialize Levenshtein distances to be sufficiently high.
-        var startNodeDist = endNodeDist = 99999;
+        var endNodeDist = 99999
+        var startNodeDist = 99999;
 
         // Check to see if the original start and end nodes are still in the document.
         if ($(sel.startContainer).parents('body').length !== 0) {
@@ -469,6 +470,7 @@ define('websync', ['crypto'], function(crypto) {
       if (WebSyncAuth.encrypted) {
         var blob = JSON.stringify({
           event: event,
+          from: WebSyncAuth.id,
           data: data
         });
         crypto.signAndEncryptWithSymmetricKey(blob, function(encrypted_blob) {

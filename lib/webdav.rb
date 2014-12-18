@@ -1,3 +1,4 @@
+# WebDAV accessor methods for a WSFile.
 class WSFileResource < DAV4Rack::Resource
     include DAV4Rack::Utils
     ROOT = :root

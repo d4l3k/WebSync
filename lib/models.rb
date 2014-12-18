@@ -4,6 +4,7 @@ DATABASE_FORMAT_VERSION = 1
 
 # Monkey patched Redis for easy caching.
 class Redis
+  # Return a value if cached otherwise save the result from a block.
   def cache(key, expire=nil)
     if (value = get(key)).nil?
       value = yield(self)
@@ -15,6 +16,7 @@ class Redis
     end
   end
 end
+
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 postgres_creds = URI.parse('postgres://'+$config['postgres'])
 $postgres = PG.connect({host: postgres_creds.host, dbname: postgres_creds.path[1..-1], user: postgres_creds.user, password: postgres_creds.password})
@@ -87,7 +89,9 @@ end # module DataMapper
 # Ease of use connection to the redis server.
 DataMapper.setup(:default, 'postgres://'+$config['postgres'])
 
-# All file data
+# All file data is represented as a WSFile.
+# In a WebSync editable document there will be content in :body,
+# in a binary document there will be the blob in :data.
 class WSFile
   include DataMapper::Resource
   property :id, Serial
@@ -114,17 +118,32 @@ class WSFile
   has n, :symmetric_keys
   belongs_to :parent, self, required: false
 
+  # Set the binary data.
+  #
+  # @param [String] the data to set
   def data= blob
     $postgres.exec_prepared('wsfile_update', [self.id, {value: blob, format: 1}])
   end
+
+  # Get the binary data.
+  #
+  # @return [String] the binary data
   def data
     response = $postgres.exec_prepared('wsfile_get', [self.id], 1)
     response.to_a.length==1 && response[0]["data"] || ""
   end
+
+  # Calculate the size of the body.
+  #
+  # @return [Number] the number of bytes
   def body_size
     request = $postgres.exec_prepared('wsfile_body_size', [self.id])
     request[0].map{|k,v| v.to_i || 0}.inject(:+)
   end
+
+  # Returns the owner of the document.
+  #
+  # @return [User] the owner
   def owner
     permission = self.permissions(level: 'owner')[0]
     if permission
@@ -133,16 +152,30 @@ class WSFile
       nil
     end
   end
+
+  # Sets a configuration option.
+  #
+  # @param [String] the key
+  # @param [String] the value to set
   def config_set key, value
     n_config = config.dup
     n_config[key]=value
     self.config= n_config
   end
+
+  # Sets a file property. Used for WebDAV and file backup.
+  #
+  # @param [String] the key
+  # @param [String] the value to set
   def property_set key, value
     n_file_properties = file_properties.dup
     n_file_properties[key]=value
     self.file_properties= n_file_properties
   end
+
+  # Calculate the file size.
+  #
+  # @return [Integer] number of bytes
   def size(children: true)
     c_size = 0
     request = $postgres.exec_prepared('wsfile_size', [self.id])
@@ -150,6 +183,10 @@ class WSFile
     c_size += self.children.map{|child| child.size}.inject(:+) || 0 if children
     c_size
   end
+
+  # Return the IDs of all children recursively.
+  #
+  # @return [Array<Number>] an array of ids
   def child_ids
     ids = [self.id]
     self.children.each do |child|
@@ -157,7 +194,10 @@ class WSFile
     end
     ids
   end
+
   # fast_size is actually slower than size for an element with no children. Otherwise, it's faster. My theory is that looking the child ids up in memory client side is faster than querying the database for them.
+  #
+  # @return [Integer] number of bytes
   def fast_size
     c_size = 0
     ids = self.child_ids
@@ -168,7 +208,10 @@ class WSFile
     end
     c_size
   end
+
   # fast_size2 is slightly slower than fast_size
+  #
+  # @return [Integer] number of bytes
   def fast_size2
     c_size = 0
     $postgres.exec_prepared('wsfile_size_multi', [self.id]).each do |row|
@@ -176,6 +219,8 @@ class WSFile
     end
     c_size
   end
+
+  # Destroy this file and any children recursively.
   def destroy_cascade
     self.save
     self.children.each do |child|
@@ -186,6 +231,10 @@ class WSFile
     self.changes.destroy
     self.destroy
   end
+
+  # Calls the optimal sizing function depending on whether it has a child or not.
+  #
+  # @return [Integer] number of bytes
   def optimal_size
     if !children
       self.size children: false
@@ -193,10 +242,21 @@ class WSFile
       self.fast_size
     end
   end
+
+  # Standard byte sizes.
   UNITS = %W(B KB MB GB TB).freeze
+
+  # Returns the size of the document in a human readable format.
+  #
+  # @return [String] human readable number of bytes
   def as_size children: true
     self.human_size(optimal_size)
   end
+
+  # Converts the number of bytes into a human readable format.
+  #
+  # @param [Integer] number of bytes
+  # @return [String] human readable number of bytes
   def self.human_size number
       if number.to_i < 1000
         exponent = 0
@@ -208,6 +268,10 @@ class WSFile
       end
      "#{number.round(1)} #{UNITS[ exponent ]}"
   end
+
+  # Copies the document and all of its children.
+  #
+  # @return [WSFile] the copy
   def copy
     new_attributes = self.attributes
     new_attributes.delete(:id)
@@ -225,11 +289,15 @@ class WSFile
     file
   end
 end
+
+# The bridge between loadable JavaScript files and a WSFile.
 class AssetWSFile
   include DataMapper::Resource
   belongs_to  :asset,  key: true
   belongs_to  :file,  model: WSFile,  key: true
 end
+
+# Represents a User on the site.
 class User
   include DataMapper::Resource
   property :email, String, :key=>true
@@ -244,12 +312,16 @@ class User
   # Used for OmniAuth
   property :origin, String, :default=>'local'
   belongs_to :theme, required: false
+
+  # Sets a configuration option for that user. This isn't used much.
   def config_set key, value
     n_config = config.dup
     n_config[key]=value
     self.config= n_config
   end
 end
+
+# Represents an encryption key, either public or an encrypted private key.
 class Key
     include DataMapper::Resource
     property :id, Serial
@@ -258,6 +330,8 @@ class Key
     property :created, DateTime
     belongs_to :user
 end
+
+# Represents a symmetric encryption key (usually aes256) that is encrypted for a specific private key.
 class SymmetricKey
   include DataMapper::Resource
   property :id, Serial
@@ -265,18 +339,24 @@ class SymmetricKey
   property :created, DateTime
   belongs_to :user
 end
+
+# Represents a theme CSS file.
 class Theme
     include DataMapper::Resource
     property :name, String, key: true
     property :location, String
     has n, :users
 end
+
+# Represents the connection between a WSFile and a User with permission level. This level can be 'viewer', 'owner' or 'editor'.
 class Permission
     include DataMapper::Resource
     property    :level, Text,           default: 'viewer' # owner, editor
     belongs_to  :user,  key: true
     belongs_to  :file,  model: WSFile,  key: true
 end
+
+# Represents a change in the JSON of a document.
 class Change
     include DataMapper::Resource
     property :id, Serial
@@ -286,7 +366,8 @@ class Change
     belongs_to :user
     belongs_to :file, 'WSFile'
 end
-# Assets could be javascript or css
+
+# A group of assets that make up a default document type.
 class AssetGroup
     include DataMapper::Resource
     property :id, Serial
@@ -294,6 +375,9 @@ class AssetGroup
     property :description, Text
     has n, :assets, :through => Resource
 end
+
+# A dynamically loadable file to the client side in edit mode.
+# Assets could be javascript or css
 class Asset
     include DataMapper::Resource
     property :id, Serial
@@ -307,6 +391,8 @@ class Asset
 end
 class Javascript < Asset; end
 class Stylesheet < Asset; end
+
+# A user that isn't logged in.
 class AnonymousUser
     attr_accessor :email, :password, :group, :documents, :changes, :config
     def initialize

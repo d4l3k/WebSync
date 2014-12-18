@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
+/*global $, define, rangy, _, alert, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
 
 /*
   WebSync: Core.js
@@ -12,16 +12,14 @@
   http://tristanrice.name/
 */
 
-
-// This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
 define('websync', ['crypto'], function(crypto) {
+  'use strict';
+
   /**
-   * The core of WebSync
+   * This is the core of WebSync. Everything is stored under the WebSync object except for websocket authentication information which is under WebSyncAuth, and the main WebSyncData object.
    * @exports websync
    * @module websync
    */
-
-  'use strict';
 
   var WebSync, WS;
 
@@ -373,12 +371,16 @@ define('websync', ['crypto'], function(crypto) {
     },
 
     /**
-     * TODO: Document
+     * Upload a resource (usually a picture) using XHR.
+     *
+     * @param {File} file - the file to upload
+     * @param {Function} progress - a callback for progress updates has signature (event, XMLHttpRequest).
+     * @param {Function} done - a callback when the upload is done. Signature: (XMLHttpRequest)
      */
     uploadResource: function(file, progress, done) {
       var xhr = new XMLHttpRequest();
       if (xhr.upload) {
-        var xhrUpload = $.ajax({
+        $.ajax({
           type: 'POST',
           url: 'upload',
           xhr: function() {
@@ -823,7 +825,7 @@ define('websync', ['crypto'], function(crypto) {
      */
     insertAtCursor: function(node) {
       node = node.get(0);
-      var sel, range, html;
+      var sel, range;
       if (window.getSelection) {
         sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
@@ -1430,7 +1432,6 @@ define('websync', ['crypto'], function(crypto) {
   $('.settings-popup #diffs').delegate('button', 'click', function(e) {
     console.log(this);
     var patches = [];
-    var c_div = this.parentElement.parentElement;
     var id = parseInt($(this).data('id'), 10);
     // TODO: Tree based patches.
     for (var i = 0; i < WebSync.patches.length; i++) {

@@ -7,13 +7,13 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
   'use strict';
   var exports = {
 
-  /**
-   * Create a palette of colors in hsla format. Opacities can be undefined or in the format of [1, 0.5, 0].
-   *
-   * @param {Number} number - the number of colors
-   * @param {Array<Number>} opacities - an optional array of opacities to generate colors with.
-   * @return {Array<String>}
-   */
+    /**
+     * Create a palette of colors in hsla format. Opacities can be undefined or in the format of [1, 0.5, 0].
+     *
+     * @param {Number} number - the number of colors
+     * @param {Array<Number>} opacities - an optional array of opacities to generate colors with.
+     * @return {Array<String>}
+     */
     colorWheel: function(number, opacities) {
       var colors = [];
 

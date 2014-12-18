@@ -1,15 +1,15 @@
 #!/bin/bash
 
-SOURCE=$(dirname "${BASH_SOURCE[0]}")
+SOURCE = $(dirname "${BASH_SOURCE[0]}")
 
-cd $SOURCE/..
+cd $SOURCE / ..
 
 echo Changed to directory: `pwd`
 
 service nginx start
 
-alias nodejs=node
+alias nodejs = node
 
-su daemon -c 'pm2 start bin/backend.js -i 4'
-su daemon -c 'bundle exec unicorn -c config/unicorn.rb'
-#thin start -C config/thin.yaml
+su daemon - c 'pm2 start bin/backend.js -i 4'
+su daemon - c 'bundle exec unicorn -c config/unicorn.rb'#
+thin start - C config / thin.yaml

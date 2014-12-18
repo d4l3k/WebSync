@@ -4,144 +4,144 @@
 "session_secret": "WebSync is awesome! This should be secret and unique to your server cluster.",
 "host_url": "https://websyn.ca",
 "websocket": {
-    "port": 4568,
-    "url": "websocket.websyn.ca"
+  "port": 4568,
+  "url": "websocket.websyn.ca"
 },
 
 // Database Configuration
 "postgres": "postgres:@localhost/websync",
 "redis": {
-    "host": null,
-    "port": null
+  "host": null,
+  "port": null
 },
 
 // Google Analytics
 "google_analytics": {
-    "enabled": false,
-    "code": "UA-41779193-1"
+  "enabled": false,
+  "code": "UA-41779193-1"
 },
 
 // Most of the stuff past here should probably be left as is.
 // This is the list of assets.
 "default_assets": [{
-    "name": "Tables",
-    "description": "Enables table editting.",
-    "url": "/assets/tables.js"
+  "name": "Tables",
+  "description": "Enables table editting.",
+  "url": "/assets/tables.js"
 }, {
-    "name": "Chat",
-    "description": "Enables chat between editors.",
-    "url": "/assets/chat.js"
+  "name": "Chat",
+  "description": "Enables chat between editors.",
+  "url": "/assets/chat.js"
 }, {
-    "name": "Page Layout",
-    "description": "Standard document layout.",
-    "url": "/assets/page.js"
+  "name": "Page Layout",
+  "description": "Standard document layout.",
+  "url": "/assets/page.js"
 }, {
-    "name": "Presentation Layout",
-    "description": "Standard presentation layout.",
-    "url": "/assets/presentation.js"
+  "name": "Presentation Layout",
+  "description": "Standard presentation layout.",
+  "url": "/assets/presentation.js"
 }, {
-    "name": "Spreadsheet Layout",
-    "description": "Standard presentation layout.",
-    "url": "/assets/spreadsheet.js"
+  "name": "Spreadsheet Layout",
+  "description": "Standard presentation layout.",
+  "url": "/assets/spreadsheet.js"
 }, {
-    "name": "Note Layout",
-    "description": "Standard note-taking layout.",
-    "url": "/assets/note.js"
+  "name": "Note Layout",
+  "description": "Standard note-taking layout.",
+  "url": "/assets/note.js"
 }, {
-    "name": "Resize",
-    "description": "Enables object resizing with handles.",
-    "url": "/assets/resize.js"
+  "name": "Resize",
+  "description": "Enables object resizing with handles.",
+  "url": "/assets/resize.js"
 }, {
-    "name": "Equations",
-    "description": "Enables equation editing.",
-    "url": "/assets/equations.js"
+  "name": "Equations",
+  "description": "Enables equation editing.",
+  "url": "/assets/equations.js"
 }, {
-    "name": "Drawing",
-    "description": "Allows you to draw arbitrary shapes.",
-    "url": "/assets/drawing.js"
+  "name": "Drawing",
+  "description": "Allows you to draw arbitrary shapes.",
+  "url": "/assets/drawing.js"
 }, {
-    "name": "Awesome",
-    "description": "Awesome presentation layout.",
-    "url": "/assets/awesome.js"
+  "name": "Awesome",
+  "description": "Awesome presentation layout.",
+  "url": "/assets/awesome.js"
 }, {
-    "name": "Charts",
-    "description": "Adds basic chart support using the library Chart.JS. Requires tables.",
-    "url": "/assets/charts.js"
+  "name": "Charts",
+  "description": "Adds basic chart support using the library Chart.JS. Requires tables.",
+  "url": "/assets/charts.js"
 }],
 
 // These represent different document types and the scripts they should load.
 "default_asset_groups": [{
-    "name": "Document",
-    "description": "Similar to Microsoft Word or LibreOffice Writer.",
-    "assets": [
-        "Tables",
-        "Chat",
-        "Page Layout",
-        "Equations",
-        "Drawing",
-        "Resize",
-        "Charts"
-    ]
+  "name": "Document",
+  "description": "Similar to Microsoft Word or LibreOffice Writer.",
+  "assets": [
+    "Tables",
+    "Chat",
+    "Page Layout",
+    "Equations",
+    "Drawing",
+    "Resize",
+    "Charts"
+  ]
 }, {
-    "name": "Presentation",
-    "description": "Similar to Microsoft PowerPoint or LibreOffice Impress.",
-    "assets": [
-        "Tables",
-        "Charts",
-        "Chat",
-        "Presentation Layout",
-        "Equations",
-        "Drawing",
-        "Resize"
-    ]
+  "name": "Presentation",
+  "description": "Similar to Microsoft PowerPoint or LibreOffice Impress.",
+  "assets": [
+    "Tables",
+    "Charts",
+    "Chat",
+    "Presentation Layout",
+    "Equations",
+    "Drawing",
+    "Resize"
+  ]
 }, {
-    "name": "Spreadsheet",
-    "description": "Similar to Microsoft Excel or LibreOffice Calc.",
-    "assets": [
-        "Tables",
-        "Charts",
-        "Chat",
-        "Spreadsheet Layout",
-        "Equations",
-        "Resize"
-    ]
+  "name": "Spreadsheet",
+  "description": "Similar to Microsoft Excel or LibreOffice Calc.",
+  "assets": [
+    "Tables",
+    "Charts",
+    "Chat",
+    "Spreadsheet Layout",
+    "Equations",
+    "Resize"
+  ]
 }, {
-    "name": "Notebook",
-    "description": "Similar to Microsoft OneNote.",
-    "assets": [
-        "Tables",
-        "Charts",
-        "Chat",
-        "Note Layout",
-        "Equations",
-        "Drawing",
-        "Resize"
-    ]
+  "name": "Notebook",
+  "description": "Similar to Microsoft OneNote.",
+  "assets": [
+    "Tables",
+    "Charts",
+    "Chat",
+    "Note Layout",
+    "Equations",
+    "Drawing",
+    "Resize"
+  ]
 }, {
-    "name": "Awe",
-    "description": "Similar to Prezi but in 3D.",
-    "assets": [
-        "Tables",
-        "Chat",
-        "Awesome",
-        "Equations",
-        "Drawing",
-        "Charts",
-        "Resize"
-    ]
+  "name": "Awe",
+  "description": "Similar to Prezi but in 3D.",
+  "assets": [
+    "Tables",
+    "Chat",
+    "Awesome",
+    "Equations",
+    "Drawing",
+    "Charts",
+    "Resize"
+  ]
 }],
 
 // Themes and stylesheets they should load.
 "default_themes": [{
-    "name": "Green",
-    "stylesheet_tag": "theme-green"
+  "name": "Green",
+  "stylesheet_tag": "theme-green"
 }, {
-    "name": "Purple",
-    "stylesheet_tag": "theme-purple"
+  "name": "Purple",
+  "stylesheet_tag": "theme-purple"
 }, {
-    "name": "Blue",
-    "stylesheet_tag": "theme-blue"
+  "name": "Blue",
+  "stylesheet_tag": "theme-blue"
 }, {
-    "name": "Dark",
-    "stylesheet_tag": "theme-dark"
+  "name": "Dark",
+  "stylesheet_tag": "theme-dark"
 }]

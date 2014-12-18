@@ -1,0 +1,26 @@
+<script src="/assets/three.js"></script>
+<script src="/assets/MTL.js"></script>
+<script src="/assets/tween.min.js"></script>
+<script src="/assets/CSS3DRenderer.js"></script>
+<div id="presentation-nav" class="sidebar">
+  <button id="addSlide" class="btn btn-default" type="button">
+    <i class="fa fa-plus fa-lg"></i>
+  </button>
+  <button id="remSlide" class="btn btn-danger" type="button">
+    <i class="fa fa-lg fa-trash-o"></i>
+  </button>
+  <button class="btn btn-default toggle-sidebar">
+    <i class="fa fa-bars fa-lg"></i>
+  </button>
+  <div id="slideView" class="slideWell panel panel-default"></div>
+  <div class="panel panel-default" id="properties">
+    <h3>Properties</h3>
+    <hr>
+      <% _.each(['Position', 'Rotation'], function(v) { %>
+        <h4><%= v %></h4>
+        <% _.each(['x', 'y', 'z'], function(i) { %>
+          <%= i.toUpperCase() %>: <input class='form-control <%= v + ' ' + i %>'></input>
+        <% }); %>
+      <% }); %>
+  </div>
+</div>

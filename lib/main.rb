@@ -22,8 +22,9 @@ require_relative 'helpers'
 require_relative 'webdav'
 require_relative 'configure'
 
-
+# WebSync wrapper module
 module WebSync
+  # The main application class.
   class App < Config
     require_relative 'routes/base'
     Dir.glob('lib/routes/*.rb').each do |file|

@@ -1,5 +1,6 @@
 module WebSync
   module Routes
+    # The routes responsible for authentication (login, register, oauth).
     class Auth < Base
       # OmniAuth: Support both GET and POST for callbacks
       %w(get post).each do |method|

@@ -1,8 +1,12 @@
 module WebSync
   module Routes
+    # The routes for uploading, downloading and converting files.
     class UploadDownload < Base
-
       helpers do
+        # Converts a file into HTML.
+        #
+        # @param tempfile [TempFile, File] the file to convert
+        # @return [String] the HTML content
         def convert_file tempfile
           filetype = get_mime_type(tempfile.path) #MIME::Types.type_for(tempfile.path).first.content_type
           if filetype=="application/pdf"
@@ -21,14 +25,24 @@ module WebSync
           end
           content
         end
+
+        # Do a basic sanitization on the uploaded file to remove any potentially
+        # malicious script tags.
+        #
+        # @param dom [Nokogiri::HTML::Document] the root dom element
+        # @return [Nokogiri::HTML::Document] the sanitized element
         def sanitize_upload dom
           # Basic security check
           dom.css("script").remove();
         end
+
+        # Fail the conversion by displaying a message and redirecting to /.
         def conversion_fail
           flash[:danger] = "'#{h params[:file][:filename]}' failed to be converted."
           redirect "/"
         end
+
+        # Upload a file without converting it.
         def upload_no_convert
           file = params['file']
           type = file[:type]

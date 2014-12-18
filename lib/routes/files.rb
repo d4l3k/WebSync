@@ -1,5 +1,6 @@
 module WebSync
   module Routes
+    # Routes responsible for displaying the file navs.
     class Files < Base
       get '/' do
         @javascripts = []

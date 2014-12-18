@@ -1,7 +1,17 @@
 module WebSync
   module Routes
+    # The routes responsible for file navigation api
     class ApiFileNav < Base
       helpers do
+        # Do a search for files.
+        #
+        # @param public [Boolean] whether to look for public files
+        # @param text [String] the search string
+        # @param offset [Number] the result offset. Currently not used as all results are returned.
+        # @param deleted [Boolean] whether to look for deleted files
+        # @param sort_type [String] what parameter to sort on. 'name', 'owner', 'date', 'size'
+        # @param sort_dir [String] which direction to sort. 'asc', 'desc'
+        # @return [Array<Hash>] the search results
         def file_query public: false, text: '', offset: 0, deleted: false, sort_type: 'date', sort_dir: 'desc'
           # TODO: Implement offset
           query = "document_#{public ? 'public' : 'private'}_search"

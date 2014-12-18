@@ -1,7 +1,7 @@
 module WebSync
   module Routes
+    # Block most XHR (originated from javascript). This stops scripts from doing anything malicious to other documents.
     class XHR < Base
-      # Block most XHR (originated from javascript). This stops scripts from doing anything malicious to other documents.
       before do
         # Allow static assets.
         if request.xhr? and not request.path_info.match %r{^/assets/}

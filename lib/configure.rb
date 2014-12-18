@@ -1,4 +1,5 @@
 module WebSync
+  # This is the configuration parameters that apply to all routes.
   class Config < Sinatra::Base
     register Sinatra::Flash
 
@@ -48,8 +49,8 @@ module WebSync
       sprockets.append_path File.join(root, 'assets', 'templates')
       sprockets.append_path File.join(root, 'assets', 'lib')
       set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
-      path = File.join(root, '../assets', '{src,lib}', "*.js")
-      no_digest = Dir.glob(path).map{|f| f.split("/").last}
+      no_digest_path = File.join(root, '../assets', '{src,lib}', "*.js")
+      no_digest = Dir.glob(no_digest_path).map{|f| f.split("/").last}
       set :assets_precompile_no_digest, no_digest
 
       # i18n-js, this is a huge hack to get it to work with sinatra-asset-pipeline

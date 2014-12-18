@@ -1,8 +1,11 @@
 # WebDAV accessor methods for a WSFile.
 class WSFileResource < DAV4Rack::Resource
   include DAV4Rack::Utils
-  ROOT = :root
   attr_accessor :file, :ws_user
+
+  # Represents the root directory. It might be a good idea to change this to be
+  # something like '/'.
+  ROOT = :root
 
   # Initialize a file resource
   #
@@ -93,6 +96,8 @@ class WSFileResource < DAV4Rack::Resource
   def exist?
     @file && @file.respond_to?(:length) && @file.length > 0 || @file != nil && @file.class != Array || file_path == "/"
   end
+
+  # Forces the user to authenticate.
   def force_auth
     if not @ws_user
       user, pass = auth_credentials

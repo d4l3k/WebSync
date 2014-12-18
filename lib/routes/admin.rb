@@ -1,5 +1,6 @@
 module WebSync
   module Routes
+    # The routes responsible for /admin and various admin actions.
     class Admin < Base
       get '/admin' do
         admin_required

@@ -1,5 +1,6 @@
 module WebSync
   module Routes
+    # Routes responsible for user settings.
     class Settings < Base
       get '/settings' do
         login_required

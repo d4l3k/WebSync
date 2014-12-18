@@ -1,5 +1,6 @@
 module WebSync
   module Routes
+    # Routes related to creating new documents and editing them.
     class Document < Base
       get '/new/:group' do
         login_required

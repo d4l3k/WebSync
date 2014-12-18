@@ -20,50 +20,55 @@ end
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]
 postgres_creds = URI.parse('postgres://'+$config['postgres'])
 $postgres = PG.connect({host: postgres_creds.host, dbname: postgres_creds.path[1..-1], user: postgres_creds.user, password: postgres_creds.password})
+
 $db_version = $redis.get("websync:db:version").to_i
 if $db_version != DATABASE_FORMAT_VERSION
-    def migrate range
-        if $db_version == range.first
-            puts "[MIGRATION] Attempting to migrate database from version #{range.first} to #{range.last}."
-            yield
-            $db_version = range.last
-        end
+  # Registers a schema migration between database formats.
+  #
+  # @param range [Range] versions to convert between
+  def migrate range
+    if $db_version == range.first
+      puts "[MIGRATION] Attempting to migrate database from version #{range.first} to #{range.last}."
+      yield
+      $db_version = range.last
     end
-    require_relative 'migrate'
-    if $db_version != DATABASE_FORMAT_VERSION
-        puts " :: WARNING: Can not migrate to latest database format!"
-    end
-    $redis.set "websync:db:version", $db_version
+  end
+  require_relative 'migrate'
+  if $db_version != DATABASE_FORMAT_VERSION
+    puts " :: WARNING: Can not migrate to latest database format!"
+  end
+  $redis.set "websync:db:version", $db_version
 end
 
+# WebSync extensions to DataMapper
 module DataMapper
+  # WebSync extensions to DataMapper properties.
   class Property
+    # A stub class representing a postgres BYTEA. This is only used so
+    # DataMapper will create it in the schema.
     class BetterBlob < Object
-
-      # Returns maximum property length (if applicable).
-      # This usually only makes sense when property is of
-      # type Range or custom
+      # A stub load method.
       #
-      # @return [Integer, nil]
-      #   the maximum length of this property
+      # @param value [String] the value to load
+      # @return [nil]
+      def load(value)
+          nil
+      end
+
+      # A stub dump method.
       #
-      # @api semipublic
-
-        def load(value)
-          #super.dup.force_encoding("BINARY") unless value.nil?
-            nil
-        end
-
-        def dump(value)
-          #value.dup.force_encoding("BINARY") unless value.nil?
-            nil
-        rescue
-          value
-        end
-     end
+      # @param value [String] the value to dump
+      # @return [nil]
+      def dump(value)
+          nil
+      end
+    end
   end # class Property
   module Migrations
+    # WebSync extensions to the DataMapper postgres adapter.
     module PostgresAdapter
+      # WebSync extensions to the DataMapper postgres adapter class methods.
+      # Adds in BetterBlob.
       module ClassMethods
         # Types for PostgreSQL databases.
         #
@@ -393,7 +398,10 @@ class Asset
     has n, :files, 'WSFile', :through => :asset_ws_files
     has n, :asset_groups, :through => Resource
 end
+# Represents a Javascript asset.
 class Javascript < Asset; end
+# Represents a Stylesheet asset. These aren't implemented and convention states
+# you load stylesheets from the controlling javascript file.
 class Stylesheet < Asset; end
 
 # A user that isn't logged in.

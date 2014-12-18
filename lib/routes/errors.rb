@@ -1,5 +1,6 @@
 module WebSync
   module Routes
+    # Routes responsible for handling errors.
     class Errors < Base
       not_found do
         erb :error, locals: {error: "404", reason: "Page or document not found."}

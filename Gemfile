@@ -17,6 +17,7 @@ gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'nokogiri'
 gem 'multi_json'
 gem 'i18n', require: ['i18n', 'i18n/backend', 'i18n/backend/simple', 'i18n/backend/fallbacks', 'i18n/config']
+gem "i18n-js", require: ['i18n/js']
 gem 'rack-contrib'
 gem 'radix62'
 gem 'pg'
@@ -24,7 +25,6 @@ gem 'font-awesome-sass'
 gem 'compass'
 gem 'sinatra-asset-pipeline', require: ['sinatra/asset_pipeline', 'sprockets/environment', 'sprockets/manifest']
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
-gem "i18n-js"
 
 group :development, :test do
     gem 'thin'

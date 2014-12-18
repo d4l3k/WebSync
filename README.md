@@ -5,19 +5,21 @@ WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive
 
 
 # Features
-[WebSyn.ca](https://websyn.ca) has a nice list of features. These might be incomplete:
+[WebSyn.ca](https://websyn.ca) has a more up to date list of features. These might be incomplete:
 
-* Persistent JSON object synced between clients
+* End-to-End Encryption powered by OpenPGP.
+* Multi-user editing
 * Notebook, Document, Spreadsheet, and Presentation editing and viewing.
-* Tables
+* Document sharing
+* Tables and Charts
 * Resizable Images & Tables
 * User support
     - Icons and display names via Gravatar.
-* Multi-user editing
 * In document chat between users
 * Revert changes to edited documents
-* Document sharing
+* Persistent JSON object synced between clients
 * Open source
+* Self Hostable
 
 
 # Dependencies
@@ -141,7 +143,9 @@ WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO 
 ## Source Documentation
 [WebSync Annotated Source Documentation](https://websyn.ca/documentation)
 
-WebSync uses Docco to automatically generate nicely formatted annotated source, but some code isn't that nicely documented. It would be great if you helped out with that.
+[JavaScript Documentation](https://websyn.ca/documentation/jsdoc/index.html)
+
+[Ruby Documentation](https://websyn.ca/documentation/yard/index.html)
 
 To generate the documentation you can run `rake documentation` or `rake assets:precompile`. Every WebSync server has the documentation available at `http://<server>:<port>/documentation`, assuming it has been generated. All production servers will have the documentation.
 

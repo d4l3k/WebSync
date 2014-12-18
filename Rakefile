@@ -182,7 +182,7 @@ task :jsdoc do
   files.each do |file|
       paths += Dir.glob(file)
   end
-  system("node_modules/jsdoc/jsdoc.js -d ./public/jsdoc/ #{paths.join " "} README.md")
+  system("node_modules/jsdoc/jsdoc.js -d ./public/documentation/jsdoc/ #{paths.join " "} README.md")
 end
 task :docco do
   files = %w(
@@ -195,10 +195,13 @@ task :docco do
   files.each do |file|
     paths += Dir.glob(file)
   end
-  system("node_modules/docco/bin/docco -o public/docco/ #{paths.join " "}")
+  system("node_modules/docco/bin/docco -o public/documentation/docco/ #{paths.join " "}")
+end
+task :yard do
+  system("yard doc -o public/documentation/yard")
 end
 
-task documentation: [:docco, :jsdoc]
+task documentation: [:docco, :jsdoc, :yard]
 
 task :hooks do
     %w(pre-commit pre-push).each do |hook|

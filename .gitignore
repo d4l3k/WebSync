@@ -1,11 +1,11 @@
 node_modules
 .sass-cache
+.yardoc
 .*.swp
 .*.swo
 *.db
 public/assets
-public/jsdoc
-public/docco
+public/documentation
 assets/bower_components
 *~
 *.log

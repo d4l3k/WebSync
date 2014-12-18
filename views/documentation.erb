@@ -1,12 +1,12 @@
 <div class="container">
   <div class="page-header"><h1><%= t 'documentation.head' %></h1></div>
-  <%= t 'documentation.desc' %>
-<br>
-<br>
+  <p><%= t 'documentation.desc' %></p>
+  <h2><%= t 'documentation.docco.head' %></h2>
+  <p><%= t 'documentation.docco.desc' %></p>
   <%
   groups = {
-    server: %w{bin/backend.js lib/**/*.rb},
-    client: %w{assets/digest/{core,edit,crypto}.js assets/src/*.js}
+    client: %w{assets/digest/{core,edit,crypto}.js assets/src/*.js},
+    server: %w{bin/backend.js lib/**/*.rb}
   }
   groups.each do |name, glob_list|
     files = []

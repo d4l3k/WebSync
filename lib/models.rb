@@ -118,14 +118,14 @@ class WSFile
   has n, :symmetric_keys
   belongs_to :parent, self, required: false
 
-  # Set the binary data.
+  # Set the binary data of the file.
   #
-  # @param [String] the data to set
+  # @param blob [String] the data to set
   def data= blob
     $postgres.exec_prepared('wsfile_update', [self.id, {value: blob, format: 1}])
   end
 
-  # Get the binary data.
+  # Get the binary data from the file.
   #
   # @return [String] the binary data
   def data
@@ -155,8 +155,8 @@ class WSFile
 
   # Sets a configuration option.
   #
-  # @param [String] the key
-  # @param [String] the value to set
+  # @param key [String] the key
+  # @param value [String] the value to set
   def config_set key, value
     n_config = config.dup
     n_config[key]=value
@@ -165,8 +165,8 @@ class WSFile
 
   # Sets a file property. Used for WebDAV and file backup.
   #
-  # @param [String] the key
-  # @param [String] the value to set
+  # @param key [String] the key
+  # @param value [String] the value to set
   def property_set key, value
     n_file_properties = file_properties.dup
     n_file_properties[key]=value
@@ -175,6 +175,7 @@ class WSFile
 
   # Calculate the file size.
   #
+  # @param children [Boolean] whether to size recursively or not
   # @return [Integer] number of bytes
   def size(children: true)
     c_size = 0
@@ -255,7 +256,7 @@ class WSFile
 
   # Converts the number of bytes into a human readable format.
   #
-  # @param [Integer] number of bytes
+  # @param number [Integer] number of bytes
   # @return [String] human readable number of bytes
   def self.human_size number
       if number.to_i < 1000
@@ -314,6 +315,9 @@ class User
   belongs_to :theme, required: false
 
   # Sets a configuration option for that user. This isn't used much.
+  #
+  # @param key [String] the key to set
+  # @param value [String] the value to set
   def config_set key, value
     n_config = config.dup
     n_config[key]=value
@@ -395,6 +399,8 @@ class Stylesheet < Asset; end
 # A user that isn't logged in.
 class AnonymousUser
     attr_accessor :email, :password, :group, :documents, :changes, :config
+
+    # Initialize the anonymous user
     def initialize
         @email = "anon@websyn.ca"
         @group = "anonymous"
@@ -402,6 +408,12 @@ class AnonymousUser
         @changes = []
         @config = {}
     end
+
+    # Sets a configuration option for that user.
+    # This is a stub and doesn't save anything.
+    #
+    # @param key [String] the key to set
+    # @param value [String] the value to set
     def config_set key, value
         self.config
     end

@@ -1,45 +1,87 @@
 module WebSync
+  # Helpers for views and routes
   module Helpers
+
+    # Escapes some HTML. Ex: '<' -> '&lt;'
+    #
+    # @param text [String] the potentially dangerous HTML
+    # @return [String] the sanitized text
     def h(text)
       Rack::Utils.escape_html(text)
     end
+
+    # Returns the corresponding i18n localization.
+    #
+    # @param token [String, Symbol] the i18n locale token
+    # @return [String] the corresponding phrase or sentence.
     def t token
       I18n.t(token)
     end
+
+    # Returns the corresponding i18n time localization.
+    #
+    # @param time [Date, DateTime] the time
+    # @return [String] the localized time
     def l time
       I18n.l(time)
     end
+
+    # Finds a template with a i18n locale.
     def find_template(views, name, engine, &block)
       I18n.fallbacks[I18n.locale].each { |locale|
         super(views, "#{name}.#{locale}", engine, &block) }
       super(views, name, engine, &block)
     end
+
+    # Returns the logger corresponding to the request.
     def logger
       request.logger
     end
+
+    # Returns the current logged in user or an AnonymousUser.
+    #
+    # @return [User, AnonymousUser] the current user
     def current_user
       if logged_in?
         return User.get(session['user'])
       end
       AnonymousUser.new
     end
+
+    # Redirects the current user to the login page if not an admin.
     def admin_required
       if not admin?
         redirect "/login?#{env["REQUEST_PATH"]}"
       end
     end
+
+    # Checks if the current user is an admin
+    #
+    # @return [Boolean] whether the user is an admin
     def admin?
       c_user = current_user
       not c_user.nil? and c_user.group=="admin"
     end
+
+    # Checks if the current user is logged in
+    #
+    # @return [Boolean] whether the user is logged in
     def logged_in?
       (!session['userhash'].nil?)&&$redis.get('userhash:'+session['userhash'])==session['user']
     end
+
+    # Redirects the current user to the login page if not logged in
     def login_required
       if !logged_in?
         redirect "/login?#{env["REQUEST_PATH"]}"
       end
     end
+
+    # Registers a user and return them if possible otherwise return nil.
+    #
+    # @param email [String] email
+    # @param pass [String] password
+    # @return [User, nil] the user or nil if registration failed.
     def register email, pass
       email = email.downcase.strip
       if email != "anon@websyn.ca" and User.get(email).nil?
@@ -51,6 +93,13 @@ module WebSync
       end
       nil
     end
+
+    # Attempts to log in a user an returns if it was successful
+    #
+    # @param email [String] email
+    # @param pass [String] password
+    # @param expire [Number] Time in seconds to expire the users login.
+    # @return [Boolean] whether the login was successful
     def authenticate email, pass, expire=nil
       email.downcase!
       user = User.get(email)
@@ -69,18 +118,19 @@ module WebSync
       end
       false
     end
+
+    # Logs a user out
     def logout
      $redis.del "userhash:#{session['userhash']}"
       session['userhash']=nil
       session['user']=nil
     end
-    def render_login_button
-      if logged_in?
-       return '<a href="/logout" title="'+t('layout.sign_out')+'"><i class="fa fa-sign-out fa-lg"></i><span class="hidden-phone"> '+t('layout.sign_out')+'</span></a>'
-      else
-       return '<a href="/login" title="'+t('layout.sign_in')+'"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> '+t('layout.sign_in')+'</span></a>'
-      end
-    end
+
+    # Returns a page from the cache if present otherwise takes the result from
+    # the provided block and caches it.
+    #
+    # @param time [Number] time in seconds to cache
+    # @yield Should return the expected page value
     def cache time: 3600, &block
       return yield if 'development' == ENV['RACK_ENV']
 
@@ -99,6 +149,12 @@ module WebSync
       end
       page
     end
+
+    # Checks if the user has access to a document, otherwise redirects to a
+    # login or 403 page.
+    #
+    # @param doc_id [Number] the optional document id
+    # @return [WSFile] the document
     def document_auth doc_id=nil
       doc_id ||= params[:doc]
       doc_id = doc_id.decode62 if doc_id.is_a? String
@@ -115,6 +171,11 @@ module WebSync
       end
       doc
     end
+
+    # Checks if the user is an editor of a document, otherwise redirects to a
+    # 403 page.
+    #
+    # @param doc [WSFile] checks if an editor of this document
     def editor! doc
       if doc.default_level == "owner" or doc.default_level == "editor"
         return
@@ -126,6 +187,11 @@ module WebSync
       end
       halt 403
     end
+
+    # Returns the MIME type from a file path provided to it.
+    #
+    # @param file [String] the file path
+    # @return [String] the mime type
     def get_mime_type file
       FileMagic.new(FileMagic::MAGIC_MIME).file(file).split(';').first
     end

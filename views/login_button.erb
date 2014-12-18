@@ -1,0 +1,5 @@
+<% if logged_in? %>
+  <a href="/logout" title="<%= t('layout.sign_out') %>"><i class="fa fa-sign-out fa-lg"></i><span class="hidden-phone"> <%= t('layout.sign_out') %></span></a>
+<% else %>
+  <a href="/login" title="<%= t('layout.sign_in') %>"><i class="fa fa-sign-in fa-lg"></i><span class="hidden-phone"> <%= t('layout.sign_in') %></span></a>'
+<% end %>

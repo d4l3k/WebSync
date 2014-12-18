@@ -3,6 +3,11 @@
 # Ported by Tristan Rice (https://github.com/d4l3k)
 
 class JSONComments
+
+  # Strips the comments from the JSON file
+  #
+  # @param str [String] The JSON+Comments blob
+  # @return [String] The cleaned JSON
   def self.strip(str)
     insideString = false
     insideComment = false

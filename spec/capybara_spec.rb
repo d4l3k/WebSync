@@ -3,6 +3,10 @@ require File.expand_path '../test_helper.rb', __FILE__
 include Rack::Test::Methods
 
 $config['websocket']['port'] = 1337
+
+# Registers and logs in a user.
+#
+# @return [User] the logged in user
 def loginuser
   user = $helpers.register 'test@websyn.ca', 'testboop'
   visit '/login?/settings'
@@ -23,11 +27,11 @@ def wait_for
     raise "WAIT FOR TIMED OUT! #{current_url}"
   end
 end
-def wait_for_edit
+def wait_for_edit url: ''
   wait_for do
     # Just in case the user wasn't logged in.
     if current_url.match(/\/login/)
-      url = current_url.split('?').last
+      url = current_url.split('?').last if url.empty?
       fill_login
       visit url
     end
@@ -43,8 +47,9 @@ def wait_for_no_bar
 end
 def new_doc type
   id = AssetGroup.all(name: type).first.id
-  visit "/new/#{id}"
-  wait_for_edit
+  url = "/new/#{id}"
+  visit url
+  wait_for_edit url: url
   uri = URI.parse(current_url)
   doc_id = uri.path.split("/")[1].decode62
   doc = WSFile.get(doc_id)
@@ -164,6 +169,9 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     loginuser
     %w{Spreadsheet Notebook}.each do |type|
       new_doc type
+      wait_for do
+        all('#name').length == 1
+      end
     end
   end
   after(:all) do
@@ -172,6 +180,7 @@ describe "WebSync Capybara Interface Tests", type: :feature do
   end
 end
 
+# Extension to use phantomjs click or fallback to triggering the event.
 class Capybara::Node::Element
   def click2
     self.click

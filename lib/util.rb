@@ -1,11 +1,17 @@
 # String helper methods
 class String
+  # Escape HTML sequences such as '<' and '>' into their safe equivalents
+  #
+  # @return [String] the escaped HTML
   def escape_html
     Rack::Utils.escape_html(self)
   end
 end
 
-# Program lookup
+# Finds the location of a system command.
+#
+# @param cmd [String] the command
+# @return [String] the file path of the command
 def which(cmd)
   exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
   ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
@@ -17,7 +23,8 @@ def which(cmd)
   return nil
 end
 
-# Likely nolonger needed
+# Likely no longer needed since all the conversion happens in the front end now.
+=begin
 def json_to_html_node obj
   html = "";
   if obj['nodeName']=="#text"
@@ -78,3 +85,4 @@ def html_to_json html
   end
   return json
 end
+=end

@@ -196,7 +196,7 @@ class WSFileResource < DAV4Rack::Resource
         Created
     end
     def _content_type filename
-      FileMagic.new(FileMagic::MAGIC_MIME).file(file).split(';').first || 'text/html'
+      FileMagic.new(FileMagic::MAGIC_MIME).file(filename).split(';').first || 'text/html'
     end
     def delete
         if collection?

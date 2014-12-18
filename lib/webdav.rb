@@ -1,4 +1,3 @@
-require 'mime/types'
 class WSFileResource < DAV4Rack::Resource
     include DAV4Rack::Utils
     ROOT = :root
@@ -197,7 +196,7 @@ class WSFileResource < DAV4Rack::Resource
         Created
     end
     def _content_type filename
-        MIME::Types.type_for(filename).first.to_s || 'text/html'
+      FileMagic.new(FileMagic::MAGIC_MIME).file(file).split(';').first || 'text/html'
     end
     def delete
         if collection?

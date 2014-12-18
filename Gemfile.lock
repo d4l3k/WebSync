@@ -182,6 +182,8 @@ GEM
       rack (>= 1.1.3)
     rack-protection (1.5.3)
       rack
+    rack-raw-upload (1.1.1)
+      multi_json
     rack-test (0.6.2)
       rack (>= 1.0)
     racksh (1.0.0)
@@ -209,6 +211,7 @@ GEM
     rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
+    ruby-filemagic (0.6.1)
     rubysl (2.1.0)
       rubysl-abbrev (~> 2.0)
       rubysl-base64 (~> 2.0)
@@ -481,7 +484,6 @@ DEPENDENCIES
   i18n
   i18n-js
   json
-  mime-types
   multi_json
   nokogiri
   omniauth
@@ -496,11 +498,13 @@ DEPENDENCIES
   racc
   rack-contrib
   rack-mini-profiler
+  rack-raw-upload
   racksh
   radix62
   rake
   redis
   rspec
+  ruby-filemagic
   rubysl
   sass
   selenium-webdriver

@@ -5,7 +5,7 @@ gem 'json'
 gem 'data_mapper'
 gem 'dm-postgres-adapter'
 gem 'dm-types'
-gem 'mime-types'
+gem 'ruby-filemagic'
 gem 'sass', require: 'sass'
 gem 'erubis'
 gem 'ejs'
@@ -24,6 +24,7 @@ gem 'pg'
 gem 'font-awesome-sass'
 gem 'compass'
 gem 'sinatra-asset-pipeline', require: ['sinatra/asset_pipeline', 'sprockets/environment', 'sprockets/manifest']
+gem 'rack-raw-upload'
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 
 group :development, :test do

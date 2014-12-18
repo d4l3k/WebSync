@@ -4,7 +4,7 @@ module WebSync
 
       helpers do
         def convert_file tempfile
-          filetype = MIME::Types.type_for(tempfile.path).first.content_type
+          filetype = get_mime_type(tempfile.path) #MIME::Types.type_for(tempfile.path).first.content_type
           if filetype=="application/pdf"
             content = PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
           elsif filetype=='text/html'
@@ -34,7 +34,7 @@ module WebSync
           type = file[:type]
           # Fingerprint file for mime-type if we aren't provided with it.
           if type == 'application/octet-stream'
-            type = MIME::Types.type_for(file[:tempfile].path).first.content_type
+            type = get_mime_type(file[:tempfile].path)
           end
           blob = WSFile.create(name: file[:filename], content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
           blob.data = file[:tempfile].read
@@ -91,7 +91,7 @@ module WebSync
             # Upload images
             upload_list.each do |file|
               path = "/tmp/#{file}"
-              type = MIME::Types.type_for(path).first.content_type
+              type = get_mime_type(path)
               blob = WSFile.create(parent: doc, name: file, content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
               blob.data = File.read path
               perm = Permission.create(user: current_user, file: blob, level: "owner")

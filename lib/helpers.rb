@@ -126,5 +126,8 @@ module WebSync
       end
       halt 403
     end
+    def get_mime_type file
+      FileMagic.new(FileMagic::MAGIC_MIME).file(file).split(';').first
+    end
   end
 end

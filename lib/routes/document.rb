@@ -133,7 +133,7 @@ module WebSync
           type = file[:type]
           # Fingerprint file for mime-type if we aren't provided with it.
           if type=="application/octet-stream"
-            type = MIME::Types.type_for(file[:tempfile].path).first.content_type
+            type = get_mime_type(file[:tempfile].path)
           end
           ws_file = doc.children(name: file[:filename])[0]
           if ws_file

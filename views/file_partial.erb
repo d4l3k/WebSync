@@ -73,48 +73,7 @@ end
         </span>
       </div><!-- /input-group -->
     </div>
-    <table class="table table-hover table-click">
-      <!--
-        <thead>
-            <tr>
-                <% headers.each do |url|
-
-                %>
-                    <th><a href="?<%= url + ( (invert or sort != url) ? "" : "&invert" )%>">
-                        <%= t("files.#{url}") %>
-                        <% if sort == url %>
-                            <i class="fa fa-sort-<%= !sort_up ? "asc" : "desc" %>"></i>
-                        <% end %>
-                    </a></th>
-                <% end %>
-                <th style="width: 1px"><span class="hidden-xs"><%= t "files.actions" %></span></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% docs.each do |doc|
-                path = doc.directory? ? "/webdav/#{doc.name}/" : "/#{doc.id.encode62}/edit"
-            %>
-                <tr>
-                    <td><a href="<%= path %>"><%= doc.name.length > 0 ? h(doc.name) : "<i>Unnamed File</i>" %><%= doc.directory? ? "/" : "" %></a></td>
-                    <% owner = doc.permissions(level: "owner").user %>
-                    <td><%= doc.permissions(level: "owner").user[0]==current_user ? t("you") : (owner.length > 0 ? h(owner[0].email) : "<i>#{t "files.orphaned"}</i>") %></td>
-                    <td><%= l doc.edit_time %></td>
-                    <td><%= doc.as_size %></td>
-                    <td class="actions">
-                    <% if doc.permissions(level: "owner").user[0]==current_user %>
-                            <% if options[:deleted] %>
-                                <a href="/<%= doc.id.encode62 %>/undelete" class="btn btn-default"><%= t "files.restore" %></a>
-                                <a href="/<%= doc.id.encode62 %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> <%= t "files.obliterate" %></span></a>
-                            <% else %>
-                                <a href="/<%= doc.id.encode62 %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> <%= t "files.delete" %></span></a>
-                            <% end %>
-                    <% end %>
-                    </td>
-                </tr>
-            <% end %>
-        </tbody>
-      -->
-    </table>
+    <table class="table table-hover table-click"></table>
   </div>
   <%= javascript_tag 'file_browser.js' %>
 </div>

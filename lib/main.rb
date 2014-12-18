@@ -19,7 +19,6 @@ if not ENV["CONFIGMODE"]
 end
 require_relative 'util'
 require_relative 'helpers'
-require_relative 'raw_upload'
 require_relative 'webdav'
 require_relative 'configure'
 

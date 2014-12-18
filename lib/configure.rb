@@ -52,6 +52,19 @@ module WebSync
       no_digest = Dir.glob(path).map{|f| f.split("/").last}
       set :assets_precompile_no_digest, no_digest
 
+      # i18n-js, this is a huge hack to get it to work with sinatra-asset-pipeline
+      require "i18n/js/middleware"
+      sprockets.register_preprocessor "application/javascript", :"i18n-js_dependencies" do |context, source|
+        if context.logical_path == "i18n/filtered"
+          ::I18n.load_path.each {|path| context.depend_on(File.expand_path(path))}
+        end
+        source
+      end
+
+      i18n_js_location = File.expand_path('../../../app/assets/javascripts',
+        I18n::JS.method(:config).source_location[0])
+      sprockets.append_path i18n_js_location
+
       # OmniAuth configuration
       use OmniAuth::Builder do
         def style provider, color, tag

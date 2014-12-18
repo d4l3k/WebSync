@@ -107,6 +107,10 @@ en:
         mine: "My Files"
         public: "Publicly Shared"
         orphaned: "Orphaned"
+        unnamed: "Unnamed Document"
+    search:
+      no_results: "No results found."
+      search: "Search"
     destroy:
         header: "Destroy File"
         confirm: "For security reasons, please confirm your password to delete this file."

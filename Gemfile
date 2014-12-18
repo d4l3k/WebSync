@@ -24,6 +24,8 @@ gem 'font-awesome-sass'
 gem 'compass'
 gem 'sinatra-asset-pipeline', require: ['sinatra/asset_pipeline', 'sprockets/environment', 'sprockets/manifest']
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
+gem "i18n-js"
+
 group :development, :test do
     gem 'thin'
     gem 'racksh'

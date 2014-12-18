@@ -226,7 +226,7 @@ function wsConnection(ws) {
             } else {
               ws.sendJSON({
                 type: 'error',
-                reason: 'Invalid permissions.'
+                reason: 'You don\'t have permission to do that.'
               });
             }
           } else if (data.type === 'permission_info') {
@@ -254,7 +254,7 @@ function wsConnection(ws) {
             } else {
               ws.sendJSON({
                 type: 'error',
-                reason: 'invalid permissions.'
+                reason: 'You don\'t have permission to do that..'
               });
             }
           } else if (data.type === 'export_html') {

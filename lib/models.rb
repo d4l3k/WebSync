@@ -335,6 +335,42 @@ $postgres.prepare("wsfile_body_size", "SELECT octet_length(body) FROM ws_files W
 $postgres.prepare("wsfile_update", "UPDATE ws_files SET data = $2 WHERE id = $1")
 $postgres.prepare("wsfile_get", "SELECT data::bytea FROM ws_files WHERE id::int = $1 LIMIT 1")
 
+['public', 'private'].each do |type|
+  ['', 'plain'].each do |search|
+    $postgres.prepare("document_#{type}_search#{search}",
+      "SELECT id, name, last_modified, permissions.user_email as owner
+        FROM (SELECT
+          ws_files.id as id,
+          ws_files.name as name,
+          ws_files.edit_time as last_modified,
+          ws_files.name || ' ' ||
+          coalesce((string_agg(p1.user_email, ' ')), '') || ' ' ||
+          regexp_replace(coalesce((string_agg(p1.user_email, ' ')), ''), '[@.+]', ' ', 'g') as text,
+          to_tsvector(ws_files.name) ||
+          to_tsvector(coalesce((string_agg(p1.user_email, ' ')), '')) ||
+          to_tsvector(regexp_replace(coalesce((string_agg(p1.user_email, ' ')), ''), '[@.+]', ' ', 'g'))
+          as document
+          FROM ws_files
+          JOIN permissions p1
+          ON p1.file_id = ws_files.id
+          #{ if type == 'private'
+              "JOIN permissions p2
+              ON p2.file_id = ws_files.id
+              WHERE p2.user_email=$4"
+            else
+              "WHERE ws_files.visibility='public'"
+            end
+          } AND ws_files.deleted=$3 GROUP BY ws_files.id) f_search
+        JOIN permissions
+        ON permissions.file_id = id
+        WHERE permissions.level = 'owner'
+        AND (
+        (f_search.document @@ #{search}to_tsquery($1)) OR
+        f_search.text ILIKE ('%' || $1 || '%'))
+        LIMIT 100 OFFSET $2")
+  end
+end
+
 if defined? migrate
     resp = $postgres.exec("select exists(select * from information_schema.tables where table_name='blobs')")
     if resp[0]["exists"]=="t"

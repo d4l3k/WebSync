@@ -1,0 +1,45 @@
+<thead>
+  <tr>
+    <% _.each({
+        'name': I18n.t('files.name'),
+        'owner': I18n.t('files.owner'),
+        'date': I18n.t('files.recent'),
+        'size': I18n.t('files.size')
+      }, function(type, k) { %>
+      <th><a data-type="<%= k %>"><%= type %></a></th>
+    <% }); %>
+    <th style="width: 1px"><span class="hidden-xs"><%= I18n.t('files.actions') %></span></th>
+  </tr>
+</thead>
+<tbody>
+  <% if (_.isEmpty(results)) { %>
+    <%= I18n.t('search.no_results') %>
+  <% } else { %>
+    <% _.each(results, function(result) {
+      var name = _.escape(result.name) || ('<i>' + I18n.t('file.unnamed') + '</i>');
+      var owner = _.escape(result.owner.nice || result.owner.email) ||
+                     ('<i>' + I18n.t('file.orphaned') + '</i>');
+    %>
+      <tr>
+        <td><a href="/<%= result.id %>/edit"><%= name %></a></td>
+        <td title="<%= _.escape(result.owner.email) %>">
+          <%= owner %>
+        </td>
+        <td title="<%= moment(result.last_modified) %>">
+          <%= moment(result.last_modified).fromNow() %>
+        </td>
+        <td><%= result.size %></td>
+        <td>
+          <% if (result.is_owner) { %>
+            <% if (deleted) { %>
+                <a href="/<%= result.id %>/undelete" class="btn btn-default"><%= I18n.t("files.restore") %></a>
+                <a href="/<%= result.id %>/destroy" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> <%= I18n.t("files.obliterate") %></span></a>
+              <% } else { %>
+                <a href="/<%= result.id %>/delete" class="btn btn-danger"><i class="fa fa-trash-o"></i><span class="hidden-xs"> <%= I18n.t("files.delete") %></span></a>
+              <% } %>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+  <%}%>
+</tbody>

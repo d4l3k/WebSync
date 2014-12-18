@@ -65,7 +65,16 @@ end
     </ul>
   </div>
   <div class="files">
+    <div class="search">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="<%= t('search.search') %>">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="button"><%= t('search.search') %></button>
+        </span>
+      </div><!-- /input-group -->
+    </div>
     <table class="table table-hover table-click">
+      <!--
         <thead>
             <tr>
                 <% headers.each do |url|
@@ -104,6 +113,8 @@ end
                 </tr>
             <% end %>
         </tbody>
+      -->
     </table>
   </div>
+  <%= javascript_tag 'file_browser.js' %>
 </div>

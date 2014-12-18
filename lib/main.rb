@@ -40,6 +40,8 @@ module WebSync
     use Routes::Settings
     use Routes::UploadDownload
     use Routes::XHR
+
+    use Routes::ApiFileNav
   end
 end
 

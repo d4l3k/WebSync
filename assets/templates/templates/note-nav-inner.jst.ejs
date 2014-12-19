@@ -1,0 +1,16 @@
+<ul class='nav nav-list'>
+  <% _.each(sections, function(section, i) { %>
+    <li class='section <%= section.active ? 'active2' : '' %>' data-index='<%= i %>' draggable="true">
+      <a>
+        <%= section.name %>
+      </a>
+      <ul class='nav nav-list'>
+        <% _.each(section.pages, function(page, i) { %>
+          <li class='page <%= page.active ? 'active' : '' %>' data-index='<%= i %>' draggable="true">
+            <a><%= page.name %></a>
+          </li>
+        <% }); %>
+      </ul>
+    </li>
+  <% }); %>
+</ul>

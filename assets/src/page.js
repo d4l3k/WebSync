@@ -10,8 +10,8 @@ define('/assets/page.js', ['websync'], function(WS) {
    */
   var exports = {};
   $('.content').hide().
-    append($('<div class="content_container"><div class="page"></div></div>')).
-    addClass('content-page').fadeIn();
+  append($('<div class="content_container"><div class="page"></div></div>')).
+  addClass('content-page').fadeIn();
 
   if (!WebSyncData.body) {
     WebSyncData.body = [];

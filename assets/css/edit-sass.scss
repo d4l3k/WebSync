@@ -995,27 +995,28 @@ nav.navbar {
     }
 }
 ul.nav.nav-list {
-    line-height: 10px;
-    a {
-        color: #333333;
+  line-height: 10px;
+  a {
+    color: #333333;
+  }
+  li {
+    &.active2 > a,
+    .active > a {
+      font-weight: bold;
+      &:hover {
+        background-color: transparent !important;
+      }
+      border-right: 1px solid #333333;
     }
-    li {
-        &.active2 > a,
-        .active > a {
-            &:hover {
-                background-color: transparent !important;
-            }
-            border-right: 1px solid #333333;
-        }
-        ul.nav.nav-list {
-            margin-left: -5px;
-            border: none;
-            font-weight: normal;
-            li {
-                margin-left: 20px;
-            }
-        }
+    ul.nav.nav-list {
+      margin-left: -5px;
+      border: none;
+      font-weight: normal;
+      li {
+        margin-left: 20px;
+      }
     }
+  }
 }
 .open {
     z-index: 10;

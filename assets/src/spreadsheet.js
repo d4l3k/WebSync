@@ -1,7 +1,36 @@
-// WebSync: Spreadsheet layout handler
-define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(websync, tables) {
-  var self = this;
-  console.log('Spreadsheet loaded');
+/*global define, $, WebSyncData, WebSyncAuth, document, _, NProgress*/
+define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(WebSync, tables) {
+  'use strict';
+
+  /**
+   * WebSync: Spreadsheet layout handler
+   *
+   * @module spreadsheet
+   * @exports spreadsheet
+   */
+
+  var WS = WebSync;
+  var exports = {
+    /** Updates the headers of the spreadsheet. */
+    updateHeaders: function() {
+      tables.axisPosition();
+      $('.axis#y').offset({
+        left: -1
+      });
+      $('.axis#x').offset({
+        top: $('.content_well').offset().top - 1
+      });
+      if ($('.axis#x').length > 0) {
+        var x_rect = $('.axis#x').outerHeight();
+        var y_rect = $('.axis#y').outerWidth();
+        $('.content-spreadsheet #spreadsheetWell').css({
+          'padding-top': x_rect - 2,
+          'padding-left': y_rect - 2
+        });
+      }
+    }
+  };
+
   $('.content').hide().addClass('content-spreadsheet').fadeIn();
   $('.content').append($('<div id="spreadsheetWell" class="content_container"><div class="table_content"></div></div>'));
   if (!WebSyncData.body) {
@@ -19,9 +48,10 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
     if (_.isEmpty(WebSyncData.body)) {
       console.log('Appending!!!');
       $('.table_content').html('<table><tbody></tbody></table>');
-      for (var r = 0; r < 50; r++) {
-        var row = $('<tr></tr>').appendTo($('.table_content > table > tbody'));
-        for (var c = 0; c < 50; c++) {
+      var r, c, row;
+      for (r = 0; r < 50; r++) {
+        row = $('<tr></tr>').appendTo($('.table_content > table > tbody'));
+        for (c = 0; c < 50; c++) {
           $('<td></td>').appendTo(row);
         }
       }
@@ -30,38 +60,19 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(webs
     }
     NProgress.done();
   });
-  if (WebSyncAuth.view_op == 'edit') {
-    //$(".slide").attr("contenteditable",true);
-  }
   $('.content_well').children().bind('mousedown selectstart', function(e) {
     e.stopPropagation();
   });
-  self.updateHeaders = function(e) {
-    tables.axisPosition();
-    $('.axis#y').offset({
-      left: -1
-    });
-    $('.axis#x').offset({
-      top: $('.content_well').offset().top - 1
-    });
-    if ($('.axis#x').length > 0) {
-      var x_rect = $('.axis#x').outerHeight();
-      var y_rect = $('.axis#y').outerWidth();
-      $('.content-spreadsheet #spreadsheetWell').css({
-        'padding-top': x_rect - 2,
-        'padding-left': y_rect - 2
-      });
-    }
-  };
-  self.updateHeaders();
-  $('.content_well').scroll(self.updateHeaders);
+  exports.updateHeaders();
+  $('.content_well').scroll(exports.updateHeaders);
   $('.navbar-fixed-top').css({
     'border-bottom': '1px solid #aaa'
   });
   setTimeout(function() {
     $('#spreadsheetWell tr:first-child td:first-child').trigger('mousedown').trigger('mouseup');
-    self.updateHeaders();
+    exports.updateHeaders();
   }, 100);
   tables.disableAxisPositioning = true;
-  return self;
+
+  return exports;
 });

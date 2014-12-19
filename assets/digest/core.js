@@ -482,10 +482,12 @@ define('websync', ['crypto'], function(crypto) {
         } else {
           // Fallback to setting selection at beginning of the document.
           var startOfDoc = $('.content [contenteditable]')[0];
-          if (!startNode)
+          if (!startNode) {
             startNode = startOfDoc;
-          if (!endNode)
+          }
+          if (!endNode) {
             endNode = startOfDoc;
+          }
         }
         // Update the text range.
         var range = document.createRange();
@@ -653,12 +655,13 @@ define('websync', ['crypto'], function(crypto) {
      */
     urlChange: function() {
       var current = window.location.pathname.split('/')[2].toLowerCase();
-      if (current === 'zen')
+      if (current === 'zen') {
         $('#view_mode').val('Zen');
-      if (current === 'view')
+      } else if (current === 'view') {
         $('#view_mode').val('Presentation');
-      else
+      } else {
         $('#view_mode').val('Normal');
+      }
       WebSync.updateViewMode(null, true);
     },
 
@@ -674,8 +677,9 @@ define('websync', ['crypto'], function(crypto) {
       if (mode === 'Zen') {
         $('body').removeClass('presentation').addClass('zen').resize();
         WebSyncAuth.viewOp = 'edit';
-        if (!dontPush)
+        if (!dontPush) {
           window.history.pushState('', 'WebSync - Zen Mode', 'zen');
+        }
         $('body').addClass('zen').resize();
         $('#zoom_level').data('slider').setValue(120);
         $('#zoom_level').trigger('slide');
@@ -688,8 +692,9 @@ define('websync', ['crypto'], function(crypto) {
       } else if (mode === 'Presentation') {
         $('body').removeClass('edit').removeClass('zen').addClass('view').resize();
         WebSyncAuth.viewOp = 'view';
-        if (!dontPush)
+        if (!dontPush) {
           window.history.pushState('', 'WebSync - Presentation Mode', 'view');
+        }
         $('nav').animate({
           top: -96
         }, 200);
@@ -700,8 +705,9 @@ define('websync', ['crypto'], function(crypto) {
       } else {
         $('body').removeClass('zen').removeClass('view').addClass('edit').resize();
         WebSyncAuth.viewOp = 'edit';
-        if (!dontPush)
+        if (!dontPush) {
           window.history.pushState('', 'WebSync - Edit Mode', 'edit');
+        }
         $('#zoom_level').data('slider').setValue(100);
         $('#zoom_level').trigger('slide');
         $('nav').animate({
@@ -718,17 +724,19 @@ define('websync', ['crypto'], function(crypto) {
     updateRibbon: function() {
       var menuButtons = '';
       var active = $('#ribbon_buttons .active').text();
-      $('.ribbon .container').each(function(elem) {
+      $('.ribbon .container').each(function() {
         menuButtons += '<li' + (this.id === active ? ' class="active"' : '') + '><a>' + this.id + '</a></li>';
       });
       $('#ribbon_buttons').html(menuButtons);
-      $('#ribbon_buttons li').click(function(e) {
+      $('#ribbon_buttons li').click(function() {
         $('#ribbon_buttons li').removeClass('active');
         $(this).addClass('active');
         $('.ribbon .container').hide();
         $('#' + $(this).text()).show();
       });
-      if (active === '') $('#ribbon_buttons li:contains(Text)').click();
+      if (active === '') {
+        $('#ribbon_buttons li:contains(Text)').click();
+      }
     },
 
     /** A storage element for backend command callbacks. */
@@ -774,10 +782,6 @@ define('websync', ['crypto'], function(crypto) {
           'margin-left': 'initial'
         });
         // TODO: Center zoomed out
-        /*var side = container.parent().width() - container.width()*WebSync.zoom;
-      if(side > 0){
-      container.css({"margin-left":  side/2});
-      }*/
       } else {
         container.removeClass('left');
         container.css({
@@ -927,7 +931,9 @@ define('websync', ['crypto'], function(crypto) {
      * @param {String} message - The message to display.
      */
     fatalError: function(msg) {
-      if (msg) $('#error_message').text(msg);
+      if (msg) {
+        $('#error_message').text(msg);
+      }
       $('#fatal_error').fadeIn();
     },
 
@@ -1189,16 +1195,15 @@ define('websync', ['crypto'], function(crypto) {
       var html = '';
       // Some basic cross site scripting attack prevention.
       var name = obj.nodeName || obj.name || '';
-      if (name === '#text')
+      if (name === '#text') {
         return _.escape(obj.textContent);
-      name = WebSync.alphaNumeric(name);
-      if (name === null) {
-        return '';
       }
+      name = WebSync.alphaNumeric(name);
       // TODO: Potentially disallow iframes!
       // TODO: Potentially allow script tags. XHR requests are blocked by default now.
-      if (name === 'script')
+      if (name === null || name === 'script') {
         return '';
+      }
       if (obj.exempt && WebSync.domExceptions[obj.exempt]) {
         return WebSync.domExceptions[obj.exempt].load(obj.data);
       }
@@ -1218,8 +1223,9 @@ define('websync', ['crypto'], function(crypto) {
       if (obj.dataset) {
         _.each(obj.dataset, function(v, k) {
           k = WS.alphaNumeric(k.trim());
-          if (dataVars.indexOf('data-' + k) === -1)
+          if (dataVars.indexOf('data-' + k) === -1) {
             html += ' data-' + WS.alphaNumeric(k) + '=' + JSON.stringify(v);
+          }
         });
       }
       if (name.toLowerCase() === 'br') {
@@ -1419,10 +1425,11 @@ define('websync', ['crypto'], function(crypto) {
     WebSync.updateViewMode();
   });
   $('.fullscreen').click(function() {
-    if (fullScreenApi.isFullScreen())
+    if (fullScreenApi.isFullScreen()) {
       fullScreenApi.cancelFullScreen();
-    else
+    } else {
       fullScreenApi.requestFullScreen(document.body);
+    }
   });
   require(['edit']);
   WS.updateRibbon();
@@ -1541,7 +1548,9 @@ window.JST.get = function(template) {
   var done = false;
   // This is used to know when all modules are loaded. It uses a sketchy internal function subject to change.
   requirejs.onResourceLoad = function(context, map, depArray) {
-    if (done) return;
+    if (done) {
+      return;
+    }
     var requirejs_context = requirejs.s.contexts._;
     var loaded = 0;
     var total = 0;

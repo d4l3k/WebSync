@@ -816,7 +816,9 @@ define(['websync'], function(WS) {
       if (size[0] > 1) {
         var pos = exports.selectedPos();
         var nX = pos[0] + 1;
-        if (nX >= size[0]) nX -= 2;
+        if (nX >= size[0]) {
+          nX -= 2;
+        }
         var nSelected = exports.posToElem(nX, pos[1]);
         for (var i = 0; i < size[1]; i++) {
           $(parentElem).children('tr').eq(i).children('td').eq(pos[0]).remove();
@@ -991,8 +993,9 @@ define(['websync'], function(WS) {
     };
     for (var attr, i = 0, attrs = obj.attributes, l = attrs.length; i < l; i++) {
       attr = attrs.item(i);
-      if (!out.attrs)
+      if (!out.attrs) {
         out.attrs = {};
+      }
       out.attrs[attr.nodeName] = attr.nodeValue;
     }
     var rows = $(obj).find(':not(table) tr');
@@ -1026,8 +1029,9 @@ define(['websync'], function(WS) {
           // Ignore attribute if it's set by the table.
           if (attr.nodeName !== 'data-content' &&
             attr.nodeName !== 'contenteditable') {
-            if (!cellOut.attrs)
+            if (!cellOut.attrs) {
               cellOut.attrs = {};
+            }
             cellOut.attrs[attr.nodeName] = attr.nodeValue;
           }
         }

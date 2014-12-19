@@ -1,10 +1,12 @@
 # First time configuration options
 
+include WebSync::Models
+
 if $config.has_key?("default_assets")
     puts "[DATABASE] Checking default assets..."
     $config["default_assets"].each do |asset|
-        if Javascript.all(name: asset["name"])[0].nil?
-            a = Javascript.create(name:asset["name"],description:asset["description"],url:asset["url"])
+        if Asset.all(name: asset["name"], type: 'Javascript')[0].nil?
+            a = Asset.create(name:asset["name"],description:asset["description"],url:asset["url"], type:'Javascript')
             puts " :: Created: #{asset["name"]}, Success: #{a.save}"
         end
     end

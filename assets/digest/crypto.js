@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global define, $, _, openpgp, FileReader, JST, WebSyncAuth, WebSyncData, WS, moment*/
+/*global define, $, _, openpgp, JST, WebSyncAuth, WebSyncData, WS, moment*/
 
 //= require templates/crypto
 

@@ -10,6 +10,7 @@ define(['websync'], function(WS) {
   /**
    * Awe (similar to Prezi) plugin.
    * @exports awesome
+   * @module awesome
    */
 
   var exports = {

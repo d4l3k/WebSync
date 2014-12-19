@@ -143,9 +143,9 @@ WebSync uses [Waffle.IO](https://waffle.io/d4l3k/WebSync) for issues. Waffle.IO 
 ## Source Documentation
 [WebSync Annotated Source Documentation](https://websyn.ca/documentation)
 
-[JavaScript Documentation](https://websyn.ca/documentation/jsdoc/index.html)
+[JavaScript Documentation](https://websyn.ca/documentation/jsdoc/WebSync/0.1.0/index.html)
 
-[Ruby Documentation](https://websyn.ca/documentation/yard/index.html)
+[Ruby Documentation](https://websyn.ca/documentation/yard/frames.html)
 
 To generate the documentation you can run `rake documentation` or `rake assets:precompile`. Every WebSync server has the documentation available at `http://<server>:<port>/documentation`, assuming it has been generated. All production servers will have the documentation.
 

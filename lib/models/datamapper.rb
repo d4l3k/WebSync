@@ -9,8 +9,8 @@ module WebSync
       property :name, Text, lazy: false
       property :data, DataMapper::Property::BetterBlob, lazy: true, required: false
       property :content_type, Text, lazy: false
-      property :edit_time, DateTime
-      property :create_time, DateTime
+      property :edit_time, DateTime, default: lambda {|r, p| DateTime.now}
+      property :create_time, DateTime, default: lambda {|r, p| DateTime.now}
       property :directory, Boolean, default: false
       property :body,             Json,       default: {}, lazy: true
       property :visibility,       String,     default: "private"

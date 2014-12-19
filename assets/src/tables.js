@@ -271,11 +271,11 @@ define(['websync'], function(WS) {
       var table = $(exports.primaryTable());
       var elem_box = exports.selectedElem.getBoundingClientRect();
       $('#table_cursor').offset({
-          left: pos.left,
-          top: pos.top
-        }).height(elem_box.height - 4).
-        width(elem_box.width - 6).
-        get(0).scrollIntoViewIfNeeded();
+        left: pos.left,
+        top: pos.top
+      }).height(elem_box.height - 4).
+      width(elem_box.width - 6).
+      get(0).scrollIntoViewIfNeeded();
 
       if (table.css('position') === 'absolute' || pos) {
         if (!exports.disableAxisPositioning) {
@@ -551,7 +551,7 @@ define(['websync'], function(WS) {
         for (y = top; y <= bottom; y++) {
           selection_html += '<tr>';
           for (x = left; x <= right; x++) {
-            selection_html += '<td>' + exports.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML + '</td>';
+            selection_html += '<td>' + exports.posToElem(x, y).innerHTML + '</td>';
           }
           selection_html += '</tr>';
         }
@@ -637,7 +637,8 @@ define(['websync'], function(WS) {
       if (!elem) {
         elem = exports.selectedElem;
       }
-      return exports.primaryTable(elem).children('tr').eq(y).children('td')[x];
+      return $(exports.primaryTable(elem)).find(':not(table) tr').eq(y).
+      find('> td')[x];
     },
 
     /**
@@ -649,15 +650,17 @@ define(['websync'], function(WS) {
     selectedPos: function(targetElem) {
       var child = (targetElem || exports.selectedElem);
       var column = 0;
-      while ((child = child.previousSibling) !== null) {
+      while ((child = child.previousElementSibling) !== null) {
         if (child.nodeName === 'TD' || child.nodeName === 'TH') {
           column++;
         }
       }
       child = (targetElem || exports.selectedElem).parentElement;
       var row = 0;
-      while ((child = child.previousSibling) !== null) {
-        row++;
+      while ((child = child.previousElementSibling) !== null) {
+        if (child.nodeName === 'TR') {
+          row++;
+        }
       }
       return [column, row];
     },
@@ -668,9 +671,10 @@ define(['websync'], function(WS) {
      * @return {Number[]} [column, row]
      */
     tableSize: function() {
+      var rows = $(exports.primaryTable()).find(':not(table) tr');
       return [
-        $(exports.primaryTable()).children('tr').first().children('td').length,
-        $(exports.primaryTable()).children('tr').length
+        rows.first().find('> td').length,
+        rows.length
       ];
     },
 

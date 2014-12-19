@@ -65,3 +65,20 @@ describe "Front end logged in helpers" do
     destroy_testuser
   end
 end
+
+describe "File upload helpers" do
+  it "should remove script tags" do
+    html = "<div><script></script><span><script src='https://google.com'></script></span></div>"
+    sanitized = $helpers.sanitize_upload(Nokogiri::HTML(html))
+    expect(sanitized.css('script').empty?).to eq(true)
+  end
+
+  it "should successfully convert html, pdf, odt and docx to HTML" do
+    files = %w(spec/test_files/sample.odt spec/test_files/sample.docx
+    spec/test_files/sample.pdf spec/test_files/sample-html.html)
+    files.each do |file|
+      html = $helpers.convert_file(File.new(file))
+      expect(html.length > 0).to eq(true)
+    end
+  end
+end

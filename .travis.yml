@@ -20,5 +20,6 @@ before_script:
   - bower install
   - bundle exec rake dependencies
   - ls -a
+  - export CODECLIMATE_REPO_TOKEN=e8e1c64b48d8a6b7d24f4ad555d7cda2616547aafceee1a940d2ae4361966970
 gemfile:
   - Gemfile

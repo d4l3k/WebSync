@@ -4,6 +4,7 @@ node_modules
 .*.swp
 .*.swo
 *.db
+coverage
 public/assets
 public/documentation
 assets/bower_components

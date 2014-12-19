@@ -48,6 +48,7 @@ group :test do
     gem 'rake'
     gem 'capybara'
     gem 'poltergeist'
+    gem 'codeclimate-test-reporter', require: nil
 end
 group :development do
     gem 'rack-mini-profiler'

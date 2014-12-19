@@ -197,5 +197,47 @@ module WebSync
     def get_mime_type file
       FileMagic.new(FileMagic::MAGIC_MIME).file(file).split(';').first
     end
+
+    # Converts a file into HTML.
+    #
+    # @param tempfile [TempFile, File] the file to convert
+    # @return [String] the HTML content
+    def convert_file tempfile
+      filetype = get_mime_type(tempfile.path)
+      path = tempfile.path
+      pieces = path.split('.')
+      base_path = if pieces.length == 1
+                    path
+                  else
+                    pieces[0..-2].join('.')
+                  end
+      if filetype == 'application/pdf'
+        PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
+      elsif filetype == 'text/html'
+        File.read(tempfile.path)
+      else
+        system("unoconv","-f","html", path)
+        exit_status = $?.to_i
+        if exit_status == 0
+          conv_path = base_path + '.html'
+          content = File.read(conv_path)
+          File.delete(conv_path)
+          content
+        else
+          logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
+        end
+      end
+    end
+
+    # Do a basic sanitization on the uploaded file to remove any potentially
+    # malicious script tags.
+    #
+    # @param dom [Nokogiri::HTML::Document] the root dom element
+    # @return [Nokogiri::HTML::Document] the sanitized element
+    def sanitize_upload dom
+      # Basic security check
+      dom.css("script").remove();
+      dom
+    end
   end
 end

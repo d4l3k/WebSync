@@ -1,4 +1,4 @@
-/*global onmessage, postMessage, _, openpgp, window*/
+/*global onmessage, postMessage, Uint8Array, openpgp, window*/
 //= require worker-window.js
 //= require openpgp/dist/openpgp.js
 

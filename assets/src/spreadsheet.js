@@ -1,4 +1,4 @@
-/*global define, $, WebSyncData, WebSyncAuth, document, _, NProgress*/
+/*global define, $, WebSyncData, document, _, NProgress*/
 define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(WebSync, tables) {
   'use strict';
 

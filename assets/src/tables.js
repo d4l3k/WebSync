@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace, WebSyncAuth, WebSocket, JST*/
+/*global $, define, rangy, _, JST*/
 
 //= require templates/tables-ribbon
 //= require templates/tables-selection
@@ -922,15 +922,15 @@ define(['websync'], function(WS) {
   });
   $(document).bind('mousemove.Tables', function(e) {
     if (exports.drag) {
-      var table = $(exports.primaryTable());
+      var pos;
       if (exports.origX) {
         $(exports.active).width(e.pageX - exports.origX + exports.origWidth);
-        var pos = exports.selectedPos(exports.active);
+        pos = exports.selectedPos(exports.active);
         $(exports.posToElem(pos[0], 0)).width(e.pageX - exports.origX + exports.origWidth);
       }
       if (exports.origY) {
         $(exports.active).height(e.pageY - exports.origY + exports.origHeight);
-        var pos = exports.selectedPos(exports.active);
+        pos = exports.selectedPos(exports.active);
         $(exports.posToElem(0, pos[1]).parentElement).height(e.pageY - exports.origY + exports.origHeight);
       }
       exports.cursorUpdate();

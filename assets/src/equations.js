@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, prompt, alert, Detector, WebSyncData, ace*/
+/*global $, define, rangy, prompt, alert, Detector, WebSyncData, ace*/
 
 // WebSync LaTeX equation editing plugin.
 define(['websync'], function(WS) {

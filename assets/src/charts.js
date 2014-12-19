@@ -1,5 +1,5 @@
 // WebSync: Charts for Spreadsheets
-/*global define, $, _, escape, FileReader, JST, document*/
+/*global define, $, _, FileReader, JST, document*/
 
 //= require templates/chart
 

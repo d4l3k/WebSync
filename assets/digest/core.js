@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, alert, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
+/*global $, define, rangy, _, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
 
 /*
   WebSync: Core.js

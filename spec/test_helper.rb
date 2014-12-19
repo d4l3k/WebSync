@@ -5,6 +5,8 @@ require_relative '../lib/helpers.rb'
 RSpec.configure do |conf|
   conf.include Rack::Test::Methods
 end
+
+
 class TestRequest
     def path
         '/test'
@@ -61,8 +63,10 @@ end
 def assert condition, reason=""
     expect(condition).to eql(true)
 end
-require File.expand_path '../../lib/main.rb', __FILE__
-require File.expand_path '../../lib/models.rb', __FILE__
+
+require_relative '../lib/main'
+require_relative '../lib/models'
+include WebSync::Models
 
 require 'capybara/rspec'
 require 'capybara/poltergeist'

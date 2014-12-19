@@ -10,8 +10,8 @@ module WebSync
 
     # Initialize a file resource
     #
-    # @param public_path [String]	Path received via request
-    # @param path [String]	Internal resource path (Only different from public path when using root_uri's for webdav)
+    # @param public_path [String] Path received via request
+    # @param path [String] Internal resource path (Only different from public path when using root_uri's for webdav)
     # @param request [Rack::Request] Rack::Request
     # @param response [Rack::Response] Rack::Response
     # @param options [Hash] Any options provided for this resource

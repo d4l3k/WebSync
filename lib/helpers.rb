@@ -67,7 +67,9 @@ module WebSync
     #
     # @return [Boolean] whether the user is logged in
     def logged_in?
-      (!session['userhash'].nil?)&&$redis.get('userhash:'+session['userhash'])==session['user']
+      !session['userhash'].nil? &&
+        $redis.get('userhash:'+session['userhash']) == session['user'] &&
+        !User.get(session['user']).nil?
     end
 
     # Redirects the current user to the login page if not logged in

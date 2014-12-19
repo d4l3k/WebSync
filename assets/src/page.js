@@ -1,13 +1,22 @@
-// WebSync: Page layout handler
+/*global define, $, WebSyncData, WebSyncAuth, document, NProgress*/
+
 define('/assets/page.js', ['websync'], function(WS) {
   'use strict';
-  var self = {};
-  $('.content').hide()
-    .append($('<div class="content_container"><div class="page"></div></div>'))
-    .addClass('content-page').fadeIn();
+
+  /**
+   * WebSync: Page layout handler
+   * @module page
+   * @exports page
+   */
+  var exports = {};
+  $('.content').hide().
+    append($('<div class="content_container"><div class="page"></div></div>')).
+    addClass('content-page').fadeIn();
+
   if (!WebSyncData.body) {
     WebSyncData.body = [];
   }
+
   if (WebSyncAuth.view_op === 'edit' && WebSyncAuth.access !== 'viewer') {
     $('.page').attr('contenteditable', true);
   }
@@ -39,5 +48,5 @@ define('/assets/page.js', ['websync'], function(WS) {
   $('.content_well').children().bind('mousedown selectstart', function(e) {
     e.stopPropagation();
   });
-  return self;
+  return exports;
 });

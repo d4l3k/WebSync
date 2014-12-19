@@ -1,127 +1,165 @@
-// WebSync: Free form drawing/note taking functionality.
-define(['websync'], function() {
-  var self = {};
+/*global define, document, $, _*/
 
-  // Define some variables. The interval is how often the points are taken. This is probably going to be removed.
-  self.interval = 50;
-  self.active = false;
-  self.points = {};
+define(['websync'], function(WebSync) {
+  'use strict';
+
+  /**
+   * WebSync: Free form drawing/note taking functionality.
+   *
+   * @module drawing
+   * @exports drawing
+   */
+
+  var exports = {
+    /** The interval is how often the points are taken. This is probably going to be removed. */
+    interval: 50,
+
+    /** If the pen is active. */
+    active: false,
+
+    /** Holds the lines */
+    points: {},
+
+    /**
+     * Add a point to a line based on event.
+     *
+     * @param e {Event} the event
+     */
+    savePoint: function(e) {
+      var relative_to = $(exports.parent);
+      var position = relative_to.css('position');
+      if (position !== 'absolute' && position !== 'relative') {
+        relative_to = $('.content_container');
+      }
+      var corner = relative_to.offset();
+      var point = [e.pageX - corner.left, e.pageY - corner.top];
+      exports.points[exports.active_id].push(point);
+      exports.drawPoints(exports.active_id, exports.canvas);
+      e.preventDefault();
+    },
+
+    /**
+     * Draw a line to a canvas based on a series of [x,y] coordinate pairs.
+     *
+     * @param id {String} name of the line
+     * @param canvas {Canvas} the canvas element to draw on
+     */
+    drawPoints: function(id, canvas) {
+      var points = exports.points[id];
+      // Find corners of the drawing
+      var top, left, bottom, right;
+      _.each(points, function(point) {
+        if (point[0] - 5 < left || !left) {
+          left = point[0] - 5;
+        }
+        if (point[0] + 5 > right || !right) {
+          right = point[0] + 5;
+        }
+        if (point[1] - 5 < top || !top) {
+          top = point[1] - 5;
+        }
+        if (point[1] + 5 > bottom || !bottom) {
+          bottom = point[1] + 5;
+        }
+      });
+      // This is a hack to clear canvas.
+      canvas.width = 100;
+      $(canvas).css({
+        position: 'absolute',
+        left: left,
+        top: top
+      }).attr('width', right - left).attr('height', bottom - top);
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#000000';
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 3;
+      _.each(points, function(point, index) {
+        if (points[index + 1]) {
+          if (index === 0) {
+            ctx.moveTo(point[0] - left, point[1] - top);
+          }
+          ctx.lineTo(points[index + 1][0] - left, points[index + 1][1] - top);
+        }
+      });
+      ctx.stroke();
+    },
+
+    /** Code to disable the function. */
+    disable: function() {
+      $('*').unbind('.Drawing');
+      $('*').undelegate('.Drawing');
+      $('.Drawing').remove();
+      WebSync.unregisterDOMException('.drawing');
+    }
+  };
 
   // Toggle button to enable drawing mode. Might be moved under the text editing tab.
   $('#Insert').append(" <button id='drawing_mode' class='btn btn-default Drawing' title='Draw'><i class='fa fa-pencil'></i></button>");
   $('#drawing_mode').click(function() {
     $(this).toggleClass('active');
-    self.active = !self.active;
+    exports.active = !exports.active;
   });
 
   // Bind mouse to the content container. This waits to make sure that the .content_container has been added (happens in the layout plugin).
   $(document).on('modules_loaded', function() {
     $('.content_container').bind('mousedown.Drawing', function(e) {
-      if (self.active) {
-        self.drag = true;
-        self.last_time = new Date();
+      if (exports.active) {
+        exports.drag = true;
+        exports.last_time = new Date();
         // The active_id is the identifier used for each line.
-        self.active_id = (new Date()).getTime().toString();
-        self.points[self.active_id] = [];
-        if ($(e.target).attr('contenteditable') == 'true') {
-          self.parent = e.target;
+        exports.active_id = (new Date()).getTime().toString();
+        exports.points[exports.active_id] = [];
+        if ($(e.target).attr('contenteditable') === 'true') {
+          exports.parent = e.target;
         } else {
-          self.parent = $(e.target).parents('[contenteditable=true]');
+          exports.parent = $(e.target).parents('[contenteditable=true]');
         }
-        self.canvas = document.createElement('canvas');
-        $(self.canvas).addClass('Drawing').data('drawid', self.active_id).prependTo(self.parent);
-        self.savePoint(e);
+        exports.canvas = document.createElement('canvas');
+        $(exports.canvas).addClass('Drawing').data('drawid', exports.active_id).prependTo(exports.parent);
+        exports.savePoint(e);
       }
     }).bind('mousemove.Drawing', function(e) {
-      if (self.active && self.drag) {
+      if (exports.active && exports.drag) {
         var date = new Date();
-        //if(date - self.last_time > self.interval){
-        self.savePoint(e);
-        self.last_time = date;
+        //if(date - exports.last_time > exports.interval){
+        exports.savePoint(e);
+        exports.last_time = date;
         //}
       }
     }).bind('mouseup.Drawing', function(e) {
-      if (self.active && self.drag) {
-        self.drag = false;
-        self.savePoint(e);
+      if (exports.active && exports.drag) {
+        exports.drag = false;
+        exports.savePoint(e);
       }
     });
   });
-  // Add a point to a line based on event.
-  self.savePoint = function(e) {
-    var relative_to = $(self.parent);
-    var position = relative_to.css('position');
-    if (position != 'absolute' && position != 'relative') {
-      relative_to = $('.content_container');
-    }
-    var corner = relative_to.offset();
-    var point = [e.pageX - corner.left, e.pageY - corner.top];
-    self.points[self.active_id].push(point);
-    self.drawPoints(self.active_id, self.canvas);
-    e.preventDefault();
-  };
-  // Draw a line to a canvas based on a series of [x,y] coordinate pairs.
-  self.drawPoints = function(id, canvas) {
-    var points = self.points[id];
-    // Find corners of the drawing
-    var top, left, bottom, right;
-    _.each(points, function(point) {
-      if (point[0] - 5 < left || !left) left = point[0] - 5;
-      if (point[0] + 5 > right || !right) right = point[0] + 5;
-      if (point[1] - 5 < top || !top) top = point[1] - 5;
-      if (point[1] + 5 > bottom || !bottom) bottom = point[1] + 5;
-    });
-    // This is a hack to clear canvas.
-    canvas.width = 100;
-    $(canvas).css({
-      position: 'absolute',
-      left: left,
-      top: top
-    }).attr('width', right - left).attr('height', bottom - top);
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#000000';
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.lineWidth = 3;
-    _.each(points, function(point, index) {
-      if (points[index + 1]) {
-        if (index == 0) ctx.moveTo(point[0] - left, point[1] - top);
-        ctx.lineTo(points[index + 1][0] - left, points[index + 1][1] - top);
-      }
-    });
-    ctx.stroke();
-  };
+
   // Register a DOM serialization exception. This allows us to store custom JSON instead of JSONized HTML.
   WebSync.registerDOMException('.Drawing', function(obj) {
     var id = $(obj).data('drawid');
     var position = $(obj).position();
     return {
       id: id,
-      points: self.points[id],
+      points: exports.points[id],
       left: position.left,
       top: position.top
     };
   }, function(json) {
-    self.points[json.id] = json.points;
+    exports.points[json.id] = json.points;
     setTimeout(function() {
-      var canvas = $("[data-drawid='" + alphaNumeric(json.id) + "']");
+      var canvas = $("[data-drawid='" + json.id + "']");
       // Draw the points.
-      self.drawPoints(json.id, canvas[0]);
+      exports.drawPoints(json.id, canvas[0]);
       // Set the position of the line.
       canvas.css({
         left: json.left,
         top: json.top
       });
     }, 1);
-    return '<canvas class="Drawing" data-drawid="' + alphaNumeric(json.id) + '"></canvas>';
+    return '<canvas class="Drawing" data-drawid="' + json.id + '"></canvas>';
   });
-  // Code to disable the function.
-  self.disable = function() {
-    $('*').unbind('.Drawing');
-    $('*').undelegate('.Drawing');
-    $('.Drawing').remove();
-    WebSync.unregisterDOMException('.drawing');
-  };
-  // Return self so other modules can hook into this one.
-  return self;
+
+  // Return exports so other modules can hook into this one.
+  return exports;
 });

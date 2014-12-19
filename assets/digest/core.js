@@ -44,10 +44,14 @@ define('websync', ['crypto'], function(crypto) {
       });
     },
 
+    /** Starts the diff interval on the JSON root */
+    startDiffInterval: function() {
+      WebSync.diffInterval = setInterval(WebSync.checkDiff, 500);
+    },
+
     /** An object with all of the callbacks for a websocket connection. */
     webSocketCallbacks: {
       onopen: function() {
-        WebSync.diffInterval = setInterval(WebSync.checkDiff, 500);
         $('nav').removeClass('no-connection');
         $(document).trigger('connection');
         $('#connection_msg').remove();
@@ -60,6 +64,7 @@ define('websync', ['crypto'], function(crypto) {
               key: WebSyncAuth.key
             });
           } else {
+            startDiffInterval();
             WebSync.connection.sendJSON({
               type: 'auth',
               id: WebSyncAuth.id,
@@ -1052,7 +1057,7 @@ define('websync', ['crypto'], function(crypto) {
             }
 
             // Add a property or element.
-          } else if (change.op == 'add') {
+          } else if (change.op === 'add') {
             var cur = dom;
             var tree = [root_dom, dom];
             _.each(parts.slice(0, -1), function(part) {
@@ -1285,6 +1290,8 @@ define('websync', ['crypto'], function(crypto) {
   // Initialize
   NProgress.start();
   WS.webSocketStart();
+
+  $(document).on('modules_loaded', exports.startDiffInterval);
 
   // Disable Mozilla built in resizing for tables and images.
   document.execCommand('enableObjectResizing', false, 'false');

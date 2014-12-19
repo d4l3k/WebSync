@@ -33,8 +33,8 @@ define(['websync'], function(WebSync) {
       }
       var corner = relative_to.offset();
       var point = [e.pageX - corner.left, e.pageY - corner.top];
-      exports.points[exports.active_id].push(point);
-      exports.drawPoints(exports.active_id, exports.canvas);
+      exports.points[exports.activeId].push(point);
+      exports.drawPoints(exports.activeId, exports.canvas);
       e.preventDefault();
     },
 
@@ -106,25 +106,24 @@ define(['websync'], function(WebSync) {
     $('.content_container').bind('mousedown.Drawing', function(e) {
       if (exports.active) {
         exports.drag = true;
-        exports.last_time = new Date();
-        // The active_id is the identifier used for each line.
-        exports.active_id = (new Date()).getTime().toString();
-        exports.points[exports.active_id] = [];
+        exports.lastTime = new Date();
+        // The activeId is the identifier used for each line.
+        exports.activeId = (new Date()).getTime().toString();
+        exports.points[exports.activeId] = [];
         if ($(e.target).attr('contenteditable') === 'true') {
           exports.parent = e.target;
         } else {
           exports.parent = $(e.target).parents('[contenteditable=true]');
         }
         exports.canvas = document.createElement('canvas');
-        $(exports.canvas).addClass('Drawing').data('drawid', exports.active_id).prependTo(exports.parent);
+        $(exports.canvas).addClass('Drawing').data('drawid', exports.activeId).prependTo(exports.parent);
         exports.savePoint(e);
       }
     }).bind('mousemove.Drawing', function(e) {
       if (exports.active && exports.drag) {
         var date = new Date();
-        //if(date - exports.last_time > exports.interval){
         exports.savePoint(e);
-        exports.last_time = date;
+        exports.lastTime = date;
         //}
       }
     }).bind('mouseup.Drawing', function(e) {

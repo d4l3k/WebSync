@@ -91,12 +91,12 @@ define(['websync'], function(WS) {
 
     /** A polling observer that checks for changes in size of the target element. */
     observer: function() {
-      var bounding_data = JSON.stringify(exports.active.getBoundingClientRect());
-      if (bounding_data !== exports.lastSize) {
+      var boundingData = JSON.stringify(exports.active.getBoundingClientRect());
+      if (boundingData !== exports.lastSize) {
         setTimeout(function() {
           exports.updateHandles();
         }, 1);
-        exports.lasttSize = bounding_data;
+        exports.lasttSize = boundingData;
       }
     },
 
@@ -187,13 +187,13 @@ define(['websync'], function(WS) {
         $(exports.active).outerWidth((e.pageX - exports.origX) / WS.zoom + exports.origWidth);
       }
       if (exports.origMove) {
-        var x_offset = e.pageX - exports.origMouse.left;
-        var y_offset = e.pageY - exports.origMouse.top;
-        var new_position = {
-          left: exports.origMove.left + x_offset,
-          top: exports.origMove.top + y_offset
+        var xOffset = e.pageX - exports.origMouse.left;
+        var yOffset = e.pageY - exports.origMouse.top;
+        var newPosition = {
+          left: exports.origMove.left + xOffset,
+          top: exports.origMove.top + yOffset
         };
-        $(exports.active).css(new_position);
+        $(exports.active).css(newPosition);
       }
       $(exports.active).trigger('resize');
       exports.updateHandles();

@@ -6,25 +6,25 @@
 //= require templates/file-browser
 
 (function() {
-  var sort_type = 'date';
-  var sort_dir = 'desc';
+  var sortType = 'date';
+  var sortDir = 'desc';
   function updateSearchResults() {
     var options = {
       public: window.location.pathname === '/public',
       deleted: window.location.pathname === '/deleted',
       q: $('.file_list .search input').val(),
-      sort_type: sort_type,
-      sort_dir: sort_dir
+      sortType: sortType,
+      sortDir: sortDir
     };
-    var url = _.template('/apifiles?public=${public}&deleted=${deleted}&q=${q}&sort_type=${sort_type}&sort_dir=${sort_dir}', options);
+    var url = _.template('/apifiles?public=${public}&deleted=${deleted}&q=${q}&sortType=${sortType}&sortDir=${sortDir}', options);
     $.get(url, function(resp) {
       var results = JSON.parse(resp);
       $('.files table').html(JST['templates/file-browser']({
         results: results,
         deleted: options.deleted,
         public: options.public,
-        sort_type: sort_type,
-        sort_dir: sort_dir
+        sortType: sortType,
+        sortDir: sortDir
       }));
     });
   }
@@ -42,10 +42,10 @@
     $('.file_list .search button').click(searchHandler);
     $('.file_list').on('click', 'th a', function(e) {
       var type = $(this).data().type;
-      if (type !== sort_type) {
-        sort_type = type;
+      if (type !== sortType) {
+        sortType = type;
       } else {
-        sort_dir = sort_dir === 'asc' ? 'desc' : 'asc';
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
       }
       updateSearchResults();
       e.preventDefault();

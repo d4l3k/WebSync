@@ -21,11 +21,11 @@ define('/assets/spreadsheet.js', ['websync', '/assets/tables.js'], function(WebS
         top: $('.content_well').offset().top - 1
       });
       if ($('.axis#x').length > 0) {
-        var x_rect = $('.axis#x').outerHeight();
-        var y_rect = $('.axis#y').outerWidth();
+        var xRect = $('.axis#x').outerHeight();
+        var yRect = $('.axis#y').outerWidth();
         $('.content-spreadsheet #spreadsheetWell').css({
-          'padding-top': x_rect - 2,
-          'padding-left': y_rect - 2
+          'padding-top': xRect - 2,
+          'padding-left': yRect - 2
         });
       }
     }

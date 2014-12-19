@@ -30,15 +30,15 @@ define(['websync'], function(WS) {
      * An observer to update position and headers if the cell size changes.
      */
     observer: function() {
-      var bounding_data = JSON.stringify(exports.selectedElem.getBoundingClientRect());
-      if (bounding_data !== exports.lastSize) {
+      var boundingData = JSON.stringify(exports.selectedElem.getBoundingClientRect());
+      if (boundingData !== exports.lastSize) {
         setTimeout(function() {
           exports.cursorUpdate();
         }, 1);
         setTimeout(function() {
           exports.headerUpdate();
         }, 2);
-        exports.lastSize = bounding_data;
+        exports.lastSize = boundingData;
       }
     },
 
@@ -183,8 +183,8 @@ define(['websync'], function(WS) {
           bounding = elem.getBoundingClientRect();
           nodes += '<th style="width: ' + (bounding.width - 1).toFixed(0) + 'px">' + exports.columnLabel(i) + '</th>';
         }
-        var table_count = $('.content_container table').index(exports.primaryTable()) + 1;
-        var name = 'Table ' + table_count;
+        var tableCount = $('.content_container table').index(exports.primaryTable()) + 1;
+        var name = 'Table ' + tableCount;
         nodes += '</tr></thead></table><table class="Table axis" id="y"><thead><tr><th>' + name + '</th></tr>';
         for (i = 0; i < size[1]; i++) {
           elem = exports.posToElem(0, i);
@@ -207,18 +207,18 @@ define(['websync'], function(WS) {
      */
     headerUpdate: function() {
       var size = exports.tableSize();
-      var x_nodes = $('.axis#x th');
+      var xNodes = $('.axis#x th');
       var i, elem, bounding;
       for (i = 0; i < size[0]; i++) {
         elem = exports.posToElem(i, 0);
         bounding = elem.getBoundingClientRect();
-        x_nodes[i].style.width = (bounding.width) + 'px';
+        xNodes[i].style.width = (bounding.width) + 'px';
       }
-      var y_nodes = $('.axis#y th');
+      var yNodes = $('.axis#y th');
       for (i = 0; i < size[1]; i++) {
         elem = exports.posToElem(0, i);
         bounding = elem.getBoundingClientRect();
-        y_nodes[i + 1].style.height = (bounding.height) + 'px';
+        yNodes[i + 1].style.height = (bounding.height) + 'px';
       }
     },
 
@@ -235,8 +235,8 @@ define(['websync'], function(WS) {
       var row = pos[1];
       // TODO: Redo this into a more readable form using jQuery.
       if (exports.selectedElem.parentElement.parentElement.children.length > row + dRow && exports.selectedElem.parentElement.parentElement.children[0].children.length > column + dColumn && row + dRow >= 0 && column + dColumn >= 0) {
-        var new_td = exports.selectedElem.parentElement.parentElement.children[row + dRow].children[column + dColumn];
-        exports.cursorSelect(new_td);
+        var newTd = exports.selectedElem.parentElement.parentElement.children[row + dRow].children[column + dColumn];
+        exports.cursorSelect(newTd);
       }
     },
 
@@ -269,12 +269,12 @@ define(['websync'], function(WS) {
       pos.left += 2;
       exports.updateSelectedArea();
       var table = $(exports.primaryTable());
-      var elem_box = exports.selectedElem.getBoundingClientRect();
+      var elemBox = exports.selectedElem.getBoundingClientRect();
       $('#table_cursor').offset({
         left: pos.left,
         top: pos.top
-      }).height(elem_box.height - 4).
-      width(elem_box.width - 6).
+      }).height(elemBox.height - 4).
+      width(elemBox.width - 6).
       get(0).scrollIntoViewIfNeeded();
 
       if (table.css('position') === 'absolute' || pos) {
@@ -308,27 +308,27 @@ define(['websync'], function(WS) {
       if (parts.length === 2) {
         second = exports.coordsFromLabel(parts[1]);
       }
-      var top_left, bottom_right;
+      var topLeft, bottomRight;
       if (second) {
         // Get top left cell.
-        top_left = [
+        topLeft = [
           first[0] < second[0] ? first[0] : second[0],
           first[1] < second[1] ? first[1] : second[1]
         ];
-        bottom_right = [
+        bottomRight = [
           first[0] > second[0] ? first[0] : second[0],
           first[1] > second[1] ? first[1] : second[1]
         ];
       } else {
-        top_left = first;
-        bottom_right = first;
+        topLeft = first;
+        bottomRight = first;
       }
       var size = [
-        bottom_right[0] - top_left[0] + 1,
-        bottom_right[1] - top_left[1] + 1
+        bottomRight[0] - topLeft[0] + 1,
+        bottomRight[1] - topLeft[1] + 1
       ];
       var data = [];
-      var elem_in_table = $(table).find('td, th')[0] || window._tmpElem;
+      var elemInTable = $(table).find('td, th')[0] || window._tmpElem;
 
       var x, y, elem, val;
       for (x = 0; x < size[0]; x++) {
@@ -336,8 +336,8 @@ define(['websync'], function(WS) {
           if (!data[x]) {
             data[x] = [];
           }
-          elem = exports.posToElem(top_left[0] + x, top_left[1] + y,
-            elem_in_table);
+          elem = exports.posToElem(topLeft[0] + x, topLeft[1] + y,
+            elemInTable);
           if (window._tmpElem && elem === window._tmpElem) {
             throw "Error: Cell can't select it's own content.";
           }
@@ -522,12 +522,12 @@ define(['websync'], function(WS) {
         var top, bottom, left, right;
         var end = exports.selectionEnd || exports.selectedElem;
         if (exports.selectionEnd && exports.selectionEnd !== exports.selectedElem) {
-          var start_box = exports.selectedElem.getBoundingClientRect();
-          var end_box = end.getBoundingClientRect();
-          top = start_box.top < end_box.top ? start_box.top : end_box.top;
-          bottom = start_box.bottom > end_box.bottom ? start_box.bottom : end_box.bottom;
-          left = start_box.left < end_box.left ? start_box.left : end_box.left;
-          right = start_box.right > end_box.right ? start_box.right : end_box.right;
+          var startBox = exports.selectedElem.getBoundingClientRect();
+          var endBox = end.getBoundingClientRect();
+          top = startBox.top < endBox.top ? startBox.top : endBox.top;
+          bottom = startBox.bottom > endBox.bottom ? startBox.bottom : endBox.bottom;
+          left = startBox.left < endBox.left ? startBox.left : endBox.left;
+          right = startBox.right > endBox.right ? startBox.right : endBox.right;
           $('#table_selection').show().offset({
             left: left,
             top: top
@@ -536,27 +536,27 @@ define(['websync'], function(WS) {
           $('#table_selection').hide();
         }
         // Set hidden selection area contents to mini-table.
-        var selection_html = '<table><tbody>';
-        var tpos_start = exports.selectedPos();
-        var tpos_end = exports.selectedPos(end);
+        var selectionHtml = '<table><tbody>';
+        var tposStart = exports.selectedPos();
+        var tposEnd = exports.selectedPos(end);
 
-        top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
-        bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
-        left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
-        right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
+        top = tposStart[1] < tposEnd[1] ? tposStart[1] : tposEnd[1];
+        bottom = tposStart[1] > tposEnd[1] ? tposStart[1] : tposEnd[1];
+        left = tposStart[0] < tposEnd[0] ? tposStart[0] : tposEnd[0];
+        right = tposStart[0] > tposEnd[0] ? tposStart[0] : tposEnd[0];
         $('.Table.axis#x').children().children().children().slice(left, right + 1).addClass('active');
         $('.Table.axis#y').children().children().slice(top + 1, bottom + 2).children().addClass('active');
 
         var x, y;
         for (y = top; y <= bottom; y++) {
-          selection_html += '<tr>';
+          selectionHtml += '<tr>';
           for (x = left; x <= right; x++) {
-            selection_html += '<td>' + exports.posToElem(x, y).innerHTML + '</td>';
+            selectionHtml += '<td>' + exports.posToElem(x, y).innerHTML + '</td>';
           }
-          selection_html += '</tr>';
+          selectionHtml += '</tr>';
         }
-        selection_html += '</tbody></table>';
-        $('#table_clip').html(selection_html);
+        selectionHtml += '</tbody></table>';
+        $('#table_clip').html(selectionHtml);
         if (exports.selectedElem.contentEditable !== 'true') {
           // Hidden selection area for copying.
           var range = rangy.createRange();
@@ -573,13 +573,13 @@ define(['websync'], function(WS) {
      */
     emptySelection: function() {
       var end = exports.selectionEnd || exports.selectedElem;
-      var tpos_start = exports.selectedPos();
-      var tpos_end = exports.selectedPos(end);
+      var tposStart = exports.selectedPos();
+      var tposEnd = exports.selectedPos(end);
 
-      var top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
-      var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
-      var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
-      var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
+      var top = tposStart[1] < tposEnd[1] ? tposStart[1] : tposEnd[1];
+      var bottom = tposStart[1] > tposEnd[1] ? tposStart[1] : tposEnd[1];
+      var left = tposStart[0] < tposEnd[0] ? tposStart[0] : tposEnd[0];
+      var right = tposStart[0] > tposEnd[0] ? tposStart[0] : tposEnd[0];
 
       var x, y, node;
       for (y = top; y <= bottom; y++) {
@@ -774,14 +774,14 @@ define(['websync'], function(WS) {
       var size = exports.tableSize();
       if (size[1] > 1) {
         var pos = exports.selectedPos();
-        var n_y = pos[1] + 1;
-        if (n_y >= size[1]) {
-          n_y -= 2;
+        var nY = pos[1] + 1;
+        if (nY >= size[1]) {
+          nY -= 2;
         }
-        var n_selected = exports.posToElem(pos[0], n_y);
+        var nSelected = exports.posToElem(pos[0], nY);
         $(exports.selectedElem).closest('tr').remove();
         exports.clearSelect();
-        exports.cursorSelect(n_selected);
+        exports.cursorSelect(nSelected);
         exports.redrawTitles();
       }
     }
@@ -815,14 +815,14 @@ define(['websync'], function(WS) {
       var parentElem = $(exports.selectedElem).parent().parent();
       if (size[0] > 1) {
         var pos = exports.selectedPos();
-        var n_x = pos[0] + 1;
-        if (n_x >= size[0]) n_x -= 2;
-        var n_selected = exports.posToElem(n_x, pos[1]);
+        var nX = pos[0] + 1;
+        if (nX >= size[0]) nX -= 2;
+        var nSelected = exports.posToElem(nX, pos[1]);
         for (var i = 0; i < size[1]; i++) {
           $(parentElem).children('tr').eq(i).children('td').eq(pos[0]).remove();
         }
         exports.clearSelect();
-        exports.cursorSelect(n_selected);
+        exports.cursorSelect(nSelected);
         exports.redrawTitles();
       }
     }
@@ -1002,7 +1002,7 @@ define(['websync'], function(WS) {
         out.heights[i] = height;
       }
       var columns = $(row).children('td');
-      var row_out = [];
+      var rowOut = [];
       _.each(columns, function(cell, j) {
         var width = $(row)[0].style.width;
         if (width) {
@@ -1016,24 +1016,24 @@ define(['websync'], function(WS) {
         } else {
           data = cell.childNodes;
         }
-        var cell_out = {};
+        var cellOut = {};
         var content_json = WS.DOMToJSON(data);
         if (!_.isEmpty(content_json)) {
-          cell_out.content = content_json;
+          cellOut.content = content_json;
         }
         for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
           attr = attrs.item(i);
           // Ignore attribute if it's set by the table.
           if (attr.nodeName !== 'data-content' &&
             attr.nodeName !== 'contenteditable') {
-            if (!cell_out.attrs)
-              cell_out.attrs = {};
-            cell_out.attrs[attr.nodeName] = attr.nodeValue;
+            if (!cellOut.attrs)
+              cellOut.attrs = {};
+            cellOut.attrs[attr.nodeName] = attr.nodeValue;
           }
         }
-        row_out.push(cell_out);
+        rowOut.push(cellOut);
       });
-      out.data.push(row_out);
+      out.data.push(rowOut);
     });
     return out;
   }, function(json) {

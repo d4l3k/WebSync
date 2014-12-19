@@ -23,23 +23,23 @@ define(['websync'], function(WS) {
       if (index < 0) {
         index = 0;
       }
-      var child_length = exports.css_scene.children.length;
-      if (index >= child_length) {
-        index = child_length - 1;
+      var childLength = exports.cssScene.children.length;
+      if (index >= childLength) {
+        index = childLength - 1;
       }
       exports.activeIndex = index;
-      if (child_length === 0) {
+      if (childLength === 0) {
         return;
       }
       $('.slidePreview.active').removeClass('active');
       $('.slidePreview').eq(index).addClass('active')[0].scrollIntoViewIfNeeded();
-      exports.focus(exports.css_scene.children[index]);
+      exports.focus(exports.cssScene.children[index]);
       exports.updateProperties();
     },
 
     /** Updates the properties pane from the selected slide. */
     updateProperties: function() {
-      var obj = exports.css_scene.children[exports.activeIndex];
+      var obj = exports.cssScene.children[exports.activeIndex];
       _.each(['Position', 'Rotation'], function(type) {
         console.log(type);
         var info = obj[type.toLowerCase()];
@@ -59,7 +59,7 @@ define(['websync'], function(WS) {
         axis = 'z';
       }
       var prop = $(this).hasClass('Position') ? 'position' : 'rotation';
-      var obj = exports.css_scene.children[exports.activeIndex];
+      var obj = exports.cssScene.children[exports.activeIndex];
       obj[prop][axis] = eval($(this).val());
       return obj;
     },
@@ -70,7 +70,7 @@ define(['websync'], function(WS) {
         height = $('.content_container').height(),
         aspect = width / height;
       exports.renderer.setSize(width, height);
-      exports.css_renderer.setSize(width, height);
+      exports.cssRenderer.setSize(width, height);
       exports.camera.aspect = aspect;
       exports.camera.updateProjectionMatrix();
       exports.dirty = true;
@@ -84,7 +84,7 @@ define(['websync'], function(WS) {
      */
     addCss: function(element) {
       var obj = new THREE.CSS3DObject(element);
-      exports.css_scene.add(obj);
+      exports.cssScene.add(obj);
       setTimeout(function() {
         var material = new THREE.MeshBasicMaterial({
           color: 0
@@ -104,12 +104,12 @@ define(['websync'], function(WS) {
     /** Triggers the document to update the canvas and positions. */
     render: function() {
       var td = 1.0;
-      var c_time = new Date();
+      var cTime = new Date();
       if (exports.lastRender) {
-        td = (c_time - exports.lastRender) / (16.66667);
+        td = (cTime - exports.lastRender) / (16.66667);
       }
       TWEEN.update();
-      exports.lastRender = c_time;
+      exports.lastRender = cTime;
       if (exports.heli) {
         exports.heli.rotation.z += 0.01 * td;
       }
@@ -117,7 +117,7 @@ define(['websync'], function(WS) {
       if (exports.dirty) {
         exports.dirty = false;
         exports.renderer.render(exports.scene, exports.camera);
-        exports.css_renderer.render(exports.css_scene, exports.camera);
+        exports.cssRenderer.render(exports.cssScene, exports.camera);
       }
     },
 
@@ -146,8 +146,8 @@ define(['websync'], function(WS) {
     /** Triggers an update on the menu. */
     updateMenu: function() {
       $('#slideView').html('');
-      $(exports.css_scene.children).each(function(index, slide_obj) {
-        var slide = slide_obj.element;
+      $(exports.cssScene.children).each(function(index, slideObj) {
+        var slide = slideObj.element;
         var preview = $("<div draggable='true' class='slidePreview " + ($(slide).hasClass('active') ? 'active' : '') + "'><div class='slide'>" + $(slide).html() + '</div></div>');
         preview.find('.slide-content').attr('contenteditable', null);
         preview.appendTo($('#slideView')).data({
@@ -161,9 +161,9 @@ define(['websync'], function(WS) {
         });
         preview.height(ratio * $(slide).outerHeight());
       });
-      var drag_elem;
+      var dragElem;
       $('.slidePreview').on('dragstart', function() {
-        drag_elem = this;
+        dragElem = this;
       }).on('dragenter', function(e) {
         e.preventDefault();
       }).on('dragover', function(e) {
@@ -173,9 +173,9 @@ define(['websync'], function(WS) {
         $(this).removeClass('over');
         e.preventDefault();
       }).on('drop', function(e) {
-        var slide_index = $(drag_elem).data().index;
-        var new_index = $(this).closest('.slidePreview').data().index;
-        exports.css_scene.children.move(slide_index, new_index);
+        var slideIndex = $(dragElem).data().index;
+        var newIndex = $(this).closest('.slidePreview').data().index;
+        exports.cssScene.children.move(slideIndex, newIndex);
         e.preventDefault();
         exports.dirty = true;
         _.delay(exports.updateMenu, 50);
@@ -185,14 +185,14 @@ define(['websync'], function(WS) {
   };
 
   WS.toJSON = function() {
-    if (!exports.css_scene) {
+    if (!exports.cssScene) {
       return;
     }
     // Slides/HTML
     WebSyncData.views = [];
     // 3D Objects
     WebSyncData.objects = [];
-    _.each(exports.css_scene.children, function(child) {
+    _.each(exports.cssScene.children, function(child) {
       var obj = {
         position: child.position,
         scale: child.scale,
@@ -210,8 +210,8 @@ define(['websync'], function(WS) {
 
   WS.fromJSON = function() {
     var i;
-    for (i = exports.css_scene.children.length; i--; i > 0) {
-      exports.css_scene.remove(exports.css_scene.children[i]);
+    for (i = exports.cssScene.children.length; i--; i > 0) {
+      exports.cssScene.remove(exports.cssScene.children[i]);
     }
     _.each(WebSyncData.views, function(view) {
       var elemm = $("<div class='awesome slide'><div class='slide-content' contenteditable=true>" + WS.JSONToDOM(view.body) + '</div></div>');
@@ -239,11 +239,11 @@ define(['websync'], function(WS) {
     exports.dirty = true;
     _.delay(exports.updateMenu, 50);
     _.delay(function() {
-      exports.setIndex(exports.css_scene.getDescendants().length - 1);
+      exports.setIndex(exports.cssScene.getDescendants().length - 1);
     }, 100);
   });
   $('#remSlide').click(function() {
-    exports.css_scene.remove(exports.css_scene.children[exports.activeIndex]);
+    exports.cssScene.remove(exports.cssScene.children[exports.activeIndex]);
     exports.setIndex(exports.activeIndex);
     _.delay(exports.updateMenu, 50);
   });
@@ -298,7 +298,7 @@ define(['websync'], function(WS) {
   });
   $(document).on('modules_loaded', function() {
     exports.scene = new THREE.Scene();
-    exports.css_scene = new THREE.Scene();
+    exports.cssScene = new THREE.Scene();
     exports.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10000);
     // Normal renderer
     exports.renderer = new THREE.WebGLRenderer({
@@ -306,17 +306,17 @@ define(['websync'], function(WS) {
       alpha: true
     });
     $('.content_container').append(exports.renderer.domElement);
-    exports.css_renderer = new THREE.CSS3DRenderer();
-    $(exports.css_renderer.domElement).css({
+    exports.cssRenderer = new THREE.CSS3DRenderer();
+    $(exports.cssRenderer.domElement).css({
       top: 0,
       position: 'absolute'
     });
-    $('.content_container').prepend(exports.css_renderer.domElement).bind('mousedown selectstart', function(e) {
+    $('.content_container').prepend(exports.cssRenderer.domElement).bind('mousedown selectstart', function(e) {
       e.stopPropagation();
     });
     $('.content_container').on('mousedown', '.slide', function(e) {
       console.log(e);
-      _.each(exports.css_scene.getDescendants(), function(dec, i) {
+      _.each(exports.cssScene.getDescendants(), function(dec, i) {
         if (dec.element === e.currentTarget) {
           exports.setIndex(i);
         }
@@ -327,7 +327,7 @@ define(['websync'], function(WS) {
     $(window).resize(exports.resize);
     _.defer(exports.resize);
 
-    exports.dom = exports.css_renderer.domElement;
+    exports.dom = exports.cssRenderer.domElement;
     WS.fromJSON();
     $('.content_container').bind('wheel', function(e) {
       if (e.originalEvent.deltaY) {
@@ -400,19 +400,19 @@ define(['websync'], function(WS) {
 });
 
 // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
-Array.prototype.move = function(old_index, new_index) {
-  while (old_index < 0) {
-    old_index += this.length;
+Array.prototype.move = function(oldIndex, newIndex) {
+  while (oldIndex < 0) {
+    oldIndex += this.length;
   }
-  while (new_index < 0) {
-    new_index += this.length;
+  while (newIndex < 0) {
+    newIndex += this.length;
   }
-  if (new_index >= this.length) {
-    var k = new_index - this.length;
+  if (newIndex >= this.length) {
+    var k = newIndex - this.length;
     while ((k--) + 1) {
       this.push(undefined);
     }
   }
-  this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+  this.splice(newIndex, 0, this.splice(oldIndex, 1)[0]);
   return this; // for testing purposes
 };

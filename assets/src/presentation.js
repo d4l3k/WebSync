@@ -52,11 +52,11 @@ define('/assets/presentation.js', ['websync'], function(WS) {
 
     /** Updates the scale of the slides */
     updateScale: function() {
-      var well_rect = $('.content_well').get(0).getBoundingClientRect();
-      var content_rect = $('.content_container .slide.active');
-      var width_scale = well_rect.width / (content_rect.width() + 80);
-      var height_scale = well_rect.height / (content_rect.height() + 65);
-      var zoom = (width_scale > height_scale) * height_scale + (width_scale <= height_scale) * width_scale;
+      var wellRect = $('.content_well').get(0).getBoundingClientRect();
+      var contentRect = $('.content_container .slide.active');
+      var widthScale = wellRect.width / (contentRect.width() + 80);
+      var heightScale = wellRect.height / (contentRect.height() + 65);
+      var zoom = (widthScale > heightScale) * heightScale + (widthScale <= heightScale) * widthScale;
       WS.setZoom(zoom);
     }
   };
@@ -129,28 +129,28 @@ define('/assets/presentation.js', ['websync'], function(WS) {
   });
   $(document).keydown(function(e) {
     if (WebSyncAuth.view_op === 'view') {
-      var cur_slide, next_slide;
+      var curSlide, nextSlide;
       if (e.keyCode === 39 || e.keyCode === 32 || e.keyCode === 40) {
         // Move forward a slide
-        cur_slide = $('.slidePreview.active').data().index;
-        next_slide = cur_slide + 1;
-        var slide_num = $('#slides .slide').length;
-        if (next_slide < slide_num) {
+        curSlide = $('.slidePreview.active').data().index;
+        nextSlide = curSlide + 1;
+        var slideNum = $('#slides .slide').length;
+        if (nextSlide < slideNum) {
           $('.slide.active').removeClass('active');
           $('.slidePreview.active').removeClass('active');
-          $($('#slides .slide').get(next_slide)).addClass('active');
-          $($('.slidePreview').get(next_slide)).addClass('active');
+          $($('#slides .slide').get(nextSlide)).addClass('active');
+          $($('.slidePreview').get(nextSlide)).addClass('active');
         }
         e.preventDefault();
       } else if (e.keyCode === 37 || e.keyCode === 38) {
         // Move back a slide
-        cur_slide = $('.slidePreview.active').data().index;
-        next_slide = cur_slide - 1;
-        if (next_slide >= 0) {
+        curSlide = $('.slidePreview.active').data().index;
+        nextSlide = curSlide - 1;
+        if (nextSlide >= 0) {
           $('.slide.active').removeClass('active');
           $('.slidePreview.active').removeClass('active');
-          $($('#slides .slide').get(next_slide)).addClass('active');
-          $($('.slidePreview').get(next_slide)).addClass('active');
+          $($('#slides .slide').get(nextSlide)).addClass('active');
+          $($('.slidePreview').get(nextSlide)).addClass('active');
         }
         e.preventDefault();
       }

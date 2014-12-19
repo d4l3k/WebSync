@@ -181,14 +181,14 @@ define('websync', ['crypto'], function(crypto) {
             property: 'public'
           });
           WebSync.clients = data.users;
-          var to_trigger = {};
+          var toTrigger = {};
           $.each(WebSync.clients, function(k, v) {
             if (v.email === 'anon@websyn.ca') {
               WebSync.users[v.id] = {
                 displayName: 'Anonymous'
               };
             } else if (!WebSync.users[v.id]) {
-              to_trigger[v.id] = [k];
+              toTrigger[v.id] = [k];
               $.ajax({
                 url: 'https://secure.gravatar.com/' + v.id + '.json',
                 dataType: 'jsonp',
@@ -196,7 +196,7 @@ define('websync', ['crypto'], function(crypto) {
               }).done(function(data) {
                 WebSync.users[v.id] = data.entry[0];
               }).complete(function() {
-                $.each(to_trigger[v.id], function(i, item) {
+                _.each(toTrigger[v.id], function(item) {
                   $(document).trigger('client_load', {
                     client: item
                   });
@@ -204,19 +204,19 @@ define('websync', ['crypto'], function(crypto) {
               });
               WebSync.users[v.id] = {};
             } else {
-              if (!to_trigger[v.id]) {
+              if (!toTrigger[v.id]) {
                 $(document).trigger('client_load', {
                   client: k
                 });
               } else {
-                to_trigger[v.id].push(k);
+                toTrigger[v.id].push(k);
               }
             }
           });
         } else if (data.type === 'new_user') {
           WebSync.clients[data.id] = data.user;
-          var user_id = data.user.id;
-          var client_id = data.id;
+          var userId = data.user.id;
+          var clientId = data.id;
           console.log('NEW USER INFO', data);
           if (data.user.email === 'anon@websyn.ca') {
             WebSync.users[data.id] = {
@@ -228,13 +228,13 @@ define('websync', ['crypto'], function(crypto) {
               url: 'https://secure.gravatar.com/' + data.user.id + '.json',
               dataType: 'jsonp'
             }).done(function(data) {
-              WebSync.users[user_id] = data.entry[0];
+              WebSync.users[userId] = data.entry[0];
               $(document).trigger('client_load', {
-                client: client_id
+                client: clientId
               });
             }).fail(function() {
               $(document).trigger('client_load', {
-                client: client_id
+                client: clientId
               });
             });
             WebSync.users[data.user.id] = {};
@@ -363,15 +363,17 @@ define('websync', ['crypto'], function(crypto) {
       var UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
       var exponent = 0;
       if (length >= 1000) {
-        var max_exp = UNITS.length;
+        var maxExp = UNITS.length;
         exponent = Math.floor(Math.log(length) / Math.log(1000));
-        if (exponent > max_exp) {
-          exponent = max_exp;
+        if (exponent > maxExp) {
+          exponent = maxExp;
         }
         length /= Math.pow(1000, exponent);
       }
       var fix = 0;
-      if (Math.floor(length) !== length) fix = 1;
+      if (Math.floor(length) !== length) {
+        fix = 1;
+      }
       return length.toFixed(fix) + ' ' + UNITS[exponent];
     },
 
@@ -714,12 +716,12 @@ define('websync', ['crypto'], function(crypto) {
 
     /** This updates the ribbon buttons based on the content in the ribbon bar. TODO: Use registration system & persist menu between updates. */
     updateRibbon: function() {
-      var menu_buttons = '';
+      var menuButtons = '';
       var active = $('#ribbon_buttons .active').text();
       $('.ribbon .container').each(function(elem) {
-        menu_buttons += '<li' + (this.id === active ? ' class="active"' : '') + '><a>' + this.id + '</a></li>';
+        menuButtons += '<li' + (this.id === active ? ' class="active"' : '') + '><a>' + this.id + '</a></li>';
       });
-      $('#ribbon_buttons').html(menu_buttons);
+      $('#ribbon_buttons').html(menuButtons);
       $('#ribbon_buttons li').click(function(e) {
         $('#ribbon_buttons li').removeClass('active');
         $(this).addClass('active');
@@ -969,11 +971,11 @@ define('websync', ['crypto'], function(crypto) {
           var exempt_json, exempt_path;
           _.each(parts, function(part, i) {
             if (!exempt_path) {
-              var check_path = root + parts.slice(0, i + 1).join('/');
-              var json = WS.getJsonFromPath(check_path);
+              var checkPath = root + parts.slice(0, i + 1).join('/');
+              var json = WS.getJsonFromPath(checkPath);
               if (json && json.exempt) {
                 exempt_json = json;
-                exempt_path = check_path;
+                exempt_path = checkPath;
               }
             }
           });
@@ -1203,13 +1205,13 @@ define('websync', ['crypto'], function(crypto) {
         return WebSync.domExceptions[obj.exempt].load(obj.data);
       }
       html += '<' + name;
-      var data_vars = [];
+      var dataVars = [];
       _.each(obj, function(v, k) {
         if (k !== 'nodeName' && k !== 'textContent' && k !== 'childNodes' && k !== 'dataset') {
           k = WS.alphaNumeric(k.trim());
           if (k.toLowerCase().indexOf('on') !== 0) {
             if (k.toLowerCase().indexOf('data-') === 0) {
-              data_vars.push(k);
+              dataVars.push(k);
             }
             html += ' ' + k + '=' + JSON.stringify(v);
           }
@@ -1218,7 +1220,7 @@ define('websync', ['crypto'], function(crypto) {
       if (obj.dataset) {
         _.each(obj.dataset, function(v, k) {
           k = WS.alphaNumeric(k.trim());
-          if (data_vars.indexOf('data-' + k) === -1)
+          if (dataVars.indexOf('data-' + k) === -1)
             html += ' data-' + WS.alphaNumeric(k) + '=' + JSON.stringify(v);
         });
       }
@@ -1256,11 +1258,11 @@ define('websync', ['crypto'], function(crypto) {
           var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetric_keys);
           if (success) {
             crypto.decryptWithSymmetricKey(WebSyncData.encrypted_blob, function(blob) {
-              var new_body = JSON.parse(blob);
+              var newBody = JSON.parse(blob);
               WebSync.backendCommand({
                 type: 'diffs',
                 action: 'list',
-                after: new_body.encryption_date
+                after: newBody.encryptionDate
               }, function(diffs) {
                 // Get rid of any unencrypted patches since they may be malicious or old.
                 var patches = _.filter(_.pluck(diffs.patches, 'patch'), function(patch) {
@@ -1268,9 +1270,9 @@ define('websync', ['crypto'], function(crypto) {
                 });
                 crypto.decryptWithSymmetricKey(patches, function(decrypted) {
                   _.each(decrypted, function(patch) {
-                    jsonpatch.apply(new_body, JSON.parse(patch));
+                    jsonpatch.apply(newBody, JSON.parse(patch));
                   });
-                  WebSyncData = new_body;
+                  WebSyncData = newBody;
                   delete WebSync.oldData;
                   $(document).trigger('modules_loaded');
                 });
@@ -1448,20 +1450,20 @@ define('websync', ['crypto'], function(crypto) {
       }
     }
     console.log(patches.length);
-    var new_body = {
+    var newBody = {
       body: []
     };
     _.each(patches, function(patch) {
-      jsonpatch.apply(new_body, JSON.parse(patch.patch));
+      jsonpatch.apply(newBody, JSON.parse(patch.patch));
     });
-    console.log(new_body);
+    console.log(newBody);
     _.each(WebSyncData, function(v, k) {
       delete WebSyncData[k];
     });
-    _.each(new_body, function(v, k) {
+    _.each(newBody, function(v, k) {
       WebSyncData[k] = v;
     });
-    WebSyncData = new_body;
+    WebSyncData = newBody;
     if (WebSync.fromJSON) {
       WebSync.fromJSON();
     }

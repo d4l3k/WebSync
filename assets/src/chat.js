@@ -22,13 +22,13 @@ define(['websync'], function(WS) {
   $('#chat img').tooltip();
   $(document).bind('client_load.Chat', function(e, data) {
     var client = data.client;
-    var client_dom = $('#client_' + client);
+    var clientDom = $('#client_' + client);
     var user = WS.clients[client];
-    var user_info = WS.users[user.id];
-    if (client_dom.length > 0) {
-      if (user_info.displayName) {
-        var display_name = user_info.displayName + ' (' + user.email + ')';
-        client_dom.children().attr('data-original-title', _.escape(display_name));
+    var userInfo = WS.users[user.id];
+    if (clientDom.length > 0) {
+      if (userInfo.displayName) {
+        var displayName = userInfo.displayName + ' (' + user.email + ')';
+        clientDom.children().attr('data-original-title', _.escape(displayName));
       }
     } else {
       self.addUser(client);
@@ -56,16 +56,16 @@ define(['websync'], function(WS) {
   };
   self.addUser = function(client) {
     var user = WS.clients[client];
-    var user_info = WS.users[user.id];
-    var display_name = user_info.displayName;
-    if (!display_name) {
-      display_name = user.email;
+    var userInfo = WS.users[user.id];
+    var displayName = userInfo.displayName;
+    if (!displayName) {
+      displayName = user.email;
     } else {
-      display_name += ' (' + user.email + ')';
+      displayName += ' (' + user.email + ')';
     }
-    display_name = _.escape(display_name);
+    displayName = _.escape(displayName);
     var style = user.email === 'anon@websyn.ca' ? 'mm' : 'retro';
-    $('#user_list').append('<a target="_blank" id="client_' + client + '" href="https://secure.gravatar.com/' + user.id + '"><img data-toggle="tooltip" data-placement="bottom" title="' + display_name + '" src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img></a>').children().last().children().tooltip();
+    $('#user_list').append('<a target="_blank" id="client_' + client + '" href="https://secure.gravatar.com/' + user.id + '"><img data-toggle="tooltip" data-placement="bottom" title="' + displayName + '" src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img></a>').children().last().children().tooltip();
   };
   $(document).bind('client_leave.Chat', function(e, data) {
     console.log('CLIENT LEAVING', data);
@@ -86,14 +86,14 @@ define(['websync'], function(WS) {
   };
   self.clientMsg = function(client, msg) {
     var user = WS.clients[client];
-    var user_info = WS.users[user.id];
-    var display_name = user_info.displayName;
-    if (!display_name) {
-      display_name = user.email;
+    var userInfo = WS.users[user.id];
+    var displayName = userInfo.displayName;
+    if (!displayName) {
+      displayName = user.email;
     }
-    display_name = _.escape(display_name);
+    displayName = _.escape(displayName);
     var style = user.email === 'anon@websyn.ca' ? 'mm' : 'retro';
-    $('#chat_well').append('<p><a target="_blank" href="https://secure.gravatar.com/' + user.id + '"><img src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img><span>' + display_name + ':</span></a> ' + _.escape(msg) + '</p>');
+    $('#chat_well').append('<p><a target="_blank" href="https://secure.gravatar.com/' + user.id + '"><img src="https://secure.gravatar.com/avatar/' + user.id + '?size=38&d=' + style + '"></img><span>' + displayName + ':</span></a> ' + _.escape(msg) + '</p>');
     if (!self.open) {
       $('#user_count').addClass('badge-pulse');
     }

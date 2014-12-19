@@ -24,10 +24,10 @@ define('edit', ['websync'], function(WS) {
   $('body').append(JST['templates/edit-body']({}));
 
   /** List of buttons that can be clicked in the Text menu. */
-  exports.text_buttons = ['bold', 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'removeFormat', 'insertorderedlist', 'insertunorderedlist', 'superscript', 'subscript', 'insertHorizontalRule', 'indent', 'outdent'];
+  exports.textButtons = ['bold', 'italic', 'strikethrough', 'underline', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'removeFormat', 'insertorderedlist', 'insertunorderedlist', 'superscript', 'subscript', 'insertHorizontalRule', 'indent', 'outdent'];
 
   // Bind the basic text editing commands to the buttons.
-  exports.text_buttons.forEach(function(elem) {
+  exports.textButtons.forEach(function(elem) {
     $('button#' + elem).bind('click.TextEdit', function() {
       document.execCommand(elem);
       //$(this).toggleClass("active");
@@ -55,17 +55,17 @@ define('edit', ['websync'], function(WS) {
       characterSelectionNoSpaces: seltext.replace(/\s+/g, '').length
     }));
   };
-  var live_update = false;
+  var liveUpdate = false;
   $(document).on('selectionchange.Text', function() {
-    if (live_update) {
+    if (liveUpdate) {
       updateText();
     }
   });
   $('#word_count').on('shown.bs.popover', function() {
     updateText();
-    live_update = true;
+    liveUpdate = true;
   }).on('hide.bs.popover', function() {
-    live_update = false;
+    liveUpdate = false;
   }).popover({
     placement: 'bottom',
     html: true,
@@ -235,7 +235,7 @@ define('edit', ['websync'], function(WS) {
   });
   $('#youtube_modal input').change(function() {
     var url = $('#youtube_modal input').val();
-    var youtube_id = exports.youtube_parser(url);
+    var youtube_id = exports.youtubeParser(url);
     var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>';
     $('#youtube_modal #youtube-preview').html(html);
   });
@@ -243,7 +243,7 @@ define('edit', ['websync'], function(WS) {
     $('#youtube_modal').modal('hide');
     var url = $('#youtube_modal input').val();
     $('#youtube_modal input').val('');
-    var youtube_id = exports.youtube_parser(url);
+    var youtube_id = exports.youtubeParser(url);
     var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>';
     WS.selectionRestore(exports.selection);
     delete exports.selection;
@@ -255,7 +255,7 @@ define('edit', ['websync'], function(WS) {
    * @param {String} url - The url to parse.
    * @return {String} The youtube video ID.
    */
-  exports.youtube_parser = function(url) {
+  exports.youtubeParser = function(url) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
     if (match && match[2].length === 11) {
@@ -270,7 +270,7 @@ define('edit', ['websync'], function(WS) {
    * @param {String} rgb - The RGBA string. Ex: 'rgb(255,128,0)'
    * @return {String}
    */
-  exports.rgb_to_hex = function(rgb) {
+  exports.rgbToHex = function(rgb) {
     if (rgb === 'rgba(0, 0, 0, 0)') {
       return '#FFFFFF';
     }
@@ -301,12 +301,12 @@ define('edit', ['websync'], function(WS) {
   /** Handling function for displaying accurate information about text in ribbon. */
   exports.selectHandler = function() {
     var style = WS.getCss();
-    $('#fontColor')[0].value = exports.rgb_to_hex(style.color);
-    $('#hilightColor')[0].value = exports.rgb_to_hex(style.backgroundColor);
+    $('#fontColor')[0].value = exports.rgbToHex(style.color);
+    $('#hilightColor')[0].value = exports.rgbToHex(style.backgroundColor);
     var fontSizePt = parseInt(style.fontSize, 10) * 0.75 | 0;
     $('#font_size').val(fontSizePt + 'pt');
 
-    exports.text_buttons.forEach(function(elem) {
+    exports.textButtons.forEach(function(elem) {
       var button = $('button#' + elem);
       if (document.queryCommandState(elem)) {
         button.addClass('active');
@@ -325,7 +325,7 @@ define('edit', ['websync'], function(WS) {
   // Sets up the list of fonts
   var fonts = ['Cursive', 'Monospace', 'Serif', 'Sans-serif', 'Fantasy', 'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Bookman Old Style', 'Bradley Hand ITC', 'Century', 'Century Gothic', 'Comic Sans MS', 'Droid Sans', 'Courier', 'Courier New', 'Georgia', 'Gentium', 'Impact', 'King', 'Lucida Console', 'Lalit', 'Modena', 'Monotype Corsiva', 'Papyrus', 'TeX', 'Times', 'Times New Roman', 'Trebuchet MS', 'Tahoma', 'Verdana', 'Verona', 'Helvetica', 'Segoe', 'Open Sans'];
   var d = new Detector();
-  var font_list = [];
+  var fontList = [];
   fonts = fonts.sort(function(a, b) {
     if (a < b) {
       return -1;
@@ -337,40 +337,42 @@ define('edit', ['websync'], function(WS) {
   });
 
   /** The available fonts on the clients system. */
-  exports.available_fonts = [];
+  exports.availableFonts = [];
   var i, result;
   for (i = 0; i < fonts.length; i++) {
     result = d.detect(fonts[i]);
     if (result) {
-      exports.available_fonts.push({
+      exports.availableFonts.push({
         name: fonts[i],
         source: 'local'
       });
     }
   }
+
   var webfonts = ['Ubuntu', 'Ubuntu Mono', 'Roboto', 'Oswald', 'Lato', 'Droid Sans', 'Droid Serif'];
   $('head').append("<link href='https://fonts.googleapis.com/css?family=" +
     webfonts.join('|').replace(/\s+/g, '+') + "' rel='stylesheet' type='text/css'>");
   _.each(webfonts, function(font) {
-    if (exports.available_fonts.indexOf(font) === -1) {
-      exports.available_fonts.push({
+    if (exports.availableFonts.indexOf(font) === -1) {
+      exports.availableFonts.push({
         name: font,
         source: 'google'
       });
     }
   });
 
-  _.each(exports.available_fonts, function(font) {
-    var font_entry = '<li>';
-    font_entry += '<a href="#">';
-    font_entry += '<span class="fname" style="font-family: \'' + font.name + '"\'">' + font.name + '</span>';
+  _.each(exports.availableFonts, function(font) {
+    var fontEntry = '<li>';
+    fontEntry += '<a href="#">';
+    fontEntry += '<span class="fname" style="font-family: \'' + font.name + '"\'">' + font.name + '</span>';
     if (font.source === 'google') {
-      //font_entry += '<i class="fa fa-google-plus"></i>';
-      font_entry += '<span class="pull-right" title="From Google Web Fonts">G</span>';
+      //fontEntry += '<i class="fa fa-google-plus"></i>';
+      fontEntry += '<span class="pull-right" title="From Google Web Fonts">G</span>';
     }
-    font_entry += '</a></li>';
-    font_list.push(font_entry);
+    fontEntry += '</a></li>';
+    fontList.push(fontEntry);
   });
+
   /**
    * A function to update the styles on the page from the custom css.
    * TODO: Not sure if this should be here.
@@ -378,13 +380,16 @@ define('edit', ['websync'], function(WS) {
   exports.updateStyles = function() {
     exports.stylesheet.innerHTML = (WebSyncData.custom_css || []).join('\n');
   };
+
   /** The Ace editor used for custom css. */
   exports.editor = null;
 
   /** The custom stylesheet element */
   exports.stylesheet = document.createElement('style');
+
   // WebKit hack :(
   exports.stylesheet.appendChild(document.createTextNode(''));
+
   // Add the <style> element to the page
   document.head.appendChild(exports.stylesheet);
 
@@ -415,7 +420,7 @@ define('edit', ['websync'], function(WS) {
     exports.editor.setValue((WebSyncData.custom_css || []).join('\n'));
     exports.updateStyles();
   });
-  $('#font .dropdown-menu').html(font_list.join('\n'));
+  $('#font .dropdown-menu').html(fontList.join('\n'));
   WS.updateRibbon();
   return exports;
 });

@@ -14,26 +14,26 @@ define('/assets/note.js', ['websync'], function(WebSync) {
   var exports = {
     /** Trigger an update for the nav. */
     updateNav: function() {
-      var active_section = $('.note-section:visible')[0];
-      var active_page = $('.note-page:visible')[0];
+      var activeSection = $('.note-section:visible')[0];
+      var activePage = $('.note-page:visible')[0];
 
       var sections = _.map($('.note-section'), function(section) {
         var name = section.dataset.name || 'Unnamed Section';
         var pages = _.map($(section).children(), function(page) {
           var $children = $(page).children();
-          var page_name = $children.filter('.note-title').text() ||
+          var pageName = $children.filter('.note-title').text() ||
             $children.filter(":not('.note-title')").first().text() ||
             'Unnamed Page';
 
           return {
-            active: page === active_page,
-            name: page_name.trim()
+            active: page === activePage,
+            name: pageName.trim()
           };
         });
 
         return {
           name: name,
-          active: section === active_section,
+          active: section === activeSection,
           pages: pages
         };
       });
@@ -42,13 +42,13 @@ define('/assets/note.js', ['websync'], function(WebSync) {
       }));
       var selectedElem = null;
 
-      var drag_elem = null;
+      var dragElem = null;
       var secondLevel = false;
       $('#notesView li').on('dragstart', function(e) {
         secondLevel = $(this).parents('ul > li > ul').length !== 0;
         e.originalEvent.dataTransfer.effectAllowed = 'move';
         e.originalEvent.dataTransfer.setData('text/plain', $(this).data().index);
-        drag_elem = this;
+        dragElem = this;
         e.stopPropagation();
       }).on('dragenter', function(e) {
         e.preventDefault();
@@ -65,30 +65,30 @@ define('/assets/note.js', ['websync'], function(WebSync) {
         $(this).removeClass('over');
       }).on('drop', function(e) {
         $('li.over').removeClass('over');
-        var orig_section, target_section;
+        var origSection, targetSection;
         if (secondLevel) {
-          var orig_page = $(drag_elem).children('a').data().index;
-          orig_section = $(drag_elem).
-            parents('#notesView > ul > li').children('a').
-            data().index;
+          var origPage = $(dragElem).children('a').data().index;
+          origSection = $(dragElem).
+          parents('#notesView > ul > li').children('a').
+          data().index;
 
-          var target_page = $(e.target).data().index;
-          target_section = $(e.target).
-            parents('#notesView > ul > li').children('a').
-            data().index;
+          var targetPage = $(e.target).data().index;
+          targetSection = $(e.target).
+          parents('#notesView > ul > li').children('a').
+          data().index;
 
-          var page = $('.note-section').eq(orig_section).children().eq(orig_page);
+          var page = $('.note-section').eq(origSection).children().eq(origPage);
           if ($(e.target).parents('#notesView > ul > li > ul').length !== 0) {
-            $('.note-section').eq(target_section).children().eq(target_page).after(page);
+            $('.note-section').eq(targetSection).children().eq(targetPage).after(page);
           } else {
-            $('.note-section').eq(target_section).prepend(page);
+            $('.note-section').eq(targetSection).prepend(page);
           }
         } else {
-          orig_section = $(drag_elem).children('a').data().index;
-          target_section = $(e.target).parents('#notesView > ul > li').
-            children('a').data().index;
-          var section = $('.note-section').eq(orig_section);
-          $('.note-section').eq(target_section).after(section);
+          origSection = $(dragElem).children('a').data().index;
+          targetSection = $(e.target).parents('#notesView > ul > li').
+          children('a').data().index;
+          var section = $('.note-section').eq(origSection);
+          $('.note-section').eq(targetSection).after(section);
         }
         e.preventDefault();
         e.stopPropagation();
@@ -120,7 +120,7 @@ define('/assets/note.js', ['websync'], function(WebSync) {
             target.remove();
             exports.updateNav();
           } else if (op === 'Rename') {
-            var finish_rename = function(e) {
+            var finishRename = function(e) {
               // Enter or Escape
               if (!e.keyCode || e.keyCode === 13 || e.keyCode === 27) {
                 e.preventDefault();
@@ -129,7 +129,7 @@ define('/assets/note.js', ['websync'], function(WebSync) {
                 exports.updateNav();
               }
             };
-            $(selectedElem).attr('contenteditable', true).focus().bind('blur.Note', finish_rename).bind('keydown', finish_rename);
+            $(selectedElem).attr('contenteditable', true).focus().bind('blur.Note', finishRename).bind('keydown', finishRename);
           }
         }
       });

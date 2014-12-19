@@ -17,15 +17,15 @@ var config = {},
   redis, postgres;
 
 
-function userAuth(doc_id, user_email, callback) {
+function userAuth(docId, userEmail, callback) {
   var info;
-  postgres.query('SELECT level FROM permissions WHERE file_id = $1 AND user_email = $2', [doc_id, user_email]).on('row', function(row) {
+  postgres.query('SELECT level FROM permissions WHERE file_id = $1 AND user_email = $2', [docId, userEmail]).on('row', function(row) {
     info = row;
   }).on('end', function() {
     if (info) {
       callback(info.level);
     } else {
-      postgres.query('SELECT visibility, default_level FROM ws_files WHERE id = $1', [doc_id]).
+      postgres.query('SELECT visibility, default_level FROM ws_files WHERE id = $1', [docId]).
       on('row', function(row) {
         if (row.visibility === 'private') {
           callback('none');
@@ -51,36 +51,36 @@ function wsConnection(ws) {
   };
   console.log(parts);
   if (parts[2] === 'edit' || parts[2] === 'view') {
-    var doc_id = Base62.decode(parts[1]);
-    console.log('Connection! (Document: ' + doc_id + ')');
+    var docId = Base62.decode(parts[1]);
+    console.log('Connection! (Document: ' + docId + ')');
     var authenticated = false;
     var responded = true;
-    var redis_sock, client_id, user_email, user_id;
+    var redisSock, clientId, userEmail, userId;
 
     ws.sendJSON({
       type: 'connected'
     });
     ws.on('close', function() {
-      if (redis_sock) {
-        redis_sock.quit();
+      if (redisSock) {
+        redisSock.quit();
       }
     });
     ws.on('message', function(message) {
       var data = JSON.parse(message);
       console.log('JSON: ' + message);
       if (data.type === 'auth') {
-        client_id = data.id;
+        clientId = data.id;
         redis.get('websocket:key:' + data.id, function(err, reply) {
           //console.log(["Keys!", reply,data.key]);
-          if (reply === data.key + ':' + doc_id) {
+          if (reply === data.key + ':' + docId) {
             console.log('Client[' + data.id + '] Authed!');
             authenticated = true;
             // TODO: Implement socket verification.
-            redis_sock = redisLib.createClient(config.redis.port, config.redis.host);
-            redis_sock.on('message', function(channel, msg) {
+            redisSock = redisLib.createClient(config.redis.port, config.redis.host);
+            redisSock.on('message', function(channel, msg) {
               console.log('DocMsg[' + channel + '] ' + msg);
               var mdata = JSON.parse(msg);
-              if (mdata.client !== client_id) {
+              if (mdata.client !== clientId) {
                 if (mdata.type === 'client_bounce') {
                   try {
                     ws.send(mdata.data);
@@ -90,23 +90,23 @@ function wsConnection(ws) {
                 }
               }
             });
-            redis_sock.subscribe('doc:' + doc_id);
+            redisSock.subscribe('doc:' + docId);
             var interval;
             var close = function() {
               clearInterval(interval);
               ws.close();
-              redis_sock.quit();
-              redis.get('doc:' + doc_id + ':users', function(err, reply) {
+              redisSock.quit();
+              redis.get('doc:' + docId + ':users', function(err, reply) {
                 // TODO: Handle error
                 var users = JSON.parse(reply);
-                delete users[client_id];
-                redis.set('doc:' + doc_id + ':users', JSON.stringify(users));
-                redis.publish('doc:' + doc_id, JSON.stringify({
+                delete users[clientId];
+                redis.set('doc:' + docId + ':users', JSON.stringify(users));
+                redis.publish('doc:' + docId, JSON.stringify({
                   type: 'client_bounce',
-                  client: client_id,
+                  client: clientId,
                   data: JSON.stringify({
                     type: 'exit_user',
-                    id: client_id
+                    id: clientId
                   })
                 }));
               });
@@ -122,20 +122,20 @@ function wsConnection(ws) {
               }
             }, 30 * 1000);
             ws.on('close', close);
-            redis.expire('websocket:id:' + client_id, 60 * 60 * 24 * 7);
-            redis.expire('websocket:key:' + client_id, 60 * 60 * 24 * 7);
+            redis.expire('websocket:id:' + clientId, 60 * 60 * 24 * 7);
+            redis.expire('websocket:key:' + clientId, 60 * 60 * 24 * 7);
             // Get the users email. This is used for Gravatar and chat.
             redis.get('websocket:id:' + data.id, function(err, email) {
               // Update document currently connected user list. The list is stored in Redis because it doesn't need to persist.
-              redis.get('doc:' + doc_id + ':users', function(err, reply) {
+              redis.get('doc:' + docId + ':users', function(err, reply) {
                 var users = {};
                 if (reply) {
                   users = JSON.parse(reply);
                 }
-                user_id = md5(email.trim().toLowerCase());
-                user_email = email.trim();
-                users[client_id] = {
-                  id: user_id,
+                userId = md5(email.trim().toLowerCase());
+                userEmail = email.trim();
+                users[clientId] = {
+                  id: userId,
                   email: email.trim(),
                   time: new Date()
                 };
@@ -143,9 +143,9 @@ function wsConnection(ws) {
                 _.each(users, function(data, id) {
                   if ((new Date() - data.time) > 60) {
                     delete users[id];
-                    redis.publish('doc:' + doc_id, JSON.stringify({
+                    redis.publish('doc:' + docId, JSON.stringify({
                       type: 'client_bounce',
-                      client: client_id,
+                      client: clientId,
                       data: JSON.stringify({
                         type: 'exit_user',
                         id: id
@@ -153,22 +153,22 @@ function wsConnection(ws) {
                     }));
                   }
                 });
-                redis.set('doc:' + doc_id + ':users', JSON.stringify(users));
-                redis.publish('doc:' + doc_id, JSON.stringify({
+                redis.set('doc:' + docId + ':users', JSON.stringify(users));
+                redis.publish('doc:' + docId, JSON.stringify({
                   type: 'client_bounce',
-                  client: client_id,
+                  client: clientId,
                   data: JSON.stringify({
                     type: 'new_user',
-                    id: client_id,
-                    user: users[client_id]
+                    id: clientId,
+                    user: users[clientId]
                   })
                 }));
                 ws.sendJSON({
                   type: 'info',
-                  user_id: user_id,
+                  user_id: userId,
                   users: users
                 });
-                console.log('[Websocket Client Authed] ID: ' + client_id + ', Email: ' + email);
+                console.log('[Websocket Client Authed] ID: ' + clientId + ', Email: ' + email);
               });
             });
           } else {
@@ -181,12 +181,12 @@ function wsConnection(ws) {
           }
         });
       } else if (authenticated) {
-        userAuth(doc_id, user_email, function(auth_level) {
+        userAuth(docId, userEmail, function(auth_level) {
           var editor = auth_level === 'editor' || auth_level === 'owner';
           if (data.type === 'load_scripts') {
             //console.log("LOADING SCRIPTS");
             var ids = [];
-            postgres.query('SELECT asset_id FROM asset_ws_files WHERE file_id = $1', [doc_id]).
+            postgres.query('SELECT asset_id FROM asset_ws_files WHERE file_id = $1', [docId]).
             on('row', function(row) {
               ids.push(row.asset_id);
             }).
@@ -216,11 +216,11 @@ function wsConnection(ws) {
             });
           } else if (data.type === 'share') {
             if (auth_level === 'owner') {
-              postgres.query('DELETE FROM permissions WHERE file_id = $1 AND user_email = $2', [doc_id, data.email]).
+              postgres.query('DELETE FROM permissions WHERE file_id = $1 AND user_email = $2', [docId, data.email]).
                 //.on('error', function(err) {})
               on('end', function() {
                 if (data.level !== 'delete') {
-                  postgres.query('INSERT INTO permissions (user_email, file_id, level) VALUES ($2, $1, $3)', [doc_id, data.email, data.level]);
+                  postgres.query('INSERT INTO permissions (user_email, file_id, level) VALUES ($2, $1, $3)', [docId, data.email, data.level]);
                 }
               });
             } else {
@@ -232,7 +232,7 @@ function wsConnection(ws) {
           } else if (data.type === 'permission_info') {
             if (auth_level === 'editor' || auth_level === 'owner') {
               var perms;
-              postgres.query('SELECT visibility, default_level FROM ws_files WHERE id = $1', [doc_id]).
+              postgres.query('SELECT visibility, default_level FROM ws_files WHERE id = $1', [docId]).
               on('row', function(row) {
                 perms = row;
               }).
@@ -240,7 +240,7 @@ function wsConnection(ws) {
                 // Check to so if it successfully got the permission level.
                 if (perms) {
                   perms.users = [];
-                  postgres.query('SELECT user_email, level FROM permissions WHERE file_id = $1', [doc_id]).
+                  postgres.query('SELECT user_email, level FROM permissions WHERE file_id = $1', [docId]).
                   on('row', function(row) {
                     perms.users.push(row);
                   }).
@@ -277,7 +277,7 @@ function wsConnection(ws) {
                     } else {
                       crypto.randomBytes(16, function(ex, buf) {
                         var token = buf.toString('hex');
-                        var address = 'websync:document_export:' + doc_id + ':' + token;
+                        var address = 'websync:document_export:' + docId + ':' + token;
                         redis.setex(address, 15 * 60, result, function(err) {
                           if (err) {
                             console.log('REDIS ERROR SETEX:', err);
@@ -302,7 +302,7 @@ function wsConnection(ws) {
           } else if (data.type === 'blob_info') {
             if (editor) {
               var resources = [];
-              postgres.query('SELECT name, edit_time, create_time, content_type, octet_length(data) FROM ws_files WHERE parent_id = $1', [doc_id]).
+              postgres.query('SELECT name, edit_time, create_time, content_type, octet_length(data) FROM ws_files WHERE parent_id = $1', [docId]).
               on('row', function(row) {
                 resources.push(row);
               }).
@@ -319,10 +319,10 @@ function wsConnection(ws) {
               });
             }
           } else if (data.type === 'default_permissions') {
-            userAuth(doc_id, user_email, function(auth) {
+            userAuth(docId, userEmail, function(auth) {
               if (auth === 'owner') {
                 // TODO: Sanitize inputs. But whateva.
-                postgres.query('UPDATE ws_files SET visibility=$1, default_level=$2 WHERE id = $3', [data.visibility, data.default_level, doc_id]);
+                postgres.query('UPDATE ws_files SET visibility=$1, default_level=$2 WHERE id = $3', [data.visibility, data.default_level, docId]);
               } else {
                 ws.sendJSON({
                   type: 'error',
@@ -332,22 +332,22 @@ function wsConnection(ws) {
             });
           } else if (data.type === 'ping') {
             responded = true;
-            redis.get('doc:' + doc_id + ':users', function(err, reply) {
+            redis.get('doc:' + docId + ':users', function(err, reply) {
               var users = {};
               if (reply) {
                 users = JSON.parse(reply);
               }
-              users[client_id] = {
-                id: user_id,
-                email: user_email,
+              users[clientId] = {
+                id: userId,
+                email: userEmail,
                 time: new Date()
               };
               _.each(users, function(data, id) {
                 if ((new Date() - data.time) > 60) {
                   delete users[id];
-                  redis.publish('doc:' + doc_id, JSON.stringify({
+                  redis.publish('doc:' + docId, JSON.stringify({
                     type: 'client_bounce',
-                    client: client_id,
+                    client: clientId,
                     data: JSON.stringify({
                       type: 'exit_user',
                       id: id
@@ -355,11 +355,11 @@ function wsConnection(ws) {
                   }));
                 }
               });
-              redis.set('doc:' + doc_id + ':users', JSON.stringify(users));
+              redis.set('doc:' + docId + ':users', JSON.stringify(users));
             });
           } else if (data.type === 'config') {
             if (data.action === 'get') {
-              postgres.query('SELECT config FROM ws_files WHERE id = $1', [doc_id]).
+              postgres.query('SELECT config FROM ws_files WHERE id = $1', [docId]).
               on('row', function(row) {
                 if (data.space === 'document') {
                   var doc_data = JSON.parse(row.config);
@@ -376,30 +376,30 @@ function wsConnection(ws) {
               });
             } // else if (data.action == 'set') {}
           } else if (data.type === 'data_patch' && editor) {
-            postgres.query('SELECT body FROM ws_files WHERE id = $1', [doc_id]).
+            postgres.query('SELECT body FROM ws_files WHERE id = $1', [docId]).
             on('row', function(row) {
               var body = JSON.parse(row.body);
               try {
                 if (data.encrypted) {
-                  postgres.query('UPDATE ws_files SET edit_time=$2 WHERE id = $1', [doc_id, new Date()]);
+                  postgres.query('UPDATE ws_files SET edit_time=$2 WHERE id = $1', [docId, new Date()]);
                 } else {
                   // Apply the patch directly if not encrypted.
                   jsonpatch.apply(body, data.patch);
-                  postgres.query('UPDATE ws_files SET body=$2,edit_time=$3 WHERE id = $1', [doc_id, JSON.stringify(body), new Date()]);
+                  postgres.query('UPDATE ws_files SET body=$2,edit_time=$3 WHERE id = $1', [docId, JSON.stringify(body), new Date()]);
                 }
                 var id = -1;
-                postgres.query('SELECT id FROM changes WHERE file_id=$1 ORDER BY time DESC LIMIT 1;', [doc_id]).on('row', function(row) {
+                postgres.query('SELECT id FROM changes WHERE file_id=$1 ORDER BY time DESC LIMIT 1;', [docId]).on('row', function(row) {
                   id = row.id;
                 }).on('end', function() {
                   var patch = data.patch;
                   if (!_.isString(patch)) {
                     patch = JSON.stringify(data.patch);
                   }
-                  postgres.query('INSERT INTO changes (time, patch, file_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)', [doc_id, patch, new Date(), user_email, id]);
+                  postgres.query('INSERT INTO changes (time, patch, file_id, user_email, parent) VALUES ($3, $2, $1, $4, $5)', [docId, patch, new Date(), userEmail, id]);
                 });
-                redis.publish('doc:' + doc_id, JSON.stringify({
+                redis.publish('doc:' + docId, JSON.stringify({
                   type: 'client_bounce',
-                  client: client_id,
+                  client: clientId,
                   data: message
                 }));
               } catch (e) {
@@ -411,22 +411,22 @@ function wsConnection(ws) {
               }
             });
           } else if (data.type === 'name_update' && editor) {
-            console.log('Update', doc_id, data.name);
-            postgres.query('UPDATE ws_files SET name=$2,edit_time=$3 WHERE id = $1', [doc_id, data.name, new Date()], function(err) {
+            console.log('Update', docId, data.name);
+            postgres.query('UPDATE ws_files SET name=$2,edit_time=$3 WHERE id = $1', [docId, data.name, new Date()], function(err) {
               if (err) {
                 throw err;
               }
             });
-            redis.publish('doc:' + doc_id, JSON.stringify({
+            redis.publish('doc:' + docId, JSON.stringify({
               type: 'client_bounce',
-              client: client_id,
+              client: clientId,
               data: message
             }));
           } else if (data.type === 'client_event') {
-            data.from = client_id;
-            redis.publish('doc:' + doc_id, JSON.stringify({
+            data.from = clientId;
+            redis.publish('doc:' + docId, JSON.stringify({
               type: 'client_bounce',
-              client: client_id,
+              client: clientId,
               data: JSON.stringify(data)
             }));
           } else if (data.type === 'assets') {
@@ -443,14 +443,14 @@ function wsConnection(ws) {
                 });
               });
             } else if (data.action === 'add' && editor) {
-              postgres.query('INSERT INTO asset_ws_files (file_id, asset_id) VALUES ($1, $2)', [doc_id, data.id]);
+              postgres.query('INSERT INTO asset_ws_files (file_id, asset_id) VALUES ($1, $2)', [docId, data.id]);
             } else if (data.action === 'delete' && editor) {
-              postgres.query('DELETE FROM asset_ws_files WHERE file_id = $1 AND asset_id = $2', [doc_id, data.id]);
+              postgres.query('DELETE FROM asset_ws_files WHERE file_id = $1 AND asset_id = $2', [docId, data.id]);
             }
           } else if (data.type === 'diffs') {
             if (data.action === 'list') {
               var patches = [];
-              postgres.query('SELECT time, patch, user_email, id, parent FROM changes WHERE file_id=$1 AND time>$2 ORDER BY time ASC', [doc_id, new Date(data.after || 0)]).on('row', function(row) {
+              postgres.query('SELECT time, patch, user_email, id, parent FROM changes WHERE file_id=$1 AND time>$2 ORDER BY time ASC', [docId, new Date(data.after || 0)]).on('row', function(row) {
                 patches.push(row);
               }).on('end', function() {
                 ws.sendJSON({
@@ -464,7 +464,7 @@ function wsConnection(ws) {
             if (data.action === 'add') {
               _.each(data.keys, function(keys, type) {
                 _.each(keys, function(key) {
-                  postgres.query('INSERT INTO keys (type, body, user_email, created) VALUES ($1, $2, $3, $4)', [type, key, user_email, new Date()]);
+                  postgres.query('INSERT INTO keys (type, body, user_email, created) VALUES ($1, $2, $3, $4)', [type, key, userEmail, new Date()]);
                 });
               });
             } else if (data.action === 'get') {
@@ -472,7 +472,7 @@ function wsConnection(ws) {
                 public: [],
                 private: []
               };
-              postgres.query('SELECT type, body, created FROM keys WHERE user_email=$1', [user_email]).
+              postgres.query('SELECT type, body, created FROM keys WHERE user_email=$1', [userEmail]).
               on('row', function(key) {
                 keys[key.type].push(key);
               }).on('end', function() {
@@ -483,8 +483,8 @@ function wsConnection(ws) {
               });
             }
           } else if (data.type === 'encrypt_document') {
-            postgres.query('INSERT INTO symmetric_keys (body, created, user_email, ws_file_id) VALUES ($1, $2, $3, $4)', [data.symmetricKey.key, new Date(), user_email, doc_id]);
-            postgres.query('UPDATE ws_files SET body=$2,edit_time=$3,encrypted=true WHERE id = $1', [doc_id, JSON.stringify(data.body), new Date()]);
+            postgres.query('INSERT INTO symmetric_keys (body, created, user_email, ws_file_id) VALUES ($1, $2, $3, $4)', [data.symmetricKey.key, new Date(), userEmail, docId]);
+            postgres.query('UPDATE ws_files SET body=$2,edit_time=$3,encrypted=true WHERE id = $1', [docId, JSON.stringify(data.body), new Date()]);
             // TODO: encrypt patches
           }
         });
@@ -495,8 +495,8 @@ function wsConnection(ws) {
 
 fs.readFile('./config/config.json', function(err, buffer) {
   // Modified JSON format that allows comments.
-  var config_lines = '{\n' + buffer.toString() + '\n}';
-  config = JSON.parse(stripJsonComments(config_lines));
+  var configLines = '{\n' + buffer.toString() + '\n}';
+  config = JSON.parse(stripJsonComments(configLines));
   postgres = new pg.Client('tcp://' + config.postgres);
   postgres.connect();
   redis = redisLib.createClient(config.redis.port, config.redis.host);

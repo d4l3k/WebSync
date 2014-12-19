@@ -82,10 +82,10 @@ define('crypto', function() {
     r.readAsText(f);
   });
   $('#encryptionModal #saveAndFinish').on('click', function() {
-    var save_priv = $('#storePrivOnServer').val() === 'on';
+    var savePriv = $('#storePrivOnServer').val() === 'on';
     var puKeys = [window.localStorage['websync-key-public']];
     var prKeys = [];
-    if (save_priv) {
+    if (savePriv) {
       prKeys = [window.localStorage['websync-key-private']];
     }
     require('websync').connection.sendJSON({
@@ -378,13 +378,13 @@ define('crypto', function() {
       execute('decryptWithSymmetricKey', [msg], callback);
     } else {
       var count = msg.length;
-      var num_decrypted = 0;
+      var numDecrypted = 0;
       var decrypted = new Array(count);
       _.each(msg, function(msg, i) {
-        execute('decryptWithSymmetricKey', [msg], function(decrypted_msg) {
-          decrypted[i] = decrypted_msg;
-          num_decrypted += 1;
-          if (num_decrypted === count) {
+        execute('decryptWithSymmetricKey', [msg], function(decryptedMsg) {
+          decrypted[i] = decryptedMsg;
+          numDecrypted += 1;
+          if (numDecrypted === count) {
             callback(decrypted);
           }
         });
@@ -433,7 +433,7 @@ define('crypto', function() {
     // To encrypt the document we need to encrypt the blob, patches and shared list.
     // TODO: Encrypt patches and shared list.
     WebSyncAuth.encrypted = true;
-    WebSyncData.encryption_date = new Date();
+    WebSyncData.encryptionDate = new Date();
     exports.signAndEncryptWithSymmetricKey(JSON.stringify(WebSyncData), function(blob) {
       WS.connection.sendJSON({
         type: 'encrypt_document',

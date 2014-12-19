@@ -5,6 +5,14 @@
 
 define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables, Chart) {
   'use strict';
+
+  /**
+   * The WebSync chart plugin.
+   *
+   * @exports charts
+   * @module charts
+   */
+
   var exports = {
 
     /**
@@ -146,7 +154,9 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       return [chart, chartObj];
     },
 
-    // Reset the chart insertion modal.
+    /**
+     * Reset the chart insertion modal.
+     */
     clearModal: function() {
       $('#chartType').val('Line');
 
@@ -161,7 +171,9 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       tables.clearSelect();
     },
 
-    // Redraw the preview chart.
+    /**
+     * Redraw the preview chart.
+     */
     updateModal: function() {
       var chartType = $('#chartType').val().replace(/ /g, '');
       $('.ChartContainer .Chart').remove();
@@ -186,7 +198,9 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       });
     },
 
-    // Code to disable the function.
+    /**
+     * Code to disable the function.
+     */
     disable: function() {
       $('*').unbind('.Chart');
       $('*').undelegate('.Chart');

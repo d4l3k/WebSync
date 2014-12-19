@@ -37,7 +37,7 @@ define(['websync'], function(WS) {
       exports.updateProperties();
     },
 
-    // Updates the properties pane from the selected slide.
+    /** Updates the properties pane from the selected slide. */
     updateProperties: function() {
       var obj = exports.css_scene.children[exports.activeIndex];
       _.each(['Position', 'Rotation'], function(type) {
@@ -49,7 +49,7 @@ define(['websync'], function(WS) {
       });
     },
 
-    // Updates the position of the slide from the property pane.
+    /** Updates the position of the slide from the property pane. */
     changePositionOfSlide: function() {
       var axis = 'x';
       if ($(this).hasClass('y')) {
@@ -64,7 +64,7 @@ define(['websync'], function(WS) {
       return obj;
     },
 
-    // Triggers a resize of the awesome document.
+    /** Triggers a resize of the awesome document. */
     resize: function() {
       var width = $('.content_container').width(),
         height = $('.content_container').height(),
@@ -101,7 +101,7 @@ define(['websync'], function(WS) {
       return obj;
     },
 
-    // Triggers the document to update the canvas and positions.
+    /** Triggers the document to update the canvas and positions. */
     render: function() {
       var td = 1.0;
       var c_time = new Date();
@@ -121,7 +121,7 @@ define(['websync'], function(WS) {
       }
     },
 
-    // Whether the canvas is marked dirty.
+    /** Whether the canvas is marked dirty. */
     dirty: true,
 
     /**
@@ -143,7 +143,7 @@ define(['websync'], function(WS) {
       easing(TWEEN.Easing.Quadratic.InOut).onUpdate(markDirty).start();
     },
 
-    // Triggers an update on the menu.
+    /** Triggers an update on the menu. */
     updateMenu: function() {
       $('#slideView').html('');
       $(exports.css_scene.children).each(function(index, slide_obj) {

@@ -21,10 +21,14 @@ define(['websync'], function(WS) {
    */
 
   var exports = {
-    // Keeps track of the size of the cell to poll for changes.
+    /**
+     * Keeps track of the size of the cell to poll for changes.
+     */
     lastSize: '',
 
-    // An observer to update position and headers if the cell size changes.
+    /**
+     * An observer to update position and headers if the cell size changes.
+     */
     observer: function() {
       var bounding_data = JSON.stringify(exports.selectedElem.getBoundingClientRect());
       if (bounding_data !== exports.lastSize) {
@@ -38,10 +42,14 @@ define(['websync'], function(WS) {
       }
     },
 
-    // Is the selection active?
+    /**
+     * Is the selection active?
+     */
     selectionActive: false,
 
-    // Disable the axis position. Only used for the Spreadsheet format.
+    /**
+     * Disable the axis position. Only used for the Spreadsheet format.
+     */
     disableAxisPositioning: false,
 
     /**
@@ -126,7 +134,9 @@ define(['websync'], function(WS) {
       });
     },
 
-    // Disables the plugin. This has to be set for possible plugin unloading.
+    /**
+     * Disables the plugin. This has to be set for possible plugin unloading.
+     */
     disable: function() {
       $('.Table').remove();
       WS.updateRibbon();
@@ -134,7 +144,9 @@ define(['websync'], function(WS) {
       $('*').undelegate('.Tables');
     },
 
-    // Render the titles for the table header.
+    /**
+     * Render the titles for the table header.
+     */
     redrawTitles: function() {
       $('.Table.axis').remove();
       if (exports.selectedElem) {
@@ -165,16 +177,17 @@ define(['websync'], function(WS) {
       if ($('.Table.axis').length === 0) {
         var size = exports.tableSize();
         var nodes = '<table class="Table axis" id="x"><thead><tr>';
-        for (var i = 0; i < size[0]; i++) {
-          var elem = exports.posToElem(i, 0);
-          var bounding = elem.getBoundingClientRect();
+        var i, elem, bounding;
+        for (i = 0; i < size[0]; i++) {
+          elem = exports.posToElem(i, 0);
+          bounding = elem.getBoundingClientRect();
           nodes += '<th style="width: ' + (bounding.width - 1).toFixed(0) + 'px">' + exports.columnLabel(i) + '</th>';
         }
         var table_count = $('.content_container table').index(exports.primaryTable()) + 1;
         var name = 'Table ' + table_count;
         nodes += '</tr></thead></table><table class="Table axis" id="y"><thead><tr><th>' + name + '</th></tr>';
-        for (var i = 0; i < size[1]; i++) {
-          var elem = exports.posToElem(0, i);
+        for (i = 0; i < size[1]; i++) {
+          elem = exports.posToElem(0, i);
           nodes += '<tr><th style="height: ' + ($(elem).height() + 1) + 'px">' + (i + 1) + '</th></tr>';
         }
         nodes += '</thead></table>';
@@ -188,26 +201,33 @@ define(['websync'], function(WS) {
       exports.cursorUpdate();
       exports.enterLeaveBinds();
     },
+
+    /**
+     * Update the header
+     */
     headerUpdate: function() {
       var size = exports.tableSize();
       var x_nodes = $('.axis#x th');
-      for (var i = 0; i < size[0]; i++) {
-        var elem = exports.posToElem(i, 0);
-        var bounding = elem.getBoundingClientRect();
+      var i, elem, bounding;
+      for (i = 0; i < size[0]; i++) {
+        elem = exports.posToElem(i, 0);
+        bounding = elem.getBoundingClientRect();
         x_nodes[i].style.width = (bounding.width) + 'px';
-        //x_nodes.eq(i).css({width:(bounding.width-1).toFixed(0)});//'+exports.columnLabel(i);
       }
       var y_nodes = $('.axis#y th');
-      for (var i = 0; i < size[1]; i++) {
-        var elem = exports.posToElem(0, i);
-        var bounding = elem.getBoundingClientRect();
+      for (i = 0; i < size[1]; i++) {
+        elem = exports.posToElem(0, i);
+        bounding = elem.getBoundingClientRect();
         y_nodes[i + 1].style.height = (bounding.height) + 'px';
-        //y_nodes.eq(i).css({height: (bounding.height-1)});//+'px">'+(i+1);
       }
-      var table = $(exports.primaryTable());
-      //$(".Table.axis#x").width(table.width()+2);
-      //$(".Table.axis#y").height(table.height());
     },
+
+    /**
+     * Select a cell using coordinates.
+     *
+     * @param dColumn {Number} the cell column
+     * @param dRow {Number} the cell row
+     */
     cursorMove: function(dColumn, dRow) {
       exports.selectedEditable(false);
       var pos = exports.selectedPos();
@@ -219,8 +239,14 @@ define(['websync'], function(WS) {
         exports.cursorSelect(new_td);
       }
     },
+
+    /**
+     * Update the position of the table header axis.
+     */
     axisPosition: function() {
-      if (!exports.selectedElem) return;
+      if (!exports.selectedElem) {
+        return;
+      }
       var table = $(exports.primaryTable());
       var offset = table.offset();
       var box = table[0].getBoundingClientRect();
@@ -233,7 +259,11 @@ define(['websync'], function(WS) {
         top: offset.top - 16
       });
     },
-    cursorUpdate: function(pos) {
+
+    /**
+     * Update the position of the cursor.
+     */
+    cursorUpdate: function() {
       var pos = $(exports.selectedElem).offset();
       pos.top += 2;
       pos.left += 2;
@@ -243,12 +273,11 @@ define(['websync'], function(WS) {
       $('#table_cursor').offset({
           left: pos.left,
           top: pos.top
-        })
-        .height(elem_box.height - 4)
-        .width(elem_box.width - 6)
-        .get(0).scrollIntoViewIfNeeded();
+        }).height(elem_box.height - 4).
+        width(elem_box.width - 6).
+        get(0).scrollIntoViewIfNeeded();
 
-      if ((table.css('position') === 'absolute' || pos)) {
+      if (table.css('position') === 'absolute' || pos) {
         if (!exports.disableAxisPositioning) {
           exports.axisPosition();
         }
@@ -257,7 +286,9 @@ define(['websync'], function(WS) {
       }
     },
 
-    // Gets values in the format of "Name.A1:B6"
+    /**
+     * Gets values in the format of "Name.A1:B6"
+     */
     getCellData: function(range) {
       var bits = range.split('.');
       var table; // = exports.primaryTable();
@@ -267,9 +298,8 @@ define(['websync'], function(WS) {
         if (search.length >= 1) {
           table = search.get(0);
         } else if (name.match(/^Table \d+$/)) {
-          var index = parseInt(name.split(' ')[1]) - 1;
-          table = $('.content_container table')
-            .get(index);
+          var index = parseInt(name.split(' ')[1], 10) - 1;
+          table = $('.content_container table').get(index);
         }
       }
       var parts = _.last(bits).split(':');
@@ -278,7 +308,7 @@ define(['websync'], function(WS) {
       if (parts.length === 2) {
         second = exports.coordsFromLabel(parts[1]);
       }
-      var top_left, bottom_right, size;
+      var top_left, bottom_right;
       if (second) {
         // Get top left cell.
         top_left = [
@@ -298,16 +328,20 @@ define(['websync'], function(WS) {
         bottom_right[1] - top_left[1] + 1
       ];
       var data = [];
-      var elem_in_table = $(table).find('td, th')[0] || window._tmp_elem;
-      for (var x = 0; x < size[0]; x++) {
-        for (var y = 0; y < size[1]; y++) {
-          if (!data[x]) data[x] = [];
-          var elem = exports.posToElem(top_left[0] + x, top_left[1] + y,
+      var elem_in_table = $(table).find('td, th')[0] || window._tmpElem;
+
+      var x, y, elem, val;
+      for (x = 0; x < size[0]; x++) {
+        for (y = 0; y < size[1]; y++) {
+          if (!data[x]) {
+            data[x] = [];
+          }
+          elem = exports.posToElem(top_left[0] + x, top_left[1] + y,
             elem_in_table);
-          if (window._tmp_elem && elem === window._tmp_elem) {
+          if (window._tmpElem && elem === window._tmpElem) {
             throw "Error: Cell can't select it's own content.";
           }
-          var val = $(elem).text();
+          val = $(elem).text();
           if (parseFloat(val).toString() === val) {
             val = parseFloat(val);
           }
@@ -319,9 +353,17 @@ define(['websync'], function(WS) {
       }
       return data;
     },
+
+    /**
+     * Eval the content of a cell.
+     * TODO: Move into a webworker to sandbox
+     *
+     * @param js {String} the cell contents to execute
+     * @param elem {Element} the cell running the JS
+     */
     evalJS: function(js, elem) {
       // Hack. :(
-      window._tmp_elem = elem;
+      window._tmpElem = elem;
 
       var c = exports.getCellData;
       var out;
@@ -330,48 +372,66 @@ define(['websync'], function(WS) {
       } catch (e) {
         out = '!' + e;
       }
-      delete window._tmp_elem;
+      delete window._tmpElem;
       return out;
     },
+
+    /**
+     * Run the nodes javascript and update it's text with the result.
+     *
+     * @param node {Element} the element to run
+     */
     updateJS: function(node) {
       var data = $(node).data().content;
       if (data[0] === '=') {
         $(node).text(exports.evalJS(data.slice(1), node));
       }
     },
+
+    /**
+     * Execute all equations in a document.
+     */
     updateAllJS: function() {
       var nodes = $('.content table td:data(content)');
       _.each(nodes, function(node) {
         exports.updateJS(node);
       });
     },
+
+    /**
+     * Make the currently selected element editable or not.
+     *
+     * @param edit {Boolean} whether the selected cell should be editable
+     */
     selectedEditable: function(edit) {
-      if (!edit) {
-        exports.selectedElem.contentEditable = 'inherit';
+      var style, contentEditable;
+      if (edit) {
+        contentEditable = true;
+        style = 'dashed';
+        var data = $(exports.selectedElem).data();
+        if (data.content) {
+          $(exports.selectedElem).text(data.content);
+        }
+      } else {
+        contentEditable = 'inherit';
+        style = 'solid';
         var text = $(exports.selectedElem).text();
         if (text[0] === '=') {
           $(exports.selectedElem).data('content', text);
         }
         exports.updateAllJS();
-        $('#table_cursor').css({
-          borderStyle: 'solid',
-          outlineStyle: 'solid'
-        });
-        $('#ribbon_buttons a:contains("Table")').click();
-      } else {
-        exports.selectedElem.contentEditable = true;
-        var data = $(exports.selectedElem).data();
-        if (data.content) {
-          $(exports.selectedElem).text(data.content);
-        }
-        $('#table_cursor').css({
-          borderStyle: 'dashed',
-          outlineStyle: 'dashed'
-        });
-        $('#ribbon_buttons a:contains("Text")').click();
-        //exports.setEndOfContenteditable(exports.selectedElem);
       }
+      exports.selectedElem.contentEditable = contentEditable;
+      $('#table_cursor').css({
+        borderStyle: style,
+        outlineStyle: style
+      });
+      $('#ribbon_buttons a:contains("Table")').click();
     },
+
+    /**
+     * Clear the table selection.
+     */
     clearSelect: function() {
       if (exports.selected) {
         exports.selected = false;
@@ -392,7 +452,15 @@ define(['websync'], function(WS) {
         exports.enterLeaveBinds();
       }
     },
+
+    /**
+     * The currently selected table.
+     */
     table: null,
+
+    /**
+     * Runs enterTable or leaveTable depending.
+     */
     enterLeaveBinds: function() {
       if (exports.selected) {
         var primary = exports.primaryTable();
@@ -410,14 +478,26 @@ define(['websync'], function(WS) {
         }
       }
     },
+
+    /**
+     * Handler for table enter that registers key and resize binds, and
+     * updates the header and cursor.
+     *
+     * @param table {Element} the table being entered
+     */
     enterTable: function(table) {
-      //$(table).children().on("keydown.TablesTemp", exports.keypressHandler);
       $(document).on('keydown.TablesTemp', exports.keypressHandler);
-      $('.content_container').delegate('resize.Tables', 'table', function(e) {
+      $('.content_container').delegate('resize.Tables', 'table', function() {
         exports.cursorUpdate();
         exports.headerUpdate();
       });
     },
+
+    /**
+     * Handler for table leave that unregisters the bindings.
+     *
+     * @param table {Element} the table being left
+     */
     leaveTable: function(table) {
       $(table).unbind('.TablesTemp');
       $(table).undelegate('.TablesTemp');
@@ -426,6 +506,10 @@ define(['websync'], function(WS) {
       $(document).undelegate('.TablesTemp');
       $(document).off('.TablesTemp');
     },
+
+    /**
+     * Update the area selection.
+     */
     updateSelectedArea: function() {
       $('.Table.axis th').removeClass('active');
       if (!exports.selected || exports.primaryTable() !== exports.primaryTable(exports.selectionEnd)) {
@@ -435,14 +519,15 @@ define(['websync'], function(WS) {
           $($('.Table.axis#y').children().children()[exports.selectedPos()[1]]).children().addClass('active');
         }
       } else {
+        var top, bottom, left, right;
         var end = exports.selectionEnd || exports.selectedElem;
         if (exports.selectionEnd && exports.selectionEnd !== exports.selectedElem) {
           var start_box = exports.selectedElem.getBoundingClientRect();
           var end_box = end.getBoundingClientRect();
-          var top = start_box.top < end_box.top ? start_box.top : end_box.top;
-          var bottom = start_box.bottom > end_box.bottom ? start_box.bottom : end_box.bottom;
-          var left = start_box.left < end_box.left ? start_box.left : end_box.left;
-          var right = start_box.right > end_box.right ? start_box.right : end_box.right;
+          top = start_box.top < end_box.top ? start_box.top : end_box.top;
+          bottom = start_box.bottom > end_box.bottom ? start_box.bottom : end_box.bottom;
+          left = start_box.left < end_box.left ? start_box.left : end_box.left;
+          right = start_box.right > end_box.right ? start_box.right : end_box.right;
           $('#table_selection').show().offset({
             left: left,
             top: top
@@ -455,15 +540,17 @@ define(['websync'], function(WS) {
         var tpos_start = exports.selectedPos();
         var tpos_end = exports.selectedPos(end);
 
-        var top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
-        var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
-        var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
-        var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
+        top = tpos_start[1] < tpos_end[1] ? tpos_start[1] : tpos_end[1];
+        bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
+        left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
+        right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
         $('.Table.axis#x').children().children().children().slice(left, right + 1).addClass('active');
         $('.Table.axis#y').children().children().slice(top + 1, bottom + 2).children().addClass('active');
-        for (var y = top; y <= bottom; y++) {
+
+        var x, y;
+        for (y = top; y <= bottom; y++) {
           selection_html += '<tr>';
-          for (var x = left; x <= right; x++) {
+          for (x = left; x <= right; x++) {
             selection_html += '<td>' + exports.selectedElem.parentElement.parentElement.children[y].children[x].innerHTML + '</td>';
           }
           selection_html += '</tr>';
@@ -480,6 +567,10 @@ define(['websync'], function(WS) {
         }
       }
     },
+
+    /**
+     * Set everything in the current selection to be ''.
+     */
     emptySelection: function() {
       var end = exports.selectionEnd || exports.selectedElem;
       var tpos_start = exports.selectedPos();
@@ -489,14 +580,22 @@ define(['websync'], function(WS) {
       var bottom = tpos_start[1] > tpos_end[1] ? tpos_start[1] : tpos_end[1];
       var left = tpos_start[0] < tpos_end[0] ? tpos_start[0] : tpos_end[0];
       var right = tpos_start[0] > tpos_end[0] ? tpos_start[0] : tpos_end[0];
-      for (var y = top; y <= bottom; y++) {
-        for (var x = left; x <= right; x++) {
-          var node = exports.selectedElem.parentElement.parentElement.children[y].children[x];
+
+      var x, y, node;
+      for (y = top; y <= bottom; y++) {
+        for (x = left; x <= right; x++) {
+          node = exports.selectedElem.parentElement.parentElement.children[y].children[x];
           node.innerHTML = '';
           $(node).data('content', null);
         }
       }
     },
+
+    /**
+     * Move cursor to the end of the content editable element (usually a cell or td).
+     *
+     * @param contentEditableElement {Element} the element to move cursor to the end of.
+     */
     setEndOfContenteditable: function(contentEditableElement) {
       var range, selection;
       if (document.createRange) //Firefox, Chrome, Opera, Safari, IE 9+
@@ -507,40 +606,81 @@ define(['websync'], function(WS) {
         selection = window.getSelection(); //get the selection object (allows you to change selection)
         selection.removeAllRanges(); //remove any selections already made
         selection.addRange(range); //make the range you have just created the visible selection
-      } else if (document.selection) //IE 8 and lower
-      {
+      } else if (document.selection) { //IE 8 and lower
         range = document.body.createTextRange(); //Create a range (a range is a like the selection but invisible)
         range.moveToElementText(contentEditableElement); //Select the entire contents of the element with the range
         range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
         range.select(); //Select the range (make it the visible selection
       }
     },
+
+    /**
+     * Return the primary table associated with the element.
+     *
+     * @param elem {Element} the child element
+     * @return {Element}
+     */
     primaryTable: function(elem) {
-      return (elem || exports.selectedElem).parentElement.parentElement.parentElement;
+      return $(elem || exports.selectedElem).parents('table')[0];
     },
+
+    /**
+     * Returns the element corresponding to the column, row coordinates in the
+     * table with the element.
+     *
+     * @param x {Number} the column
+     * @param y {Number} the row
+     * @param elem {Element} an element in the table of interest.
+     * @return {Element}
+     */
     posToElem: function(x, y, elem) {
       if (!elem) {
         elem = exports.selectedElem;
       }
-      return $(elem).parent().parent().children().eq(y).children()[x];
+      return exports.primaryTable(elem).children('tr').eq(y).children('td')[x];
     },
+
+    /**
+     * Return the position of the target element
+     *
+     * @param targetElement {Element} the element of interest
+     * @return {Number[]} An array of column, row.
+     */
     selectedPos: function(targetElem) {
       var child = (targetElem || exports.selectedElem);
       var column = 0;
       while ((child = child.previousSibling) !== null) {
-        if (child.nodeName === 'TD' || child.nodeName === 'TH')
+        if (child.nodeName === 'TD' || child.nodeName === 'TH') {
           column++;
+        }
       }
       child = (targetElem || exports.selectedElem).parentElement;
       var row = 0;
-      while ((child = child.previousSibling) !== null)
+      while ((child = child.previousSibling) !== null) {
         row++;
+      }
       return [column, row];
     },
+
+    /**
+     * Returns the table size in [column, row] counts.
+     *
+     * @return {Number[]} [column, row]
+     */
     tableSize: function() {
-      return [$(exports.selectedElem).parent().children().length, $(exports.selectedElem).parent().parent().children().length];
+      return [
+        $(exports.primaryTable()).children('tr').first().children('td').length,
+        $(exports.primaryTable()).children('tr').length
+      ];
     },
-    // http://stackoverflow.com/questions/8603480/how-to-create-a-function-that-converts-a-number-to-a-bijective-hexavigesimal
+
+    /**
+     * Returns the column label from the column number. Ex: '0' -> 'A'
+     * http://stackoverflow.com/questions/8603480/how-to-create-a-function-that-converts-a-number-to-a-bijective-hexavigesimal
+     *
+     * @param a {Number} the column number
+     * @return {String} the formated number
+     */
     columnLabel: function(a) {
       var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       // First figure out how many digits there are.
@@ -592,6 +732,7 @@ define(['websync'], function(WS) {
   $('.ribbon').append(JST['templates/tables-ribbon']({}));
   $('.content').append(JST['templates/tables-selection']({}));
   $('#Insert').append(JST['templates/tables-insert']({}));
+
   $('#table').bind('click.Tables', function() {
     var newTable = $(JST['templates/tables-new']({}));
     WS.insertAtCursor(newTable);

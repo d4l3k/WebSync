@@ -1,5 +1,5 @@
-# WebDAV accessor methods for a WSFile.
 module WebSync
+  # WebDAV accessor methods for a WSFile.
   class FileResource < DAV4Rack::Resource
     include DAV4Rack::Utils
     attr_accessor :file, :ws_user

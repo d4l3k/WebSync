@@ -33,10 +33,10 @@ define('websync', ['crypto'], function(crypto) {
     /** Creates the websocket for communication. */
     webSocketStart: function() {
       var protocol = 'ws';
-      var path = window.location.hostname + ':' + WebSyncAuth.websocket_port;
+      var path = window.location.hostname + ':' + WebSyncAuth.websocketPort;
       if (window.location.protocol === 'https:') {
         protocol = 'wss';
-        path = WebSyncAuth.websocket_url;
+        path = WebSyncAuth.websocketUrl;
       }
       WebSync.connection = new WebSocket(protocol + '://' + path + window.location.pathname);
       _.each(WebSync.webSocketCallbacks, function(f, n) {
@@ -97,9 +97,9 @@ define('websync', ['crypto'], function(crypto) {
             e(data);
           });
         }
-        if (data.req_id && WS.backendCommandCallBacks[data.req_id]) {
-          WS.backendCommandCallBacks[data.req_id](data);
-          delete WS.backendCommandCallBacks[data.req_id];
+        if (data.reqId && WS.backendCommandCallBacks[data.reqId]) {
+          WS.backendCommandCallBacks[data.reqId](data);
+          delete WS.backendCommandCallBacks[data.reqId];
         }
         if (data.type === 'scripts') {
           // Load scripts from server.
@@ -162,10 +162,10 @@ define('websync', ['crypto'], function(crypto) {
           table.html(html);
         } else if (data.type === 'config') {
           if (data.action === 'get') {
-            var callback = WebSync._config_callbacks[data.id];
+            var callback = WebSync._configCallbacks[data.id];
             if (callback) {
               callback(data.property, data.value, data.space);
-              delete WebSync._config_callbacks[data.id];
+              delete WebSync._configCallbacks[data.id];
             }
           }
         } else if (data.type === 'download_token') {
@@ -256,7 +256,7 @@ define('websync', ['crypto'], function(crypto) {
             });
           };
           if (WebSyncAuth.encrypted) {
-            crypto.decryptWithSymmetricKey(data.encrypted_blob, function(blob) {
+            crypto.decryptWithSymmetricKey(data.encryptedBlob, function(blob) {
               var decrypted = JSON.parse(blob);
               decrypted.from = data.from;
               announceEvent(decrypted);
@@ -274,7 +274,7 @@ define('websync', ['crypto'], function(crypto) {
           children.get(3).innerText = data.atype;
           $('#assets tbody').append(row);
           $(children).find('input').bootstrapSwitch('state', ($("script[src='" + data.url + "']").length > 0), true);
-        } else if (data.type === 'diff_list' && !data.req_id) {
+        } else if (data.type === 'diff_list' && !data.reqId) {
           var processPatches = function(patches) {
             WebSync.patches = patches;
             _.each(WebSync.patches, function(patch) {
@@ -446,7 +446,7 @@ define('websync', ['crypto'], function(crypto) {
     selectionRestore: function(sel) {
       if (sel.active) {
         // Find all #text nodes.
-        var text_nodes = $('.content').find(':not(iframe)').addBack().contents().filter(function() {
+        var textNodes = $('.content').find(':not(iframe)').addBack().contents().filter(function() {
           return this.nodeType === 3;
         });
         var startNode, endNode;
@@ -467,7 +467,7 @@ define('websync', ['crypto'], function(crypto) {
 
         // Locate the start & end #text nodes based on a Levenstein string distance.
         if (sel.startText) {
-          text_nodes.each(function(index, node) {
+          textNodes.each(function(index, node) {
             var dist = levenshteinenator(node.nodeValue, sel.startText);
             if (dist < startNodeDist) {
               startNode = node;
@@ -481,11 +481,11 @@ define('websync', ['crypto'], function(crypto) {
           });
         } else {
           // Fallback to setting selection at beginning of the document.
-          var start_of_doc = $('.content [contenteditable]')[0];
+          var startOfDoc = $('.content [contenteditable]')[0];
           if (!startNode)
-            startNode = start_of_doc;
+            startNode = startOfDoc;
           if (!endNode)
-            endNode = start_of_doc;
+            endNode = startOfDoc;
         }
         // Update the text range.
         var range = document.createRange();
@@ -508,10 +508,10 @@ define('websync', ['crypto'], function(crypto) {
           from: WebSyncAuth.id,
           data: data
         });
-        crypto.signAndEncryptWithSymmetricKey(blob, function(encrypted_blob) {
+        crypto.signAndEncryptWithSymmetricKey(blob, function(encryptedBlob) {
           WebSync.connection.sendJSON({
             type: 'client_event',
-            encrypted_blob: encrypted_blob
+            encryptedBlob: encryptedBlob
           });
         });
       } else {
@@ -537,17 +537,17 @@ define('websync', ['crypto'], function(crypto) {
         ['Raw Text', 'txt']
       ];
       var buttons = '';
-      _.each(types, function(doc_type) {
-        buttons += "<li><a href='#' data-type='" + doc_type[1] + "'>" + doc_type[0] + ' (.' + doc_type[1] + ')</a></li>\n';
+      _.each(types, function(docType) {
+        buttons += "<li><a href='#' data-type='" + docType[1] + "'>" + docType[0] + ' (.' + docType[1] + ')</a></li>\n';
       });
       $('#download_types').html(buttons);
       $('#download_types a').click(function(e) {
-        var export_type = $(this).data().type;
-        console.log('Exporting:', export_type, type);
+        var exportType = $(this).data().type;
+        console.log('Exporting:', exportType, type);
         WebSync.connection.sendJSON({
           type: 'export_html',
-          doc_type: type,
-          extension: export_type,
+          docType: type,
+          extension: exportType,
           data: export_to_html()
         });
       });
@@ -557,7 +557,7 @@ define('websync', ['crypto'], function(crypto) {
     users: {},
 
     /** Configuration callbacks */
-    _config_callbacks: {},
+    _configCallbacks: {},
 
     /**
      * Sends a request to the server to set config[key] to value.
@@ -566,7 +566,7 @@ define('websync', ['crypto'], function(crypto) {
      * @param {Object} value - The value to set to the key.
      * @param {String} space - Space can be "user" or "document".
      */
-    config_set: function(key, value, space) {
+    configSet: function(key, value, space) {
       if (space === null) {
         space = 'document';
       }
@@ -585,10 +585,10 @@ define('websync', ['crypto'], function(crypto) {
      * @param {Object} value - The value to set to the key.
      * @param {String} space - Space can be "user" or "document".
      */
-    config_get: function(key, callback, space) {
+    configGet: function(key, callback, space) {
       var id = btoa(Date.now());
       if (callback) {
-        WebSync._config_callbacks[id] = callback;
+        WebSync._configCallbacks[id] = callback;
       }
       if (space === null) {
         space = 'document';
@@ -673,7 +673,7 @@ define('websync', ['crypto'], function(crypto) {
       fullScreenApi.cancelFullScreen();
       if (mode === 'Zen') {
         $('body').removeClass('presentation').addClass('zen').resize();
-        WebSyncAuth.view_op = 'edit';
+        WebSyncAuth.viewOp = 'edit';
         if (!dontPush)
           window.history.pushState('', 'WebSync - Zen Mode', 'zen');
         $('body').addClass('zen').resize();
@@ -687,7 +687,7 @@ define('websync', ['crypto'], function(crypto) {
         }, 200);
       } else if (mode === 'Presentation') {
         $('body').removeClass('edit').removeClass('zen').addClass('view').resize();
-        WebSyncAuth.view_op = 'view';
+        WebSyncAuth.viewOp = 'view';
         if (!dontPush)
           window.history.pushState('', 'WebSync - Presentation Mode', 'view');
         $('nav').animate({
@@ -699,7 +699,7 @@ define('websync', ['crypto'], function(crypto) {
         fullScreenApi.requestFullScreen(document.body);
       } else {
         $('body').removeClass('zen').removeClass('view').addClass('edit').resize();
-        WebSyncAuth.view_op = 'edit';
+        WebSyncAuth.viewOp = 'edit';
         if (!dontPush)
           window.history.pushState('', 'WebSync - Edit Mode', 'edit');
         $('#zoom_level').data('slider').setValue(100);
@@ -741,7 +741,7 @@ define('websync', ['crypto'], function(crypto) {
      */
     backendCommand: function(obj, callback) {
       var id = btoa(Math.random());
-      obj.req_id = id;
+      obj.reqId = id;
       WebSync.connection.sendJSON(obj);
       WS.backendCommandCallBacks[id] = callback;
     },
@@ -861,10 +861,10 @@ define('websync', ['crypto'], function(crypto) {
       if (WebSync.tmp.lastSelNode === selNode) {
         return WebSync.tmp.lastSelCss;
       } else {
-        var css_object = $(selNode).getStyleObject();
-        WebSync.tmp.lastSelCss = css_object;
+        var cssObject = $(selNode).getStyleObject();
+        WebSync.tmp.lastSelCss = cssObject;
         WebSync.tmp.lastSelNode = selNode;
-        return css_object;
+        return cssObject;
       }
     },
 
@@ -954,45 +954,43 @@ define('websync', ['crypto'], function(crypto) {
      * Applies patches directly to the HTML.
      * @param {Array} patch - The list of changes.
      * @param {String} root - The path of the base of the JSON html. Ex: '/body/'.
-     * @param {Element} root_dom - The root DOM element.
+     * @param {Element} rootDom - The root DOM element.
      */
-    applyPatch: function(patch, root, root_dom) {
-      var dom = root_dom.childNodes;
+    applyPatch: function(patch, root, rootDom) {
+      var dom = rootDom.childNodes;
       var exemptions = {};
       _.each(patch, function(change) {
         if (change.path.indexOf(root) === 0) {
-          var local_path = change.path.slice(root.length);
-          var parts = local_path.split('/');
-          //var exempt_path = change.path.split('/').slice(0, -1).join('/');
-          //var second_to_last = WebSync.getJsonFromPath(exempt_path);
+          var localPath = change.path.slice(root.length);
+          var parts = localPath.split('/');
           console.log('CHANGE', change);
 
           // Walk the path and see if any of the parent nodes are exempt.
-          var exempt_json, exempt_path;
+          var exemptJson, exemptPath;
           _.each(parts, function(part, i) {
-            if (!exempt_path) {
+            if (!exemptPath) {
               var checkPath = root + parts.slice(0, i + 1).join('/');
               var json = WS.getJsonFromPath(checkPath);
               if (json && json.exempt) {
-                exempt_json = json;
-                exempt_path = checkPath;
+                exemptJson = json;
+                exemptPath = checkPath;
               }
             }
           });
           // Exemption (JS plugins that don't use pure HTML)
-          if (exempt_path) {
+          if (exemptPath) {
             console.log('EXEMPT', change);
             // Only want to act on an exemption once per patch set.
-            if (!exemptions[exempt_path]) {
+            if (!exemptions[exemptPath]) {
               var cur = dom;
-              var local_exempt_path = exempt_path.slice(root.length);
-              var exempt_parts = local_exempt_path.split('/');
-              _.each(exempt_parts, function(part) {
+              var localExemptPath = exemptPath.slice(root.length);
+              var exemptParts = localExemptPath.split('/');
+              _.each(exemptParts, function(part) {
                 cur = cur[part];
               });
-              var html = WebSync.domExceptions[exempt_json.exempt].load(exempt_json.data);
+              var html = WebSync.domExceptions[exemptJson.exempt].load(exemptJson.data);
               $(cur).replaceWith(html);
-              exemptions[exempt_path] = true;
+              exemptions[exemptPath] = true;
             }
             // Replace a property
           } else if (change.op === 'replace') {
@@ -1061,7 +1059,7 @@ define('websync', ['crypto'], function(crypto) {
             // Add a property or element.
           } else if (change.op === 'add') {
             var cur = dom;
-            var tree = [root_dom, dom];
+            var tree = [rootDom, dom];
             _.each(parts.slice(0, -1), function(part) {
               cur = cur[part];
               tree.push(cur);
@@ -1083,7 +1081,7 @@ define('websync', ['crypto'], function(crypto) {
               // Add a single DOM element (TODO: confirm the difference from above).
             } else if (!_.isArray(change.value)) {
               if (parts.length === 1) {
-                root_dom.innerHTML += WS.JSONToDOM([change.value]);
+                rootDom.innerHTML += WS.JSONToDOM([change.value]);
               } else {
                 cur.innerHTML += WS.JSONToDOM([change.value]);
               }
@@ -1123,14 +1121,14 @@ define('websync', ['crypto'], function(crypto) {
         jso.data = WebSync.domExceptions[exempt].dump(obj);
         return jso;
       }
-      var search_children = true;
+      var searchChildren = true;
       if (_.size(obj.dataset) > 0) {
         jso.dataset = {};
         _.each(obj.dataset, function(v, k) {
           jso.dataset[k] = v;
         });
-        if (jso.dataset.search_children === 'false') {
-          search_children = false;
+        if (jso.dataset.searchChildren === 'false') {
+          searchChildren = false;
         }
       }
       if (obj.nodeName === '#text') {
@@ -1144,7 +1142,7 @@ define('websync', ['crypto'], function(crypto) {
           }
         });
       }
-      if (search_children) {
+      if (searchChildren) {
         _.each(obj.childNodes, function(child, index) {
           jso.childNodes.push(WS.NODEtoJSON(child));
         });
@@ -1255,9 +1253,9 @@ define('websync', ['crypto'], function(crypto) {
     modulesLoaded: function() {
       if (WebSyncAuth.encrypted) {
         crypto.checkKeys(function() {
-          var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetric_keys);
+          var success = crypto.decodeSymmetricKeys(WebSyncAuth.symmetricKeys);
           if (success) {
-            crypto.decryptWithSymmetricKey(WebSyncData.encrypted_blob, function(blob) {
+            crypto.decryptWithSymmetricKey(WebSyncData.encryptedBlob, function(blob) {
               var newBody = JSON.parse(blob);
               WebSync.backendCommand({
                 type: 'diffs',

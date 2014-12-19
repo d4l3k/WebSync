@@ -160,8 +160,8 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
     clearModal: function() {
       $('#chartType').val('Line');
 
-      var table_count = $('.content_container table').index(tables.primaryTable()) + 1;
-      var name = $(tables.table).attr('name') || ('Table ' + table_count);
+      var tableCount = $('.content_container table').index(tables.primaryTable()) + 1;
+      var name = $(tables.table).attr('name') || ('Table ' + tableCount);
       var start = tables.selectedPos();
       var end = tables.selectedPos(tables.selectionEnd);
       var queryString = name + '.' +

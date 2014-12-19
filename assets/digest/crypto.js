@@ -438,7 +438,7 @@ define('crypto', function() {
       WS.connection.sendJSON({
         type: 'encrypt_document',
         body: {
-          encrypted_blob: blob
+          encryptedBlob: blob
         },
         symmetricKey: {
           publicKey: publicKey.armor(),

@@ -1017,9 +1017,9 @@ define(['websync'], function(WS) {
           data = cell.childNodes;
         }
         var cellOut = {};
-        var content_json = WS.DOMToJSON(data);
-        if (!_.isEmpty(content_json)) {
-          cellOut.content = content_json;
+        var contentJson = WS.DOMToJSON(data);
+        if (!_.isEmpty(contentJson)) {
+          cellOut.content = contentJson;
         }
         for (var attr, i = 0, attrs = cell.attributes, l = attrs.length; i < l; i++) {
           attr = attrs.item(i);

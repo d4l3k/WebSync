@@ -26,12 +26,12 @@ define(['websync'], function(WebSync) {
      * @param e {Event} the event
      */
     savePoint: function(e) {
-      var relative_to = $(exports.parent);
-      var position = relative_to.css('position');
+      var relativeTo = $(exports.parent);
+      var position = relativeTo.css('position');
       if (position !== 'absolute' && position !== 'relative') {
-        relative_to = $('.content_container');
+        relativeTo = $('.content_container');
       }
-      var corner = relative_to.offset();
+      var corner = relativeTo.offset();
       var point = [e.pageX - corner.left, e.pageY - corner.top];
       exports.points[exports.activeId].push(point);
       exports.drawPoints(exports.activeId, exports.canvas);

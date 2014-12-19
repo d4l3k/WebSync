@@ -181,8 +181,8 @@ function wsConnection(ws) {
           }
         });
       } else if (authenticated) {
-        userAuth(docId, userEmail, function(auth_level) {
-          var editor = auth_level === 'editor' || auth_level === 'owner';
+        userAuth(docId, userEmail, function(authLevel) {
+          var editor = authLevel === 'editor' || authLevel === 'owner';
           if (data.type === 'load_scripts') {
             //console.log("LOADING SCRIPTS");
             var ids = [];
@@ -193,7 +193,7 @@ function wsConnection(ws) {
             on('end', function() {
               var js = [];
               var css = [];
-              ids.forEach(function(value, index, arr) {
+              ids.forEach(function(value) {
                 postgres.query('SELECT url, type FROM assets WHERE id = $1', [value]).
                 on('row', function(row) {
                   if (row.type === 'Javascript') {
@@ -215,7 +215,7 @@ function wsConnection(ws) {
               });
             });
           } else if (data.type === 'share') {
-            if (auth_level === 'owner') {
+            if (authLevel === 'owner') {
               postgres.query('DELETE FROM permissions WHERE file_id = $1 AND user_email = $2', [docId, data.email]).
                 //.on('error', function(err) {})
               on('end', function() {
@@ -230,7 +230,7 @@ function wsConnection(ws) {
               });
             }
           } else if (data.type === 'permission_info') {
-            if (auth_level === 'editor' || auth_level === 'owner') {
+            if (authLevel === 'editor' || authLevel === 'owner') {
               var perms;
               postgres.query('SELECT visibility, default_level FROM ws_files WHERE id = $1', [docId]).
               on('row', function(row) {
@@ -258,6 +258,7 @@ function wsConnection(ws) {
               });
             }
           } else if (data.type === 'export_html') {
+            // TODO: Take into account data.docType
             tmp.file({
               mode: 0x644,
               prefix: 'websync-backend-export-',
@@ -362,12 +363,12 @@ function wsConnection(ws) {
               postgres.query('SELECT config FROM ws_files WHERE id = $1', [docId]).
               on('row', function(row) {
                 if (data.space === 'document') {
-                  var doc_data = JSON.parse(row.config);
+                  var docData = JSON.parse(row.config);
                   ws.sendJSON({
                     type: 'config',
                     action: 'get',
                     space: data.space,
-                    value: doc_data[data.property],
+                    value: docData[data.property],
                     id: data.id
                   });
 
@@ -455,7 +456,7 @@ function wsConnection(ws) {
               }).on('end', function() {
                 ws.sendJSON({
                   type: 'diff_list',
-                  req_id: data.req_id,
+                  reqId: data.reqId,
                   patches: patches
                 });
               });

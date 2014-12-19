@@ -16,7 +16,7 @@ define(['websync'], function(WS) {
     var elem = $('<span class="Equations Equation-Editable" contenteditable="false"></span>')[0];
     rangy.getSelection().getAllRanges()[0].surroundContents(elem);
     elem.dataset.latex = $(elem).text();
-    elem.dataset.search_children = false;
+    elem.dataset.searchChildren = false;
     $(elem).mathquill('editable');
     setTimeout(function() {
       $(elem).find('textarea').focus();

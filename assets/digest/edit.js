@@ -235,16 +235,16 @@ define('edit', ['websync'], function(WS) {
   });
   $('#youtube_modal input').change(function() {
     var url = $('#youtube_modal input').val();
-    var youtube_id = exports.youtubeParser(url);
-    var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>';
+    var youtubeId = exports.youtubeParser(url);
+    var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtubeId + '?origin=http://websyn.ca" height=420 width=560 frameborder="0"/>';
     $('#youtube_modal #youtube-preview').html(html);
   });
   $('#insert_video').click(function() {
     $('#youtube_modal').modal('hide');
     var url = $('#youtube_modal input').val();
     $('#youtube_modal input').val('');
-    var youtube_id = exports.youtubeParser(url);
-    var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtube_id + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>';
+    var youtubeId = exports.youtubeParser(url);
+    var html = '<iframe class="resizable" type="text/html" src="https://www.youtube.com/embed/' + youtubeId + '?origin=http://websyn.ca" height=480 width=640 frameborder="0"/>';
     WS.selectionRestore(exports.selection);
     delete exports.selection;
     document.execCommand('insertHTML', false, html);

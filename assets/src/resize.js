@@ -137,7 +137,7 @@ define(['websync'], function(WS) {
   // Bind mouse to the content container. This waits to make sure that the .content_container has been added (happens in the layout plugin).
   $(document).on('modules_loaded', function() {
     $('.content_container').delegate('img:not(.noresize), iframe:not(.noresize), table:not(.noresize), .note-page section:not(.noresize), canvas:not(.noresize), .resizable', 'click.Resize', function(e) {
-      if (WebSyncAuth.view_op === 'edit' && WebSyncAuth.access !== 'viewer') {
+      if (WebSyncAuth.viewOp === 'edit' && WebSyncAuth.access !== 'viewer') {
         exports.resizeOn(this);
         e.stopPropagation();
       }

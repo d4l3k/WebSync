@@ -17,7 +17,7 @@ define('/assets/page.js', ['websync'], function(WS) {
     WebSyncData.body = [];
   }
 
-  if (WebSyncAuth.view_op === 'edit' && WebSyncAuth.access !== 'viewer') {
+  if (WebSyncAuth.viewOp === 'edit' && WebSyncAuth.access !== 'viewer') {
     $('.page').attr('contenteditable', true);
   }
   WS.toJSON = function() {

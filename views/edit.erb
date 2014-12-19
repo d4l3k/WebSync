@@ -18,9 +18,9 @@
         // Variable: int WebSyncAuth.key;
         // This is a randomly generated string used as an API key.
         key: "<%= client_key %>",
-        view_op: "<%= op %>",
-        websocket_port: <%= $config['websocket']['port'] %>,
-        websocket_url: "<%= $config['websocket']['url'] %>",
+        viewOp: "<%= op %>",
+        websocketPort: <%= $config['websocket']['port'] %>,
+        websocketUrl: "<%= $config['websocket']['url'] %>",
         // This is the user's access level. Can be: viewer, editor, owner
         access: "<%= access %>",
         // Encryption state
@@ -28,7 +28,7 @@
         <% if doc.encrypted
           puts user
           keys = doc.symmetric_keys(user: user) %>
-          symmetric_keys: <%= MultiJson.dump(keys.map(&:body)) %>
+          symmetricKeys: <%= MultiJson.dump(keys.map(&:body)) %>
       <% end %>
     }
     // Variable: object WebSyncData;

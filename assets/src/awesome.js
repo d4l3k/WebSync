@@ -259,7 +259,7 @@ define(['websync'], function(WS) {
     exports.dirty = true;
   });
   $(document).keydown(function(e) {
-    if (WebSyncAuth.view_op === 'view') {
+    if (WebSyncAuth.viewOp === 'view') {
       if (e.keyCode === 39 || e.keyCode === 32 || e.keyCode === 40) {
         // Move forward a slide
         exports.setIndex(exports.activeIndex + 1);
@@ -343,14 +343,14 @@ define(['websync'], function(WS) {
           x: e.pageX,
           y: e.pageY
         };
-        exports.cam_start = exports.camera.position.clone();
+        exports.camStart = exports.camera.position.clone();
       }
     });
     $(document).bind('mousemove', function(e) {
       if (exports.active) {
         var x = exports.start.x - e.pageX;
         var y = e.pageY - exports.start.y;
-        exports.camera.position = exports.cam_start.clone().add(new THREE.Vector3(x, y, 0).applyQuaternion(exports.camera.quaternion));
+        exports.camera.position = exports.camStart.clone().add(new THREE.Vector3(x, y, 0).applyQuaternion(exports.camera.quaternion));
         exports.dirty = true;
         e.preventDefault();
       }

@@ -28,7 +28,7 @@ define('/assets/presentation.js', ['websync'], function(WS) {
 
     /** Updates whether the slides are editable when the view mode changes. */
     updateEditable: function() {
-      $('#slides .slide-content').attr('contenteditable', WebSyncAuth.view_op === 'edit');
+      $('#slides .slide-content').attr('contenteditable', WebSyncAuth.viewOp === 'edit');
     },
 
     /** Updates the presentation menu. */
@@ -128,7 +128,7 @@ define('/assets/presentation.js', ['websync'], function(WS) {
     e.stopPropagation();
   });
   $(document).keydown(function(e) {
-    if (WebSyncAuth.view_op === 'view') {
+    if (WebSyncAuth.viewOp === 'view') {
       var curSlide, nextSlide;
       if (e.keyCode === 39 || e.keyCode === 32 || e.keyCode === 40) {
         // Move forward a slide

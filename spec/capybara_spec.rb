@@ -20,10 +20,10 @@ def fill_login
 end
 def wait_for
   start = Time.now
-  while !yield && (Time.now-start) < 5
+  while !yield && (Time.now-start) < 10
     sleep 0.05
   end
-  if Time.now-start >= 5
+  if Time.now-start >= 10
     raise "WAIT FOR TIMED OUT! #{current_url}"
   end
 end
@@ -74,6 +74,8 @@ describe "WebSync Capybara Interface Tests", type: :feature do
     end
     # Title Test
     find("#name").set "Test Doc! 111"
+
+    sleep 1
 
     # Page Test
     find(".page").click

@@ -1,4 +1,5 @@
 module WebSync
+  # This contains all of the Models used by WebSync
   module Models
     # All file data is represented as a WSFile.
     # In a WebSync editable document there will be content in :body,

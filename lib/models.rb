@@ -3,6 +3,7 @@
 require_relative 'redis_extensions'
 require_relative 'datamapper_extensions'
 
+# The current database version
 DATABASE_FORMAT_VERSION = 1
 
 $redis = Redis.new :driver=>:hiredis, :host=>$config['redis']['host'], :port=>$config['redis']["port"]

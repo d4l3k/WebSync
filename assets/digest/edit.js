@@ -303,7 +303,7 @@ define('edit', ['websync'], function(WS) {
     var style = WS.getCss();
     $('#fontColor')[0].value = exports.rgbToHex(style.color);
     $('#hilightColor')[0].value = exports.rgbToHex(style.backgroundColor);
-    var fontSizePt = parseInt(style.fontSize, 10) * 0.75 | 0;
+    var fontSizePt = Math.floor(parseInt(style.fontSize, 10) * 0.75);
     $('#font_size').val(fontSizePt + 'pt');
 
     exports.textButtons.forEach(function(elem) {

@@ -27,9 +27,9 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
 
       function makeHSLA(h, s, l, a) {
         return 'hsla(' +
-          (h | 0) + ',' +
-          (s | 0) + '%,' +
-          (l | 0) + '%,' +
+          Math.floor(h) + ',' +
+          Math.floor(s) + '%,' +
+          Math.floor(l) + '%,' +
           a + ')';
       }
 
@@ -250,7 +250,7 @@ define(['websync', '/assets/tables.js', '/assets/Chart.js'], function(WS, tables
       'class': $(obj).attr('class')
     };
   }, function(json) {
-    var id = 'tmp' + (Math.random() * 10000000 | 0);
+    var id = 'tmp' + Math.floor(Math.random() * 10000000);
     setTimeout(function() {
       var chart = exports.makeChart(null, json.options, {
         width: 558,

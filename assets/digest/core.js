@@ -1012,7 +1012,7 @@ define('websync', ['crypto'], function(crypto) {
                 el = document.createTextNode('');
               } else {
                 el = document.createElement(change.value);
-                attrs = cur.attributes;
+                var attrs = cur.attributes;
                 if (attrs) {
                   for (var j = 0, k = attrs.length; j < k; j++) {
                     el.setAttribute(attrs[j].name, attrs[j].value);

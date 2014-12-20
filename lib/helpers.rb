@@ -203,29 +203,42 @@ module WebSync
     # @param tempfile [TempFile, File] the file to convert
     # @return [String] the HTML content
     def convert_file tempfile
-      filetype = get_mime_type(tempfile.path)
       path = tempfile.path
-      pieces = path.split('.')
-      base_path = if pieces.length == 1
-                    path
-                  else
-                    pieces[0..-2].join('.')
-                  end
+      filetype = get_mime_type(path)
+
       if filetype == 'application/pdf'
-        PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
+        convert_pdf_to_html(path)
       elsif filetype == 'text/html'
-        File.read(tempfile.path)
+        File.read(path)
       else
-        system("unoconv","-f","html", path)
-        exit_status = $?.to_i
-        if exit_status == 0
-          conv_path = base_path + '.html'
-          content = File.read(conv_path)
-          File.delete(conv_path)
-          content
-        else
-          logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
-        end
+        convert_document_to_html(path)
+      end
+    end
+
+    # Returns the HTML content from a pdf file path provided to it.
+    #
+    # @param file [String] the file path
+    # @return [String] the HTML content.
+    def convert_pdf_to_html file
+      PDFToHTMLR::PdfFilePath.new(file).convert.force_encoding("UTF-8")
+    end
+
+    # Returns the HTML content from a file path provided to it.
+    # This uses unoconv to convert the file.
+    #
+    # @param file [String] the file path
+    # @return [String] the HTML content.
+    def convert_document_to_html path
+      system("unoconv","-f","html", path)
+      exit_status = $?.to_i
+      if exit_status == 0
+        base_name = File.basename(path, File.extname(path))
+        conv_path = File.join(File.dirname(path), base_name) + '.html'
+        content = File.read(conv_path)
+        File.delete(conv_path)
+        content
+      else
+        logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
       end
     end
 

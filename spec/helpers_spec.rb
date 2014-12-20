@@ -81,4 +81,8 @@ describe "File upload helpers" do
       expect(html.length > 0).to eq(true)
     end
   end
+  it "should be able to convert PDF to HTML" do
+    html = $helpers.convert_pdf_to_html('spec/test_files/sample.pdf')
+    expect(html.length > 0).to eq(true)
+  end
 end

@@ -3,38 +3,6 @@ module WebSync
     # The routes for uploading, downloading and converting files.
     class UploadDownload < Base
       helpers do
-        # Converts a file into HTML.
-        #
-        # @param tempfile [TempFile, File] the file to convert
-        # @return [String] the HTML content
-        def convert_file tempfile
-          filetype = get_mime_type(tempfile.path)
-          if filetype == 'application/pdf'
-            PDFToHTMLR::PdfFilePath.new(tempfile.path).convert.force_encoding("UTF-8")
-          elsif filetype == 'text/html'
-            File.read(tempfile.path)
-          else
-            system("unoconv","-f","html",tempfile.path)
-            exit_status = $?.to_i
-            if exit_status == 0
-              content = File.read(tempfile.path+".html")
-              File.delete(tempfile.path + ".html")
-              content
-            else
-              logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
-            end
-          end
-        end
-
-        # Do a basic sanitization on the uploaded file to remove any potentially
-        # malicious script tags.
-        #
-        # @param dom [Nokogiri::HTML::Document] the root dom element
-        # @return [Nokogiri::HTML::Document] the sanitized element
-        def sanitize_upload dom
-          # Basic security check
-          dom.css("script").remove();
-        end
 
         # Fail the conversion by displaying a message and redirecting to /.
         def conversion_fail

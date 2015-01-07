@@ -1459,7 +1459,11 @@ define('websync', ['crypto'], function(crypto) {
       body: []
     };
     _.each(patches, function(patch) {
-      jsonpatch.apply(newBody, JSON.parse(patch.patch));
+      try {
+        jsonpatch.apply(newBody, JSON.parse(patch.patch));
+      } catch (e) {
+        console.log('BAD PATCH!', e);
+      }
     });
     console.log(newBody);
     _.each(WebSyncData, function(v, k) {

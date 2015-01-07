@@ -38,8 +38,8 @@
       return;
     }
     updateSearchResults();
-    $('.file_list .search input').keydown(searchHandler);
-    $('.file_list .search button').click(searchHandler);
+    $('.file_list').on('keydown', '.search input', searchHandler);
+    $('.file_list').on('click', '.search button', searchHandler);
     $('.file_list').on('click', 'th a', function(e) {
       var type = $(this).data().type;
       if (type !== sortType) {

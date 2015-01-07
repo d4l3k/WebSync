@@ -56,8 +56,8 @@ module WebSync
                           public: params['public']=='true',
                           offset: offset,
                           deleted: params['deleted']=='true',
-                          sort_type: params['sort_type'],
-                         sort_dir: params['sort_dir'])
+                          sort_type: params['sortType'],
+                         sort_dir: params['sortDir'])
         MultiJson.dump(resp)
       end
     end

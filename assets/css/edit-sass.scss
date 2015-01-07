@@ -213,7 +213,8 @@ body .mathquill-rendered-math {
 }
 .content ol,
 .content ul {
-    margin: 0 0 0px 25px;
+  margin: 0;
+  padding: 0 0 0 20px;
 }
 .zen {
     .menu {

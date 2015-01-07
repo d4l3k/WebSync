@@ -42,6 +42,7 @@ end
 
 $helpers = TestHelpers.new
 
+
 def testuser
   destroy_testuser
   user = $helpers.register 'test@websyn.ca', 'testboop'
@@ -90,3 +91,17 @@ Capybara.app = $config_ru
 def app
   $config_ru
 end
+
+
+module XhrHelpers
+  def xhr(path, params = {})
+    verb = params.delete(:as) || :get
+    send(verb,path, params, "HTTP_X_REQUESTED_WITH" => "XMLHttpRequest")
+  end
+  alias_method :ajax, :xhr
+end
+
+RSpec.configure do |c|
+  c.include XhrHelpers
+end
+

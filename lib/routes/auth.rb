@@ -2,13 +2,17 @@ module WebSync
   module Routes
     # The routes responsible for authentication (login, register, oauth).
     class Auth < Base
+      helpers do
+        def already_logged_in
+          flash[:warning] = "<strong>Error!</strong> Already logged in!"
+          redirect '/'
+        end
+      end
       # OmniAuth: Support both GET and POST for callbacks
       %w(get post).each do |method|
         send(method, "/auth/:provider/callback") do
-          env['omniauth.auth'] # => OmniAuth::AuthHash
           if logged_in?
-            flash[:danger] = "<strong>Error!</strong> Already logged in!"
-            redirect '/'
+            already_logged_in
           else
             hash = env["omniauth.auth"]
             email = hash["info"]["email"].downcase
@@ -16,16 +20,17 @@ module WebSync
             nice_provider = $config["omniauth"][provider.to_sym][:tag]
             user = User.get(email)
             if user.nil?
-              user = User.create({email: email, password: "", origin: provider})
-            elsif not user.origin.split(',').include?(provider)
+              User.create({
+                email: email,
+                password: "",
+                origin: provider
+              })
+            elsif !user.origin.split(',').include?(provider)
               flash[:danger] = "<strong>Error!</strong> #{email} is not enabled for #{nice_provider} login."
               redirect '/login'
             end
             puts "[OAuth Login] #{email} #{provider}"
-            session_key = SecureRandom.uuid
-            $redis.set("userhash:#{session_key}",email)
-            session['userhash']=session_key
-            session['user']=email
+            generate_and_set_session_key(email)
             redirect '/'
           end
         end
@@ -36,8 +41,7 @@ module WebSync
             erb :login
           end
         else
-          flash[:warning]="Already logged in."
-          redirect '/'
+          already_logged_in
         end
       end
       post '/login' do
@@ -56,10 +60,10 @@ module WebSync
         redirect '/login'
       end
       post '/register' do
-        if register params[:email],params[:password]
+        if register(params[:email], params[:password])
           redirect '/'
         else
-          flash[:danger]="<strong>Error!</strong> Failed to register. Account might already exist?"
+          flash[:danger]="<strong>Error!</strong> Failed to register. Account might already exist."
           redirect '/login'
         end
       end

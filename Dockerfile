@@ -1,12 +1,12 @@
-FROM ubuntu:13.10
+FROM ubuntu:14.10
 MAINTAINER Tristan Rice, rice@outerearth.net
 
 RUN apt-get update -y
 RUN apt-get install -y software-properties-common build-essential
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get upgrade -y
 
 RUN apt-get install -y openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config wget python-software-properties python python-setuptools libpq5 libpq-dev nodejs unoconv libhiredis-dev poppler-utils libreoffice-core libreoffice-calc libreoffice-writer libreoffice-impress nginx npm openjdk-7-jre-headless
+
+
 
 # Install JRuby
 #ENV JRUBY_OPTS "--2.0 -Xcext.enabled=true"
@@ -15,12 +15,12 @@ RUN apt-get install -y openssl libreadline6 libreadline6-dev curl git-core zlib1
 #ENV PATH /jruby-1.7.10/bin:$PATH
 
 # Install MRI
-RUN wget -q ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz -O ruby.tar.gz
-RUN tar xvf ruby.tar.gz
-RUN cd ruby-2.0.0-p353; ./configure --enable-shared; make install -j4
+#RUN wget -q ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz -O ruby.tar.gz
+#RUN tar xvf ruby.tar.gz
+#RUN cd ruby-2.0.0-p353; ./configure --enable-shared; make install -j4
 
-RUN gem update --system
-RUN gem install bundler rubygems-bundler
+#RUN gem update --system
+#RUN gem install bundler rubygems-bundler
 
 # Install RBX
 #RUN wget -q http://releases.rubini.us/rubinius-2.2.3.tar.bz2

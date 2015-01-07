@@ -108,17 +108,26 @@ module WebSync
       if user.nil? or not user.origin.split(',').include?('local')
         return false
       end
-      if user.password==pass and not pass.empty?
-        session_key = SecureRandom.uuid
-        $redis.set("userhash:#{session_key}",email)
-        session['userhash']=session_key
-        session['user']=email
-        if !expire.nil?
-          $redis.expire("userhash:#{session_key}",expire)
-        end
+      if user.password == pass && !pass.empty?
+        generate_and_set_session_key(email, expire)
         return true
       end
       false
+    end
+
+    # Generates an authenticated session key, saves it to redis and stores it in the session
+    #
+    # @param email [String] the email to set
+    # @param expire [Number] the number of seconds it takes to expire
+    def generate_and_set_session_key email, expire=2592000
+      email.downcase!
+      session_key = SecureRandom.uuid
+      $redis.set("userhash:#{session_key}",email)
+      session['userhash']=session_key
+      session['user']=email
+      if !expire.nil?
+        $redis.expire("userhash:#{session_key}",expire)
+      end
     end
 
     # Logs a user out
@@ -232,14 +241,23 @@ module WebSync
       system("unoconv","-f","html", path)
       exit_status = $?.to_i
       if exit_status == 0
-        base_name = File.basename(path, File.extname(path))
-        conv_path = File.join(File.dirname(path), base_name) + '.html'
+        conv_path = replace_extension(path, 'html')
         content = File.read(conv_path)
         File.delete(conv_path)
         content
       else
         logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
       end
+    end
+
+    # Replaces the extension from a file path or adds one if it doesn't exist.
+    #
+    # @param path [String] the path
+    # @param ext [String] the extension
+    # @return [String]
+    def replace_extension path, ext
+      base_name = File.basename(path, File.extname(path))
+      File.join(File.dirname(path), base_name) + '.' + ext
     end
 
     # Do a basic sanitization on the uploaded file to remove any potentially

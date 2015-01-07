@@ -85,4 +85,10 @@ describe "File upload helpers" do
     html = $helpers.convert_pdf_to_html('spec/test_files/sample.pdf')
     expect(html.length > 0).to eq(true)
   end
+  it "should be able to replace_extension successfully" do
+    expect($helpers.replace_extension('banana.txt', 'html')).to eq('./banana.html')
+    expect($helpers.replace_extension('banana.me', 'test')).to eq('./banana.test')
+    expect($helpers.replace_extension('/woof/banana.txt', 'html')).to eq('/woof/banana.html')
+    expect($helpers.replace_extension('banana', 'html')).to eq('./banana.html')
+  end
 end

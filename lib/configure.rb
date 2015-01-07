@@ -48,7 +48,7 @@ module WebSync
       sprockets.append_path File.join(root, 'assets', 'src')
       sprockets.append_path File.join(root, 'assets', 'templates')
       sprockets.append_path File.join(root, 'assets', 'lib')
-      set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
+      set :assets_precompile, %w(default.css edit.css bundle-norm.js bundle-edit.js file_browser.js theme-*.css) # *.woff *.png *.favico *.jpg *.svg *.eot *.ttf
       no_digest_path = File.join(root, '../assets', '{src,lib}', "*.js")
       no_digest = Dir.glob(no_digest_path).map{|f| f.split("/").last}
       set :assets_precompile_no_digest, no_digest

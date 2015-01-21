@@ -17,7 +17,7 @@ gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'nokogiri'
 gem 'multi_json'
 gem 'i18n', require: ['i18n', 'i18n/backend', 'i18n/backend/simple', 'i18n/backend/fallbacks', 'i18n/config']
-gem "i18n-js", require: ['i18n/js']
+gem "i18n-js", ">= 3.0.0.rc8", require: ['i18n/js']
 gem 'rack-contrib'
 gem 'radix62'
 gem 'pg'

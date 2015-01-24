@@ -105,15 +105,16 @@ define('/assets/note.js', ['websync'], function(WebSync) {
           selectedElem = element[0];
           return true;
         },
-        onItem: function(element) {
-          var op = element[0].innerText;
+        onItem: function(element, b) {
+          var op = b.target.innerText;
           var target, section;
-          if ($(selectedElem).hasClass('page')) {
-            var page = $(selectedElem).data().index;
-            section = $(selectedElem).parent().parent().parent().children().first().data().index;
+          var selectedElem = element[0];
+          if ($(selectedElem.parentElement).hasClass('page')) {
+            var page = $(selectedElem.parentElement).data().index;
+            section = $(selectedElem.parentElement).parent().parent().parent().children().first().data().index;
             target = $('.note-section').eq(section).children().eq(page);
-          } else if ($(selectedElem).hasClass('section')) {
-            section = $(selectedElem).data().index;
+          } else if ($(selectedElem.parentElement).hasClass('section')) {
+            section = $(selectedElem.parentElement).data().index;
             target = $('.note-section').eq(section);
           }
           if (op === 'Delete') {
@@ -122,10 +123,10 @@ define('/assets/note.js', ['websync'], function(WebSync) {
           } else if (op === 'Rename') {
             var finishRename = function(e) {
               // Enter or Escape
+              target[0].dataset.name = $(selectedElem).text();
               if (!e.keyCode || e.keyCode === 13 || e.keyCode === 27) {
                 e.preventDefault();
                 $(selectedElem).unbind('blur.Note').unbind('keydown.Note');
-                target[0].dataset.name = $(selectedElem).text();
                 exports.updateNav();
               }
             };
@@ -195,6 +196,12 @@ define('/assets/note.js', ['websync'], function(WebSync) {
   }
   WebSync.toJSON = function() {
     WebSyncData.body = WebSync.DOMToJSON($('#note-well').get(0).childNodes);
+    _.each(WebSyncData.body, function(section) {
+      delete section.style;
+      _.each(section.childNodes, function(node) {
+        delete node.style;
+      });
+    });
   };
   WebSync.fromJSON = function(patch) {
     if (patch) {

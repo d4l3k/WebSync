@@ -240,12 +240,12 @@ define('/assets/note.js', ['websync'], function(WebSync) {
     if (WebSyncAuth.access !== 'viewer') {
       var page = e.currentTarget;
       var note = $('<section></section');
-      $(page).append(note);
-      note.attr('contenteditable', true).focus();
       note.css({
         left: e.offsetX,
-        top: e.offsetY
+        top: e.offsetY + $(e.target).scrollTop()
       });
+      $(page).append(note);
+      note.attr('contenteditable', true).focus();
     }
   });
   $('#notesView').on('click', '.section > a', function() {

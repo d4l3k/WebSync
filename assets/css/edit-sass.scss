@@ -287,20 +287,6 @@ nav .settings-popup {
         overflow-y: auto;
     }
 }
-@media (max-width: 767px) {
-    nav .settings-popup {
-        left: 15px;
-        right: 15px;
-        .popover-content {
-            padding: 0;
-            padding-bottom: 15px;
-            width: 100%;
-            .fa-lg {
-                line-height: 1em;
-            }
-        }
-    }
-}
 .settings-popup {
     .arrow {
         /*left: 914px !important;*/
@@ -654,9 +640,21 @@ a#name {
     position: relative;
     left: -10px;
 }
-@media (max-width: 767px) {
+@media (max-width: 900px) {
     nav.navbar .collapse > * {
         float: none !important;
+    }
+    nav .settings-popup {
+        left: 15px;
+        right: 15px;
+        .popover-content {
+            padding: 0;
+            padding-bottom: 15px;
+            width: 100%;
+            .fa-lg {
+                line-height: 1em;
+            }
+        }
     }
 }
 nav.navbar {
@@ -669,16 +667,69 @@ nav.navbar {
     .collapse {
         border-bottom: 1px solid #080808;
         padding: 0;
-        overflow: auto;
+        overflow: auto !important;
         display: block !important;
         width: auto;
-        height: 51px;
-        overflow-y: hidden;
+        height: 51px !important;
+        overflow-y: hidden !important;
         white-space: nowrap;
         visibility: visible !important;
         & > * {
             display: inline-block;
         }
+    }
+    .scroll-btn {
+      position: fixed;
+      color: black;
+      $background: #444;
+      z-index: 1031;
+      cursor: pointer;
+      top: 0;
+      &.left {
+        padding-right: 15px;
+        left: 0;
+        background: linear-gradient(to left, rgba(0,0,0,0), $background, $background);
+      }
+      &.right {
+        padding-left: 15px;
+        right: 0;
+        background: linear-gradient(to right, rgba(0,0,0,0), $background, $background);
+      }
+/*
+      a {
+        color: #333;
+        &:hover {
+          color: black;
+        }
+      }
+      */
+    }
+    .ribbon .scroll-btn {
+      top: 51px;
+      $height: 44px;
+      height: $height;
+      a {
+        height: $height;
+        padding-top: 0;
+        padding-bottom: 0;
+        line-height: $height;
+        &:hover {
+          color: black;
+        }
+      }
+      $background: #ddd;
+      &.left {
+        background: linear-gradient(to left, rgba(0,0,0,0), $background, $background);
+      }
+      &.right {
+        background: linear-gradient(to right, rgba(0,0,0,0), $background, $background);
+      }
+    }
+    .collapse, .ribbon {
+      &::-webkit-scrollbar {
+        height: 0;
+        width: 0;
+      }
     }
     .navbar-toggle {
         display: none;
@@ -957,6 +1008,9 @@ nav.navbar {
             height: 100%;
             right: 0px;
             position: absolute;
+            #note-well {
+              padding: 0;
+            }
             #note-well, .note-page, .note-section {
                 width: 100%;
                 height: 100%;
@@ -967,6 +1021,8 @@ nav.navbar {
             }
             .note-page {
                 position: relative;
+                overflow: auto;
+                padding: 5px;
                 .note-title {
                     position: relative;
                     left: 20px;

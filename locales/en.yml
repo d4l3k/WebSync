@@ -10,7 +10,7 @@ en:
     # Layout
     layout:
         created_by: "Created by Tristan Rice"
-        tag_line: "is a document editing tool similar to Google Drive or Microsoft Skydrive."
+        tag_line: "is a document editing tool similar to Google Drive or Microsoft OneDrive."
         toggle_navigation: "Toggle navigation"
         publicly_shared_documents: "Publicly Shared Documents"
         shared: "Shared"

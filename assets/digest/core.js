@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, Detector, WebSyncData, ace, WebSyncAuth, WebSocket*/
+/*global $, define, rangy, _, Detector, WebSyncData, ace, WebSyncAuth, WebSocket, jsonpatch*/
 
 /*
   WebSync: Core.js
@@ -334,6 +334,45 @@ define('websync', ['crypto'], function(crypto) {
       WebSync.oldData = JSON.parse(WebSync.oldDataString);
       $(document).trigger('patched');
       WebSync.selectionRestore(WebSync.tmp.range);
+    },
+
+    /**
+     * Register events for the navbar small screen scrolling.
+     */
+    setupNavbarScrolling: function() {
+      var $collapse = $('nav .collapse');
+      var $ribbon = $('nav .ribbon');
+      var updateButtons = function() {
+        _.each([$collapse, $ribbon], function($container) {
+          var left = $container.scrollLeft();
+          if (left === 0) {
+            $container.find('.scroll-btn.left').fadeOut(100);
+          } else {
+            $container.find('.scroll-btn.left').fadeIn(100);
+          }
+          var collapse = $container[0];
+          if (collapse.scrollLeft + collapse.offsetWidth === collapse.scrollWidth) {
+            $container.find('.scroll-btn.right').fadeOut(100);
+          } else {
+            $container.find('.scroll-btn.right').fadeIn(100);
+          }
+        });
+      };
+      $collapse.scroll(updateButtons);
+      $ribbon.scroll(updateButtons);
+      $(window).resize(updateButtons);
+      updateButtons();
+      _.delay(updateButtons, 1000);
+
+      $('.scroll-btn').click(function() {
+        var $parent = $(this).parent();
+        var left = $parent.scrollLeft();
+        if ($(this).hasClass('right')) {
+          $parent.scrollLeft(left + $parent.width() - 80);
+        } else {
+          $parent.scrollLeft(left - $parent.width() - 80);
+        }
+      });
     },
 
     /** Message events handler location. */
@@ -1302,6 +1341,9 @@ define('websync', ['crypto'], function(crypto) {
   // Disable Mozilla built in resizing for tables and images.
   document.execCommand('enableObjectResizing', false, 'false');
   document.execCommand('enableInlineTableEditing', false, 'false');
+
+  WebSync.setupNavbarScrolling();
+
   $("#settingsBtn, [href='#permissions']").click(function() {
     WebSync.connection.sendJSON({
       type: 'permission_info'

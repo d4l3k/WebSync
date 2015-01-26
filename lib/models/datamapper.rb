@@ -163,7 +163,7 @@ module WebSync
       #
       # @return [String] human readable number of bytes
       def as_size children: true
-        self.human_size(optimal_size)
+        WSFile.human_size(optimal_size)
       end
 
       # Converts the number of bytes into a human readable format.

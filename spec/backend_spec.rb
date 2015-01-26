@@ -32,6 +32,7 @@ describe "WebSync Backend" do
     count = 0
     sleep 0.1
     EM.run {
+      puts last_request.path
       ws = Faye::WebSocket::Client.new("ws://localhost:1337#{last_request.path}")
       open = false
       ws.on :open do |event|

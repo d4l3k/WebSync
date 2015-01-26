@@ -365,8 +365,14 @@ module WebSync
     # @param element [Element] the property to get
     # @return [String] the property value
     def get_property(element)
-      #puts "GET PROP: #{element}"
-      @file.reload.file_properties[element[:name]]
+      puts "GET PROP: #{element} #{@file}"
+      if @file != :root
+        @file.reload.file_properties[element[:name]]
+      else
+        if element[:name] == 'resourcetype'
+
+        end
+      end
     end
 
     # Returns the content type of the resource

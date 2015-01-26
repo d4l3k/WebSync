@@ -43,7 +43,9 @@ end
 group :test do
     gem 'git_time_extractor'
     gem 'selenium-webdriver'
-    gem 'faye-websocket'
+    gem 'faye-websocket', '=0.9.0'
+    gem 'websocket-driver', '=0.5.0'
+    gem 'eventmachine', '=1.0.3'
     gem 'rspec'
     gem 'rake'
     gem 'capybara'
@@ -53,6 +55,8 @@ end
 group :development do
     gem 'rack-mini-profiler'
     gem 'flamegraph'
+    gem "better_errors"
+    gem "binding_of_caller"
 end
 
 gem 'omniauth', require: ['omniauth/builder']

@@ -1255,7 +1255,7 @@ define('websync', ['crypto'], function(crypto) {
             if (k.toLowerCase().indexOf('data-') === 0) {
               dataVars.push(k);
             }
-            html += ' ' + k + '=' + JSON.stringify(v);
+            html += ' ' + k + '="' + v + '"';
           }
         }
       });

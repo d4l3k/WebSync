@@ -1,8 +1,11 @@
 /**
- * Copyleft 2010-2011 Jay and Han (laughinghan@gmail.com)
- *   under the GNU Lesser General Public License
- *     http://www.gnu.org/licenses/lgpl.html
- * Project Website: http://mathquill.com
+ * MathQuill: http://mathquill.com
+ * by Jay and Han (laughinghan@gmail.com)
+ *
+ * This Source Code Form is subject to the terms of the
+ * Mozilla Public License, v. 2.0. If a copy of the MPL
+ * was not distributed with this file, You can obtain
+ * one at http://mozilla.org/MPL/2.0/.
  */
 
 (function() {
@@ -2889,31 +2892,31 @@ LatexCmds['∫'] = LatexCmds['int'] = LatexCmds.integral = bind(BigSymbol,'\\int
 
 //the canonical sets of numbers
 LatexCmds.N = LatexCmds.naturals = LatexCmds.Naturals =
-  bind(VanillaSymbol,'\\N','&#8469;');
+  bind(VanillaSymbol,'\\mathbb{N}','&#8469;');
 
 LatexCmds.P =
 LatexCmds.primes = LatexCmds.Primes =
 LatexCmds.projective = LatexCmds.Projective =
 LatexCmds.probability = LatexCmds.Probability =
-  bind(VanillaSymbol,'\\P','&#8473;');
+  bind(VanillaSymbol,'\\mathbb{P}','&#8473;');
 
 LatexCmds.Z = LatexCmds.integers = LatexCmds.Integers =
-  bind(VanillaSymbol,'\\Z','&#8484;');
+  bind(VanillaSymbol,'\\mathbb{Z}','&#8484;');
 
 LatexCmds.Q = LatexCmds.rationals = LatexCmds.Rationals =
-  bind(VanillaSymbol,'\\Q','&#8474;');
+  bind(VanillaSymbol,'\\mathbb{Q}','&#8474;');
 
 LatexCmds.R = LatexCmds.reals = LatexCmds.Reals =
-  bind(VanillaSymbol,'\\R','&#8477;');
+  bind(VanillaSymbol,'\\mathbb{R}','&#8477;');
 
 LatexCmds.C =
 LatexCmds.complex = LatexCmds.Complex =
 LatexCmds.complexes = LatexCmds.Complexes =
 LatexCmds.complexplane = LatexCmds.Complexplane = LatexCmds.ComplexPlane =
-  bind(VanillaSymbol,'\\C','&#8450;');
+  bind(VanillaSymbol,'\\mathbb{C}','&#8450;');
 
 LatexCmds.H = LatexCmds.Hamiltonian = LatexCmds.quaternions = LatexCmds.Quaternions =
-  bind(VanillaSymbol,'\\H','&#8461;');
+  bind(VanillaSymbol,'\\mathbb{H}','&#8461;');
 
 //spacing
 LatexCmds.quad = LatexCmds.emsp = bind(VanillaSymbol,'\\quad ','    ');
@@ -3259,7 +3262,7 @@ JS environment could actually contain many instances. */
 var Cursor = P(Point, function(_) {
   _.init = function(root) {
     this.parent = this.root = root;
-    var jQ = this.jQ = this._jQ = $('<span class="cursor">&zwj;</span>');
+    var jQ = this.jQ = this._jQ = $('<span class="cursor">&#8203;</span>');
 
     //closured for setInterval
     this.blink = function(){ jQ.toggleClass('blink'); };

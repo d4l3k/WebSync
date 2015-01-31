@@ -74,28 +74,11 @@ module WebSync
         pass unless parts.length >=3
         doc = parts[1]
         op = parts[2]
-        halt 400 unless ["edit","view", "assets"].include? parts[2]
         if op == "upload"
           redirect "/#{doc}/edit"
         end
+        pass unless ["edit","view"].include? parts[2]
         doc = document_auth doc
-        if parts[2] == "assets"
-          if parts.length > 3
-            cache do
-              file = URI.unescape(parts[3..-1].join("/"))
-              asset = doc.children(name: file)[0]
-              if asset
-                content_type asset.content_type
-                response.write asset.data
-                return
-              else
-                halt 404
-              end
-            end
-          else
-            halt 404
-          end
-        end
         @javascripts = [
           #'/assets/bundle-edit.js'
         ]
@@ -120,6 +103,20 @@ module WebSync
           access: access,
           allow_iframe: true
         }
+      end
+      get '/:doc/assets/:file' do
+        doc = document_auth
+        cache do
+          file = URI.unescape(params[:file])
+          asset = doc.children(name: file)[0]
+          if asset
+            content_type asset.content_type
+            response.write asset.data
+            return
+          else
+            halt 404
+          end
+        end
       end
       post "/:doc/upload" do
         doc = document_auth

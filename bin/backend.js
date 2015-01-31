@@ -260,7 +260,7 @@ function wsConnection(ws) {
           } else if (data.type === 'export_html') {
             // TODO: Take into account data.docType
             tmp.file({
-              mode: 0x644,
+              mode: 0644,
               prefix: 'websync-backend-export-',
               postfix: '.html'
             }, function _tempFileCreated(err, path, fd) {
@@ -269,7 +269,10 @@ function wsConnection(ws) {
               }
               console.log('File: ', path);
               console.log('Filedescriptor: ', fd);
-              fs.write(fd, data.data, function(err) {
+              var file_descriptor = fd;
+
+              fs.writeFile(path, data.data, function(err) {
+                console.log("INSIDE");
                 fs.close(fd, function(err) {
                   console.log('Extension:', data.extension);
                   unoconv.convert(path, data.extension, function(err, result) {

@@ -219,7 +219,7 @@ define('/assets/note.js', ['websync'], function(WebSync) {
       WebSync.fromJSON();
     }
     NProgress.done();
-    exports.switchToPage(0,0);
+    exports.switchToPage(0, 0);
   });
   $('.content_well').children().bind('mousedown selectstart', function(e) {
     e.stopPropagation();

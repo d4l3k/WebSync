@@ -133,15 +133,16 @@ module WebSync
           if type=="application/octet-stream"
             type = get_mime_type(file[:tempfile].path)
           end
-          ws_file = doc.children(name: file[:filename])[0]
+          filename = URI.decode(file[:filename])
+          ws_file = doc.children(name: filename)[0]
           if ws_file
             ws_file.update edit_time: DateTime.now
             ws_file.data = file[:tempfile].read
           else
-            blob = WSFile.create(parent: doc, name: file[:filename], content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
+            blob = WSFile.create(parent: doc, name: filename, content_type: type, edit_time: DateTime.now, create_time: DateTime.now)
             blob.data = file[:tempfile].read
           end
-          $redis.del "url:/#{doc.id.encode62}/assets/#{URI.encode(file[:filename])}"
+          $redis.del "url:/#{doc.id.encode62}/assets/#{URI.encode(filename)}"
           redirect "/#{doc.id.encode62}/edit"
         end
         if request.xhr?

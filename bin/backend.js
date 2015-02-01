@@ -10,6 +10,7 @@ var fs = require('fs'),
   unoconv = require('unoconv'),
   tmp = require('tmp'),
   crypto = require('crypto'),
+pdf = require('html-pdf'),
   stripJsonComments = require('strip-json-comments');
 
 
@@ -49,6 +50,12 @@ function wsConnection(ws) {
       }
     });
   };
+  var error = function(msg) {
+    ws.sendJSON({
+      type: 'error',
+      reason: msg
+    });
+  }
   console.log(parts);
   if (parts[2] === 'edit' || parts[2] === 'view') {
     var docId = Base62.decode(parts[1]);
@@ -67,7 +74,6 @@ function wsConnection(ws) {
     });
     ws.on('message', function(message) {
       var data = JSON.parse(message);
-      console.log('JSON: ' + message);
       if (data.type === 'auth') {
         clientId = data.id;
         redis.get('websocket:key:' + data.id, function(err, reply) {
@@ -258,51 +264,68 @@ function wsConnection(ws) {
               });
             }
           } else if (data.type === 'export_html') {
+            var sendFile = function(result) {
+              crypto.randomBytes(16, function(ex, buf) {
+                var token = buf.toString('hex');
+                var address = 'websync:document_export:' + docId + ':' + token;
+                redis.setex(address, 15 * 60, result, function(err) {
+                  if (err) {
+                    console.log('REDIS ERROR SETEX:', err);
+                  }
+                });
+                redis.setex(address + ':extension', 15 * 60, data.extension, function(err) {
+                  if (err) {
+                    console.log('REDIS ERROR SETEX:', err);
+                  }
+                });
+                console.log('EXPORT Address:', address, result.length);
+                ws.sendJSON({
+                  type: 'download_token',
+                  token: token
+                });
+              });
+            };
             // TODO: Take into account data.docType
-            tmp.file({
-              mode: 0644,
-              prefix: 'websync-backend-export-',
-              postfix: '.html'
-            }, function _tempFileCreated(err, path, fd) {
-              if (err) {
-                throw err;
-              }
-              console.log('File: ', path);
-              console.log('Filedescriptor: ', fd);
-              var file_descriptor = fd;
-
-              fs.writeFile(path, data.data, function(err) {
-                console.log("INSIDE");
-                fs.close(fd, function(err) {
-                  console.log('Extension:', data.extension);
-                  unoconv.convert(path, data.extension, function(err, result) {
-                    if (err) {
-                      console.log('UNOCONV ERROR', err);
-                    } else {
-                      crypto.randomBytes(16, function(ex, buf) {
-                        var token = buf.toString('hex');
-                        var address = 'websync:document_export:' + docId + ':' + token;
-                        redis.setex(address, 15 * 60, result, function(err) {
-                          if (err) {
-                            console.log('REDIS ERROR SETEX:', err);
-                          }
-                        });
-                        redis.setex(address + ':extension', 15 * 60, data.extension, function(err) {
-                          if (err) {
-                            console.log('REDIS ERROR SETEX:', err);
-                          }
-                        });
-                        console.log('EXPORT Address:', address, result.length);
-                        ws.sendJSON({
-                          type: 'download_token',
-                          token: token
-                        });
-                      });
-                    }
+            if (data.extension === 'pdf') {
+              var options = {
+                format: 'Letter',
+                border: '1in'
+              };
+              console.log('exporting!');
+              pdf.create(data.data, options).toBuffer(function(err, res) {
+                if (err) {
+                  console.log('Node-pdf', err);
+                  error('Node-pdf failed to convert. Please try again.');
+                }
+                sendFile(res);
+              });
+            } else {
+              tmp.file({
+                mode: 0644,
+                prefix: 'websync-backend-export-',
+                postfix: '.html'
+              }, function _tempFileCreated(err, path, fd) {
+                if (err) {
+                  throw err;
+                }
+                console.log('File: ', path);
+                console.log('Filedescriptor: ', fd);
+                var file_descriptor = fd;
+                fs.writeFile(path, data.data, function(err) {
+                  fs.close(fd, function(err) {
+                    console.log('Extension:', data.extension);
+                    unoconv.convert(path, data.extension, function(err, result) {
+                      if (err) {
+                        console.log('UNOCONV ERROR', err);
+                        error('Unoconv failed to convert. Please try again.');
+                      } else {
+                        sendFile(result);
+                      }
+                    });
                   });
                 });
               });
-            });
+            }
           } else if (data.type === 'blob_info') {
             if (editor) {
               var resources = [];

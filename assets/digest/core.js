@@ -423,23 +423,71 @@ define('websync', ['crypto'], function(crypto) {
      * @param {Element} img - An image element to convert to a data string.
      * @return {String}
      */
-    getBase64Image: function(img) {
-        // Create an empty canvas element
-        var canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
+    getImageDataURL: function(img) {
+      // Create an empty canvas element
+      var canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
 
-        // Copy the image contents to the canvas
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
+      // Copy the image contents to the canvas
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
 
-        // Get the data-URL formatted image
-        // Firefox supports PNG and JPEG. You could check img.src to guess the
-        // original format, but be aware the using "image/jpg" will re-encode the image.
-        var dataURL = canvas.toDataURL("image/png");
+      // Get the data-URL formatted image
+      // Firefox supports PNG and JPEG. You could check img.src to guess the
+      // original format, but be aware the using "image/jpg" will re-encode the image.
+      var dataURL = canvas.toDataURL('image/png');
 
-        return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-    }
+      return dataURL;
+    },
+
+    /**
+     * Converts the contents of an element into a static HTML blob with data uri images.
+     *
+     * @param {Element} elem - The element to export.
+     * @return {String} Static HTML
+     */
+    exportElements: function(elem) {
+      var dom = $(elem).clone();
+      _.each(dom.find('img'), function(img) {
+        var $img = $(img);
+        $img.css({
+          'width': img.width,
+          'height': img.height
+        });
+        $img.attr('src', WS.getImageDataURL(img));
+      });
+      /*
+       * This converts all LaTeX equations into MathML. It would work great if anything supported it. :(
+      var selector = '.mathquill-rendered-math';
+      var equations = dom.find(selector);
+      if (equations.length > 0) {
+        $('body').append('<script src="/assets/display-latex.user.js"></script>');
+        _.each(equations, function(equation) {
+          var latex = $(equation).mathquill('latex');
+          $(equation).text('$'+latex+'$');
+          patch_element(equation);
+          $(equation).attr('id', 'Object1');
+          $(equation).find('math').attr('xmlns', 'http://www.w3.org/1998/Math/MathML');
+          console.log(equation);
+        });
+      }
+      */
+      // Convert CSS into static element properties.
+      var selector = '*';
+      var elements = dom.find(selector);
+      var realElements = $(elem).find(selector);
+      _.each(elements, function(elem, i) {
+        var eqn = realElements[i];
+        var style = $(eqn).getStyleObject();
+        var jsonStyle = {};
+        _.each(style, function(key) {
+          jsonStyle[key] = style[key];
+        });
+        $(elem).css(jsonStyle);
+      });
+      return dom.html();
+    },
 
     /**
      * Upload a resource (usually a picture) using XHR.

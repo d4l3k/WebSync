@@ -31,10 +31,12 @@ define('/assets/page.js', ['websync'], function(WS) {
     }
   };
   WS.setupDownloads('document', function() {
-    return '<html><head><style>' +
+    WS.info('Exporting document to file. Please wait...');
+    return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd"><html><head><style>' +
       (WebSyncData.custom_css || []).join('\n') +
       '</style></head><body>' +
-      WS.JSONToDOM(WebSyncData.body) +
+      WS.exportElements($('.page')) +
+      //WS.JSONToDOM(WebSyncData.body) +
       '</body></html>';
   });
   $(document).on('modules_loaded', function() {

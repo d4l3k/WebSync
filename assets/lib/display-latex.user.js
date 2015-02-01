@@ -44,7 +44,7 @@
 
 
 
-const mmlns = 'http://www.w3.org/1998/Math/MathML';
+var mmlns = 'http://www.w3.org/1998/Math/MathML';
 
 
 function result_element(tag, num_attrs)
@@ -136,7 +136,7 @@ if(this.GM_registerMenuCommand) {
 
 
 
-const char_map = {
+var char_map = {
   'script': [
     '\uEF35', '\u212C', '\uEF36', '\uEF37', '\u2130', '\u2131',
     '\uEF38', '\u210B', '\u2110', '\uEF39', '\uEF3A', '\u2112',
@@ -159,7 +159,7 @@ const char_map = {
     '\uEF9E', '\u2124' ],
 };
 
-const uppercase_re = /[A-Z]/;
+var uppercase_re = /[A-Z]/;
 
 function fix_mathvariant(node, style)
 {
@@ -1631,11 +1631,11 @@ function v_collect_invisible_group (tokens , v_stop_tokens ) {
 }
 
 
-const tokenize_re = /(\\begin|\\operatorname|\\mathrm|\\mathop|\\end)\s*\{\s*([A-Z a-z]+)\s*\}|(\\[a-zA-Z]+|\\[\\#\{\},:;!])|(\s+)|([0-9\.]+)|([\$!"#%&'()*+,-.\/:;<=>?\[\]^_`\{\|\}~])|([a-zA-Z])/g;
+var tokenize_re = /(\\begin|\\operatorname|\\mathrm|\\mathop|\\end)\s*\{\s*([A-Z a-z]+)\s*\}|(\\[a-zA-Z]+|\\[\\#\{\},:;!])|(\s+)|([0-9\.]+)|([\$!"#%&'()*+,-.\/:;<=>?\[\]^_`\{\|\}~])|([a-zA-Z])/g;
 
-const tokenize_text_re = /[\${}\\]|\\[a-zA-Z]+|[^{}\$]+/g;
+var tokenize_text_re = /[\${}\\]|\\[a-zA-Z]+|[^{}\$]+/g;
 
-const tokenize_text_commands = {
+var tokenize_text_commands = {
   '\\textrm': 1,
   '\\textsl': 1,
   '\\textit': 1,
@@ -1757,7 +1757,7 @@ function patch_img(node)
   {
     var parent = node.parentNode;
     var previous = parent.previousSibling;
-    const non_whitespace = /[^\s]/;
+    var non_whitespace = /[^\s]/;
 
         if(previous &&
        previous.nodeType == node.TEXT_NODE &&

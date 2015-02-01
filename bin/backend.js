@@ -10,7 +10,7 @@ var fs = require('fs'),
   unoconv = require('unoconv'),
   tmp = require('tmp'),
   crypto = require('crypto'),
-pdf = require('html-pdf'),
+  pdf = require('html-pdf'),
   stripJsonComments = require('strip-json-comments');
 
 
@@ -55,7 +55,7 @@ function wsConnection(ws) {
       type: 'error',
       reason: msg
     });
-  }
+  };
   console.log(parts);
   if (parts[2] === 'edit' || parts[2] === 'view') {
     var docId = Base62.decode(parts[1]);

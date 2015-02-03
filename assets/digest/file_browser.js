@@ -1,6 +1,6 @@
 /*global $, _, window, JST*/
 
-//= require lodash/dist/lodash.min.js
+//= require lodash/lodash.min.js
 //= require moment/moment.js
 
 //= require templates/file-browser

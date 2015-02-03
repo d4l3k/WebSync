@@ -16,7 +16,7 @@
       sortType: sortType,
       sortDir: sortDir
     };
-    var url = _.template('/apifiles?public=${public}&deleted=${deleted}&q=${q}&sortType=${sortType}&sortDir=${sortDir}', options);
+    var url = _.template('/apifiles?public=${public}&deleted=${deleted}&q=${q}&sortType=${sortType}&sortDir=${sortDir}')(options);
     $.get(url, function(resp) {
       var results = JSON.parse(resp);
       $('.files table').html(JST['templates/file-browser']({

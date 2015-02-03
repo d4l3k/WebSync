@@ -17,12 +17,9 @@ body,
 html {
     overflow: hidden;
     //background-color: #eee !important;
-    position: fixed;
     width: 100%;
     height: 100%;
     color: black;
-    top: 0;
-    left: 0;
 }
 .modal-body :first-child {
     margin-top: 0;
@@ -1125,5 +1122,29 @@ ul.nav.nav-list {
       width: $size;
     }
     margin-right: 5px;
+  }
+}
+@media print {
+  body > * {
+    display: none;
+  }
+  body, .content_well {
+    overflow: visible;
+    position: initial;
+    display: block !important;
+  }
+  .content_well, .content_well * {
+    .content_container {
+      margin: 0;
+      border: 0;
+      .page {
+        border: 0;
+        margin: 0;
+      }
+      display: initial;
+    }
+  }
+  .return_edit {
+    display: none !important;
   }
 }

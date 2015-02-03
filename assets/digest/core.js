@@ -116,7 +116,8 @@ define('websync', ['crypto'], function(crypto) {
           $('#name').text(data.name);
         } else if (data.type === 'ping') {
           WebSync.connection.sendJSON({
-            type: 'ping'
+            type: 'ping',
+            hash: openpgp.crypto.hash.md5(JSON.stringify(WebSyncData))
           });
         } else if (data.type === 'permissions') {
           $('#access_mode').val(data.visibility);

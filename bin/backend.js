@@ -292,6 +292,7 @@ function wsConnection(ws) {
                 border: '1in'
               };
               console.log('exporting!');
+              fs.writeFile('/tmp/blah.html', data.data, function(err) {});
               pdf.create(data.data, options).toBuffer(function(err, res) {
                 if (err) {
                   console.log('Node-pdf', err);

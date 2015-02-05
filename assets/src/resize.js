@@ -28,6 +28,12 @@ define(['websync'], function(WS) {
       $('.content').append('<div class="Resize handle left middle"></div>');
       exports.updateHandles();
       exports.active.addEventListener('DOMSubtreeModified', exports.observer);
+      $('*').off('scroll.ResizeScroll');
+      var parent = $(elem);
+      while (parent.length > 0) {
+        parent.on('scroll.ResizeScroll', exports.updateHandles);
+        parent = parent.parent();
+      }
     },
 
     /** Updates the position of the handles. */
@@ -36,57 +42,37 @@ define(['websync'], function(WS) {
         return;
       }
       var offset = $(exports.active).offset();
+      var width, height;
       if (exports.active.getBoundingClientRect) {
         var rect = exports.active.getBoundingClientRect();
-        var width = rect.width;
-        var height = rect.height;
-        $('.Resize.handle.top').offset({
-          top: offset.top - 4
-        });
-        $('.Resize.handle.left').offset({
-          left: offset.left - 4
-        });
-        $('.Resize.handle.right').offset({
-          left: offset.left + width - 3
-        });
-        $('.Resize.handle.bottom').offset({
-          top: offset.top + height - 3
-        });
-        $('.Resize.handle.right.middle, .Resize.handle.left.middle').offset({
-          top: offset.top + height / 2 - 4
-        });
-        $('.Resize.handle.top.middle, .Resize.handle.bottom.middle').offset({
-          left: offset.left + width / 2 - 4
-        });
-        $('.Resize.handle.top.left.dragable').offset({
-          left: offset.left - 8,
-          top: offset.top - 8
-        });
-        // Fallback method. TODO: Remove.
+        width = rect.width;
+        height = rect.height;
       } else {
-        $('.Resize.handle.top').offset({
-          top: offset.top - 4
-        });
-        $('.Resize.handle.left').offset({
-          left: offset.left - 4
-        });
-        $('.Resize.handle.right').offset({
-          left: offset.left + $(exports.active).outerWidth() * WS.zoom - 3
-        });
-        $('.Resize.handle.bottom').offset({
-          top: offset.top + $(exports.active).outerHeight() * WS.zoom - 3
-        });
-        $('.Resize.handle.right.middle, .Resize.handle.left.middle').offset({
-          top: offset.top + $(exports.active).outerHeight() * WS.zoom / 2 - 4
-        });
-        $('.Resize.handle.top.middle, .Resize.handle.bottom.middle').offset({
-          left: offset.left + $(exports.active).outerWidth() * WS.zoom / 2 - 4
-        });
-        $('.Resize.handle.top.left.dragable').offset({
-          left: offset.left - 8,
-          top: offset.top - 8
-        });
+        width = $(exports.active).outerWidth() * WS.zoom;
+        height = $(exports.active).outerHeight() * WS.zoom;
       }
+      $('.Resize.handle.top').offset({
+        top: offset.top - 4
+      });
+      $('.Resize.handle.left').offset({
+        left: offset.left - 4
+      });
+      $('.Resize.handle.right').offset({
+        left: offset.left + width - 3
+      });
+      $('.Resize.handle.bottom').offset({
+        top: offset.top + height - 3
+      });
+      $('.Resize.handle.right.middle, .Resize.handle.left.middle').offset({
+        top: offset.top + height / 2 - 4
+      });
+      $('.Resize.handle.top.middle, .Resize.handle.bottom.middle').offset({
+        left: offset.left + width / 2 - 4
+      });
+      $('.Resize.handle.top.left.dragable').offset({
+        left: offset.left - 8,
+        top: offset.top - 8
+      });
     },
 
     /** A polling observer that checks for changes in size of the target element. */

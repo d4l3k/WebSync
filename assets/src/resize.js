@@ -27,7 +27,8 @@ define(['websync'], function(WS) {
       $('.content').append('<div class="Resize handle bottom left"></div>');
       $('.content').append('<div class="Resize handle left middle"></div>');
       exports.updateHandles();
-      exports.active.addEventListener('DOMSubtreeModified', exports.observer);
+      $(exports.active).on('keypress.Resize', exports.observer);
+      //exports.active.addEventListener('DOMSubtreeModified', exports.observer);
       $('*').off('scroll.ResizeScroll');
       var parent = $(elem);
       while (parent.length > 0) {
@@ -76,13 +77,13 @@ define(['websync'], function(WS) {
     },
 
     /** A polling observer that checks for changes in size of the target element. */
-    observer: function() {
-      var boundingData = JSON.stringify(exports.active.getBoundingClientRect());
+    observer: function(e) {
+      var boundingData = exports.active.clientWidth + ';' + exports.active.clientHeight;
       if (boundingData !== exports.lastSize) {
         setTimeout(function() {
           exports.updateHandles();
         }, 1);
-        exports.lasttSize = boundingData;
+        exports.lastSize = boundingData;
       }
     },
 
@@ -96,6 +97,7 @@ define(['websync'], function(WS) {
       $('.Resize.handle').remove();
       if (exports.active) {
         exports.active.removeEventListener('DOMSubtreeModified', exports.observer);
+        $(exports.active).off('keypress.Resize');
       }
       exports.active = null;
     },

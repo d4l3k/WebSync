@@ -141,6 +141,7 @@ define(['websync'], function(WS) {
       $('.Table').remove();
       WS.updateRibbon();
       $('*').unbind('.Tables');
+      $('*').off('.Tables');
       $('*').undelegate('.Tables');
     },
 
@@ -173,7 +174,8 @@ define(['websync'], function(WS) {
       $(exports.selectedElem).focus();
       exports.selectedEditable(false);
       //exports.observer.observe(exports.selectedElem,{characterData:true});
-      exports.selectedElem.addEventListener('DOMSubtreeModified', exports.observer);
+      //exports.selectedElem.addEventListener('DOMSubtreeModified', exports.observer);
+      $(exports.selectedElem).on('keypress.Tables', _.throttle(exports.observer, 100)).on('resize.Tables', _.throttle(exports.observer, 100));
       if ($('.Table.axis').length === 0) {
         var size = exports.tableSize();
         var nodes = '<table class="Table axis" id="x"><thead><tr>';
@@ -439,7 +441,8 @@ define(['websync'], function(WS) {
         $('#table_cursor').offset({
           left: -10000
         });
-        exports.selectedElem.removeEventListener('DOMSubtreeModified', exports.observer);
+        //exports.selectedElem.removeEventListener('DOMSubtreeModified', exports.observer);
+        $(exports.selectedElem).off('.Tables');
         delete exports.selectedElem;
         $("#ribbon_buttons a:contains('Table')").parent().fadeOut(200);
         $('#ribbon_buttons a:contains("Text")').click();

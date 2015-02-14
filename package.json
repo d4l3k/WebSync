@@ -18,7 +18,7 @@
     "tmp": "0.0.24",
     "underscore": "^1.7.0",
     "unoconv": "^0.1.2",
-    "ws": "^0.6.3"
+    "ws": "^0.7.1"
   },
   "repository": {
     "type": "git",

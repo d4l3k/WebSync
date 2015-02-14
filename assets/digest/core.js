@@ -174,7 +174,7 @@ define('websync', ['crypto'], function(crypto) {
         } else if (data.type === 'error') {
           if (data.action === 'sync') {
             var elem = WebSync.error('<b>Error</b> ' + data.reason + ' Click to force changes.');
-            $(elem).click(function(){
+            $(elem).click(function() {
               $(this).hide();
               WebSync.info('Attempting to force changes...');
               WebSync.oldData = data.body;

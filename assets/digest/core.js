@@ -172,14 +172,16 @@ define('websync', ['crypto'], function(crypto) {
         } else if (data.type === 'download_token') {
           window.location.pathname = '/' + window.location.pathname.split('/')[1] + '/download/' + data.token;
         } else if (data.type === 'error') {
-          WebSync.error(data.reason);
           if (data.action === 'sync') {
-            // TODO: Use modal
-            var sync = confirm('Error: ' + data.reason + '\nPress okay to force changes.');
-            if (sync) {
+            var elem = WebSync.error('<b>Error</b> ' + data.reason + ' Click to force changes.');
+            $(elem).click(function(){
+              $(this).hide();
+              WebSync.info('Attempting to force changes...');
               WebSync.oldData = data.body;
               WebSync.oldDataString = JSON.stringify(data.body);
-            }
+            });
+          } else {
+            WebSync.error(data.reason);
           }
         } else if (data.type === 'info') {
           WebSync.webSocketFirstTime = false;

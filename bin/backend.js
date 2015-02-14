@@ -388,16 +388,16 @@ function wsConnection(ws) {
             });
 
             postgres.query('SELECT body, encrypted FROM ws_files WHERE id = $1', [docId]).
-              on('row', function(row) {
-                var hash = openpgp.crypto.hash.md5(row.body);
-                if (data.hash !== hash) {
-                  ws.sendJSON({
-                    type: 'error',
-                    action: 'sync',
-                    body: JSON.parse(row.body),
-                    reason: 'Client & Server have become desynced and future changes may not be saved.'
-                  });
-                }
+            on('row', function(row) {
+              var hash = openpgp.crypto.hash.md5(row.body);
+              if (data.hash !== hash) {
+                ws.sendJSON({
+                  type: 'error',
+                  action: 'sync',
+                  body: JSON.parse(row.body),
+                  reason: 'Client & Server have become desynced and future changes may not be saved.'
+                });
+              }
             });
           } else if (data.type === 'config') {
             if (data.action === 'get') {

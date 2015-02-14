@@ -11,7 +11,8 @@ var fs = require('fs'),
   tmp = require('tmp'),
   crypto = require('crypto'),
   pdf = require('html-pdf'),
-  stripJsonComments = require('strip-json-comments');
+  stripJsonComments = require('strip-json-comments'),
+  openpgp = require('openpgp');
 
 
 var config = {},
@@ -147,7 +148,7 @@ function wsConnection(ws) {
                 };
                 // Check for expired users (> 60 sec).
                 _.each(users, function(data, id) {
-                  if ((new Date() - data.time) > 60) {
+                  if ((new Date() - new Date(data.time)) > 60) {
                     delete users[id];
                     redis.publish('doc:' + docId, JSON.stringify({
                       type: 'client_bounce',
@@ -371,7 +372,7 @@ function wsConnection(ws) {
                 time: new Date()
               };
               _.each(users, function(data, id) {
-                if ((new Date() - data.time) > 60) {
+                if ((new Date() - new Date(data.time)) > 60) {
                   delete users[id];
                   redis.publish('doc:' + docId, JSON.stringify({
                     type: 'client_bounce',
@@ -384,6 +385,19 @@ function wsConnection(ws) {
                 }
               });
               redis.set('doc:' + docId + ':users', JSON.stringify(users));
+            });
+
+            postgres.query('SELECT body, encrypted FROM ws_files WHERE id = $1', [docId]).
+              on('row', function(row) {
+                var hash = openpgp.crypto.hash.md5(row.body);
+                if (data.hash !== hash) {
+                  ws.sendJSON({
+                    type: 'error',
+                    action: 'sync',
+                    body: JSON.parse(row.body),
+                    reason: 'Client & Server have become desynced and future changes may not be saved.'
+                  });
+                }
             });
           } else if (data.type === 'config') {
             if (data.action === 'get') {

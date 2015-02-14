@@ -64,7 +64,7 @@ define('websync', ['crypto'], function(crypto) {
               key: WebSyncAuth.key
             });
           } else {
-            startDiffInterval();
+            exports.startDiffInterval();
             WebSync.connection.sendJSON({
               type: 'auth',
               id: WebSyncAuth.id,
@@ -173,6 +173,14 @@ define('websync', ['crypto'], function(crypto) {
           window.location.pathname = '/' + window.location.pathname.split('/')[1] + '/download/' + data.token;
         } else if (data.type === 'error') {
           WebSync.error(data.reason);
+          if (data.action === 'sync') {
+            // TODO: Use modal
+            var sync = confirm('Error: ' + data.reason + '\nPress okay to force changes.');
+            if (sync) {
+              WebSync.oldData = data.body;
+              WebSync.oldDataString = JSON.stringify(data.body);
+            }
+          }
         } else if (data.type === 'info') {
           WebSync.webSocketFirstTime = false;
           WebSync.loadScripts();

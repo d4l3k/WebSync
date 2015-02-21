@@ -1,4 +1,6 @@
 # [![WebSync](https://github.com/d4l3k/WebSync/raw/master/public/img/logo-github.png)](https://websyn.ca)
+
+[![Join the chat at https://gitter.im/d4l3k/WebSync](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/d4l3k/WebSync?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive.
 
 [![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)  [![Idea Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=Low%20Priority&title=Ideas)](https://waffle.io/d4l3k/WebSync)  [![Build Status](https://travis-ci.org/d4l3k/WebSync.svg?branch=master)](https://travis-ci.org/d4l3k/WebSync) [![Gem Status](https://img.shields.io/gemnasium/d4l3k/WebSync.svg?style=flat)](https://gemnasium.com/d4l3k/WebSync) [![Code Climate](https://img.shields.io/codeclimate/github/d4l3k/WebSync.svg?style=flat)](https://codeclimate.com/github/d4l3k/WebSync) [![Codacy Badge](https://img.shields.io/codacy/3eb607d1abb0496ea3e28b898b267685.svg?style=flat)](https://www.codacy.com/public/rice/WebSync) [![Ruby Documentation Coverage](http://inch-ci.org/github/d4l3k/WebSync.svg?branch=master&style=flat)](http://inch-ci.org/github/d4l3k/WebSync)

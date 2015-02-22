@@ -814,7 +814,6 @@ define(['websync'], function(WS) {
   $('.Table [title="Delete Column"]').bind('click.Tables', function(e) {
     if (exports.selected) {
       var size = exports.tableSize();
-      var pos = exports.selectedPos();
       var parentElem = $(exports.selectedElem).parent().parent();
       if (size[0] > 1) {
         var pos = exports.selectedPos();
@@ -974,7 +973,7 @@ define(['websync'], function(WS) {
       var nodes = $(e.originalEvent.clipboardData.getData('text/html'));
       nodes.find('script').remove();
       if (nodes.filter('table').length > 0) {
-        rows = nodes.filter('table').find('tr');
+        var rows = nodes.filter('table').find('tr');
         var pos = exports.selectedPos();
         _.each(rows, function(row, i) {
           _.each($(row).children(), function(element, j) {

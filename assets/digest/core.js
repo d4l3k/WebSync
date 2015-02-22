@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, define, rangy, _, Detector, WebSyncData, ace, WebSyncAuth, WebSocket, jsonpatch*/
+/*global $, define, rangy, _, Detector, WebSyncData, ace, WebSyncAuth, WebSocket, jsonpatch, openpgp, NProgress, fullScreenApi, requirejs, WS*/
 
 /*
   WebSync: Core.js
@@ -115,9 +115,11 @@ define('websync', ['crypto'], function(crypto) {
         } else if (data.type === 'name_update') {
           $('#name').text(data.name);
         } else if (data.type === 'ping') {
+          var hash = openpgp.crypto.hash.md5(JSON.stringify(WebSyncData));
+          console.log('HASH', hash);
           WebSync.connection.sendJSON({
             type: 'ping',
-            hash: openpgp.crypto.hash.md5(JSON.stringify(WebSyncData))
+            hash: hash
           });
         } else if (data.type === 'permissions') {
           $('#access_mode').val(data.visibility);
@@ -1143,7 +1145,8 @@ define('websync', ['crypto'], function(crypto) {
                 el = document.createElement(change.value);
                 var attrs = cur.attributes;
                 if (attrs) {
-                  for (var j = 0, k = attrs.length; j < k; j++) {
+                  var j = 0, k = attrs.length;
+                  for (j = 0; j < k; j++) {
                     el.setAttribute(attrs[j].name, attrs[j].value);
                   }
                 }
@@ -1264,7 +1267,7 @@ define('websync', ['crypto'], function(crypto) {
         jso.textContent = obj.textContent;
       }
       if (obj.attributes) {
-        _.each(obj.attributes, function(v, k) {
+        _.each(obj.attributes, function(v) {
           // TODO: Add blacklist of classnames & attributes for DOM serialization.
           if (v.name !== 'contenteditable' && v.name.indexOf('data-') !== 0) {
             jso[v.name] = v.value;
@@ -1272,7 +1275,7 @@ define('websync', ['crypto'], function(crypto) {
         });
       }
       if (searchChildren) {
-        _.each(obj.childNodes, function(child, index) {
+        _.each(obj.childNodes, function(child) {
           jso.childNodes.push(WS.NODEtoJSON(child));
         });
       }
@@ -1289,7 +1292,7 @@ define('websync', ['crypto'], function(crypto) {
      */
     DOMToJSON: function(obj) {
       var jso = [];
-      _.each(obj, function(elem, index) {
+      _.each(obj, function(elem) {
         elem.normalize();
         jso.push(WebSync.NODEtoJSON(elem));
       });
@@ -1356,7 +1359,7 @@ define('websync', ['crypto'], function(crypto) {
       } else {
         html += '>';
         if (obj.childNodes) {
-          _.each(obj.childNodes, function(elem, index) {
+          _.each(obj.childNodes, function(elem) {
             html += WS.NODEtoDOM(elem);
           });
         }
@@ -1372,7 +1375,7 @@ define('websync', ['crypto'], function(crypto) {
      */
     JSONToDOM: function(obj) {
       var html = '';
-      _.each(obj, function(elem, index) {
+      _.each(obj, function(elem) {
         html += WebSync.NODEtoDOM(elem);
       });
       return html;
@@ -1399,7 +1402,7 @@ define('websync', ['crypto'], function(crypto) {
                   _.each(decrypted, function(patch) {
                     jsonpatch.apply(newBody, JSON.parse(patch));
                   });
-                  WebSyncData = newBody;
+                  window.WebSyncData = newBody;
                   delete WebSync.oldData;
                   $(document).trigger('modules_loaded');
                 });
@@ -1447,7 +1450,7 @@ define('websync', ['crypto'], function(crypto) {
       level: choice
     });
   });
-  $('#user_perms').delegate('a', 'click', function(e) {
+  $('#user_perms').delegate('a', 'click', function() {
     var email = $(this).parents('tr').children().first().text();
     WebSync.connection.sendJSON({
       type: 'share',
@@ -1504,7 +1507,7 @@ define('websync', ['crypto'], function(crypto) {
     }
   });
   $('.settings-popup #config').delegate('button', 'click', function() {
-    $(this.parentElement.children[0]).prop('disabled', function(_, val) {
+    $(this.parentElement.children[0]).prop('disabled', function(u, val) {
       return !val;
     });
     $(this).toggleClass('active');
@@ -1517,7 +1520,7 @@ define('websync', ['crypto'], function(crypto) {
   $('#name, #permissions input[type=text]').bind('mousedown selectstart', function(e) {
     e.stopPropagation();
   });
-  $('#zoom_level').slider().on('slide', function(e) {
+  $('#zoom_level').slider().on('slide', function() {
     WebSync.setZoom($('#zoom_level').data('slider').getValue() / 100.0);
 
   });
@@ -1569,12 +1572,12 @@ define('websync', ['crypto'], function(crypto) {
     $($('#settingsBtn').get(0).parentElement).toggleClass('active');
     $('.settings-popup').toggle();
   });
-  $('.settings-popup #diffs').delegate('button', 'click', function(e) {
-    console.log(this);
+  $('.settings-popup #diffs').delegate('button', 'click', function() {
     var patches = [];
     var id = parseInt($(this).data('id'), 10);
     // TODO: Tree based patches.
-    for (var i = 0; i < WebSync.patches.length; i++) {
+    var i;
+    for (i = 0; i < WebSync.patches.length; i++) {
       patches.push(WebSync.patches[i]);
       if (WebSync.patches[i].id === id) {
         i = WebSync.patches.length;
@@ -1598,7 +1601,7 @@ define('websync', ['crypto'], function(crypto) {
     _.each(newBody, function(v, k) {
       WebSyncData[k] = v;
     });
-    WebSyncData = newBody;
+    window.WebSyncData = newBody;
     if (WebSync.fromJSON) {
       WebSync.fromJSON();
     }
@@ -1668,16 +1671,16 @@ if (window.JST === undefined) {
   window.JST = {};
 }
 window.JST.get = function(template) {
-  if (JST[template] === undefined) {
+  if (window.JST[template] === undefined) {
     $('body').append('<script src="/assets/' + template + '.js?body=1"></script>');
   }
-  return JST[template];
+  return window.JST[template];
 };
 
 (function() {
   var done = false;
   // This is used to know when all modules are loaded. It uses a sketchy internal function subject to change.
-  requirejs.onResourceLoad = function(context, map, depArray) {
+  requirejs.onResourceLoad = function() {
     if (done) {
       return;
     }
@@ -1703,4 +1706,4 @@ window.JST.get = function(template) {
   require(['websync'], function(websync) {
     window.WebSync = window.WS = websync;
   });
-})();
+}());

@@ -11,12 +11,12 @@
     "html-pdf": "^1.0.0",
     "js-beautify": "^1.5.4",
     "jsdoc": "^3.3.0-alpha11",
+    "lodash": "^3.3.0",
     "openpgp": "^0.10.3",
     "pg": "^4.1.0",
     "redis": "^0.12.1",
     "strip-json-comments": "^1.0.2",
     "tmp": "0.0.24",
-    "underscore": "^1.7.0",
     "unoconv": "^0.1.2",
     "ws": "^0.7.1"
   },

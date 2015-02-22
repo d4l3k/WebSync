@@ -168,6 +168,7 @@ define('/assets/note.js', ['websync'], function(WebSync) {
       $('.note-page').hide();
       $('.note-section').eq(section).children().eq(page).show();
       exports.updateNav();
+      $('.mathquill-rendered-math').mathquill('redraw');
     }
   };
   $('.content').hide().addClass('content-note').fadeIn();

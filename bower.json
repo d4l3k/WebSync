@@ -23,7 +23,7 @@
     "requirejs": "~2.1.15",
     "jquery": "~2.1.1",
     "rangy": "~1.2.3",
-    "lodash": "~3.2.0",
+    "lodash": "~3.3.0",
     "bootstrap-contextmenu": "~0.3.1",
     "seiyria-bootstrap-slider": "~4.4.0",
     "nprogress": "~0.1.6",

@@ -1145,7 +1145,8 @@ define('websync', ['crypto'], function(crypto) {
                 el = document.createElement(change.value);
                 var attrs = cur.attributes;
                 if (attrs) {
-                  var j = 0, k = attrs.length;
+                  var j = 0,
+                    k = attrs.length;
                   for (j = 0; j < k; j++) {
                     el.setAttribute(attrs[j].name, attrs[j].value);
                   }

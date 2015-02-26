@@ -34,14 +34,15 @@ define(['websync'], function(WS) {
   var queries = {};
   self.getEqn = function(elem) {
     var eqns = $('.mathquill-editable');
-    var eqn1 = eqns.eq(eqns.index(elem)-1).mathquill('latex');
+    var eqn1 = eqns.eq(eqns.index(elem) - 1).mathquill('latex');
     var eqn2 = $(elem).mathquill('latex');
-    return '(' + eqn1 + ') === (' + eqn2 + ')';
+    return '((' + eqn1 + ') === (' + eqn2 + ')) || ((' + eqn1 + ') == (' + eqn2 + '))';
   };
   self.updateHref = function(elem) {
-    $(elem).find('.wolfram').attr('href', 'http://www.wolframalpha.com/input/?i=' + window.escape($(elem).mathquill('latex')));
+    $(elem).find('.wolfram').attr('href', 'http://www.wolframalpha.com/input/?i=' + window.encodeURIComponent($(elem).mathquill('latex')));
   };
   self.checkMath = function(elem) {
+    self.updateHref(elem);
     var eqn = self.getEqn(elem);
     console.log(eqn);
 
@@ -94,7 +95,7 @@ define(['websync'], function(WS) {
     if (data.result.queryresult.tips) {
       color = '';
     } else {
-      var equal = _.last(data.result.queryresult.pod).subpod[0].plaintext[0] === 'True';
+      var equal = data.result.queryresult.pod[1].subpod[0].plaintext[0] === 'True';
       color = equal ? 'valid' : 'invalid';
     }
     $(elem).find('.wolfram').removeClass('valid').removeClass('invalid').addClass(color).show();

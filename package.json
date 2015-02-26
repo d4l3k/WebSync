@@ -12,6 +12,7 @@
     "js-beautify": "^1.5.4",
     "jsdoc": "^3.3.0-alpha11",
     "lodash": "^3.3.0",
+    "node-wolfram": "0.0.1",
     "openpgp": "^0.10.3",
     "pg": "^4.1.0",
     "redis": "^0.12.1",

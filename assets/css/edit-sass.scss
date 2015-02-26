@@ -1149,3 +1149,13 @@ ul.nav.nav-list {
     display: none !important;
   }
 }
+a.wolfram {
+  color: orange;
+  font-weight: bold;
+  &.valid {
+    color: lime;
+  }
+  &.invalid {
+    color: red;
+  }
+}

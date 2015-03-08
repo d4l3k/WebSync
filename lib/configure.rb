@@ -65,14 +65,20 @@ module WebSync
         I18n::JS.method(:config).source_location[0])
       sprockets.append_path i18n_js_location
 
+      $omniauth_initialzed = false
+
       # OmniAuth configuration
       use OmniAuth::Builder do
-        def style provider, color, tag
-          $config["omniauth"] ||= {}
-          $config["omniauth"][provider.to_sym] = {color: color, tag: tag}
+        if !$omniauth_initialized
+          def style provider, color, tag
+            $config["omniauth"] ||= {}
+            $config["omniauth"][provider.to_sym] = {color: color, tag: tag}
+          end
+          # This is a huge hack.
+          eval(File.read('./config/omniauth-providers.rb'))
+
+          $omniauth_initialized = true
         end
-        # This is a huge hack.
-        eval(File.read('./config/omniauth-providers.rb'))
       end
     end
   end

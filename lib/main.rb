@@ -26,6 +26,16 @@ require_relative 'configure'
 module WebSync
   # The main application class.
   class App < Config
+    # OmniAuth configuration
+    use OmniAuth::Builder do
+      def style provider, color, tag
+        $config["omniauth"] ||= {}
+        $config["omniauth"][provider.to_sym] = {color: color, tag: tag}
+      end
+      # This is a huge hack.
+      eval(File.read('./config/omniauth-providers.rb'))
+    end
+
     require_relative 'routes/base'
     Dir.glob('lib/routes/*.rb').each do |file|
       require_relative '../'+file

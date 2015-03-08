@@ -36,7 +36,7 @@ define(['websync'], function(WS) {
     var eqns = $('.mathquill-editable');
     var eqn1 = eqns.eq(eqns.index(elem) - 1).mathquill('latex');
     var eqn2 = $(elem).mathquill('latex');
-    return '((' + eqn1 + ') === (' + eqn2 + ')) || ((' + eqn1 + ') == (' + eqn2 + '))';
+    return '(' + eqn1 + ')==(' + eqn2 + ')'.replace(/(\\right|\\left)/ig, '');
   };
   self.updateHref = function(elem) {
     $(elem).find('.wolfram').attr('href', 'http://www.wolframalpha.com/input/?i=' + window.encodeURIComponent($(elem).mathquill('latex')));

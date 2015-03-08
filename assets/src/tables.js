@@ -717,6 +717,7 @@ define(['websync'], function(WS) {
      * @return {Array<Number>} an array with column, row.
      */
     coordsFromLabel: function(label) {
+      var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       // Row (number), Column (Base 26)
       var r = '',
         c = '';

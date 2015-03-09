@@ -12,6 +12,8 @@ module WebSync
       Bundler.require(:development)
       set :assets_debug, true
       use PryRescue::Rack
+      set :protection, :except => :frame_options
+      set :absolute_redirects, false
     end
 
     configure :production do
@@ -41,6 +43,7 @@ module WebSync
       I18n.enforce_available_locales = false
       I18n.load_path = Dir[File.join(settings.root, '..', 'locales', '*.yml')]
       I18n.backend.load_translations
+
       register Sinatra::AssetPipeline
       #sprockets.append_path File.join(root, 'assets', 'css')
       sprockets.append_path File.join(root, 'assets', 'digest')

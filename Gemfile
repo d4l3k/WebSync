@@ -23,7 +23,7 @@ gem 'radix62'
 gem 'pg'
 gem 'font-awesome-sass'
 gem 'compass'
-gem 'sinatra-asset-pipeline', require: ['sinatra/asset_pipeline', 'sprockets/environment', 'sprockets/manifest']
+gem 'sinatra-asset-pipeline', '= 0.6.0', require: ['sinatra/asset_pipeline', 'sprockets/environment', 'sprockets/manifest']
 gem 'rack-raw-upload'
 gem 'dav4rack', git: 'https://github.com/inferiorhumanorgans/dav4rack.git'
 gem 'yard'

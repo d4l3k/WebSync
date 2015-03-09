@@ -23,7 +23,7 @@
     "requirejs": "~2.1.15",
     "jquery": "~2.1.1",
     "rangy": "~1.2.3",
-    "lodash": "~3.3.0",
+    "lodash": "~3.4.0",
     "bootstrap-contextmenu": "~0.3.1",
     "seiyria-bootstrap-slider": "~4.4.0",
     "nprogress": "~0.1.6",
@@ -32,7 +32,8 @@
     "openpgp": "~0.10.3",
     "jquery-validation": "~1.13.1",
     "moment": "~2.9.0",
-    "bootstrap-material-design": "~0.2.1"
+    "bootstrap-material-design": "~0.2.1",
+    "bowser": "~0.7.2"
   },
   "resolutions": {
     "jquery": "~2.1.1"

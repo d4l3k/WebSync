@@ -4,7 +4,7 @@
     <title>WebSyn.ca</title>
     <link rel="shortcut icon" href="/favicon.ico?v=3">
     <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <% if !(defined?(allow_iframe) && allow_iframe) %>
+    <% if !(defined?(allow_iframe) && allow_iframe) && ENV["RACK_ENV"] != "development" %>
         <meta http-equiv="X-Frame-Options" content="deny" /> 
     <% end %>
     <% if logged_in?

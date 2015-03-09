@@ -3,7 +3,7 @@ module WebSync
     # Routes related to creating new documents and editing them.
     class Document < Base
       get '/new/:group' do
-        login_required
+        #login_required
         group = AssetGroup.get(params[:group])
         if group.nil?
           halt 400
@@ -15,10 +15,14 @@ module WebSync
           edit_time: Time.now,
           content_type: 'text/websync'
         )
+        if !logged_in?
+          doc.default_level = "editor"
+          doc.visibility = "hidden"
+        end
         doc.assets = group.assets
         doc.save
         # TODO: Handle errors
-        Permission.create(user: current_user, file: doc, level: "owner")
+        Permission.create(user: current_user, file: doc, level: "owner") if logged_in?
         redirect "/#{doc.id.encode62}/edit"
       end
       get '/:doc/json' do

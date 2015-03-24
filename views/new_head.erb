@@ -1,0 +1,81 @@
+<div class="new-head">
+  <%= erb :nicehead %>
+  <iframe src="/new/1"></iframe>
+</div>
+<div class="feature-head">
+    <h2><%= t :promo_line %></h2>
+</div>
+<div class="container-fluid promo well">
+    <div class="row">
+        <% items = {notebook: ["note.png", "pencil"], presentation: ["presentation.png", "picture-o"], document: ["document.png", "file-o"], spreadsheet: ["spreadsheet.png", "table"]} %>
+        <% items.each do |type, dat| %>
+            <div class="col-md-4 col-sm-6">
+                <h3><i class="fa fa-<%= dat[1] %>"></i> <%= t type %> <a href="/new/<%= AssetGroup.first(name: type.capitalize).id %>" class="btn btn-default">Create</a></h3>
+                <img src="img/index/<%= dat[0] %>" class="img-thumbnail">
+            </div>
+        <% end %>
+        <div class="col-md-4 col-sm-6">
+            <h3><i class="fa fa-cloud"></i> <%= t :local_file_sync %> <a href="#webdav" class="btn btn-default"><%= t :more %></a></h3>
+            <img src="img/index/file-mount.png" class="img-thumbnail">
+        </div>
+    </div>
+</div>
+<div class="container">
+    <% notes = [
+        [
+            {s: 'pencil', t: 'note_taking'},
+            {s: 'refresh', t: 'collaborative_work'},
+            {s: 'eye-slash', t: 'self_host'},
+            {s: 'camera-retro', t: 'incremental_backups'}
+        ], [
+            {s: 'female', t: 'gravatar'},
+            {s: 'gears', t: 'equations'},
+            {s: 'code', t: 'plugin_based'},
+            {s: 'keyboard-o', t: 'open_source'}
+        ], [
+            {s: 'mobile', t: 'responsive'},
+            {s: 'pencil', t: 'drawing'},
+            {s: 'youtube-play', t: 'interactive_content'},
+            {s: 'cloud', t: 'file_sync'}
+        ], [
+            {s: 'globe', t: 'i18n'},
+            {s: 'bar-chart', t: 'charts'}
+        ]
+    ]
+    notes.each do |row| %>
+        <div class="row features">
+        <% row.each do |cell| %>
+            <div class="col-md-3 col-sm-6">
+                <h3><i class="fa fa-<%= cell[:s] %>"></i> <%= t("descriptions.#{cell[:t]}.name") %></h3>
+                <span><%= t("descriptions.#{cell[:t]}.desc") %></span>
+            </div>
+        <% end %>
+        </div>
+    <% end %>
+</div>
+<script>
+document.querySelector('.new-head > iframe').addEventListener('load', function(e) {
+  var innerWindow = this.contentWindow;
+  var in$ = innerWindow.$;
+  var checkForVisible = function() {
+    if (in$('.page').is(':visible')) {
+      setTimeout(function() {
+        var node = in$('<div style="text-align: center; font-size: 20pt; font-family: \'Open Sans\'"></div>');
+        node.appendTo(in$('.page'));
+        var text = 'Hi! Welcome to WebSync!\nTry it out in this live editor!';
+        var n = 0;
+        var interval = setInterval(function() {
+          node.text(node.text() + text[n]);
+          n += 1;
+          if (!text[n]) {
+            clearInterval(interval);
+          }
+        }, 70);
+      }, 200);
+    } else {
+      setTimeout(checkForVisible, 100);
+    }
+  }
+  checkForVisible();
+});
+</script>

@@ -12,6 +12,11 @@ module WebSync
           end
         end
       end
+      get '/new_index' do
+        cache do
+          erb :new_head
+        end
+      end
       get '/deleted' do
         login_required
         erb :deleted

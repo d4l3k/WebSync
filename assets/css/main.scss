@@ -511,14 +511,13 @@ body > .container-fluid {
   -o-background-size: cover;
   background-size: cover;
   overflow: visible;
-  margin-top: 30px;
   .head-content {
     text-align: center;
     background-color: transparent;
     position: static;
     color: white;
     .title-logo {
-      margin: 170px 0 90px 0;
+      margin: 150px 0 20px 0;
       display: inline-block;
       height: 160px;
       text-align: center;
@@ -556,18 +555,26 @@ body > .container-fluid {
     min-width: 190px;
     font-size: 20px;
   }
-  /*.btn {
-    padding: 15px 30px;
-    background-color: transparent;
-    border: 1px solid;
-    border-color: white;
-    color: white;
-    &:hover {
-      background-color: white;
-      color: black;
-      border-color: black;
-    }
-  }*/
+}
+.new-head {
+  & > iframe {
+    position: absolute;
+    bottom: 0;
+    border: 1px solid #333;
+    border-bottom: 0;
+    height: 400px;
+    padding: 0;
+    left: 50%;
+    $width: 1170px;
+    width: $width;
+    margin-left: -$width/2;
+  }
+  .big-head {
+    height: 900px;
+  }
+  height: 900px;
+  overflow: hidden;
+  position: relative;
 }
 /* RESPONSIVE CSS
   -------------------------------------------------- */
@@ -669,7 +676,13 @@ body > .container-fluid {
 }
 .feature-head {
   text-align: center;
-  margin: 30px;
+  padding: 30px;
+  box-shadow: rgba(0,0,0,0.1) 0 -5px 16px;
+  z-index: 50;
+  position: relative;
+  h2 {
+    margin: 0;
+  }
 }
 
 table.table-click {

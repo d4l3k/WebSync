@@ -354,6 +354,9 @@ nav .settings-popup {
             color: darken(white, 10%);
         }
     }
+    .voice-intermin {
+      opacity: 0.5;
+    }
 }
 .layout-presentation {
   #slides {
@@ -517,6 +520,12 @@ a#name {
     margin-bottom: 0px !important;
     margin-top: 0px !important;
     width: auto !important;
+    &#voice_input.active {
+      @include ex(animation-duration, 2s);
+      @include ex(animation-name, voice-active);
+      @include ex(animation-iteration-count, infinite);
+      @include ex(animation-direction, alternate);
+    }
   }
   input, select{
     &[type="color"] {
@@ -1101,6 +1110,18 @@ ul.nav.nav-list {
         background-color: #f89406;
     }
 }
+
+@include keyframes(voice-active) {
+    from {
+        background-color: inherit;
+        color: black;
+    }
+    to {
+        background-color: red;
+        color: white;
+    }
+}
+
 .Chart {
   $size: 10px;
   text-align: center;

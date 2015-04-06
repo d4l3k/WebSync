@@ -250,6 +250,71 @@ define('edit', ['websync'], function(WS) {
     document.execCommand('insertHTML', false, html);
   });
 
+  if (window.webkitSpeechRecognition) {
+    $('#voice_input').show();
+
+    var voiceInputActive = false;
+    var lastResults = [];
+    var nodes = [];
+
+    var stopVoice = function() {
+      $('#voice_input').removeClass('active')
+        .find('i').removeClass('fa-microphone-slash').addClass('fa-microphone');
+      $('.content_well .voice-intermin').removeClass('voice-intermin');
+      lastResults = [];
+      nodes = [];
+      voiceInputActive = false;
+    };
+    var startVoice = function() {
+      var recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onstart = function() {
+        $('#voice_input').addClass('active')
+          .find('i').addClass('fa-microphone-slash').removeClass('fa-microphone');
+        voiceInputActive = true;
+      };
+      recognition.onresult = function(event) {
+        console.log('VOICE', event);
+        _.each(event.results, function(result, i) {
+          var text = result[0].transcript;
+
+          var lastResult = lastResults[i];
+          if (!lastResult) {
+            var node = $('<span class="voice-intermin"></span>').text(text);
+            nodes.push(node);
+
+            var sel = rangy.getSelection().getRangeAt(0);
+            sel.insertNode(node[0]);
+          } else {
+            nodes[i].text(text);
+            if (result.isFinal) {
+              nodes[i].removeClass('voice-intermin');
+            }
+          }
+        });
+        lastResults = event.results;
+      };
+      recognition.onerror = function(event) {
+        console.log('VOICE ERROR', event);
+      };
+      recognition.onend = function() {
+        console.log('VOICE END');
+        stopVoice();
+        startVoice();
+      };
+      recognition.start();
+    };
+    $('#voice_input').click(function() {
+      if (voiceInputActive) {
+        stopVoice();
+      } else {
+        startVoice();
+      }
+    });
+  }
+
   /**
    * Youtube REGEX from http://stackoverflow.com/a/8260383 by Lasnv
    * @param {String} url - The url to parse.
@@ -400,8 +465,9 @@ define('edit', ['websync'], function(WS) {
   tag.src = '/ace/ace.js';
   document.body.appendChild(tag);
   $("a[href='#css']").click();
-  var check = function() {
-    if (typeof ace !== 'undefined') {
+
+  var checkForAce = function() {
+    if (window.ace) {
       exports.editor = window.ace.edit('css-editor');
       exports.editor.getSession().setMode('ace/mode/css');
       exports.editor.setValue((WebSyncData.custom_css || []).join('\n'));
@@ -412,10 +478,10 @@ define('edit', ['websync'], function(WS) {
         exports.updateStyles();
       });
     } else {
-      setTimeout(check, 100);
+      setTimeout(checkForAce, 100);
     }
   };
-  check();
+  checkForAce();
   $(document).on('patched', function() {
     exports.editor.setValue((WebSyncData.custom_css || []).join('\n'));
     exports.updateStyles();

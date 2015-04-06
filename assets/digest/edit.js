@@ -256,17 +256,22 @@ define('edit', ['websync'], function(WS) {
     var voiceInputActive = false;
     var lastResults = [];
     var nodes = [];
+    var recognition;
 
     var stopVoice = function() {
       $('#voice_input').removeClass('active')
         .find('i').removeClass('fa-microphone-slash').addClass('fa-microphone');
       $('.content_well .voice-intermin').removeClass('voice-intermin');
-      lastResults = [];
-      nodes = [];
       voiceInputActive = false;
+      if (recognition) {
+        recognition.stop();
+      }
     };
     var startVoice = function() {
-      var recognition = new webkitSpeechRecognition();
+      lastResults = [];
+      nodes = [];
+
+      recognition = new webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
 
@@ -298,11 +303,13 @@ define('edit', ['websync'], function(WS) {
       };
       recognition.onerror = function(event) {
         console.log('VOICE ERROR', event);
+        if (event.error !== 'not-allowed') {
+          startVoice();
+        }
       };
       recognition.onend = function() {
         console.log('VOICE END');
         stopVoice();
-        startVoice();
       };
       recognition.start();
     };

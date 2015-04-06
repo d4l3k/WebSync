@@ -9,6 +9,7 @@
 //= require fast-json-patch/dist/json-patch-duplex.min.js
 //= require openpgp/dist/openpgp.js
 //= require moment/moment.js
+//= require json-stable-stringify.js
 
 //= require jquery.computedstyles.js
 //= require fullscreen.js

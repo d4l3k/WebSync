@@ -115,7 +115,7 @@ define('websync', ['crypto'], function(crypto) {
         } else if (data.type === 'name_update') {
           $('#name').text(data.name);
         } else if (data.type === 'ping') {
-          var hash = openpgp.crypto.hash.md5(JSON.stringify(WebSyncData));
+          var hash = openpgp.crypto.hash.md5(window.stableStringify(WebSyncData));
           console.log('HASH', hash);
           WebSync.connection.sendJSON({
             type: 'ping',

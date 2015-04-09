@@ -140,6 +140,13 @@ pm2 start bin/backend.js -i 4
 which launches four worker threads that all listen on port 4568.
 
 If you want to avoid pm2, you can just run `bin/backend.js` or `node node/backend.js` to get a single worker on port 4568.
+## Troubleshooting
+
+```
+rake aborted!
+LoadError: cannot load such file -- sprockets/sass/importer
+```
+If you get the above error, or something similar make sure you've installed the proper dependencies by running `bundle`. If the problem persists, try prefixing commands with `bundle exec ...`.
 
 # Contributing
 

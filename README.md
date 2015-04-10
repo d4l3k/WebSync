@@ -161,6 +161,8 @@ LoadError: cannot load such file -- sprockets/sass/importer
 ```
 If you get the above error, or something similar make sure you've installed the proper dependencies by running `bundle`. If the problem persists, try prefixing commands with `bundle exec ...`.
 
+To make `bundle exec` unneeded please see https://rvm.io/integration/bundler
+
 # Contributing
 
 ## TODO

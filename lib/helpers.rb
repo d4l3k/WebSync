@@ -35,7 +35,11 @@ module WebSync
 
     # Returns the logger corresponding to the request.
     def logger
-      request.logger
+      if request.respond_to? :logger
+        request.logger
+      else
+        Logger.new(STDOUT)
+      end
     end
 
     # Returns the current logged in user or an AnonymousUser.
@@ -246,7 +250,7 @@ module WebSync
         File.delete(conv_path)
         content
       else
-        logger.info "Unoconv failed and Unrecognized filetype: #{params[:file][:type]}"
+        logger.info "Unoconv failed, filetype: #{get_mime_type(path)}"
       end
     end
 

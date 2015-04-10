@@ -14,7 +14,8 @@ services:
   - redis-server
 before_install:
   - wget "http://www.webdav.org/neon/litmus/litmus-0.13.tar.gz" && tar xvf litmus-0.13.tar.gz && cd litmus-0.13 && ./configure && sudo make install && cd ..
-  - sudo apt-get install libpq-dev libpq5 libmagic-dev
+  - sudo apt-get update
+  - sudo apt-get install libpq-dev libpq5 libmagic-dev postgresql-server-dev-9.3
 before_script:
   - "psql -c 'create database websync;' -U postgres"
   - npm install

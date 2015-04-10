@@ -36,9 +36,22 @@ WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive
 * You probably need Java for the Closure javascript compressor (send me a message if it works without it).
 
 [Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync is automatically tested against Ruby 2.0.0 and Ruby 2.1.2.
-The Ruby dependencies need Bundler and you can install it by running `gem install rubygems-bundler` and then `bundle` inside the WebSync directory to download the dependencies.
 
-To install the Node.JS dependencies, just run `npm install`.
+In adition to the previously mentioned depencies, some global depencies are needed as well.
+```
+gem install rubygems-bundler
+
+sudo npm install -g bower
+sudo npm install -g grunt-cli
+sudo npm install -g pm2
+```
+
+To install project local dependencies for Ruby, Node.JS and bower, just run:
+```
+bundle install
+npm install
+bower install
+```
 
 Some things (like databases and initial javascript assets) can be configured in "config.json" but a majority still require source changes.
 

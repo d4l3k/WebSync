@@ -17,6 +17,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install libpq-dev libpq5 libmagic-dev postgresql-server-dev-9.3 libreoffice
   - git clone https://github.com/dagwieers/unoconv && cd unoconv && sudo make install && cd ..
+  - unoconv foo; echo
 before_script:
   - "psql -c 'create database websync;' -U postgres"
   - npm install

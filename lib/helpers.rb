@@ -251,6 +251,7 @@ module WebSync
         content
       else
         logger.info "Unoconv failed, filetype: #{get_mime_type(path)}"
+        []
       end
     end
 

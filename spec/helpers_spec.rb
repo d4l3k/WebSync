@@ -73,7 +73,10 @@ describe "File upload helpers" do
     expect(sanitized.css('script').empty?).to eq(true)
   end
 
-  it "should successfully convert html, pdf, odt and docx to HTML" do
+  #check if unoconv is present
+  system("unoconv", "thisfileshouldnotexist")
+  unoconv_works = $?.to_i == 6
+  it "should successfully convert html, pdf, odt and docx to HTML", :if => unoconv_works do
     files = %w(spec/test_files/sample.odt spec/test_files/sample.docx
     spec/test_files/sample.pdf spec/test_files/sample-html.html)
     files.each do |file|

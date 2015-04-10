@@ -1,6 +1,6 @@
 <div class="new-head">
   <%= erb :nicehead %>
-  <iframe src="/new/1"></iframe>
+  <iframe data-src="/new/1" allowfullscreen=true></iframe>
 </div>
 <div class="feature-head">
     <h2><%= t :promo_line %></h2>
@@ -78,4 +78,17 @@ document.querySelector('.new-head > iframe').addEventListener('load', function(e
   }
   checkForVisible();
 });
+function checkForSize() {
+  if (window.innerWidth > 767) {
+    var elem = document.querySelector('iframe[data-src]');
+    if (!elem) {
+      return
+    }
+    var src = elem.dataset.src
+    elem.setAttribute('src', src)
+    elem.removeAttribute('data-src')
+  }
+}
+window.addEventListener('resize', checkForSize);
+checkForSize();
 </script>

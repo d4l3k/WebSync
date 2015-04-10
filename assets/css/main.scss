@@ -565,7 +565,7 @@ body > .container-fluid {
     height: 400px;
     padding: 0;
     left: 50%;
-    $width: 1170px;
+    $width: 979px;
     width: $width;
     margin-left: -$width/2;
   }
@@ -580,12 +580,15 @@ body > .container-fluid {
   -------------------------------------------------- */
 
 @media (max-width: 979px) {
+  .new-head {
+    & > iframe {
+      width: 100%;
+      margin-left: -50%;
+    }
+  }
   .container.navbar-wrapper {
     margin-bottom: 0;
     width: auto;
-  }
-  .head-content {
-    margin-top: 70px;
   }
   .navbar-fixed-top {
     margin-bottom: 0px;
@@ -624,6 +627,17 @@ body > .container-fluid {
   }
 }
 @media (max-width: 767px) {
+  .new-head {
+    margin-top: 50px;
+    $height: 540px;
+    height: $height;
+    .big-head {
+      height: $height;
+    }
+    & > iframe {
+      display: none;
+    }
+  }
   .navbar-inner {} .head-content {
     margin-top: 50px;
   }

@@ -8,13 +8,8 @@ module WebSync
           erb :file_list
         else
           cache do
-            erb :index
+            erb :new_head
           end
-        end
-      end
-      get '/new_index' do
-        cache do
-          erb :new_head
         end
       end
       get '/deleted' do

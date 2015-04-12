@@ -12,7 +12,8 @@
 "postgres": "postgres:@localhost/websync",
 "redis": {
   "host": null,
-  "port": null
+  "port": null,
+  "password": null
 },
 
 // Google Analytics
@@ -148,3 +149,4 @@
 
 // Wolfram Alpha integration
 "wolframAppId": "Y92E32-YH2QY6HQJJ"
+

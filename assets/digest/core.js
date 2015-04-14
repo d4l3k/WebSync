@@ -38,7 +38,7 @@ define('websync', ['crypto'], function(crypto) {
         protocol = 'wss';
         path = WebSyncAuth.websocketUrl;
       }
-      WebSync.connection = new WebSocket(protocol + '://' + path + window.location.pathname);
+      WebSync.connection = new WebSocket(protocol + '://' + path + '/websocket' + window.location.pathname);
       _.each(WebSync.webSocketCallbacks, function(f, n) {
         WebSync.connection[n] = f;
       });

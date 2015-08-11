@@ -21,7 +21,7 @@ before_install:
 before_script:
   - "psql -c 'create database websync;' -U postgres"
   - npm install
-  - npm install -g bower
+  - npm install -g bower karma
   - bower install
   - bundle exec rake dependencies
   - ls -a

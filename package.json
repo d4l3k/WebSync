@@ -15,7 +15,7 @@
     "json-stable-stringify": "^1.0.0",
     "karma": "^0.12.31",
     "karma-jasmine": "^0.3.5",
-    "lodash": "^3.5.0",
+    "lodash": "^3.9.3",
     "node-wolfram": "0.0.1",
     "openpgp": "^1.0.0",
     "pg": "^4.1.0",

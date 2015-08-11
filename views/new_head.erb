@@ -1,6 +1,6 @@
 <div class="new-head">
   <%= erb :nicehead %>
-  <iframe data-src="/new/1" allowfullscreen=true></iframe>
+  <iframe data-src="/new/<%= AssetGroup.first(name:"Document").id %>" allowfullscreen=true></iframe>
 </div>
 <div class="feature-head">
     <h2><%= t :promo_line %></h2>

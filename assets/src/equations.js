@@ -63,10 +63,27 @@ define(['websync'], function(WS) {
     }
     self.selectionInEquation = elem;
   });
+  var lastEnter = 0;
   $('.content').on('keydown', '.mathquill-editable', function(e) {
     self.updateHref(this);
     if (e.keyCode === 13) {
-      self.checkMath(this);
+      var time = +new Date;
+      if (time - lastEnter < 200) {
+        var node = $('.mathquill-editable .cursor').parents('.mathquill-editable')[0];
+
+        var selection = rangy.getSelection();
+        var range = rangy.createRange();
+        range.setStartAfter(node);
+        range.setEndAfter(node);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        document.execCommand('insertParagraph',false);
+        self.insertEquation();
+      } else {
+        self.checkMath(this);
+      }
+      lastEnter = time;
     }
   }).on('click', '.mathquill-editable', function() {
     $(this).find('.wolfram').show();

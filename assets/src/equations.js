@@ -4,8 +4,9 @@
 // WebSync LaTeX equation editing plugin.
 define(['websync'], function(WS) {
   var self = {};
+  var mathquillClass = '.mq-editable-field';
   // Load the MathQuill javascript library.
-  $('body').append('<script type="text/javascript" class="Equations" src="/assets/mathquill.js"></script><link rel="stylesheet" type="text/css" href="/mathquill.css">');
+  $('body').append('<script class="Equations" src="/assets/mathquill.js"></script><link rel="stylesheet" type="text/css" href="/mathquill.css">');
 
   // Append the new equation button to the File menu and make it do stuff.
   $('#Insert').append(" <button id='insert_equation' class='btn btn-default Equations' title='Insert Equation (Ctrl-Shift-F)'>Equation</button>");
@@ -23,7 +24,11 @@ define(['websync'], function(WS) {
     }, 1);
   };
   self.makeEditable = function(elem) {
-    $(elem).mathquill('editable');
+    //$(elem).mathquill('editable');
+    MathQuill.MathField($(elem)[0]);
+    $(elem).on('mousedown.Equations, click.Equations', function(e) {
+      e.stopPropagation();
+    });
     $(elem).prepend('<a class="wolfram" target="_blank" style="display: none">=</a>');
   };
   $(document).bind('keydown.Equations', function(e) {
@@ -33,13 +38,14 @@ define(['websync'], function(WS) {
   });
   var queries = {};
   self.getEqn = function(elem) {
-    var eqns = $('.mathquill-editable');
-    var eqn1 = eqns.eq(eqns.index(elem) - 1).mathquill('latex');
-    var eqn2 = $(elem).mathquill('latex');
+    var eqns = $(mathquillClass);
+    var eqn1 = MathQuill.MathField(eqns.eq(eqns.index(elem) - 1)[0]).latex();
+    var eqn2 = MathQuill.MathField($(elem)[0]).latex();
     return '(' + eqn1 + ')==(' + eqn2 + ')'.replace(/(\\right|\\left)/ig, '');
   };
   self.updateHref = function(elem) {
-    $(elem).find('.wolfram').attr('href', 'http://www.wolframalpha.com/input/?i=' + window.encodeURIComponent($(elem).mathquill('latex')));
+    var latex = MathQuill.MathField($(elem)[0]).latex();
+    $(elem).find('.wolfram').attr('href', 'http://www.wolframalpha.com/input/?i=' + window.encodeURIComponent(latex));
   };
   self.checkMath = function(elem) {
     self.updateHref(elem);
@@ -57,19 +63,19 @@ define(['websync'], function(WS) {
   };
   self.selectionInEquation = false;
   $(document).on('selectionchange', function() {
-    var elem = $(rangy.getSelection().anchorNode).parents('.mathquill-editable');
+    var elem = $(rangy.getSelection().anchorNode).parents(mathquillClass);
     if (elem.length === 0 && self.selectionInEquation.length > 0) {
       self.checkMath(self.selectionInEquation);
     }
     self.selectionInEquation = elem;
   });
   var lastEnter = 0;
-  $('.content').on('keydown', '.mathquill-editable', function(e) {
+  $('.content').on('keydown', mathquillClass, function(e) {
     self.updateHref(this);
     if (e.keyCode === 13) {
       var time = +new Date;
       if (time - lastEnter < 200) {
-        var node = $('.mathquill-editable .cursor').parents('.mathquill-editable')[0];
+        var node = $(mathquillClass + ' .cursor').parents(mathquillClass)[0];
 
         var selection = rangy.getSelection();
         var range = rangy.createRange();
@@ -85,13 +91,13 @@ define(['websync'], function(WS) {
       }
       lastEnter = time;
     }
-  }).on('click', '.mathquill-editable', function() {
+  }).on('click', mathquillClass, function() {
     $(this).find('.wolfram').show();
     self.updateHref(this);
   });
   // Custom handler for equations since MathQuill doesn't export clean HTML.
-  WS.registerDOMException('.mathquill-rendered-math', function(obj) {
-    return $(obj).mathquill('latex');
+  WS.registerDOMException(mathquillClass, function(obj) {
+    return MathQuill.MathField($(obj)[0]).latex();
   }, function(json) {
     setTimeout(function() {
       self.makeEditable($('.make-editable').removeClass('make-editable'));

@@ -46,7 +46,8 @@ html {
     z-index: 10001;
     position: absolute;
 }
-body .mathquill-rendered-math {
+body .mq-editable-field {
+    white-space: nowrap;
     border: none;
     &.empty {
         border: 1px solid #aaa;
@@ -547,6 +548,11 @@ a#name {
     font-family: 'Arial';
     table {
         @include ex(user-modify, read-only);
+    }
+    .mq-editable-field {
+      table, th, td {
+        border: none;
+      }
     }
     table,
     th,

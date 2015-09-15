@@ -1,4 +1,4 @@
-/*jslint browser: true*/
+
 /*global $, define, rangy, _, JST*/
 
 //= require templates/tables-ribbon
@@ -875,7 +875,6 @@ define(['websync'], function(WS) {
     exports.selectionActive = true;
     exports.selectionEnd = null;
     exports.updateSelectedArea();
-    //e.preventDefault();
   });
   $('.content').bind('mousemove.Tables', function(e) {
     if (exports.selectionActive && exports.selectedElem && exports.selectedElem.contentEditable !== 'true') {

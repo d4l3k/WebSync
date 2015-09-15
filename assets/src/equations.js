@@ -25,7 +25,9 @@ define(['websync'], function(WS) {
   };
   self.makeEditable = function(elem) {
     //$(elem).mathquill('editable');
-    MathQuill.MathField($(elem)[0]);
+    $(elem).each(function() {
+      MathQuill.MathField($(this)[0]);
+    });
     $(elem).on('mousedown.Equations, click.Equations', function(e) {
       e.stopPropagation();
     });
@@ -75,7 +77,7 @@ define(['websync'], function(WS) {
     if (e.keyCode === 13) {
       var time = +new Date;
       if (time - lastEnter < 200) {
-        var node = $(mathquillClass + ' .cursor').parents(mathquillClass)[0];
+        var node = $(mathquillClass + ' .mq-cursor').parents(mathquillClass)[0];
 
         var selection = rangy.getSelection();
         var range = rangy.createRange();

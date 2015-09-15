@@ -96,17 +96,17 @@ define(['websync'], function(WS) {
     self.updateHref(this);
   });
   // Custom handler for equations since MathQuill doesn't export clean HTML.
-  var export = function(obj) {
+  var exportFunc = function(obj) {
     return MathQuill.MathField($(obj)[0]).latex();
   }
-  var import = function(json) {
+  var importFunc = function(json) {
     setTimeout(function() {
       self.makeEditable($('.make-editable').removeClass('make-editable'));
     }, 1);
     return '<span class="Equations Equation-Editable make-editable" contenteditable="false">' + json + '</span>';
   }
-  WS.registerDOMException(mathquillClass, export, import);
-  WS.registerDOMException('.mathquill-rendered-math', export, import);
+  WS.registerDOMException(mathquillClass, exportFunc, importFunc);
+  WS.registerDOMException('.mathquill-rendered-math', exportFunc, importFunc);
   // Code to disable the plugin.
   self.disable = function() {
     $('*').unbind('.Equations');

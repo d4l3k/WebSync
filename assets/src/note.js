@@ -166,8 +166,14 @@ define('/assets/note.js', ['websync'], function(WebSync) {
     switchToPage: function(section, page) {
       exports.switchToSection(section);
       $('.note-page').hide();
-      $('.note-section').eq(section).children().eq(page).show();
+      var $page = $('.note-section').eq(section).children().eq(page);
+      $page.show();
       exports.updateNav();
+      if (window.MathQuill) {
+        $page.find('.Equation-Editable').each(function(){
+          MathQuill.MathField(this).reflow()
+        });
+      }
     }
   };
   $('.content').hide().addClass('content-note').fadeIn();

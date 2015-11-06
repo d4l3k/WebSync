@@ -86,7 +86,7 @@ define(['websync'], function(WS) {
         selection.removeAllRanges();
         selection.addRange(range);
 
-        document.execCommand('insertParagraph',false);
+        document.execCommand('insertParagraph');
         self.insertEquation();
       } else {
         self.checkMath(this);

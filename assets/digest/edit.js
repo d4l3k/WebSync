@@ -130,8 +130,8 @@ define('edit', ['websync'], function(WS) {
       }
       e.preventDefault();
     }
+    var command = true;
     if (e.shiftKey && e.ctrlKey) {
-      var command = true;
       if (e.keyCode === 54) { // Key 6
         document.execCommand('superscript');
       } else if (e.keyCode === 55) { // Key 7
@@ -153,14 +153,25 @@ define('edit', ['websync'], function(WS) {
       } else {
         command = false;
       }
-      if (command) {
-        e.preventDefault();
-      }
-    }
-    if (e.ctrlKey && e.keyCode === 83) { // S
+    } else if (e.ctrlKey && e.keyCode === 83) { // S
       WS.info('<b>Saved</b> WebSync automatically saves your changes.');
       $('#ribbon_buttons a:contains(File)').click();
       $('#File .btn-group button').click();
+      e.preventDefault();
+    } else if (e.ctrlKey) {
+      if (e.key == 'b') {
+        document.execCommand('bold');
+      } else if (e.key == 'i') {
+        document.execCommand('italic');
+      } else if (e.key == 'u') {
+        document.execCommand('underline');
+      } else {
+        command = false;
+      }
+    } else {
+      command = false;
+    }
+    if (command) {
       e.preventDefault();
     }
   });

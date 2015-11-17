@@ -184,6 +184,6 @@ Here's a pretty graph of the setup on WebSyn.ca that I made for a talk.
 
 License
 ----
-Copyright (c) 2014 Tristan Rice
+Copyright (c) 2015 [Tristan Rice](https://fn.lc)
 
 WebSync is licensed under the [MIT License](http://opensource.org/licenses/MIT).

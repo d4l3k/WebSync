@@ -1,4 +1,6 @@
 # [![WebSync](https://github.com/d4l3k/WebSync/raw/master/public/img/logo-github.png)](https://websyn.ca)
+
+[![Join the chat at https://gitter.im/d4l3k/WebSync](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/d4l3k/WebSync?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive.
 
 [![Priority Issues](https://badge.waffle.io/d4l3k/WebSync.png?label=ready&title=Issues)](https://waffle.io/d4l3k/WebSync)

@@ -35,9 +35,9 @@ WebSync is a document editing tool similar to Google Drive or Microsoft Skydrive
 * Libre Office, unoconv and poppler is required for file upload & download.
 * You probably need Java for the Closure javascript compressor (send me a message if it works without it).
 
-[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple ruby version. WebSync is automatically tested against Ruby 2.0.0 and Ruby 2.1.2.
+[Ruby Version Manager](https://rvm.io/) is a great tool for handling multiple versions of Ruby. WebSync is automatically tested against Ruby 2.0.0 and Ruby 2.1.2.
 
-In adition to the previously mentioned depencies, some global depencies are needed as well.
+In addition to the previously mentioned dependencies, some global dependencies are needed as well.
 ```
 gem install rubygems-bundler
 
@@ -53,7 +53,7 @@ npm install
 bower install
 ```
 
-Some things (like databases and initial javascript assets) can be configured in "config.json" but a majority still require source changes.
+Some things (like databases and initial javascript assets) can be configured in "config.json" but a majority will require source changes.
 
 # Development Instance
 Once the dependencies are installed and running, you should be able to run a development server by running:
@@ -98,7 +98,7 @@ style    :facebook, "#3b5998", "Facebook"
 
 # Production
 ## Docker
-[Docker](http://www.docker.io/) is a lightweight Linux container tool that allows for easy deployment. The first step is to install that by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src) and because of it WebSyn.ca doesn't use it anymore. The Docker images on Digital Ocean are out of date.
+[Docker](http://www.docker.io/) is a lightweight Linux container tool that allows for easy deployment. The first step is to install by following the instructions on Docker's site. I've had issues with the Ubuntu Docker image on Digital Ocean (for some reason you couldn't access /src) and because of it WebSyn.ca doesn't use it anymore. The Docker images on Digital Ocean are out of date.
 
 Second, modify `WebSync/config/personal-docker/config.json` with the production database information. The WebSync container does not include any databases. You need to configure Redis and PostgreSQL seperately.
 
@@ -159,7 +159,7 @@ If you want to avoid pm2, you can just run `bin/backend.js` or `node node/backen
 rake aborted!
 LoadError: cannot load such file -- sprockets/sass/importer
 ```
-If you get the above error, or something similar make sure you've installed the proper dependencies by running `bundle`. If the problem persists, try prefixing commands with `bundle exec ...`.
+If you get the above error, or something similar, make sure you've installed the proper dependencies by running `bundle`. If the problem persists, try prefixing commands with `bundle exec ...`.
 
 To make `bundle exec` unneeded please see https://rvm.io/integration/bundler
 
